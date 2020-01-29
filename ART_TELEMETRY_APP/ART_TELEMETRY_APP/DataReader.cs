@@ -1,30 +1,34 @@
-﻿using System;
+﻿using LiveCharts;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Diagnostics;
-using LiveCharts;
+using System.Windows.Controls;
 
 namespace ART_TELEMETRY_APP
 {
     class DataReader
     {
-        List<DataTable> data_tables = new List<DataTable>();
-
-        public DataReader() { }
-        public DataReader(string file_name)
+        public DataReader(string file_name, ComboBox inputdatas_cmb_box)
         {
+            readFile(file_name);
+        }
+
+        private void readFile(string file_name)
+        {
+            Trace.WriteLine("reading file");
+
             List<Tuple<string, ChartValues<float>>> new_datas = new List<Tuple<string, ChartValues<float>>>();
 
-            StreamReader read_file = new StreamReader(file_name);
+            StreamReader read_file = new StreamReader(file_name, Encoding.Default);
 
             string[] attributes = read_file.ReadLine().Split(';');
-
-            foreach (string item in attributes)
+            foreach (string attribute in attributes)
             {
-                new_datas.Add(new Tuple<string, ChartValues<float>>(item, new ChartValues<float>()));
+                new_datas.Add(new Tuple<string, ChartValues<float>>(attribute, new ChartValues<float>()));
             }
 
             while (!read_file.EndOfStream)
@@ -42,14 +46,12 @@ namespace ART_TELEMETRY_APP
                     }
                 }
             }
+
             read_file.Close();
 
-            foreach (Tuple<string, ChartValues<float>> data in new_datas)
-            {
-                data_tables.Add(new DataTable(data.Item1, data.Item2));
-            }
-        }
+            Trace.WriteLine("reading file has ended");
 
-        internal List<DataTable> DataTables { get => data_tables; set => data_tables = value; }
+            Datas.Instance.AddInputData(new InputData(file_name.Split('\\').Last(), new_datas));
+        }
     }
 }

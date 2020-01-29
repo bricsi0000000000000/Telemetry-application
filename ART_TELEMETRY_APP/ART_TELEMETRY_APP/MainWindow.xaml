@@ -6,8 +6,28 @@
         xmlns:local="clr-namespace:ART_TELEMETRY_APP"
         xmlns:Wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf" x:Class="ART_TELEMETRY_APP.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid Name="grid">
-        <Button x:Name="import_file_btn" Content="Import" Click="importFileBtnClick" HorizontalAlignment="Left" Margin="66,46,0,0" VerticalAlignment="Top" Width="75"/>
+        Title="ART telemetry" Height="1240" Width="1600" WindowStartupLocation="CenterScreen">
+    <Grid Name="main_grid">
+        <DockPanel>
+            <Menu DockPanel.Dock="Top" Height="24" Margin="0,0,-0.4,0">
+                <MenuItem Header="Charts" Click="switchFormToCharts"  Height="24" Width="58" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" Padding="9,0,0,0"/>
+                <MenuItem Header="Groups" Click="switchFormToGroups"  Height="24" Width="58" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" Padding="9,0,0,0"/>
+            </Menu>
+            <StackPanel></StackPanel>
+        </DockPanel>
+        <Grid x:Name="charts_grid" Visibility="Hidden">
+            <Button x:Name="import_file_btn" Click="importFileBtnClick" Content="Import" HorizontalAlignment="Left" Margin="0,25,0,0" VerticalAlignment="Top" Width="75"/>
+        </Grid>
+        <Grid x:Name="groups_grid">
+            <TextBox x:Name="new_group_txt_box" HorizontalAlignment="Left" Height="23" Margin="10,28,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            <Button x:Name="add_group_btn" Click="addGroupBtnClick" Content="Add Group" HorizontalAlignment="Left" Margin="135,28,0,0" VerticalAlignment="Top" Width="75" Height="24"/>
+            <ComboBox x:Name="groups_cmb_box" HorizontalAlignment="Left" Margin="68,59,0,0" VerticalAlignment="Top" Width="142"/>
+            <Label x:Name="groups_label" Content="Groups" HorizontalAlignment="Left" Margin="10,56,0,0" VerticalAlignment="Top" Width="53" HorizontalContentAlignment="Center"/>
+            <ComboBox x:Name="inputdatas_cmb_box" HorizontalAlignment="Left" Margin="327,59,0,0" VerticalAlignment="Top" Width="123"/>
+            <Label x:Name="inputdatas_label" Content="Input Datas" HorizontalAlignment="Left" Margin="250,56,0,0" VerticalAlignment="Top" Width="72" HorizontalContentAlignment="Center"/>
+            
+            <ListBox x:Name="groups_listbox" HorizontalAlignment="Left" Height="265" Margin="10,87,0,0" VerticalAlignment="Top" Width="200"/>
+            <ListBox x:Name="inputdatas_listbox" HorizontalAlignment="Left" Height="265" Margin="250,87,0,0" VerticalAlignment="Top" Width="200" SelectionChanged="inputdatas_listbox_SelectionChanged"/>
+        </Grid>
     </Grid>
 </Window>

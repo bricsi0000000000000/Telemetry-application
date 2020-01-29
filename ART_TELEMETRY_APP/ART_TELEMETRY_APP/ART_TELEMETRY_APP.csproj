@@ -84,10 +84,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Chart.cs" />
-    <Compile Include="ChartBuilder.cs" />
-    <Compile Include="DataTable.cs" />
     <Compile Include="DataReader.cs" />
+    <Compile Include="Datas.cs" />
+    <Compile Include="Group.cs" />
+    <Compile Include="GroupBuilder.cs" />
+    <Compile Include="Groups.cs" />
+    <Compile Include="InputData.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
