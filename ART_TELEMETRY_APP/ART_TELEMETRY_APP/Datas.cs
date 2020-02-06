@@ -10,8 +10,10 @@ namespace ART_TELEMETRY_APP
 {
     class Datas
     {
-        List<InputData> input_datas = new List<InputData>();
+        List<Data> datas = new List<Data>();
+        string active_file_name;
 
+        #region instance
         private static Datas instance = null;
         private Datas() { }
 
@@ -26,15 +28,35 @@ namespace ART_TELEMETRY_APP
                 return instance;
             }
         }
+        #endregion
 
-        public void AddInputData(InputData input_data)
+        public void AddInputData(Data input_data)
         {
-            input_datas.Add(input_data);
+            datas.Add(input_data);
         }
 
-        public InputData GetInputData(string attribute)
+        public Data GetData(string file_name = "")
         {
-            return input_datas.Find(attr => attr.InputDataName == attribute);
+            if (file_name == "")
+            {
+                return datas.Find(name => name.FileName == active_file_name);
+            }
+            else
+            {
+                return datas.Find(name => name.FileName == file_name);
+            }
+        }
+
+        public string ActiveFileName
+        {
+            get
+            {
+                return active_file_name;
+            }
+            set
+            {
+                active_file_name = value;
+            }
         }
     }
 }

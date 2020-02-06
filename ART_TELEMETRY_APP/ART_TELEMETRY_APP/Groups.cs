@@ -1,17 +1,17 @@
-﻿using System;
+﻿using LiveCharts;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace ART_TELEMETRY_APP
 {
     class Groups
     {
-        List<Group> groups = new List<Group>();
-        string active_group;
-
+        #region instance
         private static Groups instance = null;
         private Groups() { }
 
@@ -26,10 +26,24 @@ namespace ART_TELEMETRY_APP
                 return instance;
             }
         }
+        #endregion
+
+        List<Group> groups = new List<Group>();
+        string active_group;
+        TreeViewItem active_tree_view_item;
 
         public void AddGroup(string name)
         {
             groups.Add(new Group(name));
+        }
+
+        public Group GetGroup(string name = "")
+        {
+            if (name == "")
+            {
+                name = active_group;
+            }
+            return groups.Find(n => n.Name == name);
         }
 
         public List<string> GetGroupsNames
@@ -46,13 +60,20 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        public List<string> GetGroupAttributes(string name)
+        public List<string> GetGroupAttributes(string name = "")
         {
-            foreach (Group group in groups)
+            if (name == "")
             {
-                if (name == group.Name)
+                return GetGroupAttributes(active_group);
+            }
+            else
+            {
+                foreach (Group group in groups)
                 {
-                    return group.Attributes;
+                    if (name == group.Name)
+                    {
+                        return group.Attributes;
+                    }
                 }
             }
 
@@ -61,19 +82,15 @@ namespace ART_TELEMETRY_APP
 
         public void AddAttributeToGroup(string attribute)
         {
-            groups.Find(n => n.Name == active_group).Attributes.Add(attribute);
-
-            foreach (var item in groups)
+            if ((groups.Find(n => n.Name == active_group).Attributes.Find(attr => attr == attribute)) == null)
             {
-                if (item.Name == active_group)
-                {
-                    Trace.WriteLine(active_group);
-                    foreach (var r in item.Attributes)
-                    {
-                        Trace.WriteLine(r);
-                    }
-                }
+                groups.Find(n => n.Name == active_group).AddAttribute(attribute);
             }
+        }
+
+        public void RemoveAttributeFromGroup(string attribute)
+        {
+            groups.Find(n => n.Name == active_group).Attributes.Remove(attribute);
         }
 
         public string ActiveGroup
@@ -85,6 +102,34 @@ namespace ART_TELEMETRY_APP
             set
             {
                 active_group = value;
+            }
+        }
+
+        public int GroupsCount
+        {
+            get
+            {
+                return groups.Count;
+            }
+        }
+
+        public List<Group> GetGroups
+        {
+            get
+            {
+                return groups;
+            }
+        }
+
+        public TreeViewItem ActiveGroupTreeViewItem
+        {
+            get
+            {
+                return active_tree_view_item;
+            }
+            set
+            {
+                active_tree_view_item = value;
             }
         }
     }

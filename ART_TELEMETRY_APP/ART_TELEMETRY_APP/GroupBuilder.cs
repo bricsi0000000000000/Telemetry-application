@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LiveCharts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace ART_TELEMETRY_APP
         public GroupBuilder(string group_name)
         {
             Groups.Instance.AddGroup(group_name);
+            Charts.Instance.AddChart(new Chart(group_name));
         }
     }
 }

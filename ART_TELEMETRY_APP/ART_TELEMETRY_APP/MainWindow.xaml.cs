@@ -18,6 +18,8 @@ using LiveCharts.Charts;
 using LiveCharts.Wpf;
 using System.Diagnostics;
 using System.Collections;
+using System.IO;
+using MaterialDesignThemes.Wpf;
 
 namespace ART_TELEMETRY_APP
 {
@@ -27,111 +29,227 @@ namespace ART_TELEMETRY_APP
         {
             InitializeComponent();
 
-            groups_grid.Visibility = Visibility.Hidden;
-            charts_grid.Visibility = Visibility.Visible;
+            groupsColorZone.Visibility = Visibility.Hidden;
+            chartsColorZone.Visibility = Visibility.Visible;
+            swicthFormToChartsBtn.Background = Brushes.Transparent;
+            swicthFormToChartsBtn.BorderThickness = new Thickness(5);
+
+            importFileDarkening.Visibility = Visibility.Hidden;
+
+            group_options_nothing.Visibility = Visibility.Visible;
+            channel_options_nothing.Visibility = Visibility.Visible;
         }
 
-        private void importFileBtnClick(object sender, RoutedEventArgs e)
+        private void channelCmbBoxItemClick(object sender, MouseButtonEventArgs e)
         {
-            OpenFileDialog open_file_dialog = new OpenFileDialog();
-            open_file_dialog.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
-            if (open_file_dialog.ShowDialog() == true)
+            updateChannelCmbboxItems(sender.ToString().Split(':').Last().Trim());
+        }
+
+        private void activeChannelItemClick(object sender, MouseButtonEventArgs e)
+        {
+            var item = ((TreeViewItem)sender).Parent;
+            Groups.Instance.ActiveGroup = ((TreeViewItem)item).Header.ToString();
+            Groups.Instance.ActiveGroupTreeViewItem = (TreeViewItem)item;
+
+            activeGroupNameLbl.Content = string.Format("{0}", Groups.Instance.ActiveGroup);
+            updateGroupOptionsZoomingOption();
+
+            channel_options_nothing.Visibility = Visibility.Hidden;
+
+            selected_channel_lbl.Content = getNameFromSender(e.Source);
+            line_smoothness_toogle_button.IsChecked = Datas.Instance.GetData().GetSingleData(getNameFromSender(e.Source)).Option.line_smoothness;
+        }
+
+        private void updateChannelCmbboxItems(string name)
+        {
+            active_channel_items_listbox.Items.Clear();
+            foreach (var attribute in Datas.Instance.GetData(name).Datas)
             {
-                DataReader data_reader = new DataReader(open_file_dialog.FileName, inputdatas_cmb_box);
-                updateInputDatasCmbBox(open_file_dialog.FileName);
+                ListBoxItem item = new ListBoxItem();
+                item.Content = attribute.Name;
+                item.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(channelListBoxItemClick);
+                active_channel_items_listbox.Items.Add(item);
             }
+            Datas.Instance.ActiveFileName = name;
         }
-
-        private void addGroupBtnClick(object sender, RoutedEventArgs e)
-        {
-            if (new_group_txt_box.Text == string.Empty)
-            {
-                MessageBox.Show("Group name is empty!", "wrong input", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-            else
-            {
-                GroupBuilder group_builder = new GroupBuilder(new_group_txt_box.Text);
-                groups_cmb_box.Items.Clear();
-                foreach (string name in Groups.Instance.GetGroupsNames)
-                {
-                    ComboBoxItem item = new ComboBoxItem();
-                    item.Content = name;
-                    item.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(groupsCmbBoxItemClick);
-                    groups_cmb_box.Items.Add(item);
-                }
-                new_group_txt_box.Text = "";
-            }
-        }
-
-        private void switchFormToCharts(object sender, RoutedEventArgs e)
-        {
-            groups_grid.Visibility = Visibility.Hidden;
-            charts_grid.Visibility = Visibility.Visible;
-        }
-
-        private void switchFormToGroups(object sender, RoutedEventArgs e)
-        {
-            groups_grid.Visibility = Visibility.Visible;
-            charts_grid.Visibility = Visibility.Hidden;
-        }
-
-        private void groupsCmbBoxItemClick(object sender, MouseButtonEventArgs e)
-        {
-            Groups.Instance.ActiveGroup = sender.ToString().Split(':').Last().Trim();
-            List<string> attributes = Groups.Instance.GetGroupAttributes(sender.ToString());
-            if (attributes != null)
-            {
-                groups_listbox.Items.Clear();
-                foreach (string attribute in Groups.Instance.GetGroupAttributes(sender.ToString()))
-                {
-                    ListBoxItem item = new ListBoxItem();
-                    item.Content = attribute;
-                    item.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(groupsListBoxItemClick);
-                    groups_listbox.Items.Add(item);
-                }
-            } 
-        }
-        private void inputDatasCmbBoxItemClick(object sender, MouseButtonEventArgs e)
-        {
-            Trace.WriteLine(e.ToString());
-            inputdatas_listbox.Items.Clear();
-            foreach (var attribute in Datas.Instance.GetInputData(sender.ToString().Split(':').Last().Trim()).Datas)
-            {
-                /* ListBoxItem item = new ListBoxItem();
-                 item.Content = attribute.Item1;
-                 //item.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(inputDatasListBoxItemClick);
-                 inputdatas_listbox.Items.Add(item);*/
-                inputdatas_listbox.Items.Add(attribute.Item1);
-            }
-        }
-        private void updateInputDatasCmbBox(string file_name)
+        private void updateFilesCmbBox(string file_name)
         {
             ComboBoxItem item = new ComboBoxItem();
             item.Content = file_name.Split('\\').Last();
-            item.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(inputDatasCmbBoxItemClick);
-            inputdatas_cmb_box.Items.Add(item);
+            item.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(channelCmbBoxItemClick);
+            channels_cmbbox.Items.Add(item);
+            //channels_cmbbox.SelectedItem = item;
         }
 
-        private void inputDatasListBoxItemClick(object sender, MouseButtonEventArgs e)
+        private void channelListBoxItemClick(object sender, MouseButtonEventArgs e)
         {
-            Groups.Instance.AddAttributeToGroup(sender.ToString().Split(':').Last().Trim());
-            groups_listbox.Items.Clear();
-            foreach (string attribute in Groups.Instance.GetGroupAttributes(Groups.Instance.ActiveGroup))
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
-                ListBoxItem item = new ListBoxItem();
-                item.Content = attribute;
-                groups_listbox.Items.Add(item);
+                Groups.Instance.AddAttributeToGroup(sender.ToString().Split(':').Last().Trim());
+                Groups.Instance.ActiveGroupTreeViewItem.Items.Clear();
+
+                updateGroupItems();
             }
         }
 
-        private void groupsListBoxItemClick(object sender, MouseButtonEventArgs e)
+        private void updateGroupItems(string name = "")
         {
-            Trace.WriteLine("groupsListBoxItemClick: " + sender.ToString().Split(':').Last().Trim());
+            foreach (string attribute in Groups.Instance.GetGroupAttributes(name))
+            {
+                TreeViewItem item = new TreeViewItem();
+                item.Header = attribute;
+                Groups.Instance.ActiveGroupTreeViewItem.Items.Add(item);
+                item.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(activeChannelItemClick);
+            }
         }
 
-        private void inputdatas_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void groupsTreeViewItemClick(object sender, MouseButtonEventArgs e)
         {
-            Trace.WriteLine("|" + inputdatas_listbox.SelectedItem + "|" );
+            if (Groups.Instance.GetGroups.Find(name => name.Name == getNameFromSender(e.Source)) != null)
+            {
+                updateGroupsTreeViewItem((TreeViewItem)sender, getNameFromSender(e.Source));
+                channel_options_nothing.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void updateGroupsTreeViewItem(TreeViewItem item, string name)
+        {
+            Groups.Instance.ActiveGroupTreeViewItem = item;
+            Groups.Instance.ActiveGroup = name;
+            activeGroupNameLbl.Content = string.Format("{0}", Groups.Instance.ActiveGroup);
+            updateGroupOptionsZoomingOption();
+
+            group_options_nothing.Visibility = Visibility.Hidden;
+        }
+
+        private void updateGroupOptionsZoomingOption()
+        {
+            zoomingOptionsX.IsChecked = Groups.Instance.GetGroup().Zooming == ZoomingOptions.X;
+            zoomingOptionsY.IsChecked = Groups.Instance.GetGroup().Zooming == ZoomingOptions.Y;
+            zoomingOptionsXY.IsChecked = Groups.Instance.GetGroup().Zooming == ZoomingOptions.Xy;
+        }
+
+        private string getNameFromSender(object sender)
+        {
+            string[] s = sender.ToString().Split(':');
+            return s[1].Split(' ')[0].Trim();
+        }
+
+        private void addNewGroupDialog(object sender, DialogClosingEventArgs eventArgs)
+        {
+            if (!Equals(eventArgs.Parameter, true))
+            {
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(add_group_txtbox.Text))
+            {
+                channel_options_nothing.Visibility = Visibility.Visible;
+
+                groups_tree_view.Items.Clear();
+                GroupBuilder group_builder = new GroupBuilder(add_group_txtbox.Text);
+
+                foreach (string name in Groups.Instance.GetGroupsNames)
+                {
+                    TreeViewItem item = new TreeViewItem();
+                    item.Header = name;
+                    item.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(groupsTreeViewItemClick);
+                    Groups.Instance.ActiveGroupTreeViewItem = item;
+
+                    try
+                    {
+                        updateGroupItems(name);
+                    }
+                    catch (Exception)
+                    {
+                    }
+
+                    item.IsExpanded = true;
+
+                    groups_tree_view.Items.Add(item);
+
+                    updateGroupsTreeViewItem(item, name);
+                }
+            }
+
+            add_group_txtbox.Text = string.Empty;
+        }
+
+        private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void switchFormToGroupsExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            groupsColorZone.Visibility = Visibility.Visible;
+            switchFormToGroupsBtn.Background = Brushes.Transparent;
+            switchFormToGroupsBtn.BorderThickness = new Thickness(5);
+
+            chartsColorZone.Visibility = Visibility.Hidden;
+            swicthFormToChartsBtn.BorderThickness = new Thickness(0);
+            BrushConverter brush_converter = new BrushConverter();
+            swicthFormToChartsBtn.Background = (Brush)brush_converter.ConvertFrom("#f44336");
+        }
+
+        private void switchFormToChartsExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            groupsColorZone.Visibility = Visibility.Hidden;
+            switchFormToGroupsBtn.BorderThickness = new Thickness(0);
+            BrushConverter brush_converter = new BrushConverter();
+            switchFormToGroupsBtn.Background = (Brush)brush_converter.ConvertFrom("#f44336");
+
+            chartsColorZone.Visibility = Visibility.Visible;
+            swicthFormToChartsBtn.Background = Brushes.Transparent;
+            swicthFormToChartsBtn.BorderThickness = new Thickness(5);
+        }
+
+        private void groupOptionsZoomingOptionBtn(object sender, RoutedEventArgs e)
+        {
+            if (getNameFromSender(sender).Equals("X"))
+            {
+                Groups.Instance.GetGroup().Zooming = ZoomingOptions.X;
+            }
+            else if (getNameFromSender(sender).Equals("Y"))
+            {
+                Groups.Instance.GetGroup().Zooming = ZoomingOptions.Y;
+            }
+            else if (getNameFromSender(sender).Equals("XY"))
+            {
+                Groups.Instance.GetGroup().Zooming = ZoomingOptions.Xy;
+            }
+        }
+
+        private void importFileExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            importFileProgressBar.Value = 0;
+            loading_file_lbl.Content = string.Empty;
+
+            OpenFileDialog open_file_dialog = new OpenFileDialog();
+            open_file_dialog.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
+
+            if (open_file_dialog.ShowDialog() == true)
+            {
+                importFileDarkening.Visibility = Visibility.Visible;
+                loading_file_lbl.Content = string.Format("Loading : {0}", open_file_dialog.FileName.Split('\\').Last());
+                DataReader.Instance.ReadData(open_file_dialog.FileName, importFileProgressBar, importFileDarkening);
+            }
+            else
+            {
+                importFileDarkening.Visibility = Visibility.Hidden;
+            }
+
+            updateFilesCmbBox(open_file_dialog.FileName);
+        }
+
+        private void lineSmoothnessToggleButtonClick(object sender, RoutedEventArgs e)
+        {
+            Datas.Instance.GetData().GetSingleData(selected_channel_lbl.Content.ToString()).Option.line_smoothness = (bool)line_smoothness_toogle_button.IsChecked;
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ChartBuilder ch = new ChartBuilder(charts_grid);
         }
     }
 }

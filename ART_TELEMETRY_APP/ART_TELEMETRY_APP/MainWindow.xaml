@@ -4,30 +4,331 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ART_TELEMETRY_APP"
-        xmlns:Wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf" x:Class="ART_TELEMETRY_APP.MainWindow"
+        xmlns:Wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        x:Class="ART_TELEMETRY_APP.MainWindow"
         mc:Ignorable="d"
-        Title="ART telemetry" Height="1240" Width="1600" WindowStartupLocation="CenterScreen">
-    <Grid Name="main_grid">
-        <DockPanel>
-            <Menu DockPanel.Dock="Top" Height="24" Margin="0,0,-0.4,0">
-                <MenuItem Header="Charts" Click="switchFormToCharts"  Height="24" Width="58" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" Padding="9,0,0,0"/>
-                <MenuItem Header="Groups" Click="switchFormToGroups"  Height="24" Width="58" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" Padding="9,0,0,0"/>
+        xmlns:s="clr-namespace:System;assembly=mscorlib"
+        Title="ART telemetry" Height="1080" Width="1920" WindowStartupLocation="CenterScreen"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        FontFamily="{materialDesign:MaterialDesignFont}" WindowStyle="ThreeDBorderWindow" ResizeMode="NoResize"
+    >
+
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}" CanExecute="CommandBinding_CanExecute"></CommandBinding>
+        <CommandBinding Command="{x:Static local:SwitchForms.SwitchToGroups}" CanExecute="CommandBinding_CanExecute" Executed="switchFormToGroupsExecuted"></CommandBinding>
+        <CommandBinding Command="{x:Static local:SwitchForms.SwitchToCharts}" CanExecute="CommandBinding_CanExecute" Executed="switchFormToChartsExecuted"></CommandBinding>
+        <CommandBinding Command="{x:Static local:ButtonCommands.ImportFile}" CanExecute="CommandBinding_CanExecute" Executed="importFileExecuted"></CommandBinding>
+    </Window.CommandBindings>
+
+    <Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*"/>
+                <ColumnDefinition Width="1858*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="108.8"/>
+            </Grid.RowDefinitions>
+            <Menu IsMainMenu="True" Grid.ColumnSpan="2" Margin="0,0,-0.4,109" Grid.RowSpan="2">
+                <MenuItem Header="_File">
+                    <MenuItem Header="Import file" Command="{x:Static local:ButtonCommands.ImportFile}">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="Import" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="_Chart">
+                    <MenuItem Header="Show Charts" Click="MenuItem_Click">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="Import" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
             </Menu>
-            <StackPanel></StackPanel>
-        </DockPanel>
-        <Grid x:Name="charts_grid" Visibility="Hidden">
-            <Button x:Name="import_file_btn" Click="importFileBtnClick" Content="Import" HorizontalAlignment="Left" Margin="0,25,0,0" VerticalAlignment="Top" Width="75"/>
+            <Grid Grid.Column="0" Margin="0,0,0,-890" Grid.Row="1" >
+                <Button x:Name="swicthFormToChartsBtn" Command="{x:Static local:SwitchForms.SwitchToCharts}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Margin="2,2,2,954"  ToolTip="Switch Form To Charts">
+                    <materialDesign:PackIcon Kind="ChartLine" RenderTransformOrigin="0.55,0.5" Width="15" Height="15">
+                        <materialDesign:PackIcon.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </materialDesign:PackIcon.RenderTransform>
+                    </materialDesign:PackIcon>
+                </Button>
+                <Button x:Name="switchFormToGroupsBtn" Command="{x:Static local:SwitchForms.SwitchToGroups}" Height="Auto" Margin="2,47,2.4,908.6" ToolTip="Switch Form To Groups">
+                    <materialDesign:PackIcon Kind="SelectGroup" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" RenderTransformOrigin="0.6,0.5" Width="15" Height="15">
+                        <materialDesign:PackIcon.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </materialDesign:PackIcon.RenderTransform>
+                    </materialDesign:PackIcon>
+                </Button>
+            </Grid>
+
+            <materialDesign:ColorZone x:Name="chartsColorZone" Width="Auto" Height="989" Margin="0.6,0.6,-0.4,-880" Grid.Row="1" Grid.Column="1" Mode="Inverted" >
+                <Grid x:Name="charts_grid" Height="989" VerticalAlignment="Bottom" Margin="0,0,0.2,-0.2"></Grid>
+            </materialDesign:ColorZone>
+            <materialDesign:ColorZone x:Name="groupsColorZone" Width="Auto" Height="989" Margin="0.6,0.6,-0.4,-880" Grid.Row="1" Grid.Column="1" Mode="Inverted" Visibility="Hidden" >
+                <Grid Margin="0,0,-2.8,-0.2">
+                    <Grid.RowDefinitions>
+                    </Grid.RowDefinitions>
+                    <materialDesign:DialogHost DialogClosing="addNewGroupDialog" Margin="0,0,-3,0">
+                        <materialDesign:DialogHost.DialogContent>
+                            <StackPanel Margin="16">
+                                <TextBox Margin="0 8 0 0" HorizontalAlignment="Stretch" x:Name="add_group_txtbox" materialDesign:HintAssist.IsFloating="True" materialDesign:HintAssist.Hint="New group"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                                        IsDefault="True"
+                                                        Margin="0 8 8 0"
+                                                        Command="materialDesign:DialogHost.CloseDialogCommand"
+                                                        >
+                                        <Button.CommandParameter>
+                                            <s:Boolean>True</s:Boolean>
+                                        </Button.CommandParameter>
+
+                                        Add
+                                    </Button>
+                                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                                        IsCancel="True"
+                                                        Margin="0 8 8 0"
+                                                        Command="materialDesign:DialogHost.CloseDialogCommand">
+                                        <Button.CommandParameter>
+                                            <s:Boolean>False</s:Boolean>
+                                        </Button.CommandParameter>
+                                        Cancel
+                                    </Button>
+                                </StackPanel>
+                            </StackPanel>
+                        </materialDesign:DialogHost.DialogContent>
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,-0.4,526.8" >
+                                <materialDesign:Card MinWidth="300" MaxWidth="300" materialDesign:ShadowAssist.ShadowDepth="Depth3" Margin="10">
+                                    <Grid>
+                                        <Button Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+                                        Content="Add Group" Height="Auto"
+                                        Margin="15,15,15,398.4"/>
+                                        <TreeView x:Name="groups_tree_view"
+                                          Margin="15,57,15,10.4"/>
+                                    </Grid>
+                                </materialDesign:Card>
+                                <materialDesign:Card MinWidth="300" MaxWidth="300" materialDesign:ShadowAssist.ShadowDepth="Depth3" Margin="10">
+                                    <Grid>
+                                        <Label x:Name="activeGroupNameLbl"
+                                       Content="{Binding}"
+                                       VerticalContentAlignment="Center"
+                                       HorizontalContentAlignment="Center"
+                                       Foreground="White"
+                                       Margin="15,15,15,395.4"
+                                       Height="29"
+                                />
+                                        <Grid Margin="0,55,0,-0.6">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="80"/>
+                                                <RowDefinition Height="80"/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <materialDesign:Card Grid.Row="0" Margin="15,0,15,0">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <Label Grid.Column="0"
+                                                   VerticalContentAlignment="Center"
+                                                   HorizontalContentAlignment="Center"
+                                            >Zooming</Label>
+                                                    <StackPanel Grid.Column="1" Name="group_options_zooming_options_grid">
+                                                        <RadioButton GroupName="zooming_options" Click="groupOptionsZoomingOptionBtn" Name="zoomingOptionsX" Margin="0,0,0,0.4" Width="Auto">
+                                                            <Label Content="X axis"/>
+                                                        </RadioButton>
+                                                        <RadioButton GroupName="zooming_options" Click="groupOptionsZoomingOptionBtn" Name="zoomingOptionsY" Margin="0,0,0.2,0.4" Width="Auto">
+                                                            <Label Content="Y axis"/>
+                                                        </RadioButton>
+                                                        <RadioButton GroupName="zooming_options" Click="groupOptionsZoomingOptionBtn" Name="zoomingOptionsXY" Margin="0,0,0,0.4" Width="Auto">
+                                                            <Label Content="XY axis"></Label>
+                                                        </RadioButton>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </materialDesign:Card>
+                                        </Grid>
+                                        <materialDesign:Card Name="group_options_nothing" Visibility="Hidden">
+                                            <Label Content="No selected group"
+                                           Foreground="#DD222222"
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           FontSize="30"></Label>
+                                        </materialDesign:Card>
+                                    </Grid>
+                                </materialDesign:Card>
+                                <materialDesign:Card MinWidth="300" MaxWidth="300" materialDesign:ShadowAssist.ShadowDepth="Depth3" Margin="10">
+                                    <Grid>
+                                        <Label Name="selected_channel_lbl"
+                                       Content="*Channel* options"
+                                       VerticalContentAlignment="Center"
+                                       HorizontalContentAlignment="Center"
+                                       Foreground="White"
+                                       Margin="15,15,15,395.4"
+                                       Height="29"
+                                />
+                                        <Grid Margin="0,54,0,-0.6">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="47.2"/>
+                                                <RowDefinition Height="56.8"/>
+                                                <RowDefinition Height="267.2"/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <materialDesign:Card Grid.Row="0" Margin="15,5,15,5.2">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Grid.Column="0"
+                                                   Content="Line Smoothness"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center"
+                                                   HorizontalContentAlignment="Left"
+                                                   Margin="0,6,0.2,5.8"
+                                                   Width="135"></Label>
+                                                    <ToggleButton x:Name="line_smoothness_toogle_button"
+                                                          Click="lineSmoothnessToggleButtonClick"
+                                                          Margin="135,0,0,0.8"
+                                                          Width="37"
+                                                          HorizontalAlignment="Left" Grid.ColumnSpan="2"/>
+                                                </Grid>
+                                            </materialDesign:Card>
+                                            <materialDesign:Card Grid.Row="1" Margin="15,4.8,15,7">
+                                                <TextBox materialDesign:HintAssist.Hint="Stroke Thickness"
+                                                 materialDesign:HintAssist.IsFloating="True"
+                                                 Foreground="White"
+                                                 Margin="5,0,5,5"
+                                        />
+                                            </materialDesign:Card>
+                                            <materialDesign:Card Grid.Row="2" Margin="15,5,15,4.2">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="30"/>
+                                                        <RowDefinition/>
+                                                    </Grid.RowDefinitions>
+                                                    <Label Grid.Row="0"
+                                                   VerticalAlignment="Center"
+                                                   Content="Stroke Color"/>
+                                                    <materialDesign:ColorPicker Grid.Row="1"></materialDesign:ColorPicker>
+                                                </Grid>
+                                            </materialDesign:Card>
+                                        </Grid>
+                                        <materialDesign:Card Name="channel_options_nothing" Visibility="Hidden">
+                                            <Label Content="No selected channel"
+                                           Foreground="#DD222222"
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           FontSize="30"></Label>
+                                        </materialDesign:Card>
+                                    </Grid>
+                                </materialDesign:Card>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,467,-0.4,-0.2">
+                                <materialDesign:Card MinWidth="300" MaxWidth="300" materialDesign:ShadowAssist.ShadowDepth="Depth3" Margin="10">
+                                    <Grid>
+                                        <ComboBox Name="channels_cmbbox"
+                                              Margin="15,16,15,449.6"
+                                              Height="36"
+                                              Foreground="White"
+                                              ></ComboBox>
+                                        <ListBox x:Name="active_channel_items_listbox" Margin="15,62,15,14.8"></ListBox>
+                                    </Grid>
+                                </materialDesign:Card>
+                            </StackPanel>
+                        </Grid>
+                    </materialDesign:DialogHost>
+
+                </Grid>
+
+                <!--<materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth3" Margin="10">
+                        <Grid>
+                            <TextBox x:Name="new_group_txt_box" HorizontalAlignment="Left" Height="23" Margin="19,62,0,-29" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                            <Button x:Name="add_group_btn" Click="addGroupBtnClick" Content="Add Group" HorizontalAlignment="Left" Margin="200,61,0,-29" VerticalAlignment="Top" Width="75" Height="24"/>
+                            <ComboBox x:Name="groups_cmb_box" HorizontalAlignment="Left" Margin="19,206,0,0" VerticalAlignment="Top" Width="142"/>
+                        </Grid>
+                    </materialDesign:Card>-->
+
+                <!--<Button x:Name="import_file_btn" Click="importFileBtnClick" Margin="0,0,1784,0" Height="41" VerticalAlignment="Top">
+                        <materialDesign:PackIcon Kind="Import"></materialDesign:PackIcon>
+                    </Button>
+                    <Button x:Name="draw_charts_btn" Click="drawChartsBtnClick" Margin="76,0,1713,0" Height="41" Width="Auto" VerticalAlignment="Top">
+                        <materialDesign:PackIcon Kind="Show"></materialDesign:PackIcon>
+                    </Button>-->
+            </materialDesign:ColorZone>
         </Grid>
-        <Grid x:Name="groups_grid">
-            <TextBox x:Name="new_group_txt_box" HorizontalAlignment="Left" Height="23" Margin="10,28,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-            <Button x:Name="add_group_btn" Click="addGroupBtnClick" Content="Add Group" HorizontalAlignment="Left" Margin="135,28,0,0" VerticalAlignment="Top" Width="75" Height="24"/>
-            <ComboBox x:Name="groups_cmb_box" HorizontalAlignment="Left" Margin="68,59,0,0" VerticalAlignment="Top" Width="142"/>
-            <Label x:Name="groups_label" Content="Groups" HorizontalAlignment="Left" Margin="10,56,0,0" VerticalAlignment="Top" Width="53" HorizontalContentAlignment="Center"/>
-            <ComboBox x:Name="inputdatas_cmb_box" HorizontalAlignment="Left" Margin="327,59,0,0" VerticalAlignment="Top" Width="123"/>
-            <Label x:Name="inputdatas_label" Content="Input Datas" HorizontalAlignment="Left" Margin="250,56,0,0" VerticalAlignment="Top" Width="72" HorizontalContentAlignment="Center"/>
-            
-            <ListBox x:Name="groups_listbox" HorizontalAlignment="Left" Height="265" Margin="10,87,0,0" VerticalAlignment="Top" Width="200"/>
-            <ListBox x:Name="inputdatas_listbox" HorizontalAlignment="Left" Height="265" Margin="250,87,0,0" VerticalAlignment="Top" Width="200" SelectionChanged="inputdatas_listbox_SelectionChanged"/>
+        <!--<Grid Name="main_grid">
+            <DockPanel>
+                <Menu DockPanel.Dock="Top" Margin="0,0,-0.4,0.4" Height="26">
+                    <MenuItem Header="sddsadas" Height="26" Width="59" >
+                    </MenuItem>
+                    <MenuItem Header="dasdas" Click="switchFormToGroups"  Height="26" Width="40" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5"/>
+                </Menu>
+                <StackPanel></StackPanel>
+            </DockPanel>
+            <Grid x:Name="charts_grid" Margin="40,26,-0.4,0.4">
+                <Button x:Name="import_file_btn" Click="importFileBtnClick" Content="Import" HorizontalAlignment="Left" Margin="60,10,0,0" VerticalAlignment="Top" Width="75"/>
+                <Grid x:Name="diagrams_grid" Margin="50,49,9.6,0" Height="811" VerticalAlignment="Top"/>
+                <Button x:Name="draw_charts_btn" Click="drawChartsBtnClick" Content="Show" HorizontalAlignment="Left" Margin="140,10,0,0" VerticalAlignment="Top" Width="75"/>
+            </Grid>
+            <Grid x:Name="groups_grid" Margin="40,26,-0.4,0.4" >
+                <TextBox x:Name="new_group_txt_box" HorizontalAlignment="Left" Height="23" Margin="296,165,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                <Button x:Name="add_group_btn" Click="addGroupBtnClick" Content="Add Group" HorizontalAlignment="Left" Margin="422,165,0,0" VerticalAlignment="Top" Width="75" Height="24"/>
+                <ComboBox x:Name="groups_cmb_box" HorizontalAlignment="Left" Margin="355,196,0,0" VerticalAlignment="Top" Width="142"/>
+                <Label x:Name="groups_label" Content="Groups" HorizontalAlignment="Left" Margin="297,193,0,0" VerticalAlignment="Top" Width="53" HorizontalContentAlignment="Center"/>
+                <ComboBox x:Name="inputdatas_cmb_box" HorizontalAlignment="Left" Margin="614,196,0,0" VerticalAlignment="Top" Width="123"/>
+                <Label x:Name="inputdatas_label" Content="Input Datas" HorizontalAlignment="Left" Margin="537,193,0,0" VerticalAlignment="Top" Width="72" HorizontalContentAlignment="Center"/>
+
+                <ListBox x:Name="groups_listbox" HorizontalAlignment="Left" Height="265" Margin="297,224,0,0" VerticalAlignment="Top" Width="200"/>
+                <ListBox x:Name="inputdatas_listbox" HorizontalAlignment="Left" Height="265" Margin="537,224,0,0" VerticalAlignment="Top" Width="200"/>
+                <Label x:Name="active_group_lbl" Content="" HorizontalAlignment="Left" Margin="297,494,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="200" Height="26"/>
+                <Label x:Name="active_file_lbl" Content="" HorizontalAlignment="Left" Margin="537,494,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="200" Height="26"/>
+            </Grid>
+
+            <Grid x:Name="vertical_menu" Margin="0,26,1873.6,0.4" Background="#FFF4F4F4">
+              <Button x:Name="swicthFormToChartsBtn" Click="switchFormToCharts" Margin="0,0,0,984">
+                    <Image Source="chart_icon.png"></Image>
+                </Button>
+                <Button x:Name="switchFormToGroupsBtn" Click="switchFormToGroups" Margin="0,40,0,944">
+                    <Image Source="chart_icon.png"></Image>
+                </Button>
+            </Grid>
+        </Grid>-->
+        <Grid Name="importFileDarkening" Background="#E52B2B2B">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="500*"/>
+                <RowDefinition Height="500*"/>
+            </Grid.RowDefinitions>
+            <Label Name="loading_file_lbl"
+                   Grid.Row="0"
+                   VerticalAlignment="Center"
+                   FontSize="80"
+                   Margin="10,360,9.6,9.6"
+                   Content="Loading: file.csv"
+                   HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="1894" Height="156"
+                   ></Label>
+            <ProgressBar x:Name="importFileProgressBar"
+                         
+                         Value="60"
+                         Grid.Row="1" Height="16" Margin="350,8.4,350,0" Width="Auto"
+                         HorizontalContentAlignment="Center" VerticalAlignment="Top"
+            />
         </Grid>
     </Grid>
 </Window>
