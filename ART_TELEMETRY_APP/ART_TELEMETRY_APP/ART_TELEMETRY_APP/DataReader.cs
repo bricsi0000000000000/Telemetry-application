@@ -66,7 +66,12 @@ namespace ART_TELEMETRY_APP
                 Data.SingleData single_data = new Data.SingleData();
                 single_data.Name = attribute;
                 single_data.Datas = new ChartValues<float>();
-                single_data.Option = new Data.LineSerieOptions { line_smoothness = false, stroke_color = Brushes.Black, stroke_thickness = .7f };
+                single_data.Option = new Data.LineSerieOptions
+                {
+                    line_smoothness = false,
+                    stroke_thickness = .7f,
+                    stroke_color = Brushes.Aqua
+                };
                 new_datas.Add(single_data);
             }
 

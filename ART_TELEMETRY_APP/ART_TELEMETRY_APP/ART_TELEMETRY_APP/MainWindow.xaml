@@ -80,7 +80,7 @@
             <materialDesign:ColorZone x:Name="chartsColorZone" Width="Auto" Height="989" Margin="0.6,0.6,-0.4,-880" Grid.Row="1" Grid.Column="1" Mode="Inverted" >
                 <Grid x:Name="charts_grid" Height="989" VerticalAlignment="Bottom" Margin="0,0,0.2,-0.2"></Grid>
             </materialDesign:ColorZone>
-            <materialDesign:ColorZone x:Name="groupsColorZone" Width="Auto" Height="989" Margin="0.6,0.6,-0.4,-880" Grid.Row="1" Grid.Column="1" Mode="Inverted" Visibility="Hidden" >
+            <materialDesign:ColorZone x:Name="groupsColorZone" Width="Auto" Height="989" Margin="0.6,0.6,-0.4,-880" Grid.Row="1" Grid.Column="1" Mode="Inverted" >
                 <Grid Margin="0,0,-2.8,-0.2">
                     <Grid.RowDefinitions>
                     </Grid.RowDefinitions>
@@ -211,11 +211,13 @@
                                                 </Grid>
                                             </materialDesign:Card>
                                             <materialDesign:Card Grid.Row="1" Margin="15,4.8,15,7">
-                                                <TextBox materialDesign:HintAssist.Hint="Stroke Thickness"
-                                                 materialDesign:HintAssist.IsFloating="True"
-                                                 Foreground="White"
-                                                 Margin="5,0,5,5"
-                                        />
+                                                <TextBox x:Name="stroke_thickness_txtbox"
+                                                         TextChanged="stroke_thickness_txtbox_TextChanged"
+                                                         materialDesign:HintAssist.Hint="Stroke Thickness"
+                                                         materialDesign:HintAssist.IsFloating="True"
+                                                         Foreground="White"
+                                                         Margin="5,0,5,5"
+                                                />
                                             </materialDesign:Card>
                                             <materialDesign:Card Grid.Row="2" Margin="15,5,15,4.2">
                                                 <Grid>
@@ -226,7 +228,10 @@
                                                     <Label Grid.Row="0"
                                                    VerticalAlignment="Center"
                                                    Content="Stroke Color"/>
-                                                    <materialDesign:ColorPicker Grid.Row="1"></materialDesign:ColorPicker>
+                                                    <materialDesign:ColorPicker Grid.Row="1"
+                                                                                Name="stroke_color_colorpicker"
+                                                                                ColorChanged="stroke_color_colorpicker_ColorChanged"
+                                                                                />
                                                 </Grid>
                                             </materialDesign:Card>
                                         </Grid>
@@ -310,7 +315,7 @@
                 </Button>
             </Grid>
         </Grid>-->
-        <Grid Name="importFileDarkening" Background="#E52B2B2B">
+        <Grid Name="importFileDarkening" Background="#E52B2B2B" Visibility="Hidden">
             <Grid.RowDefinitions>
                 <RowDefinition Height="500*"/>
                 <RowDefinition Height="500*"/>

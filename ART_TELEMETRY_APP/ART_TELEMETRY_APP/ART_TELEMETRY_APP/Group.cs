@@ -14,19 +14,22 @@ namespace ART_TELEMETRY_APP
         List<string> attributes = new List<string>();
         CartesianChart chart;
 
-        ZoomingOptions chart_zooming_options;
         bool chart_disable_animations;
         bool chart_hoverable;
 
         public Group(string name)
         {
             this.name = name;
-            chart_zooming_options = ZoomingOptions.Xy;
             chart_disable_animations = true;
             chart_hoverable = false;
 
             chart = new CartesianChart();
-            updateChart();
+            
+            chart.DataTooltip = null;
+            chart.Name = name;
+            chart.Zoom = ZoomingOptions.X;
+            chart.Hoverable = chart_hoverable;
+            chart.DisableAnimations = chart_disable_animations;
 
             /*
             Axis a = new Axis();
@@ -35,15 +38,6 @@ namespace ART_TELEMETRY_APP
 
             chart.AxisX.Add(a);
            */
-        }
-
-        void updateChart()
-        {
-            chart.ToolTip = null;
-            chart.Name = name;
-            chart.Zoom = chart_zooming_options;
-            chart.Hoverable = chart_hoverable;
-            chart.DisableAnimations = chart_disable_animations;
         }
 
         public void AddAttribute(string attribute)
@@ -83,11 +77,11 @@ namespace ART_TELEMETRY_APP
         {
             get
             {
-                return chart_zooming_options;
+                return chart.Zoom;
             }
             set
             {
-                chart_zooming_options = value;
+                chart.Zoom = value;
             }
         }
     }

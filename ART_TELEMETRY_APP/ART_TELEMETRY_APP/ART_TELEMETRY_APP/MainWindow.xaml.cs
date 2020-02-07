@@ -47,6 +47,7 @@ namespace ART_TELEMETRY_APP
 
         private void activeChannelItemClick(object sender, MouseButtonEventArgs e)
         {
+            string name = getNameFromSender(e.Source);
             var item = ((TreeViewItem)sender).Parent;
             Groups.Instance.ActiveGroup = ((TreeViewItem)item).Header.ToString();
             Groups.Instance.ActiveGroupTreeViewItem = (TreeViewItem)item;
@@ -56,8 +57,15 @@ namespace ART_TELEMETRY_APP
 
             channel_options_nothing.Visibility = Visibility.Hidden;
 
-            selected_channel_lbl.Content = getNameFromSender(e.Source);
-            line_smoothness_toogle_button.IsChecked = Datas.Instance.GetData().GetSingleData(getNameFromSender(e.Source)).Option.line_smoothness;
+            selected_channel_lbl.Content = name;
+            line_smoothness_toogle_button.IsChecked = Datas.Instance.GetData().GetSingleData(name).Option.line_smoothness;
+            stroke_thickness_txtbox.Text = Datas.Instance.GetData().GetSingleData(name).Option.stroke_thickness.ToString();
+
+
+            Trace.WriteLine(Datas.Instance.GetData().GetSingleData(name).Option.stroke_color);
+
+            stroke_color_colorpicker.Color = ((SolidColorBrush)Datas.Instance.GetData().GetSingleData(name).Option.stroke_color).Color;
+            Trace.WriteLine(stroke_color_colorpicker.Color);
         }
 
         private void updateChannelCmbboxItems(string name)
@@ -231,7 +239,7 @@ namespace ART_TELEMETRY_APP
             if (open_file_dialog.ShowDialog() == true)
             {
                 importFileDarkening.Visibility = Visibility.Visible;
-                loading_file_lbl.Content = string.Format("Loading : {0}", open_file_dialog.FileName.Split('\\').Last());
+                loading_file_lbl.Content = string.Format("Loading: {0}", open_file_dialog.FileName.Split('\\').Last());
                 DataReader.Instance.ReadData(open_file_dialog.FileName, importFileProgressBar, importFileDarkening);
             }
             else
@@ -239,7 +247,10 @@ namespace ART_TELEMETRY_APP
                 importFileDarkening.Visibility = Visibility.Hidden;
             }
 
-            updateFilesCmbBox(open_file_dialog.FileName);
+            if (!open_file_dialog.FileName.Equals(string.Empty))
+            {
+                updateFilesCmbBox(open_file_dialog.FileName);
+            }
         }
 
         private void lineSmoothnessToggleButtonClick(object sender, RoutedEventArgs e)
@@ -250,6 +261,16 @@ namespace ART_TELEMETRY_APP
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             ChartBuilder ch = new ChartBuilder(charts_grid);
+        }
+
+        private void stroke_thickness_txtbox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Datas.Instance.GetData().GetSingleData(selected_channel_lbl.Content.ToString()).Option.stroke_thickness = float.Parse(stroke_thickness_txtbox.Text);
+        }
+
+        private void stroke_color_colorpicker_ColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
+        {
+            Datas.Instance.GetData().GetSingleData(selected_channel_lbl.Content.ToString()).Option.stroke_color = new SolidColorBrush(stroke_color_colorpicker.Color);
         }
     }
 }
