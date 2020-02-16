@@ -260,7 +260,8 @@ namespace ART_TELEMETRY_APP
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ChartBuilder ch = new ChartBuilder(charts_grid);
+            MapBuilder map_builder = new MapBuilder(map);
+            ChartBuilder chart_builder = new ChartBuilder(charts_grid);
         }
 
         private void stroke_thickness_txtbox_TextChanged(object sender, TextChangedEventArgs e)
@@ -268,7 +269,7 @@ namespace ART_TELEMETRY_APP
             Datas.Instance.GetData().GetSingleData(selected_channel_lbl.Content.ToString()).Option.stroke_thickness = float.Parse(stroke_thickness_txtbox.Text);
         }
 
-        private void stroke_color_colorpicker_ColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
+        private void stroke_color_colorpicker_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Datas.Instance.GetData().GetSingleData(selected_channel_lbl.Content.ToString()).Option.stroke_color = new SolidColorBrush(stroke_color_colorpicker.Color);
         }

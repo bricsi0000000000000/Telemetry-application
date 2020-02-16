@@ -77,10 +77,17 @@
                 </Button>
             </Grid>
 
-            <materialDesign:ColorZone x:Name="chartsColorZone" Width="Auto" Height="989" Margin="0.6,0.6,-0.4,-880" Grid.Row="1" Grid.Column="1" Mode="Inverted" >
-                <Grid x:Name="charts_grid" Height="989" VerticalAlignment="Bottom" Margin="0,0,0.2,-0.2"></Grid>
+            <materialDesign:ColorZone x:Name="chartsColorZone" Width="Auto" Height="989" Margin="0.6,0.6,-0.4,-880" Grid.Row="1" Grid.Column="1" Mode="Inverted">
+                <Grid>
+                    <materialDesign:Card Margin="1587,10,10,10">
+                        <Path x:Name="map" Stroke="White" StrokeThickness="1" Stretch="Fill" Margin="10,10,10,489"></Path>
+                    </materialDesign:Card>
+                    <materialDesign:Card Margin="10,10,281.2,9.8">
+                        <Grid x:Name="charts_grid" Height="969" VerticalAlignment="Bottom" Margin="0,0,0,-0.2" ></Grid>
+                    </materialDesign:Card>
+                </Grid>
             </materialDesign:ColorZone>
-            <materialDesign:ColorZone x:Name="groupsColorZone" Width="Auto" Height="989" Margin="0.6,0.6,-0.4,-880" Grid.Row="1" Grid.Column="1" Mode="Inverted" >
+            <materialDesign:ColorZone x:Name="groupsColorZone" Width="Auto" Height="989" Margin="0.6,0.6,-0.4,-880" Grid.Row="1" Grid.Column="1" Mode="Inverted" Visibility="Hidden" >
                 <Grid Margin="0,0,-2.8,-0.2">
                     <Grid.RowDefinitions>
                     </Grid.RowDefinitions>
@@ -230,7 +237,7 @@
                                                    Content="Stroke Color"/>
                                                     <materialDesign:ColorPicker Grid.Row="1"
                                                                                 Name="stroke_color_colorpicker"
-                                                                                ColorChanged="stroke_color_colorpicker_ColorChanged"
+                                                                                PreviewMouseLeftButtonUp="stroke_color_colorpicker_PreviewMouseLeftButtonUp"
                                                                                 />
                                                 </Grid>
                                             </materialDesign:Card>

@@ -15,11 +15,12 @@ namespace ART_TELEMETRY_APP
         string file_name;
         List<SingleData> datas = new List<SingleData>();
         float filter_percent = .03f;
+        List<List<Tuple<double, double>>> laps = new List<List<Tuple<double, double>>>();
 
         public class SingleData
         {
             public string Name;
-            public ChartValues<float> Datas;
+            public ChartValues<double> Datas;
             public LineSerieOptions Option;
         }
 
@@ -28,6 +29,34 @@ namespace ART_TELEMETRY_APP
             public bool line_smoothness;
             public float stroke_thickness;
             public Brush stroke_color;
+        }
+
+        public List<List<Tuple<double, double>>> Laps
+        {
+            get
+            {
+                return laps;
+            }
+            set
+            {
+                laps = value;
+            }
+        }
+
+        public List<double> Latitude
+        {
+            get
+            {
+                return datas.Find(n => n.Name == "Latitude").Datas.ToList();
+            }
+        }
+
+        public List<double> Longitude
+        {
+            get
+            {
+                return datas.Find(n => n.Name == "Longitude").Datas.ToList();
+            }
         }
 
         public SingleData GetSingleData(string name)
@@ -39,10 +68,6 @@ namespace ART_TELEMETRY_APP
         {
             this.file_name = input_data_name;
             this.datas = datas;
-
-            /*Options.line_smoothness = true;
-            Options.stroke_thickness = .7f;
-            Options.stroke_color = Brushes.Black;*/
         }
 
         public string FileName
@@ -63,11 +88,19 @@ namespace ART_TELEMETRY_APP
 
         public ChartValues<ObservablePoint> GetChartValues(string attribute)
         {
-            ChartValues<float> values = datas.Find(attr => attr.Name == attribute).Datas;
+            ChartValues<double> values = datas.Find(attr => attr.Name == attribute).Datas;
             return convertToObservablePoints(filteredData(values));
         }
 
-        ChartValues<float> timeDatas
+        List<double> GetLapData
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        ChartValues<double> timeDatas
         {
             get
             {
@@ -75,11 +108,11 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        ChartValues<ObservablePoint> convertToObservablePoints(ChartValues<float> filtered_datas)
+        ChartValues<ObservablePoint> convertToObservablePoints(ChartValues<double> filtered_datas)
         {
             ChartValues<ObservablePoint> return_datas = new ChartValues<ObservablePoint>();
 
-            ChartValues<float> time = filteredData(timeDatas);
+            ChartValues<double> time = filteredData(timeDatas);
 
             for (int i = 0; i < filtered_datas.Count; i++)
             {
@@ -93,9 +126,9 @@ namespace ART_TELEMETRY_APP
             return return_datas;
         }
 
-        ChartValues<float> filteredData(ChartValues<float> datas)
+        ChartValues<double> filteredData(ChartValues<double> datas)
         {
-            ChartValues<float> input_datas = new ChartValues<float>(datas);
+            ChartValues<double> input_datas = new ChartValues<double>(datas);
             int total = input_datas.Count;
             Random rand = new Random(DateTime.Now.Millisecond);
             while (input_datas.Count / (double)total > filter_percent)
