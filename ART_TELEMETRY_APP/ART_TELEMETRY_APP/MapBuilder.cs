@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MaterialDesignThemes.Wpf;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace ART_TELEMETRY_APP
 {
     class MapBuilder
     {
-        public MapBuilder(Path map)
+        public MapBuilder(Path map, ColorZone map_nothing = null)
         {
             Datas.Instance.GetData().Laps.Clear();
 
@@ -102,6 +103,11 @@ namespace ART_TELEMETRY_APP
             }
 
             map.Data = Geometry.Parse(p);
+
+            if (map_nothing != null)
+            {
+                map_nothing.Visibility = System.Windows.Visibility.Hidden;
+            }
         }
     }
 }

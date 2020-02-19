@@ -16,7 +16,7 @@ namespace ART_TELEMETRY_APP
 {
     class ChartBuilder
     {
-        public ChartBuilder(Grid diagram_grid)
+        public ChartBuilder(Grid diagram_grid, ColorZone diagram_nothing)
         {
             diagram_grid.Children.Clear();
             diagram_grid.RowDefinitions.Clear();
@@ -58,6 +58,8 @@ namespace ART_TELEMETRY_APP
                 diagram_grid.Children.Add(splitter);
                 diagram_grid.RowDefinitions.Add(row_up);
                 diagram_grid.RowDefinitions.Add(row_down);
+
+                diagram_nothing.Visibility = Visibility.Hidden;
             }
         }
     }

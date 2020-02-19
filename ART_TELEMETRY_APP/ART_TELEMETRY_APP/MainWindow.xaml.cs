@@ -31,13 +31,17 @@ namespace ART_TELEMETRY_APP
 
             groupsColorZone.Visibility = Visibility.Hidden;
             chartsColorZone.Visibility = Visibility.Visible;
-            swicthFormToChartsBtn.Background = Brushes.Transparent;
-            swicthFormToChartsBtn.BorderThickness = new Thickness(5);
+
+            BrushConverter brush_converter = new BrushConverter();
+            // swicthFormToChartsBtn.Background = (Brush)brush_converter.ConvertFrom("#FFFAFAFA");
+             swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#e53935");
 
             importFileDarkening.Visibility = Visibility.Hidden;
 
             group_options_nothing.Visibility = Visibility.Visible;
             channel_options_nothing.Visibility = Visibility.Visible;
+            input_file_nothing.Visibility = Visibility.Visible;
+            diagram_nothing.Visibility = Visibility.Visible;
         }
 
         private void channelCmbBoxItemClick(object sender, MouseButtonEventArgs e)
@@ -57,7 +61,7 @@ namespace ART_TELEMETRY_APP
 
             channel_options_nothing.Visibility = Visibility.Hidden;
 
-            selected_channel_lbl.Content = name;
+            selected_channel_lbl.Content = string.Format("{0}", name);
             line_smoothness_toogle_button.IsChecked = Datas.Instance.GetData().GetSingleData(name).Option.line_smoothness;
             stroke_thickness_txtbox.Text = Datas.Instance.GetData().GetSingleData(name).Option.stroke_thickness.ToString();
 
@@ -191,25 +195,21 @@ namespace ART_TELEMETRY_APP
         private void switchFormToGroupsExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             groupsColorZone.Visibility = Visibility.Visible;
-            switchFormToGroupsBtn.Background = Brushes.Transparent;
-            switchFormToGroupsBtn.BorderThickness = new Thickness(5);
-
             chartsColorZone.Visibility = Visibility.Hidden;
-            swicthFormToChartsBtn.BorderThickness = new Thickness(0);
+
             BrushConverter brush_converter = new BrushConverter();
-            swicthFormToChartsBtn.Background = (Brush)brush_converter.ConvertFrom("#f44336");
+            switchFormToGroupsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#e53935");
+            swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#DD000000");
         }
 
         private void switchFormToChartsExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             groupsColorZone.Visibility = Visibility.Hidden;
-            switchFormToGroupsBtn.BorderThickness = new Thickness(0);
-            BrushConverter brush_converter = new BrushConverter();
-            switchFormToGroupsBtn.Background = (Brush)brush_converter.ConvertFrom("#f44336");
-
             chartsColorZone.Visibility = Visibility.Visible;
-            swicthFormToChartsBtn.Background = Brushes.Transparent;
-            swicthFormToChartsBtn.BorderThickness = new Thickness(5);
+
+            BrushConverter brush_converter = new BrushConverter();
+            switchFormToGroupsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#DD000000");
+            swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#e53935");
         }
 
         private void groupOptionsZoomingOptionBtn(object sender, RoutedEventArgs e)
@@ -240,7 +240,7 @@ namespace ART_TELEMETRY_APP
             {
                 importFileDarkening.Visibility = Visibility.Visible;
                 loading_file_lbl.Content = string.Format("Loading: {0}", open_file_dialog.FileName.Split('\\').Last());
-                DataReader.Instance.ReadData(open_file_dialog.FileName, importFileProgressBar, importFileDarkening);
+                DataReader.Instance.ReadData(open_file_dialog.FileName, importFileProgressBar, importFileDarkening, input_file_nothing);
             }
             else
             {
@@ -251,6 +251,7 @@ namespace ART_TELEMETRY_APP
             {
                 updateFilesCmbBox(open_file_dialog.FileName);
             }
+
         }
 
         private void lineSmoothnessToggleButtonClick(object sender, RoutedEventArgs e)
@@ -260,8 +261,8 @@ namespace ART_TELEMETRY_APP
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            MapBuilder map_builder = new MapBuilder(map_svg);
-            ChartBuilder chart_builder = new ChartBuilder(charts_grid);
+            MapBuilder map_builder = new MapBuilder(map_svg, map_nothing);
+            ChartBuilder chart_builder = new ChartBuilder(charts_grid, diagram_nothing);
         }
 
         private void stroke_thickness_txtbox_TextChanged(object sender, TextChangedEventArgs e)

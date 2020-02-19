@@ -58,5 +58,13 @@ namespace ART_TELEMETRY_APP
                 active_file_name = value;
             }
         }
+
+        public int DatasCount
+        {
+            get
+            {
+                return datas.Count;
+            }
+        }
     }
 }

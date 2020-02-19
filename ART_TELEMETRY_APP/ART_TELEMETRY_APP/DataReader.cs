@@ -1,4 +1,5 @@
 ﻿using LiveCharts;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -36,9 +37,11 @@ namespace ART_TELEMETRY_APP
         BackgroundWorker worker;
         string file_name;
         Grid importFileDarkening;
+        Card input_file_nothing;
 
-        public void ReadData(string file_name, ProgressBar importFileProgressBar, Grid importFileDarkening)
+        public void ReadData(string file_name, ProgressBar importFileProgressBar, Grid importFileDarkening, Card input_file_nothing)
         {
+            this.input_file_nothing = input_file_nothing;
             this.file_name = file_name;
             this.file_length = File.ReadLines(file_name).Count();
             this.importFileProgressBar = importFileProgressBar;
@@ -70,7 +73,7 @@ namespace ART_TELEMETRY_APP
                 {
                     line_smoothness = false,
                     stroke_thickness = .7f,
-                    stroke_color = Brushes.Aqua
+                    stroke_color = Brushes.Black
                 };
                 new_datas.Add(single_data);
             }
@@ -105,6 +108,10 @@ namespace ART_TELEMETRY_APP
         private void workerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             importFileDarkening.Visibility = Visibility.Hidden;
+            if (Datas.Instance.DatasCount > 0)
+            {
+                input_file_nothing.Visibility = Visibility.Hidden;
+            }
         }
     }
 }
