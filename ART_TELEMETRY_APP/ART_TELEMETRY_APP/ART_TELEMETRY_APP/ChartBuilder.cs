@@ -1,6 +1,7 @@
 ﻿using LiveCharts;
 using LiveCharts.Defaults;
 using LiveCharts.Wpf;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace ART_TELEMETRY_APP
@@ -22,9 +24,15 @@ namespace ART_TELEMETRY_APP
             int index = 0;
             for (int i = 0; i < Groups.Instance.GroupsCount; i++)
             {
-                Groups.Instance.GetGroups[i].Chart.Series.Clear();
+                CartesianChart chart = new CartesianChart();
+                chart.DataTooltip = null;
+                chart.Zoom = Groups.Instance.GetGroup().Zooming;
+                chart.DisableAnimations = true;
+                chart.Hoverable = false;
 
-                RowDefinition row = new RowDefinition();
+                RowDefinition row_up = new RowDefinition();
+                RowDefinition row_down = new RowDefinition();
+                row_down.Height = new GridLength(5);
 
                 foreach (string attribute in Groups.Instance.GetGroups[i].Attributes)
                 {
@@ -36,15 +44,20 @@ namespace ART_TELEMETRY_APP
                     serie.StrokeThickness = Datas.Instance.GetData().GetSingleData(attribute).Option.stroke_thickness;
                     serie.Fill = Brushes.Transparent;
                     serie.Stroke = Datas.Instance.GetData().GetSingleData(attribute).Option.stroke_color;
-                    Groups.Instance.GetGroups[i].Chart.Series.Add(serie);
+                    chart.Series.Add(serie);
                 }
 
-                Grid.SetRow(Groups.Instance.GetGroups[i].Chart, index++);
-                diagram_grid.Children.Add(Groups.Instance.GetGroups[i].Chart);
+                Grid.SetRow(chart, index++);
+                diagram_grid.Children.Add(chart);
 
-                //diagram_grid.Children.Add(Groups.Instance.GetGroup().Chart);
+                GridSplitter splitter = new GridSplitter();
+                splitter.ResizeDirection = GridResizeDirection.Rows;
+                splitter.HorizontalAlignment = HorizontalAlignment.Stretch;
+                Grid.SetRow(splitter, index++);
 
-                diagram_grid.RowDefinitions.Add(row);
+                diagram_grid.Children.Add(splitter);
+                diagram_grid.RowDefinitions.Add(row_up);
+                diagram_grid.RowDefinitions.Add(row_down);
             }
         }
     }

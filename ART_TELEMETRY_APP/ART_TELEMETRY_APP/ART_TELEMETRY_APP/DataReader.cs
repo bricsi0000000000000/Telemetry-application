@@ -65,7 +65,7 @@ namespace ART_TELEMETRY_APP
             {
                 Data.SingleData single_data = new Data.SingleData();
                 single_data.Name = attribute;
-                single_data.Datas = new ChartValues<float>();
+                single_data.Datas = new ChartValues<double>();
                 single_data.Option = new Data.LineSerieOptions
                 {
                     line_smoothness = false,
@@ -84,15 +84,11 @@ namespace ART_TELEMETRY_APP
                 {
                     if (row[i] != "")
                     {
-                        new_datas[i].Datas.Add(float.Parse(row[i], number_format_info));
-                    }
-                    else
-                    {
-                        new_datas[i].Datas.Add(float.NaN);
+                        new_datas[i].Datas.Add(double.Parse(row[i], number_format_info));
                     }
                 }
 
-                worker.ReportProgress(Convert.ToInt32((index / (float)file_length) * 100));
+                worker.ReportProgress(Convert.ToInt32((index / (double)file_length) * 100));
                 index++;
             }
 

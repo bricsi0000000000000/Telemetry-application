@@ -8,13 +8,13 @@
         x:Class="ART_TELEMETRY_APP.MainWindow"
         mc:Ignorable="d"
         xmlns:s="clr-namespace:System;assembly=mscorlib"
-        Title="ART telemetry" Height="1080" Width="1920" WindowStartupLocation="CenterScreen"
+        Title="ART telemetry" Height="700" Width="1000" WindowStartupLocation="CenterScreen"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
         TextElement.FontSize="14"
-        FontFamily="{materialDesign:MaterialDesignFont}" WindowStyle="ThreeDBorderWindow" ResizeMode="NoResize"
+        FontFamily="{materialDesign:MaterialDesignFont}" WindowStyle="ThreeDBorderWindow"
     >
 
     <Window.CommandBindings>
@@ -27,14 +27,14 @@
     <Grid>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50*"/>
-                <ColumnDefinition Width="1858*"/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
-                <RowDefinition Height="108.8"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Menu IsMainMenu="True" Grid.ColumnSpan="2" Margin="0,0,-0.4,109" Grid.RowSpan="2">
+            <Menu IsMainMenu="True" Grid.ColumnSpan="2" Grid.RowSpan="2">
                 <MenuItem Header="_File">
                     <MenuItem Header="Import file" Command="{x:Static local:ButtonCommands.ImportFile}">
                         <MenuItem.Icon>
@@ -50,9 +50,19 @@
                     </MenuItem>
                 </MenuItem>
             </Menu>
-            <Grid Grid.Column="0" Margin="0,0,0,-890" Grid.Row="1" >
-                <Button x:Name="swicthFormToChartsBtn" Command="{x:Static local:SwitchForms.SwitchToCharts}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Margin="2,2,2,954"  ToolTip="Switch Form To Charts">
-                    <materialDesign:PackIcon Kind="ChartLine" RenderTransformOrigin="0.55,0.5" Width="15" Height="15">
+            <StackPanel Grid.Column="0" Grid.Row="1" >
+                <Button x:Name="swicthFormToChartsBtn"
+                        Command="{x:Static local:SwitchForms.SwitchToCharts}"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch" 
+                        Height="40"
+                        Margin="5"
+                        Padding="5"
+                        ToolTip="Switch Form To Charts">
+                    <materialDesign:PackIcon Kind="ChartLine"
+                                             RenderTransformOrigin="0.5,0.5"
+                                             Width="15"
+                                             Height="15">
                         <materialDesign:PackIcon.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform ScaleX="2" ScaleY="2"/>
@@ -63,8 +73,16 @@
                         </materialDesign:PackIcon.RenderTransform>
                     </materialDesign:PackIcon>
                 </Button>
-                <Button x:Name="switchFormToGroupsBtn" Command="{x:Static local:SwitchForms.SwitchToGroups}" Height="Auto" Margin="2,47,2.4,908.6" ToolTip="Switch Form To Groups">
-                    <materialDesign:PackIcon Kind="SelectGroup" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" RenderTransformOrigin="0.6,0.5" Width="15" Height="15">
+                <Button x:Name="switchFormToGroupsBtn"
+                        Command="{x:Static local:SwitchForms.SwitchToGroups}"
+                        Height="40"
+                        Margin="5"
+                        Padding="5"
+                        ToolTip="Switch Form To Groups">
+                    <materialDesign:PackIcon Kind="SelectGroup"
+                                             HorizontalContentAlignment="Stretch" 
+                                             VerticalContentAlignment="Stretch"
+                                             RenderTransformOrigin="0.5,0.5" Width="15" Height="15">
                         <materialDesign:PackIcon.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform ScaleX="2" ScaleY="2"/>
@@ -75,19 +93,120 @@
                         </materialDesign:PackIcon.RenderTransform>
                     </materialDesign:PackIcon>
                 </Button>
-            </Grid>
+            </StackPanel>
 
-            <materialDesign:ColorZone x:Name="chartsColorZone" Width="Auto" Height="989" Margin="0.6,0.6,-0.4,-880" Grid.Row="1" Grid.Column="1" Mode="Inverted" >
-                <Grid x:Name="charts_grid" Height="989" VerticalAlignment="Bottom" Margin="0,0,0.2,-0.2"></Grid>
+            <materialDesign:ColorZone x:Name="chartsColorZone"
+                                      Grid.Column="1"
+                                      Grid.Row="1"
+                                      Mode="Inverted"
+                                      VerticalAlignment="Stretch"
+                                      >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <materialDesign:Card Margin="10,10,5,10"
+                                         Grid.Column="0"
+                                         >
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="10*"/>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Viewbox Stretch="Uniform" 
+                                         Grid.Column="0">
+                                    <Button Grid.Column="0"
+                                            Height="Auto"
+                                            Margin="5"
+                                            Padding="5"
+                                            Name="prev_lab_btn"
+                                            Click="prev_lab_btn_Click">
+                                        <materialDesign:PackIcon Kind="NavigateBefore"
+                                                             RenderTransformOrigin=".5,.5"
+                                                             Height="25"
+                                                             Width="25">
+                                            <materialDesign:PackIcon.RenderTransform>
+                                                <TransformGroup>
+                                                    <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                                                    <SkewTransform/>
+                                                    <RotateTransform/>
+                                                </TransformGroup>
+                                            </materialDesign:PackIcon.RenderTransform>
+                                        </materialDesign:PackIcon>
+                                    </Button>
+                                </Viewbox>
+                                <Viewbox Grid.Column="1"
+                                         Stretch="Uniform">
+                                    <Label x:Name="act_lap_lbl"
+                                           HorizontalContentAlignment="Center"
+                                           VerticalContentAlignment="Center"/>
+                                </Viewbox>
+                                <Viewbox Stretch="Uniform" 
+                                         Grid.Column="2">
+                                    <Button Height="Auto"
+                                            Margin="5"
+                                            Padding="5"
+                                            Name="next_lap_btn"
+                                            Click="next_lap_btn_Click">
+                                        <materialDesign:PackIcon Kind="NavigateNext"
+                                                                 RenderTransformOrigin=".5,.5"
+                                                                 Height="25"
+                                                                 Width="25">
+                                            <materialDesign:PackIcon.RenderTransform>
+                                                <TransformGroup>
+                                                    <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                                                    <SkewTransform/>
+                                                    <RotateTransform/>
+                                                </TransformGroup>
+                                            </materialDesign:PackIcon.RenderTransform>
+                                        </materialDesign:PackIcon>
+                                    </Button>
+                                </Viewbox>
+                            </Grid>
+                            <Grid x:Name="charts_grid"
+                                  Grid.Row="1"/>
+                        </Grid>
+                    </materialDesign:Card>
+                    <materialDesign:Card Margin="5,10,10,10"
+                                         Grid.Column="1"
+                                         >
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="2*"/>
+                            </Grid.RowDefinitions>
+                            <Path x:Name="map_svg"
+                                  Stroke="White"
+                                  StrokeThickness="1"
+                                  Stretch="Fill"
+                                  Grid.Row="0"/>
+                        </Grid>
+                    </materialDesign:Card>
+                </Grid>
             </materialDesign:ColorZone>
-            <materialDesign:ColorZone x:Name="groupsColorZone" Width="Auto" Height="989" Margin="0.6,0.6,-0.4,-880" Grid.Row="1" Grid.Column="1" Mode="Inverted" >
-                <Grid Margin="0,0,-2.8,-0.2">
-                    <Grid.RowDefinitions>
-                    </Grid.RowDefinitions>
-                    <materialDesign:DialogHost DialogClosing="addNewGroupDialog" Margin="0,0,-3,0">
+            <materialDesign:ColorZone x:Name="groupsColorZone"
+                                      Grid.Row="1"
+                                      Grid.Column="1"
+                                      Mode="Inverted"
+                                      VerticalAlignment="Stretch"
+                                      Visibility="Hidden"
+                                      >
+                <Grid>
+                    <materialDesign:DialogHost DialogClosing="addNewGroupDialog">
                         <materialDesign:DialogHost.DialogContent>
                             <StackPanel Margin="16">
-                                <TextBox Margin="0 8 0 0" HorizontalAlignment="Stretch" x:Name="add_group_txtbox" materialDesign:HintAssist.IsFloating="True" materialDesign:HintAssist.Hint="New group"/>
+                                <TextBox Margin="0 8 0 0"
+                                         HorizontalAlignment="Stretch"
+                                         x:Name="add_group_txtbox"
+                                         materialDesign:HintAssist.IsFloating="True"
+                                         materialDesign:HintAssist.Hint="New group"/>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
                                     <Button Style="{StaticResource MaterialDesignFlatButton}"
                                                         IsDefault="True"
@@ -97,7 +216,6 @@
                                         <Button.CommandParameter>
                                             <s:Boolean>True</s:Boolean>
                                         </Button.CommandParameter>
-
                                         Add
                                     </Button>
                                     <Button Style="{StaticResource MaterialDesignFlatButton}"
@@ -113,33 +231,51 @@
                             </StackPanel>
                         </materialDesign:DialogHost.DialogContent>
                         <Grid>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,-0.4,526.8" >
-                                <materialDesign:Card MinWidth="300" MaxWidth="300" materialDesign:ShadowAssist.ShadowDepth="Depth3" Margin="10">
+                            <WrapPanel Orientation="Horizontal">
+                                <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth3"
+                                                     Margin="10"
+                                                     MinWidth="200"
+                                                     Height="300"
+                                                     >
                                     <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="50"/>
+                                            <RowDefinition Height="14*"/>
+                                        </Grid.RowDefinitions>
                                         <Button Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
-                                        Content="Add Group" Height="Auto"
-                                        Margin="15,15,15,398.4"/>
+                                                Content="Add Group"
+                                                Grid.Row="0"
+                                                Margin="5"
+                                                />
                                         <TreeView x:Name="groups_tree_view"
-                                          Margin="15,57,15,10.4"/>
+                                                  Grid.Row="1"
+                                                  />
                                     </Grid>
                                 </materialDesign:Card>
-                                <materialDesign:Card MinWidth="300" MaxWidth="300" materialDesign:ShadowAssist.ShadowDepth="Depth3" Margin="10">
+                                <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth3"
+                                                     Margin="10"
+                                                     MinWidth="200"
+                                                     MinHeight="200">
                                     <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="14*"/>
+                                        </Grid.RowDefinitions>
                                         <Label x:Name="activeGroupNameLbl"
-                                       Content="{Binding}"
-                                       VerticalContentAlignment="Center"
-                                       HorizontalContentAlignment="Center"
-                                       Foreground="White"
-                                       Margin="15,15,15,395.4"
-                                       Height="29"
-                                />
-                                        <Grid Margin="0,55,0,-0.6">
+                                               Content="{Binding}"
+                                               VerticalContentAlignment="Center"
+                                               HorizontalContentAlignment="Center"
+                                               Foreground="White"
+                                               Grid.Row="0"
+                                        />
+                                        <Grid Grid.Row="1">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="80"/>
                                                 <RowDefinition Height="80"/>
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
-                                            <materialDesign:Card Grid.Row="0" Margin="15,0,15,0">
+                                            <materialDesign:Card Grid.Row="0" 
+                                                                 Margin="10,0,10,0">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition/>
@@ -147,119 +283,150 @@
                                                     </Grid.ColumnDefinitions>
 
                                                     <Label Grid.Column="0"
-                                                   VerticalContentAlignment="Center"
-                                                   HorizontalContentAlignment="Center"
-                                            >Zooming</Label>
-                                                    <StackPanel Grid.Column="1" Name="group_options_zooming_options_grid">
-                                                        <RadioButton GroupName="zooming_options" Click="groupOptionsZoomingOptionBtn" Name="zoomingOptionsX" Margin="0,0,0,0.4" Width="Auto">
+                                                           VerticalContentAlignment="Center"
+                                                           HorizontalContentAlignment="Center"
+                                                           Content="Zooming"
+                                                    />
+                                                    <StackPanel Grid.Column="1"
+                                                                Name="group_options_zooming_options_grid">
+                                                        <RadioButton GroupName="zooming_options"
+                                                                     Click="groupOptionsZoomingOptionBtn"
+                                                                     Name="zoomingOptionsX"
+                                                                     VerticalContentAlignment="Center"
+                                                                     >
                                                             <Label Content="X axis"/>
                                                         </RadioButton>
-                                                        <RadioButton GroupName="zooming_options" Click="groupOptionsZoomingOptionBtn" Name="zoomingOptionsY" Margin="0,0,0.2,0.4" Width="Auto">
+                                                        <RadioButton GroupName="zooming_options"
+                                                                     Click="groupOptionsZoomingOptionBtn"
+                                                                     Name="zoomingOptionsY"
+                                                                     Margin="0"
+                                                                     VerticalContentAlignment="Center"
+                                                                     >
                                                             <Label Content="Y axis"/>
                                                         </RadioButton>
-                                                        <RadioButton GroupName="zooming_options" Click="groupOptionsZoomingOptionBtn" Name="zoomingOptionsXY" Margin="0,0,0,0.4" Width="Auto">
-                                                            <Label Content="XY axis"></Label>
+                                                        <RadioButton GroupName="zooming_options"
+                                                                     Click="groupOptionsZoomingOptionBtn"
+                                                                     Name="zoomingOptionsXY"
+                                                                     VerticalContentAlignment="Center">
+                                                            <Label Content="XY axis"/>
                                                         </RadioButton>
                                                     </StackPanel>
                                                 </Grid>
                                             </materialDesign:Card>
                                         </Grid>
-                                        <materialDesign:Card Name="group_options_nothing" Visibility="Hidden">
-                                            <Label Content="No selected group"
-                                           Foreground="#DD222222"
-                                           VerticalContentAlignment="Center"
-                                           HorizontalContentAlignment="Center"
-                                           FontSize="30"></Label>
+                                        <materialDesign:Card Name="group_options_nothing"
+                                                             Grid.RowSpan="2"
+                                                             Visibility="Hidden"
+                                                             >
+                                            <Viewbox Stretch="None">
+                                                <Label Content="No selected group"
+                                                       Foreground="#DD222222"
+                                                       VerticalContentAlignment="Center"
+                                                       HorizontalContentAlignment="Center"
+                                                       FontSize="20"/>
+                                            </Viewbox>
                                         </materialDesign:Card>
                                     </Grid>
                                 </materialDesign:Card>
-                                <materialDesign:Card MinWidth="300" MaxWidth="300" materialDesign:ShadowAssist.ShadowDepth="Depth3" Margin="10">
+                                <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth3"
+                                                     Margin="10"
+                                                     MinWidth="200"
+                                                     Height="300">
                                     <Grid>
                                         <Label Name="selected_channel_lbl"
-                                       Content="*Channel* options"
-                                       VerticalContentAlignment="Center"
-                                       HorizontalContentAlignment="Center"
-                                       Foreground="White"
-                                       Margin="15,15,15,395.4"
-                                       Height="29"
-                                />
-                                        <Grid Margin="0,54,0,-0.6">
+                                               Content="*Channel* options"
+                                               VerticalContentAlignment="Center"
+                                               HorizontalContentAlignment="Center"
+                                               Foreground="White"
+                                        />
+                                        <Grid Grid.Row="0">
                                             <Grid.RowDefinitions>
-                                                <RowDefinition Height="47.2"/>
-                                                <RowDefinition Height="56.8"/>
-                                                <RowDefinition Height="267.2"/>
+                                                <RowDefinition Height="4*"/>
+                                                <RowDefinition Height="4*"/>
+                                                <RowDefinition Height="20*"/>
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
-                                            <materialDesign:Card Grid.Row="0" Margin="15,5,15,5.2">
+                                            <materialDesign:Card Grid.Row="0">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition/>
-                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Grid.Column="0"
-                                                   Content="Line Smoothness"
-                                                   VerticalAlignment="Center"
-                                                   HorizontalAlignment="Center"
-                                                   HorizontalContentAlignment="Left"
-                                                   Margin="0,6,0.2,5.8"
-                                                   Width="135"></Label>
+                                                           Content="Line Smoothness"
+                                                           VerticalAlignment="Center"
+                                                           HorizontalAlignment="Center"
+                                                           HorizontalContentAlignment="Left"
+                                                           Margin="10,0,10,0"
+                                                           />
                                                     <ToggleButton x:Name="line_smoothness_toogle_button"
-                                                          Click="lineSmoothnessToggleButtonClick"
-                                                          Margin="135,0,0,0.8"
-                                                          Width="37"
-                                                          HorizontalAlignment="Left" Grid.ColumnSpan="2"/>
+                                                                  Click="lineSmoothnessToggleButtonClick"
+                                                                  HorizontalAlignment="Left"
+                                                                  Grid.Column="1"/>
                                                 </Grid>
                                             </materialDesign:Card>
-                                            <materialDesign:Card Grid.Row="1" Margin="15,4.8,15,7">
+                                            <materialDesign:Card Grid.Row="1">
                                                 <TextBox x:Name="stroke_thickness_txtbox"
                                                          TextChanged="stroke_thickness_txtbox_TextChanged"
                                                          materialDesign:HintAssist.Hint="Stroke Thickness"
                                                          materialDesign:HintAssist.IsFloating="True"
                                                          Foreground="White"
-                                                         Margin="5,0,5,5"
+                                                         Margin="10,0,10,0"
                                                 />
                                             </materialDesign:Card>
-                                            <materialDesign:Card Grid.Row="2" Margin="15,5,15,4.2">
+                                            <materialDesign:Card Grid.Row="2">
                                                 <Grid>
                                                     <Grid.RowDefinitions>
                                                         <RowDefinition Height="30"/>
                                                         <RowDefinition/>
                                                     </Grid.RowDefinitions>
                                                     <Label Grid.Row="0"
-                                                   VerticalAlignment="Center"
-                                                   Content="Stroke Color"/>
+                                                           VerticalAlignment="Center"
+                                                           Content="Stroke Color"
+                                                           Margin="10,0,10,0"/>
                                                     <materialDesign:ColorPicker Grid.Row="1"
                                                                                 Name="stroke_color_colorpicker"
-                                                                                ColorChanged="stroke_color_colorpicker_ColorChanged"
+                                                                                PreviewMouseLeftButtonUp="stroke_color_colorpicker_PreviewMouseLeftButtonUp"
+                                                                                Margin="10,0,10,0"
                                                                                 />
                                                 </Grid>
                                             </materialDesign:Card>
                                         </Grid>
-                                        <materialDesign:Card Name="channel_options_nothing" Visibility="Hidden">
-                                            <Label Content="No selected channel"
-                                           Foreground="#DD222222"
-                                           VerticalContentAlignment="Center"
-                                           HorizontalContentAlignment="Center"
-                                           FontSize="30"></Label>
+                                        <materialDesign:Card Name="channel_options_nothing"
+                                                             Visibility="Hidden"
+                                                             >
+                                            <Viewbox Stretch="None">
+                                                <Label Content="No selected channel"
+                                                       Foreground="#DD222222"
+                                                       VerticalContentAlignment="Center"
+                                                       HorizontalContentAlignment="Center"
+                                                       FontSize="20"/>
+                                            </Viewbox>
                                         </materialDesign:Card>
                                     </Grid>
                                 </materialDesign:Card>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0,467,-0.4,-0.2">
-                                <materialDesign:Card MinWidth="300" MaxWidth="300" materialDesign:ShadowAssist.ShadowDepth="Depth3" Margin="10">
+                                <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth3"
+                                                     Margin="10"
+                                                     MinWidth="200"
+                                                     Height="300">
                                     <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="7*"/>
+                                        </Grid.RowDefinitions>
                                         <ComboBox Name="channels_cmbbox"
-                                              Margin="15,16,15,449.6"
-                                              Height="36"
-                                              Foreground="White"
-                                              ></ComboBox>
-                                        <ListBox x:Name="active_channel_items_listbox" Margin="15,62,15,14.8"></ListBox>
+                                                  Foreground="White"
+                                                  Grid.Row="0"
+                                                  Margin="10,5,10,0"
+                                              />
+                                        <ListBox x:Name="active_channel_items_listbox"
+                                                 Grid.Row="1"
+                                                 />
                                     </Grid>
                                 </materialDesign:Card>
-                            </StackPanel>
+                            </WrapPanel>
                         </Grid>
                     </materialDesign:DialogHost>
-
                 </Grid>
 
                 <!--<materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth3" Margin="10">
@@ -315,24 +482,30 @@
                 </Button>
             </Grid>
         </Grid>-->
-        <Grid Name="importFileDarkening" Background="#E52B2B2B" Visibility="Hidden">
+        <Grid Name="importFileDarkening"
+              Background="#E52B2B2B"
+              Visibility="Hidden"
+              >
             <Grid.RowDefinitions>
-                <RowDefinition Height="500*"/>
-                <RowDefinition Height="500*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Label Name="loading_file_lbl"
-                   Grid.Row="0"
-                   VerticalAlignment="Center"
-                   FontSize="80"
-                   Margin="10,360,9.6,9.6"
-                   Content="Loading: file.csv"
-                   HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="1894" Height="156"
-                   ></Label>
+            <Viewbox Stretch="Uniform"
+                     VerticalAlignment="Bottom">
+                <Label Name="loading_file_lbl"
+                       Grid.Row="0"
+                       FontSize="20"
+                       Content="Loading: file.csv"
+                       Margin="10,0,10,0"
+                       />
+            </Viewbox>
             <ProgressBar x:Name="importFileProgressBar"
-                         
                          Value="60"
-                         Grid.Row="1" Height="16" Margin="350,8.4,350,0" Width="Auto"
-                         HorizontalContentAlignment="Center" VerticalAlignment="Top"
+                         Grid.Row="1"
+                         Height="16"
+                         HorizontalContentAlignment="Center"
+                         VerticalAlignment="Top"
+                         Margin="100,0,100,0"
             />
         </Grid>
     </Grid>
