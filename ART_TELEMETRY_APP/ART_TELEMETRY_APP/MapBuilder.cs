@@ -93,7 +93,7 @@ namespace ART_TELEMETRY_APP
                 }
             }
 
-            int lap = Groups.Instance.GetGroup().ActLap;
+            int lap = Datas.Instance.GetData().ActLap;
             string p = string.Format("M{0} {1}", Datas.Instance.GetData().Laps[lap][0].Item1, Datas.Instance.GetData().Laps[lap][0].Item2);
 
             for (int i = 0; i < Datas.Instance.GetData().Laps[lap].Count; i++)

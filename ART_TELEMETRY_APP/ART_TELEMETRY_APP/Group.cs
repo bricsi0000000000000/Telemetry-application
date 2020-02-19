@@ -40,21 +40,6 @@ namespace ART_TELEMETRY_APP
            */
         }
 
-        public int ActLap
-        {
-            get
-            {
-                return act_lap;
-            }
-            set
-            {
-                if (value >= 0 && value <= Datas.Instance.GetData().Laps.Count)
-                {
-                    act_lap = value;
-                }
-            }
-        }
-
         public void AddAttribute(string attribute)
         {
             attributes.Add(attribute);
