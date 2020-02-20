@@ -9,8 +9,8 @@
         mc:Ignorable="d"
         xmlns:s="clr-namespace:System;assembly=mscorlib"
         Title="ART telemetry"
-        Height="1080"
-        Width="1920"
+        Height="700"
+        Width="1300"
         WindowStartupLocation="CenterScreen"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -67,7 +67,7 @@
                         Width="Auto"
                         Margin="5"
                         Padding="5"
-                        ToolTip="Switch Form To Charts"
+                        ToolTip="Switch Form To Charts  Ctrl+D"
                         Background="#FFFAFAFA"
                         BorderBrush="#FFFAFAFA"
                         Foreground="#FF3E3E3E"
@@ -93,7 +93,7 @@
                         Height="40"
                         Margin="5"
                         Padding="5"
-                        ToolTip="Switch Form To Groups"
+                        ToolTip="Switch Form To Groups  Ctrl+G"
                         Background="#FFFAFAFA"
                         BorderBrush="#FFFAFAFA"
                         Foreground="#FF3E3E3E"
@@ -230,15 +230,45 @@
                                                   VerticalAlignment="Stretch"
                                                   Visibility="Hidden"
                                                   >
-                            <Viewbox Stretch="None"
+                            <Viewbox Stretch="Uniform"
                                      >
                                 <Label Content="Nothing to show"
                                        Foreground="#DDBFBFBF"
-                                       VerticalContentAlignment="Center"
-                                       HorizontalContentAlignment="Center"
+                                       VerticalContentAlignment="Stretch"
+                                       HorizontalContentAlignment="Stretch"
                                        FontSize="30"
                                     />
                             </Viewbox>
+                        </materialDesign:ColorZone>
+                        <materialDesign:ColorZone Grid.Row="0"
+                                                  x:Name="map_progressbar_colorzone"
+                                                  Grid.RowSpan="3"
+                                                  Mode="Light"
+                                                  VerticalAlignment="Stretch"
+                                                  >
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Viewbox Stretch="Uniform"
+                                         Grid.Row="0"
+                                         VerticalAlignment="Bottom"
+                                     >
+                                    <Label Content="Calculating laps"
+                                       Foreground="#DDBFBFBF"
+                                       VerticalContentAlignment="Stretch"
+                                       HorizontalContentAlignment="Stretch"
+                                       FontSize="30"
+                                    />
+                                </Viewbox>
+                                <ProgressBar Grid.Row="1"
+                                             VerticalAlignment="Top"
+                                             Name="map_progressbar"
+                                             Style="{StaticResource MaterialDesignCircularProgressBar}" 
+                                             IsIndeterminate="True"
+                                             />
+                            </Grid>
                         </materialDesign:ColorZone>
                     </Grid>
                 </Grid>
@@ -253,7 +283,8 @@
                     <materialDesign:DialogHost DialogClosing="addNewGroupDialog"
                                                >
                         <materialDesign:DialogHost.DialogContent >
-                            <StackPanel Margin="16" >
+                            <StackPanel Margin="16" 
+                                        >
                                 <TextBox Margin="0 8 0 0"
                                          HorizontalAlignment="Stretch"
                                          x:Name="add_group_txtbox"

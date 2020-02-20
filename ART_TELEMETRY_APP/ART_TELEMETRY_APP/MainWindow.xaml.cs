@@ -42,6 +42,9 @@ namespace ART_TELEMETRY_APP
             channel_options_nothing.Visibility = Visibility.Visible;
             input_file_nothing.Visibility = Visibility.Visible;
             diagram_nothing.Visibility = Visibility.Visible;
+            map_nothing.Visibility = Visibility.Visible;
+
+            map_progressbar_colorzone.Visibility = Visibility.Hidden;
         }
 
         private void channelCmbBoxItemClick(object sender, MouseButtonEventArgs e)
@@ -240,7 +243,15 @@ namespace ART_TELEMETRY_APP
             {
                 importFileDarkening.Visibility = Visibility.Visible;
                 loading_file_lbl.Content = string.Format("Loading: {0}", open_file_dialog.FileName.Split('\\').Last());
-                DataReader.Instance.ReadData(open_file_dialog.FileName, importFileProgressBar, importFileDarkening, input_file_nothing, map_svg, map_nothing);
+                DataReader.Instance.ReadData(open_file_dialog.FileName,
+                                             importFileProgressBar,
+                                             importFileDarkening,
+                                             input_file_nothing,
+                                             map_svg,
+                                             map_nothing,
+                                             map_progressbar,
+                                             map_progressbar_colorzone
+                                             );
             }
             else
             {
@@ -251,6 +262,8 @@ namespace ART_TELEMETRY_APP
             {
                 updateFilesCmbBox(open_file_dialog.FileName);
             }
+
+            map_nothing.Visibility = Visibility.Hidden;
         }
 
         private void lineSmoothnessToggleButtonClick(object sender, RoutedEventArgs e)
@@ -260,9 +273,8 @@ namespace ART_TELEMETRY_APP
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            MapBuilder.Instance.Build(map_svg, map_nothing);
             ChartBuilder chart_builder = new ChartBuilder(charts_grid, diagram_nothing);
-            act_lap_lbl.Content = string.Format("{0}/{1}", ++Datas.Instance.GetData().ActLap, Datas.Instance.GetData().Laps.Count);
+            act_lap_lbl.Content = string.Format("{0}/{1}", 1, Datas.Instance.GetData().Laps.Count);
         }
 
         private void stroke_thickness_txtbox_TextChanged(object sender, TextChangedEventArgs e)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -31,7 +32,7 @@ namespace ART_TELEMETRY_APP
         List<Map> maps = new List<Map>();
         public void Build(Path map_svg_path, ColorZone map_nothing = null)
         {
-            map_svg_path.Data = Geometry.Parse(GetMap().SvgPathes[Datas.Instance.GetData().ActLap]);
+            map_svg_path.Data = Geometry.Parse(GetMap().SvgPathes[Datas.Instance.GetData().ActLap++]);
 
             if (map_nothing != null)
             {
@@ -39,9 +40,17 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        public void Make(string mape_name)
+        public void Make(string mape_name,
+                         ProgressBar map_progressbar,
+                         ColorZone map_progressbar_colorzone,
+                         Path map_svg,
+                         ColorZone map_nothing)
         {
-            Map map = new Map(mape_name);
+            Map map = new Map(mape_name,
+                              map_progressbar,
+                              map_progressbar_colorzone,
+                              map_svg,
+                              map_nothing);
             maps.Add(map);
         }
 

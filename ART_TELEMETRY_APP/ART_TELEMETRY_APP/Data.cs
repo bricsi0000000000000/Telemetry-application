@@ -15,7 +15,7 @@ namespace ART_TELEMETRY_APP
         string file_name;
         List<SingleData> datas = new List<SingleData>();
         float filter_percent = .03f;
-        List<List<Tuple<double, double>>> laps = new List<List<Tuple<double, double>>>();
+        List<Tuple<List<Tuple<double, double>>, int, int>> laps = new List<Tuple<List<Tuple<double, double>>, int, int>>();
         int act_lap = 0;
 
         public class SingleData
@@ -32,7 +32,7 @@ namespace ART_TELEMETRY_APP
             public Brush stroke_color;
         }
 
-        public List<List<Tuple<double, double>>> Laps
+        public List<Tuple<List<Tuple<double, double>>, int, int>> Laps
         {
             get
             {
@@ -109,12 +109,16 @@ namespace ART_TELEMETRY_APP
             return convertToObservablePoints(filteredData(values));
         }
 
-        List<double> GetLapData
+        List<double> GetLapValues(int lap = 0)
         {
-            get
+            int get_lap = lap == 0 ? act_lap : lap;
+
+            foreach (var item in laps)
             {
-                return null;
+                Console.WriteLine(item.Item1.Count + " " + item.Item2 + " " + item.Item3);
             }
+
+            return null;
         }
 
         ChartValues<double> timeDatas

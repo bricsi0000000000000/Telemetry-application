@@ -42,8 +42,18 @@ namespace ART_TELEMETRY_APP
         Card input_file_nothing;
         Path map_svg;
         ColorZone map_nothing;
+        ProgressBar map_progressbar;
+        ColorZone map_progressbar_colorzone;
 
-        public void ReadData(string file_name, ProgressBar importFileProgressBar, Grid importFileDarkening, Card input_file_nothing, Path map_svg, ColorZone map_nothing)
+        public void ReadData(string file_name,
+                             ProgressBar importFileProgressBar,
+                             Grid importFileDarkening,
+                             Card input_file_nothing,
+                             Path map_svg,
+                             ColorZone map_nothing,
+                             ProgressBar map_progressbar,
+                             ColorZone map_progressbar_colorzone
+                             )
         {
             this.input_file_nothing = input_file_nothing;
             this.file_name = file_name;
@@ -52,6 +62,8 @@ namespace ART_TELEMETRY_APP
             this.importFileDarkening = importFileDarkening;
             this.map_svg = map_svg;
             this.map_nothing = map_nothing;
+            this.map_progressbar = map_progressbar;
+            this.map_progressbar_colorzone = map_progressbar_colorzone;
 
             worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
@@ -91,7 +103,11 @@ namespace ART_TELEMETRY_APP
                 string[] row = read_file.ReadLine().Split(';');
                 for (int i = 0; i < new_datas.Count; i++)
                 {
-                    if (row[i] != "")
+                    if (row[i] == "")
+                    {
+                        new_datas[i].Datas.Add(double.NaN);
+                    }
+                    else
                     {
                         new_datas[i].Datas.Add(double.Parse(row[i], number_format_info));
                     }
@@ -118,11 +134,8 @@ namespace ART_TELEMETRY_APP
             {
                 input_file_nothing.Visibility = Visibility.Hidden;
                 Datas.Instance.ActiveFileName = file_name.Split('\\').Last();
-                MapBuilder.Instance.Make(file_name.Split('\\').Last());
+                MapBuilder.Instance.Make(file_name.Split('\\').Last(), map_progressbar, map_progressbar_colorzone, map_svg, map_nothing);
             }
-
-            Console.WriteLine(Datas.Instance.ActiveFileName);
-
         }
     }
 }
