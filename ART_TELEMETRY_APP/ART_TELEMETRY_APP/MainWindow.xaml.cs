@@ -240,7 +240,7 @@ namespace ART_TELEMETRY_APP
             {
                 importFileDarkening.Visibility = Visibility.Visible;
                 loading_file_lbl.Content = string.Format("Loading: {0}", open_file_dialog.FileName.Split('\\').Last());
-                DataReader.Instance.ReadData(open_file_dialog.FileName, importFileProgressBar, importFileDarkening, input_file_nothing);
+                DataReader.Instance.ReadData(open_file_dialog.FileName, importFileProgressBar, importFileDarkening, input_file_nothing, map_svg, map_nothing);
             }
             else
             {
@@ -251,7 +251,6 @@ namespace ART_TELEMETRY_APP
             {
                 updateFilesCmbBox(open_file_dialog.FileName);
             }
-
         }
 
         private void lineSmoothnessToggleButtonClick(object sender, RoutedEventArgs e)
@@ -261,8 +260,9 @@ namespace ART_TELEMETRY_APP
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            MapBuilder map_builder = new MapBuilder(map_svg, map_nothing);
+            MapBuilder.Instance.Build(map_svg, map_nothing);
             ChartBuilder chart_builder = new ChartBuilder(charts_grid, diagram_nothing);
+            act_lap_lbl.Content = string.Format("{0}/{1}", ++Datas.Instance.GetData().ActLap, Datas.Instance.GetData().Laps.Count);
         }
 
         private void stroke_thickness_txtbox_TextChanged(object sender, TextChangedEventArgs e)
@@ -279,14 +279,14 @@ namespace ART_TELEMETRY_APP
         {
             Datas.Instance.GetData().ActLap--;
             act_lap_lbl.Content = string.Format("{0}/{1}", Datas.Instance.GetData().ActLap, Datas.Instance.GetData().Laps.Count);
-            MapBuilder map = new MapBuilder(map_svg);
+            map_svg.Data = Geometry.Parse(MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1]);
         }
 
         private void next_lap_btn_Click(object sender, RoutedEventArgs e)
         {
             Datas.Instance.GetData().ActLap++;
             act_lap_lbl.Content = string.Format("{0}/{1}", Datas.Instance.GetData().ActLap, Datas.Instance.GetData().Laps.Count);
-            MapBuilder map = new MapBuilder(map_svg);
+            map_svg.Data = Geometry.Parse(MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1]);
         }
     }
 }

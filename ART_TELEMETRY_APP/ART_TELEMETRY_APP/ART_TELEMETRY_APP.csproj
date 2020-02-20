@@ -72,7 +72,7 @@
     <Compile Include="ButtonCommands.cs" />
     <Compile Include="ChartLineColors.cs" />
     <Compile Include="MapBuilder.cs" />
-    <Compile Include="Maps.cs" />
+    <Compile Include="Map.cs" />
     <Compile Include="SwitchForms.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

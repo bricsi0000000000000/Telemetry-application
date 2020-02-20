@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
+using Path = System.Windows.Shapes.Path;
 
 namespace ART_TELEMETRY_APP
 {
@@ -38,14 +40,18 @@ namespace ART_TELEMETRY_APP
         string file_name;
         Grid importFileDarkening;
         Card input_file_nothing;
+        Path map_svg;
+        ColorZone map_nothing;
 
-        public void ReadData(string file_name, ProgressBar importFileProgressBar, Grid importFileDarkening, Card input_file_nothing)
+        public void ReadData(string file_name, ProgressBar importFileProgressBar, Grid importFileDarkening, Card input_file_nothing, Path map_svg, ColorZone map_nothing)
         {
             this.input_file_nothing = input_file_nothing;
             this.file_name = file_name;
             this.file_length = File.ReadLines(file_name).Count();
             this.importFileProgressBar = importFileProgressBar;
             this.importFileDarkening = importFileDarkening;
+            this.map_svg = map_svg;
+            this.map_nothing = map_nothing;
 
             worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
@@ -111,7 +117,12 @@ namespace ART_TELEMETRY_APP
             if (Datas.Instance.DatasCount > 0)
             {
                 input_file_nothing.Visibility = Visibility.Hidden;
+                Datas.Instance.ActiveFileName = file_name.Split('\\').Last();
+                MapBuilder.Instance.Make(file_name.Split('\\').Last());
             }
+
+            Console.WriteLine(Datas.Instance.ActiveFileName);
+
         }
     }
 }

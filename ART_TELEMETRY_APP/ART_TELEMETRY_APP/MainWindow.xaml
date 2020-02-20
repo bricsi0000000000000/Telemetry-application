@@ -141,34 +141,43 @@
                     </materialDesign:ColorZone>
                     <Grid Grid.Column="1">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="3*"/>
+                            <RowDefinition Height="7*"/>
                             <RowDefinition Height="*"/>
-                            <RowDefinition Height="3*"/>
+                            <RowDefinition Height="7*"/>
                         </Grid.RowDefinitions>
-                        <Path Grid.Row="0"
-                              x:Name="map_svg"
-                              Stroke="#FF3E3E3E"
-                              StrokeThickness="1"
-                              Stretch="Fill"
-                              />
-                        <Grid Grid.Row="1">
+                        <materialDesign:Card Grid.Row="0"
+                                             Margin="10"
+                                             materialDesign:ShadowAssist.ShadowDepth="Depth2">
+                            <Path x:Name="map_svg"
+                                  Stroke="#FF3E3E3E"
+                                  StrokeThickness="1"
+                                  Stretch="Fill"
+                                  Margin="5"
+                                  />
+                        </materialDesign:Card>
+                        <Grid Grid.Row="1"
+                              Margin="10,0,10,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="12*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Viewbox Stretch="Uniform" 
-                                        Grid.Column="0">
+                                     Grid.Column="0"
+                                     >
                                 <Button Grid.Column="0"
-                                        Height="Auto"
-                                        Margin="5"
                                         Padding="5"
                                         Name="prev_lab_btn"
-                                        Click="prev_lab_btn_Click">
+                                        Click="prev_lab_btn_Click"
+                                        Background="#FFFAFAFA"
+                                        BorderBrush="#FFFAFAFA"
+                                        Foreground="#FF3E3E3E"
+                                        Height="116"
+                                        >
                                     <materialDesign:PackIcon Kind="NavigateBefore"
-                                                            RenderTransformOrigin=".5,.5"
-                                                            Height="25"
-                                                            Width="25">
+                                                             RenderTransformOrigin=".5,.5"
+                                                             Height="25"
+                                                             Width="25">
                                         <materialDesign:PackIcon.RenderTransform>
                                             <TransformGroup>
                                                 <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
@@ -180,18 +189,25 @@
                                 </Button>
                             </Viewbox>
                             <Viewbox Grid.Column="1"
-                                        Stretch="Uniform">
+                                     Stretch="Uniform">
                                 <Label x:Name="act_lap_lbl"
-                                        HorizontalContentAlignment="Center"
-                                        VerticalContentAlignment="Center"/>
+                                       HorizontalContentAlignment="Center"
+                                       VerticalContentAlignment="Center"
+                                       Content="1/11"
+                                       FontSize="5"
+                                       />
                             </Viewbox>
                             <Viewbox Stretch="Uniform" 
                                         Grid.Column="2">
-                                <Button Height="Auto"
-                                        Margin="5"
+                                <Button Margin="5"
                                         Padding="5"
                                         Name="next_lap_btn"
-                                        Click="next_lap_btn_Click">
+                                        Click="next_lap_btn_Click"
+                                        Background="#FFFAFAFA"
+                                        BorderBrush="#FFFAFAFA"
+                                        Foreground="#FF3E3E3E"
+                                        Height="116"
+                                        >
                                     <materialDesign:PackIcon Kind="NavigateNext"
                                                                 RenderTransformOrigin=".5,.5"
                                                                 Height="25"
@@ -212,6 +228,7 @@
                                                   Grid.RowSpan="3"
                                                   Mode="Light"
                                                   VerticalAlignment="Stretch"
+                                                  Visibility="Hidden"
                                                   >
                             <Viewbox Stretch="None"
                                      >
@@ -230,6 +247,7 @@
                                       Grid.Row="1"
                                       Grid.Column="1"
                                       VerticalAlignment="Stretch"
+                                      Visibility="Hidden"
                                       >
                 <Grid>
                     <materialDesign:DialogHost DialogClosing="addNewGroupDialog"
