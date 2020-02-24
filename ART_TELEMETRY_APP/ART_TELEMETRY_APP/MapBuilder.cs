@@ -44,13 +44,15 @@ namespace ART_TELEMETRY_APP
                          ProgressBar map_progressbar,
                          ColorZone map_progressbar_colorzone,
                          Path map_svg,
-                         ColorZone map_nothing)
+                         ColorZone map_nothing
+                        )
         {
             Map map = new Map(mape_name,
                               map_progressbar,
                               map_progressbar_colorzone,
                               map_svg,
-                              map_nothing);
+                              map_nothing
+                              );
             maps.Add(map);
         }
 

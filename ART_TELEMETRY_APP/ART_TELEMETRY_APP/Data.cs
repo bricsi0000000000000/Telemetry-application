@@ -14,15 +14,17 @@ namespace ART_TELEMETRY_APP
     {
         string file_name;
         List<SingleData> datas = new List<SingleData>();
-        float filter_percent = .03f;
-        List<Tuple<List<Tuple<double, double>>, int, int>> laps = new List<Tuple<List<Tuple<double, double>>, int, int>>();
+        float filter_percent = .7f;
         int act_lap = 0;
+        ChartValues<double> time_datas;
+        public List<Tuple<List<Tuple<double, double>>, int, int>> laps = new List<Tuple<List<Tuple<double, double>>, int, int>>();
 
         public class SingleData
         {
             public string Name;
             public ChartValues<double> Datas;
             public LineSerieOptions Option;
+            public List<ChartValues<ObservablePoint>> DatasInLaps = new List<ChartValues<ObservablePoint>>();
         }
 
         public class LineSerieOptions
@@ -32,15 +34,16 @@ namespace ART_TELEMETRY_APP
             public Brush stroke_color;
         }
 
+        public void InitTimeDatas()
+        {
+            time_datas = filteredData(datas[0].Datas);
+        }
+
         public List<Tuple<List<Tuple<double, double>>, int, int>> Laps
         {
             get
             {
                 return laps;
-            }
-            set
-            {
-                laps = value;
             }
         }
 
@@ -52,13 +55,17 @@ namespace ART_TELEMETRY_APP
             }
             set
             {
-                if (value > 0 && value <= laps.Count)
-                {
-                    act_lap = value;
-                }
+                act_lap = value;
             }
         }
 
+        public void MakeDatasInLaps(string attribute)
+        {
+            for (int i = 0; i < laps.Count; i++)
+            {
+                GetSingleData(attribute).DatasInLaps.Add(GetChartValues(attribute, i));
+            }
+        }
 
         public List<double> Latitude
         {
@@ -103,44 +110,45 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        public ChartValues<ObservablePoint> GetChartValues(string attribute)
+        public ChartValues<ObservablePoint> GetChartValues(string attribute, int lap = 0)
         {
-            ChartValues<double> values = datas.Find(attr => attr.Name == attribute).Datas;
-            return convertToObservablePoints(filteredData(values));
+            return convertToObservablePoints(filteredData(GetLapValues(datas.Find(attr => attr.Name == attribute).Datas, lap)));
         }
 
-        List<double> GetLapValues(int lap = 0)
+        ChartValues<double> GetLapValues(ChartValues<double> values, int lap = 0)
         {
             int get_lap = lap == 0 ? act_lap : lap;
 
-            foreach (var item in laps)
+            ChartValues<double> datas = new ChartValues<double>();
+
+            for (int i = laps[get_lap].Item2; i < laps[get_lap].Item3; i++)
             {
-                Console.WriteLine(item.Item1.Count + " " + item.Item2 + " " + item.Item3);
+                datas.Add(values[i]);
             }
 
-            return null;
+            return datas;
         }
 
         ChartValues<double> timeDatas
         {
             get
             {
-                return datas[0].Datas;
+                return time_datas;
             }
         }
 
-        ChartValues<ObservablePoint> convertToObservablePoints(ChartValues<double> filtered_datas)
+        ChartValues<ObservablePoint> convertToObservablePoints(ChartValues<double> datas)
         {
             ChartValues<ObservablePoint> return_datas = new ChartValues<ObservablePoint>();
 
-            ChartValues<double> time = filteredData(timeDatas);
+            ChartValues<double> time = timeDatas;
 
-            for (int i = 0; i < filtered_datas.Count; i++)
+            for (int i = 0; i < datas.Count; i++)
             {
                 return_datas.Add(new ObservablePoint
                 {
                     X = time[i],
-                    Y = filtered_datas[i]
+                    Y = datas[i]
                 });
             }
 

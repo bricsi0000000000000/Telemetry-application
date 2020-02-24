@@ -45,6 +45,7 @@ namespace ART_TELEMETRY_APP
             map_nothing.Visibility = Visibility.Visible;
 
             map_progressbar_colorzone.Visibility = Visibility.Hidden;
+            diagram_calculate_laps.Visibility = Visibility.Hidden;
         }
 
         private void channelCmbBoxItemClick(object sender, MouseButtonEventArgs e)
@@ -262,8 +263,6 @@ namespace ART_TELEMETRY_APP
             {
                 updateFilesCmbBox(open_file_dialog.FileName);
             }
-
-            map_nothing.Visibility = Visibility.Hidden;
         }
 
         private void lineSmoothnessToggleButtonClick(object sender, RoutedEventArgs e)
@@ -273,8 +272,11 @@ namespace ART_TELEMETRY_APP
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ChartBuilder chart_builder = new ChartBuilder(charts_grid, diagram_nothing);
-            act_lap_lbl.Content = string.Format("{0}/{1}", 1, Datas.Instance.GetData().Laps.Count);
+            LapBuilder.Instance.Build(diagram_nothing,
+                                      diagram_calculate_laps,
+                                      charts_grid,
+                                      act_lap_lbl
+                                      );
         }
 
         private void stroke_thickness_txtbox_TextChanged(object sender, TextChangedEventArgs e)
@@ -289,16 +291,24 @@ namespace ART_TELEMETRY_APP
 
         private void prev_lab_btn_Click(object sender, RoutedEventArgs e)
         {
-            Datas.Instance.GetData().ActLap--;
-            act_lap_lbl.Content = string.Format("{0}/{1}", Datas.Instance.GetData().ActLap, Datas.Instance.GetData().Laps.Count);
-            map_svg.Data = Geometry.Parse(MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1]);
+            if (Datas.Instance.GetData().ActLap - 1 >= 0)
+            {
+                Datas.Instance.GetData().ActLap--;
+                ChartBuilder.Instance.Build(charts_grid, diagram_nothing);
+                act_lap_lbl.Content = string.Format("{0}/{1}", Datas.Instance.GetData().ActLap, Datas.Instance.GetData().Laps.Count);
+                map_svg.Data = Geometry.Parse(MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1]);
+            }
         }
 
         private void next_lap_btn_Click(object sender, RoutedEventArgs e)
         {
-            Datas.Instance.GetData().ActLap++;
-            act_lap_lbl.Content = string.Format("{0}/{1}", Datas.Instance.GetData().ActLap, Datas.Instance.GetData().Laps.Count);
-            map_svg.Data = Geometry.Parse(MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1]);
+            if (Datas.Instance.GetData().ActLap + 1 <= Datas.Instance.GetData().Laps.Count)
+            {
+                Datas.Instance.GetData().ActLap++;
+                ChartBuilder.Instance.Build(charts_grid, diagram_nothing);
+                act_lap_lbl.Content = string.Format("{0}/{1}", Datas.Instance.GetData().ActLap, Datas.Instance.GetData().Laps.Count);
+                map_svg.Data = Geometry.Parse(MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1]);
+            }
         }
     }
 }

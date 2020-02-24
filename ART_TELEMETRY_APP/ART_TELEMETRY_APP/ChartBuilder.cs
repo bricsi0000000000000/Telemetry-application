@@ -16,7 +16,24 @@ namespace ART_TELEMETRY_APP
 {
     class ChartBuilder
     {
-        public ChartBuilder(Grid diagram_grid, ColorZone diagram_nothing)
+        #region instance
+        private static ChartBuilder instance = null;
+        private ChartBuilder() { }
+
+        public static ChartBuilder Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new ChartBuilder();
+                }
+                return instance;
+            }
+        }
+        #endregion
+
+        public void Build(Grid diagram_grid, ColorZone diagram_nothing)
         {
             diagram_grid.Children.Clear();
             diagram_grid.RowDefinitions.Clear();
@@ -38,7 +55,7 @@ namespace ART_TELEMETRY_APP
                 {
                     LineSeries serie = new LineSeries();
                     serie.Title = Groups.Instance.GetGroups[i].Name;
-                    serie.Values = Datas.Instance.GetData().GetChartValues(attribute);
+                    serie.Values = Datas.Instance.GetData().GetSingleData(attribute).DatasInLaps[Datas.Instance.GetData().ActLap - 1];
                     serie.LineSmoothness = Datas.Instance.GetData().GetSingleData(attribute).Option.line_smoothness ? 1 : 0;
                     serie.PointGeometry = null;
                     serie.StrokeThickness = Datas.Instance.GetData().GetSingleData(attribute).Option.stroke_thickness;

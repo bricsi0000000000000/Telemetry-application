@@ -133,8 +133,14 @@ namespace ART_TELEMETRY_APP
             if (Datas.Instance.DatasCount > 0)
             {
                 input_file_nothing.Visibility = Visibility.Hidden;
+                map_nothing.Visibility = Visibility.Hidden;
                 Datas.Instance.ActiveFileName = file_name.Split('\\').Last();
-                MapBuilder.Instance.Make(file_name.Split('\\').Last(), map_progressbar, map_progressbar_colorzone, map_svg, map_nothing);
+                MapBuilder.Instance.Make(file_name.Split('\\').Last(),
+                                         map_progressbar,
+                                         map_progressbar_colorzone,
+                                         map_svg,
+                                         map_nothing
+                                         );
             }
         }
     }

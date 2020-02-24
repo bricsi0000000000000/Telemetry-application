@@ -139,6 +139,33 @@
                                     />
                         </Viewbox>
                     </materialDesign:ColorZone>
+                    <materialDesign:ColorZone Name="diagram_calculate_laps"
+                                              VerticalAlignment="Stretch">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Viewbox Stretch="Uniform"
+                                         Grid.Row="0"
+                                         VerticalAlignment="Bottom"
+                                     >
+                                <Label Content="Calculating laps"
+                                       Foreground="#DDBFBFBF"
+                                       VerticalContentAlignment="Stretch"
+                                       HorizontalContentAlignment="Stretch"
+                                       FontSize="30"
+                                    />
+                            </Viewbox>
+                            <ProgressBar Grid.Row="1"
+                                         VerticalAlignment="Top"
+                                         Name="diagram_progressbar"
+                                         Style="{StaticResource MaterialDesignCircularProgressBar}" 
+                                         IsIndeterminate="True"
+                                         />
+                        </Grid>
+
+                    </materialDesign:ColorZone>
                     <Grid Grid.Column="1">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="7*"/>

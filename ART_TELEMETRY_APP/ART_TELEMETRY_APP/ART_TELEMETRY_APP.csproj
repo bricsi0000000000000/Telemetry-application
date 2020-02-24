@@ -71,6 +71,7 @@
     </ApplicationDefinition>
     <Compile Include="ButtonCommands.cs" />
     <Compile Include="ChartLineColors.cs" />
+    <Compile Include="LapBuilder.cs" />
     <Compile Include="MapBuilder.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="SwitchForms.cs" />

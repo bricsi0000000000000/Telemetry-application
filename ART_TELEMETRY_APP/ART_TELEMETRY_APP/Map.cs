@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 
@@ -32,15 +33,16 @@ namespace ART_TELEMETRY_APP
             this.map_progressbar_colorzone = map_progressbar_colorzone;
             this.map_svg = map_svg;
             this.map_nothing = map_nothing;
-            map_progressbar.Visibility = System.Windows.Visibility.Visible;
-            map_progressbar_colorzone.Visibility = System.Windows.Visibility.Visible;
+
+            this.map_progressbar.Visibility = Visibility.Visible;
+            this.map_progressbar_colorzone.Visibility = Visibility.Visible;
 
             worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
             worker.DoWork += calculateLaps;
             worker.ProgressChanged += workerProgressChanged;
             worker.RunWorkerCompleted += workerCompleted;
-            worker.RunWorkerAsync(1000);
+            worker.RunWorkerAsync(10000);
         }
 
         public string Name
@@ -67,7 +69,7 @@ namespace ART_TELEMETRY_APP
             double longitude_min = double.MaxValue;
             foreach (var item in Datas.Instance.GetData().Latitude)
             {
-                if (item != 0 && !Double.IsNaN(item))
+                if (item != 0 && !double.IsNaN(item))
                 {
                     if (item < latitude_min)
                     {
@@ -77,7 +79,7 @@ namespace ART_TELEMETRY_APP
             }
             foreach (var item in Datas.Instance.GetData().Longitude)
             {
-                if (item != 0 && !Double.IsNaN(item))
+                if (item != 0 && !double.IsNaN(item))
                 {
                     if (item < longitude_min)
                     {
@@ -90,23 +92,30 @@ namespace ART_TELEMETRY_APP
 
             double scale = Math.Pow(10, 5);
 
-            List<double> latitude = new List<double>();
-            List<double> longitude = new List<double>();
+            List<Tuple<int, double>> latitude = new List<Tuple<int, double>>();
+            List<Tuple<int, double>> longitude = new List<Tuple<int, double>>();
 
             List<double> raw_latitude = Datas.Instance.GetData().Latitude;
             List<double> raw_longitude = Datas.Instance.GetData().Longitude;
 
             for (int i = 0; i < raw_latitude.Count; i++)
             {
-                if (raw_latitude[i] != 0 && !Double.IsNaN(raw_latitude[i]))
+                if (raw_latitude[i] != 0)
                 {
-                    latitude.Add(Math.Round((raw_latitude[i] - latitude_min) * scale));
-                }
-                if (raw_longitude[i] != 0 && !Double.IsNaN(raw_latitude[i]))
-                {
-                    longitude.Add(Math.Round((raw_longitude[i] - longitude_min) * scale));
+                    if (!double.IsNaN(raw_latitude[i]))
+                    {
+                        latitude.Add(new Tuple<int, double>(i, Math.Round((raw_latitude[i] - latitude_min) * scale)));
+                    }
+                    if (raw_longitude[i] != 0)
+                    {
+                        if (!double.IsNaN(raw_longitude[i]))
+                        {
+                            longitude.Add(new Tuple<int, double>(i, Math.Round((raw_longitude[i] - longitude_min) * scale)));
+                        }
+                    }
                 }
             }
+            Console.WriteLine(latitude.Count);
 
             int after = 500;
             int radius = 40;
@@ -117,11 +126,9 @@ namespace ART_TELEMETRY_APP
             int last_circle_index = 0;
 
             int lap_start_index = 0;
-            int lap_end_index = 0;
-
             for (int i = 0; i < latitude.Count; i++)
             {
-                act_lap.Add(new Tuple<double, double>(latitude[i], longitude[i]));
+                act_lap.Add(new Tuple<double, double>(latitude[i].Item2, longitude[i].Item2));
                 if (i >= last_circle_index + after)
                 {
                     last_in_circle = false;
@@ -129,25 +136,24 @@ namespace ART_TELEMETRY_APP
 
                 if (!last_in_circle)
                 {
-                    if (Math.Sqrt(Math.Pow(latitude[i] - latitude[0], 2) + Math.Pow(longitude[i] - longitude[0], 2)) < radius)
+                    if (Math.Sqrt(Math.Pow(latitude[i].Item2 - latitude[0].Item2, 2) + Math.Pow(longitude[i].Item2 - longitude[0].Item2, 2)) < radius)
                     {
                         last_in_circle = true;
                         last_circle_index = i;
 
                         if (i + 1 < latitude.Count)
                         {
-                            act_lap.Add(new Tuple<double, double>(latitude[i + 1], longitude[i + 1]));
+                            act_lap.Add(new Tuple<double, double>(latitude[i + 1].Item2, longitude[i + 1].Item2));
                         }
 
                         List<Tuple<double, double>> add = new List<Tuple<double, double>>(act_lap);
 
-                        lap_end_index = i;
+                        int lap_end_index = latitude[i].Item1;
                         Datas.Instance.GetData().Laps.Add(new Tuple<List<Tuple<double, double>>, int, int>(add, lap_start_index, lap_end_index));
-                        lap_start_index = i;
+                        lap_start_index = latitude[i].Item1;
                         act_lap.Clear();
                     }
                 }
-
                 //worker.ReportProgress(Convert.ToInt32((i / (double)latitude.Count) * 100));
             }
         }
