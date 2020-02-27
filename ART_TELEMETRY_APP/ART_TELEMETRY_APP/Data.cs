@@ -14,9 +14,9 @@ namespace ART_TELEMETRY_APP
     {
         string file_name;
         List<SingleData> datas = new List<SingleData>();
-        float filter_percent = .7f;
+        float filter_percent = .6f;
         int act_lap = 0;
-        ChartValues<double> time_datas;
+        ChartValues<double> distances;
         public List<Tuple<List<Tuple<double, double>>, int, int>> laps = new List<Tuple<List<Tuple<double, double>>, int, int>>();
 
         public class SingleData
@@ -34,9 +34,24 @@ namespace ART_TELEMETRY_APP
             public Brush stroke_color;
         }
 
-        public void InitTimeDatas()
+        public void InitDistances()
         {
-            time_datas = filteredData(datas[0].Datas);
+            distances = new ChartValues<double>();
+            ChartValues<double> filtered_speed = filteredData(GetSingleData("speed").Datas);
+            ChartValues<double> filtered_time = filteredData(GetSingleData("Time").Datas);
+            distances.Add(0);
+            for (int i = 1; i < filtered_speed.Count; i++)
+            {
+                if (i - 1 >= 0)
+                {
+                    distances.Add(distances[i - 1] + distance(filtered_time[i - 1], filtered_time[i], filtered_speed[i - 1] / 3.6, filtered_speed[i] / 3.6));
+                }
+            }
+        }
+
+        double distance(double time1, double time2, double speed1, double speed2)
+        {
+            return ((speed1 + speed2) / 2) * (time2 - time1);
         }
 
         public List<Tuple<List<Tuple<double, double>>, int, int>> Laps
@@ -112,8 +127,10 @@ namespace ART_TELEMETRY_APP
 
         public ChartValues<ObservablePoint> GetChartValues(string attribute, int lap = 0)
         {
-            return convertToObservablePoints(filteredData(GetLapValues(datas.Find(attr => attr.Name == attribute).Datas, lap)));
+            return convertToObservablePoints(    filteredData(GetLapValues(datas.Find(attr => attr.Name == attribute).Datas, lap)));
         }
+
+        
 
         ChartValues<double> GetLapValues(ChartValues<double> values, int lap = 0)
         {
@@ -129,25 +146,15 @@ namespace ART_TELEMETRY_APP
             return datas;
         }
 
-        ChartValues<double> timeDatas
-        {
-            get
-            {
-                return time_datas;
-            }
-        }
-
         ChartValues<ObservablePoint> convertToObservablePoints(ChartValues<double> datas)
         {
             ChartValues<ObservablePoint> return_datas = new ChartValues<ObservablePoint>();
-
-            ChartValues<double> time = timeDatas;
 
             for (int i = 0; i < datas.Count; i++)
             {
                 return_datas.Add(new ObservablePoint
                 {
-                    X = time[i],
+                    X = distances[i],
                     Y = datas[i]
                 });
             }

@@ -1,5 +1,6 @@
 ﻿using LiveCharts;
 using LiveCharts.Defaults;
+using LiveCharts.Events;
 using LiveCharts.Wpf;
 using MaterialDesignThemes.Wpf;
 using System;
@@ -32,7 +33,6 @@ namespace ART_TELEMETRY_APP
             }
         }
         #endregion
-
         public void Build(Grid diagram_grid, ColorZone diagram_nothing)
         {
             diagram_grid.Children.Clear();
@@ -47,20 +47,28 @@ namespace ART_TELEMETRY_APP
                 chart.DisableAnimations = true;
                 chart.Hoverable = false;
 
+                /*Axis axis = new Axis();
+                axis.Title = Groups.Instance.GetGroups[i].Name;
+                axis.Position = AxisPosition.LeftBottom;
+
+                chart.AxisX.Add(axis);*/
+
                 RowDefinition row_up = new RowDefinition();
                 RowDefinition row_down = new RowDefinition();
                 row_down.Height = new GridLength(5);
 
                 foreach (string attribute in Groups.Instance.GetGroups[i].Attributes)
                 {
-                    LineSeries serie = new LineSeries();
-                    serie.Title = Groups.Instance.GetGroups[i].Name;
-                    serie.Values = Datas.Instance.GetData().GetSingleData(attribute).DatasInLaps[Datas.Instance.GetData().ActLap - 1];
-                    serie.LineSmoothness = Datas.Instance.GetData().GetSingleData(attribute).Option.line_smoothness ? 1 : 0;
-                    serie.PointGeometry = null;
-                    serie.StrokeThickness = Datas.Instance.GetData().GetSingleData(attribute).Option.stroke_thickness;
-                    serie.Fill = Brushes.Transparent;
-                    serie.Stroke = Datas.Instance.GetData().GetSingleData(attribute).Option.stroke_color;
+                    LineSeries serie = new LineSeries
+                    {
+                        Title = Groups.Instance.GetGroups[i].Name,
+                        Values = Datas.Instance.GetData().GetSingleData(attribute).DatasInLaps[Datas.Instance.GetData().ActLap - 1],
+                        LineSmoothness = Datas.Instance.GetData().GetSingleData(attribute).Option.line_smoothness ? 1 : 0,
+                        PointGeometry = null,
+                        StrokeThickness = Datas.Instance.GetData().GetSingleData(attribute).Option.stroke_thickness,
+                        Fill = Brushes.Transparent,
+                        Stroke = Datas.Instance.GetData().GetSingleData(attribute).Option.stroke_color
+                    };
                     chart.Series.Add(serie);
                 }
 

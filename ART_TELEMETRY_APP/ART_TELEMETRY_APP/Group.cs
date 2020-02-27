@@ -40,6 +40,36 @@ namespace ART_TELEMETRY_APP
            */
         }
 
+        public void CalculateMultiplier()
+        {
+            double max = 0;
+            string max_attribute = "";
+            foreach (string attribute in attributes)
+            {
+                ChartValues<double> data = Datas.Instance.GetData().GetSingleData(attribute).Datas;
+                double act_max = data.Max();
+                if(act_max > max)
+                {
+                    max = act_max;
+                    max_attribute = attribute;
+                }
+            }
+
+            foreach (string attribute in attributes)
+            {
+                if (!attribute.Equals(max_attribute))
+                {
+                    ChartValues<double> data = Datas.Instance.GetData().GetSingleData(attribute).Datas;
+                    double multiplier = max / data.Max();
+
+                    for (int i = 0; i < data.Count; i++)
+                    {
+                        data[i] *= multiplier;
+                    }
+                }
+            }
+        }
+
         public void AddAttribute(string attribute)
         {
             attributes.Add(attribute);

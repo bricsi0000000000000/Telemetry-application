@@ -272,6 +272,7 @@ namespace ART_TELEMETRY_APP
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
+            Groups.Instance.GetGroup().CalculateMultiplier();
             LapBuilder.Instance.Build(diagram_nothing,
                                       diagram_calculate_laps,
                                       charts_grid,
@@ -309,6 +310,12 @@ namespace ART_TELEMETRY_APP
                 act_lap_lbl.Content = string.Format("{0}/{1}", Datas.Instance.GetData().ActLap, Datas.Instance.GetData().Laps.Count);
                 map_svg.Data = Geometry.Parse(MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1]);
             }
+        }
+
+        private void chartsColorZone_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point position = Mouse.GetPosition(chartsColorZone);
+            separator.Margin = new Thickness(position.X, 0, 0, 0);
         }
     }
 }

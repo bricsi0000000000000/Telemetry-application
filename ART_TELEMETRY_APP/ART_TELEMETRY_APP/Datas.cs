@@ -32,12 +32,13 @@ namespace ART_TELEMETRY_APP
 
         public void AddInputData(Data input_data)
         {
+            input_data.InitDistances();
             datas.Add(input_data);
         }
 
         public Data GetData(string file_name = "")
         {
-            if (file_name == "")
+            if (file_name.Equals(""))
             {
                 return datas.Find(name => name.FileName == active_file_name);
             }

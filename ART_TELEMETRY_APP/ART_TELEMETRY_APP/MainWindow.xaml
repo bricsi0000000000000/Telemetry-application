@@ -119,28 +119,37 @@
                                       Grid.Row="1"
                                       Mode="Light"
                                       VerticalAlignment="Stretch"
+                                      MouseMove="chartsColorZone_MouseMove"
                                       >
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="5*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
+                    <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" 
+                               Width="2"
+                               Name="separator"
+                               HorizontalAlignment="Left"/>
                     <Grid x:Name="charts_grid"
                           Grid.Row="0"
                           />
                     <materialDesign:ColorZone Name="diagram_nothing"
-                                              VerticalAlignment="Stretch">
+                                              VerticalAlignment="Stretch"
+                                              Visibility="Hidden"
+                                              >
                         <Viewbox Stretch="None">
                             <Label Content="No diagrams to show"
                                    Foreground="#DDBFBFBF"
                                    VerticalContentAlignment="Center"
                                    HorizontalContentAlignment="Center"
                                    FontSize="100"
-                                    />
+                                   />
                         </Viewbox>
                     </materialDesign:ColorZone>
                     <materialDesign:ColorZone Name="diagram_calculate_laps"
-                                              VerticalAlignment="Stretch">
+                                              VerticalAlignment="Stretch"
+                                              Visibility="Hidden"
+                                              >
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
