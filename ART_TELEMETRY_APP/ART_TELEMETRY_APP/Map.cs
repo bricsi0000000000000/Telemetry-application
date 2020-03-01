@@ -13,7 +13,7 @@ namespace ART_TELEMETRY_APP
 {
     class Map
     {
-        List<string> svg_pathes = new List<string>();
+        List<Tuple<string, List<Tuple<double, double>>>> svg_pathes = new List<Tuple<string, List<Tuple<double, double>>>>();
         string name;
         BackgroundWorker worker;
         ProgressBar map_progressbar;
@@ -53,7 +53,7 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        public List<string> SvgPathes
+        public List<Tuple<string, List<Tuple<double, double>>>> SvgPathes
         {
             get
             {
@@ -88,8 +88,6 @@ namespace ART_TELEMETRY_APP
                 }
             }
 
-            Console.WriteLine(longitude_min + " " + latitude_min);
-
             double scale = Math.Pow(10, 5);
 
             List<Tuple<int, double>> latitude = new List<Tuple<int, double>>();
@@ -115,7 +113,6 @@ namespace ART_TELEMETRY_APP
                     }
                 }
             }
-            Console.WriteLine(latitude.Count);
 
             int after = 500;
             int radius = 40;
@@ -154,7 +151,6 @@ namespace ART_TELEMETRY_APP
                         act_lap.Clear();
                     }
                 }
-                //worker.ReportProgress(Convert.ToInt32((i / (double)latitude.Count) * 100));
             }
         }
 
@@ -167,18 +163,23 @@ namespace ART_TELEMETRY_APP
         {
             for (int lap = 0; lap < Datas.Instance.GetData().Laps.Count; lap++)
             {
+                List<Tuple<double, double>> act_lap_coordinates = new List<Tuple<double, double>>();
                 string act_svg_path = string.Format("M{0} {1}",
                                       Datas.Instance.GetData().Laps[lap].Item1[0].Item1,
                                       Datas.Instance.GetData().Laps[lap].Item1[0].Item2);
+                act_lap_coordinates.Add(new Tuple<double, double>(Datas.Instance.GetData().Laps[lap].Item1[0].Item1,
+                                                                  Datas.Instance.GetData().Laps[lap].Item1[0].Item2));
 
                 for (int i = 0; i < Datas.Instance.GetData().Laps[lap].Item1.Count; i++)
                 {
                     act_svg_path += string.Format(" L{0} {1}",
                                     Datas.Instance.GetData().Laps[lap].Item1[i].Item1,
                                     Datas.Instance.GetData().Laps[lap].Item1[i].Item2);
+                    act_lap_coordinates.Add(new Tuple<double, double>(Datas.Instance.GetData().Laps[lap].Item1[i].Item1,
+                                                                      Datas.Instance.GetData().Laps[lap].Item1[i].Item2));
                 }
 
-                svg_pathes.Add(act_svg_path);
+                svg_pathes.Add(new Tuple<string, List<Tuple<double, double>>>(act_svg_path, act_lap_coordinates));
             }
 
             map_progressbar_colorzone.Visibility = System.Windows.Visibility.Hidden;

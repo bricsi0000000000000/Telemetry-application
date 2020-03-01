@@ -38,7 +38,7 @@ namespace ART_TELEMETRY_APP
         ProgressBar importFileProgressBar;
         BackgroundWorker worker;
         string file_name;
-        Grid importFileDarkening;
+        ColorZone importFileDarkening;
         Card input_file_nothing;
         Path map_svg;
         ColorZone map_nothing;
@@ -47,7 +47,7 @@ namespace ART_TELEMETRY_APP
 
         public void ReadData(string file_name,
                              ProgressBar importFileProgressBar,
-                             Grid importFileDarkening,
+                             ColorZone importFileDarkening,
                              Card input_file_nothing,
                              Path map_svg,
                              ColorZone map_nothing,

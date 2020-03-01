@@ -34,7 +34,7 @@ namespace ART_TELEMETRY_APP
 
             BrushConverter brush_converter = new BrushConverter();
             // swicthFormToChartsBtn.Background = (Brush)brush_converter.ConvertFrom("#FFFAFAFA");
-             swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#e53935");
+            swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#e53935");
 
             importFileDarkening.Visibility = Visibility.Hidden;
 
@@ -297,7 +297,7 @@ namespace ART_TELEMETRY_APP
                 Datas.Instance.GetData().ActLap--;
                 ChartBuilder.Instance.Build(charts_grid, diagram_nothing);
                 act_lap_lbl.Content = string.Format("{0}/{1}", Datas.Instance.GetData().ActLap, Datas.Instance.GetData().Laps.Count);
-                map_svg.Data = Geometry.Parse(MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1]);
+                map_svg.Data = Geometry.Parse(MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1].Item1);
             }
         }
 
@@ -308,14 +308,26 @@ namespace ART_TELEMETRY_APP
                 Datas.Instance.GetData().ActLap++;
                 ChartBuilder.Instance.Build(charts_grid, diagram_nothing);
                 act_lap_lbl.Content = string.Format("{0}/{1}", Datas.Instance.GetData().ActLap, Datas.Instance.GetData().Laps.Count);
-                map_svg.Data = Geometry.Parse(MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1]);
+                map_svg.Data = Geometry.Parse(MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1].Item1);
             }
         }
 
         private void chartsColorZone_MouseMove(object sender, MouseEventArgs e)
         {
-            Point position = Mouse.GetPosition(chartsColorZone);
-            separator.Margin = new Thickness(position.X, 0, 0, 0);
+            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                Point position = Mouse.GetPosition(chartsColorZone);
+                try
+                {
+                    Canvas.SetLeft(act_position_circle, MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1].Item2[Convert.ToInt32((position.X * (MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1].Item2.Count)) / chartsColorZone.ActualWidth)].Item1);
+                    Canvas.SetTop(act_position_circle, MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1].Item2[Convert.ToInt32((position.X * (MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1].Item2.Count)) / chartsColorZone.ActualWidth)].Item2);
+                    Console.WriteLine(MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1].Item2[Convert.ToInt32((position.X * (MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1].Item2.Count)) / chartsColorZone.ActualWidth)].ToString());
+                }
+                catch (Exception)
+                {
+                }
+                separator.Margin = new Thickness(position.X, 0, 0, 0);
+            }
         }
     }
 }
