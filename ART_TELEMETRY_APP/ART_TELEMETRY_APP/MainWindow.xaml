@@ -127,11 +127,13 @@
             </StackPanel>
             <dragablz:TabablzControl x:Name="workspaces"
                                      Grid.Column="1"
-                                     Grid.Row="1">
+                                     Grid.Row="1"
+                                     Grid.RowSpan="2">
                 <dragablz:TabablzControl.InterTabController>
-                    <dragablz:InterTabController Partition="Primary" />
+                    <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" />
                 </dragablz:TabablzControl.InterTabController>
                 <TabItem Header="aaa">
+                    <Label Content="asdasdas"></Label>
                 </TabItem>
                 <TabItem Header="bbb">
                 </TabItem>

@@ -75,8 +75,13 @@
     <Compile Include="ButtonCommands.cs" />
     <Compile Include="ChartLineColors.cs" />
     <Compile Include="LapBuilder.cs" />
+    <Compile Include="MainWindowViewModell.cs" />
     <Compile Include="MapBuilder.cs" />
     <Compile Include="Map.cs" />
+    <Compile Include="MyInterTabClient.cs" />
+    <Compile Include="MyWindow.xaml.cs">
+      <DependentUpon>MyWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SwitchForms.cs" />
     <Compile Include="Tab.cs" />
     <Compile Include="TabBuilder.cs" />
@@ -102,6 +107,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MyWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

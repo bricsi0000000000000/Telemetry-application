@@ -20,14 +20,18 @@ using System.Diagnostics;
 using System.Collections;
 using System.IO;
 using MaterialDesignThemes.Wpf;
+using Dragablz;
 
 namespace ART_TELEMETRY_APP
 {
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
             InitializeComponent();
+
+            this.DataContext = new MainWindowViewModell();
 
             groupsColorZone.Visibility = Visibility.Hidden;
             chartsColorZone.Visibility = Visibility.Visible;
@@ -38,14 +42,14 @@ namespace ART_TELEMETRY_APP
 
             importFileDarkening.Visibility = Visibility.Hidden;
 
-          /*  group_options_nothing.Visibility = Visibility.Visible;
-            channel_options_nothing.Visibility = Visibility.Visible;
-            input_file_nothing.Visibility = Visibility.Visible;
-            diagram_nothing.Visibility = Visibility.Visible;
-            map_nothing.Visibility = Visibility.Visible;
+            /*  group_options_nothing.Visibility = Visibility.Visible;
+              channel_options_nothing.Visibility = Visibility.Visible;
+              input_file_nothing.Visibility = Visibility.Visible;
+              diagram_nothing.Visibility = Visibility.Visible;
+              map_nothing.Visibility = Visibility.Visible;
 
-            map_progressbar_colorzone.Visibility = Visibility.Hidden;
-            diagram_calculate_laps.Visibility = Visibility.Hidden;*/
+              map_progressbar_colorzone.Visibility = Visibility.Hidden;
+              diagram_calculate_laps.Visibility = Visibility.Hidden;*/
         }
 
         private void channelCmbBoxItemClick(object sender, MouseButtonEventArgs e)
@@ -335,5 +339,9 @@ namespace ART_TELEMETRY_APP
             Window w = new Window();
             w.Show();
         }
+
+       
     }
 }
+
+
