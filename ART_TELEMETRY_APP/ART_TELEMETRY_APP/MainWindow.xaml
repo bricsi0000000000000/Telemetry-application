@@ -17,6 +17,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
         TextElement.FontSize="14"
+        xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
         FontFamily="{materialDesign:MaterialDesignFont}" WindowStyle="ThreeDBorderWindow"
     >
 
@@ -25,30 +26,38 @@
         <CommandBinding Command="{x:Static local:SwitchForms.SwitchToGroups}" CanExecute="CommandBinding_CanExecute" Executed="switchFormToGroupsExecuted"></CommandBinding>
         <CommandBinding Command="{x:Static local:SwitchForms.SwitchToCharts}" CanExecute="CommandBinding_CanExecute" Executed="switchFormToChartsExecuted"></CommandBinding>
         <CommandBinding Command="{x:Static local:ButtonCommands.ImportFile}" CanExecute="CommandBinding_CanExecute" Executed="importFileExecuted"></CommandBinding>
+        <CommandBinding Command="{x:Static local:ButtonCommands.AddWorkspace}" CanExecute="CommandBinding_CanExecute" Executed="addWorkspaceExecuted"></CommandBinding>
     </Window.CommandBindings>
 
     <Grid>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="30"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Menu IsMainMenu="True"
                   Grid.ColumnSpan="2"
                   Grid.RowSpan="2"
                   >
-                <MenuItem Header="_File">
+                <MenuItem Header="_File"
+                          FontSize="10"
+                          Height="30"
+                          >
                     <MenuItem Header="Import file" Command="{x:Static local:ButtonCommands.ImportFile}">
                         <MenuItem.Icon>
                             <materialDesign:PackIcon Kind="Import" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="_Chart">
+                <MenuItem Header="_Chart"
+                          FontSize="10"
+                          Height="30"
+                          >
                     <MenuItem Header="Show Charts" Click="MenuItem_Click">
                         <MenuItem.Icon>
                             <materialDesign:PackIcon Kind="Import" />
@@ -58,14 +67,15 @@
             </Menu>
             <StackPanel Grid.Column="0"
                         Grid.Row="1" 
+                        Grid.RowSpan="2"
                         >
                 <Button x:Name="swicthFormToChartsBtn"
                         Command="{x:Static local:SwitchForms.SwitchToCharts}"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch" 
-                        Height="40"
+                        Height="30"
                         Width="Auto"
-                        Margin="5"
+                        Margin="0"
                         Padding="5"
                         ToolTip="Switch Form To Charts  Ctrl+D"
                         Background="#FFFAFAFA"
@@ -75,8 +85,8 @@
                         >
                     <materialDesign:PackIcon Kind="ChartLine"
                                              RenderTransformOrigin="0.5,0.5"
-                                             Width="15"
-                                             Height="15">
+                                             Width="10"
+                                             Height="10">
                         <materialDesign:PackIcon.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform ScaleX="2" ScaleY="2"/>
@@ -90,8 +100,8 @@
                 <Button x:Name="switchFormToGroupsBtn"
                         Command="{x:Static local:SwitchForms.SwitchToGroups}"
                         Width="Auto"
-                        Height="40"
-                        Margin="5"
+                        Height="30"
+                        Margin="0"
                         Padding="5"
                         ToolTip="Switch Form To Groups  Ctrl+G"
                         Background="#FFFAFAFA"
@@ -101,7 +111,9 @@
                     <materialDesign:PackIcon Kind="SelectGroup"
                                              HorizontalContentAlignment="Stretch" 
                                              VerticalContentAlignment="Stretch"
-                                             RenderTransformOrigin="0.5,0.5" Width="15" Height="15">
+                                             RenderTransformOrigin="0.5,0.5"
+                                             Width="10"
+                                             Height="10">
                         <materialDesign:PackIcon.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform ScaleX="2" ScaleY="2"/>
@@ -113,10 +125,56 @@
                     </materialDesign:PackIcon>
                 </Button>
             </StackPanel>
+            <dragablz:TabablzControl x:Name="workspaces"
+                                     Grid.Column="1"
+                                     Grid.Row="1">
+                <dragablz:TabablzControl.InterTabController>
+                    <dragablz:InterTabController Partition="Primary" />
+                </dragablz:TabablzControl.InterTabController>
+                <TabItem Header="aaa">
+                </TabItem>
+                <TabItem Header="bbb">
+                </TabItem>
+                
+            </dragablz:TabablzControl>
+            <!--<StackPanel x:Name="workspaces"
+                        Grid.Column="1"
+                        Grid.Row="1"
+                        Orientation="Horizontal"
+                        >
+                <Button 
+                        Command="{x:Static local:ButtonCommands.AddWorkspace}"
+                        Margin="0"
+                        Height="30"
+                        Width="30"
+                        Padding="0"
+                        ToolTip="Add new workspace"
+                        Background="#FFFAFAFA"
+                        BorderBrush="#FFFAFAFA"
+                        Foreground="#FF3E3E3E"
+                        materialDesign:ShadowAssist.ShadowDepth="Depth0">
+                    <materialDesign:PackIcon Kind="AddBox"
+                                             HorizontalContentAlignment="Stretch" 
+                                             VerticalContentAlignment="Stretch"
+                                             RenderTransformOrigin="0.5,0.5"
+                                             Width="10"
+                                             Height="10">
+                        <materialDesign:PackIcon.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </materialDesign:PackIcon.RenderTransform>
+                    </materialDesign:PackIcon>
+                </Button>
+            </StackPanel>-->
 
             <materialDesign:ColorZone x:Name="chartsColorZone"
                                       Grid.Column="1"
-                                      Grid.Row="1"
+                                      Grid.Row="2"
+                                      Grid.RowSpan="2"
                                       Mode="Light"
                                       VerticalAlignment="Stretch"
                                       >
@@ -617,7 +675,7 @@
                                Margin="10,0,10,0"
                                />
                     </Viewbox>
-                        <ProgressBar x:Name="importFileProgressBar"
+                    <ProgressBar x:Name="importFileProgressBar"
                                  Value="60"
                                  Grid.Row="1"
                                  Height="16"

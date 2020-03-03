@@ -19,5 +19,16 @@ namespace ART_TELEMETRY_APP
                     new KeyGesture(Key.O, ModifierKeys.Control)
               }
           );
+
+        public static readonly RoutedUICommand AddWorkspace = new RoutedUICommand
+         (
+             "Add Workspace",
+             "AddWorkspace",
+             typeof(SwitchForms),
+             new InputGestureCollection()
+             {
+                    new KeyGesture(Key.N, ModifierKeys.Control)
+             }
+         );
     }
 }

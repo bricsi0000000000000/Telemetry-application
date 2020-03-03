@@ -38,14 +38,14 @@ namespace ART_TELEMETRY_APP
 
             importFileDarkening.Visibility = Visibility.Hidden;
 
-            group_options_nothing.Visibility = Visibility.Visible;
+          /*  group_options_nothing.Visibility = Visibility.Visible;
             channel_options_nothing.Visibility = Visibility.Visible;
             input_file_nothing.Visibility = Visibility.Visible;
             diagram_nothing.Visibility = Visibility.Visible;
             map_nothing.Visibility = Visibility.Visible;
 
             map_progressbar_colorzone.Visibility = Visibility.Hidden;
-            diagram_calculate_laps.Visibility = Visibility.Hidden;
+            diagram_calculate_laps.Visibility = Visibility.Hidden;*/
         }
 
         private void channelCmbBoxItemClick(object sender, MouseButtonEventArgs e)
@@ -328,6 +328,12 @@ namespace ART_TELEMETRY_APP
                 }
                 separator.Margin = new Thickness(position.X, 0, 0, 0);
             }
+        }
+
+        private void addWorkspaceExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            Window w = new Window();
+            w.Show();
         }
     }
 }
