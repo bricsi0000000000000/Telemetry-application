@@ -33,14 +33,15 @@ namespace ART_TELEMETRY_APP
 
             this.DataContext = new MainWindowViewModell();
 
-            groupsColorZone.Visibility = Visibility.Hidden;
-            chartsColorZone.Visibility = Visibility.Visible;
+           // groupsColorZone.Visibility = Visibility.Hidden;
+            //chartsColorZone.Visibility = Visibility.Visible;
 
             BrushConverter brush_converter = new BrushConverter();
             // swicthFormToChartsBtn.Background = (Brush)brush_converter.ConvertFrom("#FFFAFAFA");
             swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#e53935");
 
             importFileDarkening.Visibility = Visibility.Hidden;
+            chartsColorZone.Visibility = Visibility.Hidden;
 
             /*  group_options_nothing.Visibility = Visibility.Visible;
               channel_options_nothing.Visibility = Visibility.Visible;
@@ -50,6 +51,26 @@ namespace ART_TELEMETRY_APP
 
               map_progressbar_colorzone.Visibility = Visibility.Hidden;
               diagram_calculate_laps.Visibility = Visibility.Hidden;*/
+        }
+
+        public ItemActionCallback ClosingTabItemHandler
+        {
+            get { return ClosingTabItemHandlerImpl; }
+        }
+
+        /// <summary>
+        /// Callback to handle tab closing.
+        /// </summary>        
+        private static void ClosingTabItemHandlerImpl(ItemActionCallbackArgs<TabablzControl> args)
+        {
+            //in here you can dispose stuff or cancel the close
+
+            //here's your view model:
+            var viewModel = args.DragablzItem.DataContext as HeaderedItemViewModel;
+            Debug.Assert(viewModel != null);
+
+            //here's how you can cancel stuff:
+            //args.Cancel(); 
         }
 
         private void channelCmbBoxItemClick(object sender, MouseButtonEventArgs e)
@@ -195,6 +216,10 @@ namespace ART_TELEMETRY_APP
             add_group_txtbox.Text = string.Empty;
         }
 
+        private void addNewWorkspaceDialog(object sender, DialogClosingEventArgs eventArgs)
+        {
+            //addWorkspaceNameTxtbox
+        }
         private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -336,8 +361,7 @@ namespace ART_TELEMETRY_APP
 
         private void addWorkspaceExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            Window w = new Window();
-            w.Show();
+            
         }
 
        

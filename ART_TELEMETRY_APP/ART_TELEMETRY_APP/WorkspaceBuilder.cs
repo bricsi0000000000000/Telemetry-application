@@ -3,28 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace ART_TELEMETRY_APP
 {
-    class TabBuilder
+    class WorkspaceBuilder
     {
-        private static TabBuilder instance = null;
-        public static TabBuilder Instance
+        #region instance
+        private static WorkspaceBuilder instance = null;
+        private WorkspaceBuilder() { }
+
+        public static WorkspaceBuilder Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new TabBuilder();
+                    instance = new WorkspaceBuilder();
                 }
                 return instance;
             }
         }
+        #endregion
 
-        public void BuildTab(Tab tab, TabControl workspaces)
+        public void BuildWorkspace(string name)
         {
-            workspaces.Items.Add(tab.Tab_Item);
+            
         }
     }
 }

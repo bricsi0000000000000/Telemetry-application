@@ -21,6 +21,25 @@
         FontFamily="{materialDesign:MaterialDesignFont}" WindowStyle="ThreeDBorderWindow"
     >
 
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Dragablz;component/Themes/Generic.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
+            <Style TargetType="{x:Type dragablz:TabablzControl}">
+                <!--<Setter Property="NewItemFactory" Value="{x:Static local:WorkspaceNewItem.Factory}" />-->
+                <Setter Property="ItemsSource" Value="{Binding Items}" />
+                <Setter Property="ClosingItemCallback" Value="{Binding ClosingTabItemHandler}" />
+                <!--<Setter Property="ShowDefaultAddButton" Value="True" />-->
+                <Setter Property="ShowDefaultCloseButton" Value="True" />
+                <Setter Property="AdjacentHeaderItemOffset" Value="-10" />
+                <Setter Property="ItemContainerStyle" Value="{StaticResource TrapezoidDragableTabItemStyle}" />
+                <Setter Property="HeaderMemberPath" Value="Header" />
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}" CanExecute="CommandBinding_CanExecute"></CommandBinding>
         <CommandBinding Command="{x:Static local:SwitchForms.SwitchToGroups}" CanExecute="CommandBinding_CanExecute" Executed="switchFormToGroupsExecuted"></CommandBinding>
@@ -125,60 +144,103 @@
                     </materialDesign:PackIcon>
                 </Button>
             </StackPanel>
-            <dragablz:TabablzControl x:Name="workspaces"
-                                     Grid.Column="1"
-                                     Grid.Row="1"
-                                     Grid.RowSpan="2">
-                <dragablz:TabablzControl.InterTabController>
-                    <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" />
-                </dragablz:TabablzControl.InterTabController>
-                <TabItem Header="aaa">
-                    <Label Content="asdasdas"></Label>
-                </TabItem>
-                <TabItem Header="bbb">
-                </TabItem>
-                
-            </dragablz:TabablzControl>
-            <!--<StackPanel x:Name="workspaces"
-                        Grid.Column="1"
-                        Grid.Row="1"
-                        Orientation="Horizontal"
-                        >
-                <Button 
-                        Command="{x:Static local:ButtonCommands.AddWorkspace}"
-                        Margin="0"
-                        Height="30"
-                        Width="30"
-                        Padding="0"
-                        ToolTip="Add new workspace"
-                        Background="#FFFAFAFA"
-                        BorderBrush="#FFFAFAFA"
-                        Foreground="#FF3E3E3E"
-                        materialDesign:ShadowAssist.ShadowDepth="Depth0">
-                    <materialDesign:PackIcon Kind="AddBox"
-                                             HorizontalContentAlignment="Stretch" 
-                                             VerticalContentAlignment="Stretch"
-                                             RenderTransformOrigin="0.5,0.5"
-                                             Width="10"
-                                             Height="10">
-                        <materialDesign:PackIcon.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform ScaleX="2" ScaleY="2"/>
-                                <SkewTransform/>
-                                <RotateTransform/>
-                                <TranslateTransform/>
-                            </TransformGroup>
-                        </materialDesign:PackIcon.RenderTransform>
-                    </materialDesign:PackIcon>
-                </Button>
-            </StackPanel>-->
 
+
+            <materialDesign:DialogHost DialogClosing="addNewWorkspaceDialog"
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Grid.RowSpan="2"
+                                            >
+                <materialDesign:DialogHost.DialogContent >
+                    <StackPanel Margin="16" 
+                                    >
+                        <TextBox x:Name="addWorkspaceNameTxtbox"
+                                 Margin="0 8 0 0"
+                                 HorizontalAlignment="Stretch"
+                                 materialDesign:HintAssist.IsFloating="True"
+                                 materialDesign:HintAssist.Hint="Workspace Name"
+                                 />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                                    IsDefault="True"
+                                                    Margin="0 8 8 0"
+                                                    Command="materialDesign:DialogHost.CloseDialogCommand"
+                                                    >
+                                <Button.CommandParameter>
+                                    <s:Boolean>True</s:Boolean>
+                                </Button.CommandParameter>
+                                Add
+                            </Button>
+                            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                                    IsCancel="True"
+                                                    Margin="0 8 8 0"
+                                                    Command="materialDesign:DialogHost.CloseDialogCommand">
+                                <Button.CommandParameter>
+                                    <s:Boolean>False</s:Boolean>
+                                </Button.CommandParameter>
+                                Cancel
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </materialDesign:DialogHost.DialogContent>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal"
+                                Grid.Row="0"
+                                >
+                        <Button 
+                            Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+                            Margin="0"
+                            Height="30"
+                            Width="30"
+                            Padding="0"
+                            ToolTip="Add new workspace"
+                            Background="#FFFAFAFA"
+                            BorderBrush="#FFFAFAFA"
+                            Foreground="#FF3E3E3E"
+                            materialDesign:ShadowAssist.ShadowDepth="Depth0">
+                        <materialDesign:PackIcon Kind="AddBox"
+                                            HorizontalContentAlignment="Stretch" 
+                                            VerticalContentAlignment="Stretch"
+                                            RenderTransformOrigin="0.5,0.5"
+                                            Width="10"
+                                            Height="10">
+                            <materialDesign:PackIcon.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                    <SkewTransform/>
+                                    <RotateTransform/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </materialDesign:PackIcon.RenderTransform>
+                        </materialDesign:PackIcon>
+                    </Button>
+                    </StackPanel>
+                    <dragablz:TabablzControl x:Name="workspaces"
+                                             Grid.Row="1"
+                                             >  
+                        <dragablz:TabablzControl.InterTabController>
+                        <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" />
+                    </dragablz:TabablzControl.InterTabController>
+
+                    <TabItem Header="semmi">
+
+                    </TabItem>
+
+                </dragablz:TabablzControl>
+                </Grid>
+            </materialDesign:DialogHost>
             <materialDesign:ColorZone x:Name="chartsColorZone"
                                       Grid.Column="1"
                                       Grid.Row="2"
                                       Grid.RowSpan="2"
                                       Mode="Light"
                                       VerticalAlignment="Stretch"
+                                      Visibility="Hidden"
                                       >
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -377,7 +439,7 @@
                 </Grid>
             </materialDesign:ColorZone>
             <materialDesign:ColorZone x:Name="groupsColorZone"
-                                      Grid.Row="1"
+                                      Grid.Row="2"
                                       Grid.Column="1"
                                       VerticalAlignment="Stretch"
                                       Visibility="Hidden"
