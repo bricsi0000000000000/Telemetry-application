@@ -19,6 +19,7 @@
         TextElement.FontSize="14"
         xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
         FontFamily="{materialDesign:MaterialDesignFont}" WindowStyle="ThreeDBorderWindow"
+        xmlns:dockablz="clr-namespace:Dragablz.Dockablz;assembly=Dragablz"
     >
 
     <Window.Resources>
@@ -45,7 +46,7 @@
         <CommandBinding Command="{x:Static local:SwitchForms.SwitchToGroups}" CanExecute="CommandBinding_CanExecute" Executed="switchFormToGroupsExecuted"></CommandBinding>
         <CommandBinding Command="{x:Static local:SwitchForms.SwitchToCharts}" CanExecute="CommandBinding_CanExecute" Executed="switchFormToChartsExecuted"></CommandBinding>
         <CommandBinding Command="{x:Static local:ButtonCommands.ImportFile}" CanExecute="CommandBinding_CanExecute" Executed="importFileExecuted"></CommandBinding>
-        <CommandBinding Command="{x:Static local:ButtonCommands.AddWorkspace}" CanExecute="CommandBinding_CanExecute" Executed="addWorkspaceExecuted"></CommandBinding>
+        <CommandBinding Command="{x:Static local:ButtonCommands.WorkspaceSettings}" CanExecute="CommandBinding_CanExecute" Executed="workspaceSettingsExecuted"></CommandBinding>
     </Window.CommandBindings>
 
     <Grid>
@@ -147,10 +148,10 @@
 
 
             <materialDesign:DialogHost DialogClosing="addNewWorkspaceDialog"
-                                            Grid.Row="1"
-                                            Grid.Column="1"
-                                            Grid.RowSpan="2"
-                                            >
+                                       Grid.Row="1"
+                                       Grid.Column="1"
+                                       Grid.RowSpan="2"
+                                       >
                 <materialDesign:DialogHost.DialogContent >
                     <StackPanel Margin="16" 
                                     >
@@ -203,35 +204,62 @@
                             BorderBrush="#FFFAFAFA"
                             Foreground="#FF3E3E3E"
                             materialDesign:ShadowAssist.ShadowDepth="Depth0">
-                        <materialDesign:PackIcon Kind="AddBox"
-                                            HorizontalContentAlignment="Stretch" 
-                                            VerticalContentAlignment="Stretch"
-                                            RenderTransformOrigin="0.5,0.5"
-                                            Width="10"
-                                            Height="10">
-                            <materialDesign:PackIcon.RenderTransform>
-                                <TransformGroup>
-                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
-                                    <SkewTransform/>
-                                    <RotateTransform/>
-                                    <TranslateTransform/>
-                                </TransformGroup>
-                            </materialDesign:PackIcon.RenderTransform>
-                        </materialDesign:PackIcon>
-                    </Button>
+                            <materialDesign:PackIcon Kind="AddBox"
+                                                     HorizontalContentAlignment="Stretch" 
+                                                     VerticalContentAlignment="Stretch"
+                                                     RenderTransformOrigin="0.5,0.5"
+                                                     Width="10"
+                                                     Height="10">
+                                <materialDesign:PackIcon.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                        <SkewTransform/>
+                                        <RotateTransform/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </materialDesign:PackIcon.RenderTransform>
+                            </materialDesign:PackIcon>
+                        </Button>
+                        <Button 
+                            Command="{x:Static local:ButtonCommands.WorkspaceSettings}"
+                            Margin="0"
+                            Height="30"
+                            Width="30"
+                            Padding="0"
+                            ToolTip="Add new workspace"
+                            Background="#FFFAFAFA"
+                            BorderBrush="#FFFAFAFA"
+                            Foreground="#FF3E3E3E"
+                            materialDesign:ShadowAssist.ShadowDepth="Depth0">
+                            <materialDesign:PackIcon Kind="Settings"
+                                                     HorizontalContentAlignment="Stretch" 
+                                                     VerticalContentAlignment="Stretch"
+                                                     RenderTransformOrigin="0.5,0.5"
+                                                     Width="10"
+                                                     Height="10">
+                                <materialDesign:PackIcon.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                        <SkewTransform/>
+                                        <RotateTransform/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </materialDesign:PackIcon.RenderTransform>
+                            </materialDesign:PackIcon>
+                        </Button>
+                       
                     </StackPanel>
-                    <dragablz:TabablzControl x:Name="workspaces"
-                                             Grid.Row="1"
-                                             >  
-                        <dragablz:TabablzControl.InterTabController>
-                        <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" />
-                    </dragablz:TabablzControl.InterTabController>
-
-                    <TabItem Header="semmi">
-
-                    </TabItem>
-
-                </dragablz:TabablzControl>
+                    <dockablz:Layout 
+                                     Grid.Row="1"
+                                     >
+                        <dragablz:TabablzControl x:Name="workspaces"
+                                                 ConsolidateOrphanedItems="True"
+                                             >
+                            <dragablz:TabablzControl.InterTabController>
+                                <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" />
+                            </dragablz:TabablzControl.InterTabController>
+                        </dragablz:TabablzControl>
+                    </dockablz:Layout>
                 </Grid>
             </materialDesign:DialogHost>
             <materialDesign:ColorZone x:Name="chartsColorZone"

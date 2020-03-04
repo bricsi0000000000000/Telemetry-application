@@ -216,10 +216,7 @@ namespace ART_TELEMETRY_APP
             add_group_txtbox.Text = string.Empty;
         }
 
-        private void addNewWorkspaceDialog(object sender, DialogClosingEventArgs eventArgs)
-        {
-            //addWorkspaceNameTxtbox
-        }
+   
         private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -359,12 +356,16 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        private void addWorkspaceExecuted(object sender, ExecutedRoutedEventArgs e)
+        private void addNewWorkspaceDialog(object sender, DialogClosingEventArgs eventArgs)
         {
-            
+            WorkspaceManager.Instance.AddWorkspace(new Workspace(addWorkspaceNameTxtbox.Text));
+            WorkspaceBuilder.Instance.BuildWorkspace(workspaces, addWorkspaceNameTxtbox.Text);
         }
 
-       
+        private void workspaceSettingsExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            WorkspaceBuilder.Instance.BuildWorkspace(workspaces);
+        }
     }
 }
 

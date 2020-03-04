@@ -26,15 +26,33 @@ namespace ART_TELEMETRY_APP
         #endregion
 
         List<Workspace> workspaces = new List<Workspace>();
+        string active_workspace;
 
-        public Workspace GetWorkspace(string name)
+        public string ActiveWorkspace
         {
+            get
+            {
+                return active_workspace;
+            }
+            set
+            {
+                active_workspace = value;
+            }
+        }
+
+        public Workspace GetWorkspace(string name = "")
+        {
+            if (name.Equals(""))
+            {
+                return workspaces.Find(n => n.Name == active_workspace);
+            }
             return workspaces.Find(n => n.Name == name);
         }
 
         public void AddWorkspace(Workspace workspace)
         {
             workspaces.Add(workspace);
+            active_workspace = workspace.Name;
         }
     }
 }

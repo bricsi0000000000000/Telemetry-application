@@ -16,7 +16,7 @@ namespace ART_TELEMETRY_APP
               typeof(SwitchForms),
               new InputGestureCollection()
               {
-                    new KeyGesture(Key.O, ModifierKeys.Control)
+                new KeyGesture(Key.O, ModifierKeys.Control)
               }
           );
 
@@ -27,8 +27,19 @@ namespace ART_TELEMETRY_APP
              typeof(SwitchForms),
              new InputGestureCollection()
              {
-                    new KeyGesture(Key.N, ModifierKeys.Control)
+                new KeyGesture(Key.N, ModifierKeys.Control)
              }
          );
+
+        public static readonly RoutedUICommand WorkspaceSettings = new RoutedUICommand
+           (
+               "Workspace Settings",
+               "WorkspaceSettings",
+               typeof(SwitchForms),
+               new InputGestureCollection()
+               {
+                new KeyGesture(Key.K, ModifierKeys.Control)
+               }
+           );
     }
 }
