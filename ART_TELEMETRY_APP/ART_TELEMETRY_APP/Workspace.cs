@@ -1,33 +1,52 @@
-﻿using System;
+﻿using Dragablz;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace ART_TELEMETRY_APP
 {
-    class Workspace
+    class Workspace : Tab
     {
-        string name;
+        Dragablz.Dockablz.Layout layout;
 
-        public string Name
+        public Workspace(string name) : base(name)
         {
-            get
-            {
-                return name;
-            }
-        }
-
-        List<Tab> tabs = new List<Tab>();
-        Tab settings_tab;
-
-        public Workspace(string name)
-        {
-            this.name = name;
-
+            layout = new Dragablz.Dockablz.Layout();
             settings_tab = new Tab(string.Format("{0}_settings", name));
+            TabablzControl tab_control = new TabablzControl();
+            this.TabItem.Content = layout;
+
+            InterTabController inter_tab_contorller = new InterTabController();
+            //inter_tab_contorller.InterTabClient.
+            //Binding binding = new Binding("InterTabClient");
+            //binding.Source = inter_tab_contorller;
+            //inter_tab_contorller.SetBinding()
+             tab_control.InterTabController = inter_tab_contorller;
+
+            layout.Content = tab_control;
+
+            TabItem item = new TabItem();
+            item.Header = "1";
+            tab_control.Items.Add(item);
+
+            TabItem item1 = new TabItem();
+            item1.Header = "2";
+            tab_control.Items.Add(item1);
         }
+
+        private void drop(object sender, DragEventArgs e)
+        {
+            Console.WriteLine(sender.ToString());
+        }
+
+
+        Tab settings_tab;
+        List<Tab> tabs = new List<Tab>();
 
         public TabItem GetTab(string name)
         {

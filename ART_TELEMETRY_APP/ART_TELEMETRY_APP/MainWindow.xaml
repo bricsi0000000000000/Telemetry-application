@@ -51,10 +51,6 @@
 
     <Grid>
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="30"/>
@@ -85,7 +81,7 @@
                     </MenuItem>
                 </MenuItem>
             </Menu>
-            <StackPanel Grid.Column="0"
+            <!--<StackPanel Grid.Column="0"
                         Grid.Row="1" 
                         Grid.RowSpan="2"
                         >
@@ -144,12 +140,10 @@
                         </materialDesign:PackIcon.RenderTransform>
                     </materialDesign:PackIcon>
                 </Button>
-            </StackPanel>
-
+            </StackPanel>-->
 
             <materialDesign:DialogHost DialogClosing="addNewWorkspaceDialog"
                                        Grid.Row="1"
-                                       Grid.Column="1"
                                        Grid.RowSpan="2"
                                        >
                 <materialDesign:DialogHost.DialogContent >
@@ -226,7 +220,7 @@
                             Height="30"
                             Width="30"
                             Padding="0"
-                            ToolTip="Add new workspace"
+                            ToolTip="Active Workspace Settings"
                             Background="#FFFAFAFA"
                             BorderBrush="#FFFAFAFA"
                             Foreground="#FF3E3E3E"
@@ -249,21 +243,17 @@
                         </Button>
                        
                     </StackPanel>
-                    <dockablz:Layout 
-                                     Grid.Row="1"
-                                     >
                         <dragablz:TabablzControl x:Name="workspaces"
                                                  ConsolidateOrphanedItems="True"
-                                             >
+                                                 Grid.Row="1"
+                                                 >
                             <dragablz:TabablzControl.InterTabController>
                                 <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" />
                             </dragablz:TabablzControl.InterTabController>
                         </dragablz:TabablzControl>
-                    </dockablz:Layout>
                 </Grid>
             </materialDesign:DialogHost>
             <materialDesign:ColorZone x:Name="chartsColorZone"
-                                      Grid.Column="1"
                                       Grid.Row="2"
                                       Grid.RowSpan="2"
                                       Mode="Light"
@@ -468,7 +458,6 @@
             </materialDesign:ColorZone>
             <materialDesign:ColorZone x:Name="groupsColorZone"
                                       Grid.Row="2"
-                                      Grid.Column="1"
                                       VerticalAlignment="Stretch"
                                       Visibility="Hidden"
                                       >

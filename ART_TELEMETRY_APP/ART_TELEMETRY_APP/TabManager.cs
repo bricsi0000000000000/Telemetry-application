@@ -6,28 +6,27 @@ using System.Threading.Tasks;
 
 namespace ART_TELEMETRY_APP
 {
-    class WorkspaceManager
+    class TabManager
     {
         #region instance
-        private static WorkspaceManager instance = null;
-        private WorkspaceManager() { }
+        private static TabManager instance = null;
+        private TabManager() { }
 
-        public static WorkspaceManager Instance
+        public static TabManager Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new WorkspaceManager();
+                    instance = new TabManager();
                 }
                 return instance;
             }
         }
         #endregion
 
-        List<Workspace> workspaces = new List<Workspace>();
+        List<Tab> tabs = new List<Tab>();
         string active_workspace;
-
         public string ActiveWorkspace
         {
             get
@@ -40,19 +39,18 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        public Workspace GetWorkspace(string name = "")
+        public void AddTab(Tab tab)
+        {
+            tabs.Add(tab);
+        }
+
+        public Tab GetTab(string name = "")
         {
             if (name.Equals(""))
             {
-                return workspaces.Find(n => n.Name == active_workspace);
+                return tabs.Find(n => n.Name == active_workspace);
             }
-            return workspaces.Find(n => n.Name == name);
-        }
-
-        public void AddWorkspace(Workspace workspace)
-        {
-            workspaces.Add(workspace);
-            active_workspace = workspace.Name;
+            return tabs.Find(n => n.Name == name);
         }
     }
 }

@@ -9,6 +9,15 @@ namespace ART_TELEMETRY_APP
 {
     class Tab
     {
+        string name;
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+        }
+
         TabItem tab_item;
         public TabItem TabItem
         {
@@ -20,9 +29,12 @@ namespace ART_TELEMETRY_APP
 
         public Tab(string name)
         {
+            this.name = name;
             tab_item = new TabItem();
             tab_item.Header = name;
             tab_item.Name = string.Format("{0}_tab_item", name);
         }
+
+        Grid charts_grid;
     }
 }

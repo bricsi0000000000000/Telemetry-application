@@ -73,6 +73,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Tab.cs" />
+    <Compile Include="TabBuilder.cs" />
+    <Compile Include="TabManager.cs" />
     <Compile Include="WorkspaceNewItem.cs" />
     <Compile Include="ButtonCommands.cs" />
     <Compile Include="ChartLineColors.cs" />
@@ -86,8 +88,6 @@
     </Compile>
     <Compile Include="SwitchForms.cs" />
     <Compile Include="Workspace.cs" />
-    <Compile Include="WorkspaceBuilder.cs" />
-    <Compile Include="WorkspaceManager.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

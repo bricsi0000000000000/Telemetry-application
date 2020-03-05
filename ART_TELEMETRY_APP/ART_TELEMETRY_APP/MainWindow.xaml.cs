@@ -33,15 +33,15 @@ namespace ART_TELEMETRY_APP
 
             this.DataContext = new MainWindowViewModell();
 
-           // groupsColorZone.Visibility = Visibility.Hidden;
+            // groupsColorZone.Visibility = Visibility.Hidden;
             //chartsColorZone.Visibility = Visibility.Visible;
 
             BrushConverter brush_converter = new BrushConverter();
             // swicthFormToChartsBtn.Background = (Brush)brush_converter.ConvertFrom("#FFFAFAFA");
-            swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#e53935");
+            //swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#e53935");
 
-            importFileDarkening.Visibility = Visibility.Hidden;
-            chartsColorZone.Visibility = Visibility.Hidden;
+            //importFileDarkening.Visibility = Visibility.Hidden;
+            //chartsColorZone.Visibility = Visibility.Hidden;
 
             /*  group_options_nothing.Visibility = Visibility.Visible;
               channel_options_nothing.Visibility = Visibility.Visible;
@@ -216,7 +216,7 @@ namespace ART_TELEMETRY_APP
             add_group_txtbox.Text = string.Empty;
         }
 
-   
+
         private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -224,22 +224,22 @@ namespace ART_TELEMETRY_APP
 
         private void switchFormToGroupsExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            groupsColorZone.Visibility = Visibility.Visible;
+           /* groupsColorZone.Visibility = Visibility.Visible;
             chartsColorZone.Visibility = Visibility.Hidden;
 
             BrushConverter brush_converter = new BrushConverter();
             switchFormToGroupsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#e53935");
-            swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#DD000000");
+            swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#DD000000");*/
         }
 
         private void switchFormToChartsExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            groupsColorZone.Visibility = Visibility.Hidden;
+           /* groupsColorZone.Visibility = Visibility.Hidden;
             chartsColorZone.Visibility = Visibility.Visible;
 
             BrushConverter brush_converter = new BrushConverter();
             switchFormToGroupsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#DD000000");
-            swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#e53935");
+            swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#e53935");*/
         }
 
         private void groupOptionsZoomingOptionBtn(object sender, RoutedEventArgs e)
@@ -358,13 +358,23 @@ namespace ART_TELEMETRY_APP
 
         private void addNewWorkspaceDialog(object sender, DialogClosingEventArgs eventArgs)
         {
-            WorkspaceManager.Instance.AddWorkspace(new Workspace(addWorkspaceNameTxtbox.Text));
-            WorkspaceBuilder.Instance.BuildWorkspace(workspaces, addWorkspaceNameTxtbox.Text);
+            TabManager.Instance.AddTab(new Workspace(addWorkspaceNameTxtbox.Text));
+            TabBuilder.Instance.Build(TabManager.Instance.GetTab(addWorkspaceNameTxtbox.Text).TabItem, workspaces);
+            TabManager.Instance.ActiveWorkspace = addWorkspaceNameTxtbox.Text;
+            addWorkspaceNameTxtbox.Text = "";
         }
 
         private void workspaceSettingsExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            WorkspaceBuilder.Instance.BuildWorkspace(workspaces);
+            TabManager.Instance.ActiveWorkspace = ((TabItem)workspaces.SelectedItem).Name.Replace("_tab_item", "");
+            try
+            {
+                TabBuilder.Instance.Build((TabManager.Instance.GetTab() as Workspace).SettingsTab.TabItem, workspaces);
+                TabManager.Instance.AddTab((TabManager.Instance.GetTab() as Workspace).SettingsTab);
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }
