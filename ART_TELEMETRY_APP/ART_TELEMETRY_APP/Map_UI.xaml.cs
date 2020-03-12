@@ -10,21 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace ART_TELEMETRY_APP
 {
     /// <summary>
-    /// Interaction logic for MyWindow.xaml
+    /// Interaction logic for Map_UI.xaml
     /// </summary>
-    public partial class MyWindow : Window
+    public partial class Map_UI : UserControl
     {
-
-        public MyInterTabClient myInterTabClient = new MyInterTabClient();
-        public MyWindow()
+        public Map_UI()
         {
             InitializeComponent();
-
         }
     }
 }

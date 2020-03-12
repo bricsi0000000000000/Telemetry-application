@@ -20,26 +20,26 @@ namespace ART_TELEMETRY_APP
               }
           );
 
-        public static readonly RoutedUICommand AddWorkspace = new RoutedUICommand
+        public static readonly RoutedUICommand ShowPilots = new RoutedUICommand
          (
-             "Add Workspace",
-             "AddWorkspace",
+             "Show Pilots",
+             "ShowPilots",
              typeof(SwitchForms),
              new InputGestureCollection()
              {
-                new KeyGesture(Key.N, ModifierKeys.Control)
+                new KeyGesture(Key.F2)
              }
          );
 
-        public static readonly RoutedUICommand WorkspaceSettings = new RoutedUICommand
-           (
-               "Workspace Settings",
-               "WorkspaceSettings",
-               typeof(SwitchForms),
-               new InputGestureCollection()
-               {
-                new KeyGesture(Key.K, ModifierKeys.Control)
-               }
-           );
+        public static readonly RoutedUICommand Settings = new RoutedUICommand
+        (
+            "Settings",
+            "Settings",
+            typeof(SwitchForms),
+            new InputGestureCollection()
+            {
+                new KeyGesture(Key.F3)
+            }
+        );
     }
 }

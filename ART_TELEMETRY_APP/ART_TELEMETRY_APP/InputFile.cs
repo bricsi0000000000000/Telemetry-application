@@ -10,16 +10,16 @@ using System.Windows.Media;
 
 namespace ART_TELEMETRY_APP
 {
-    class Data
+    public class InputFile
     {
         string file_name;
-        List<SingleData> datas = new List<SingleData>();
+        List<Data> datas = new List<Data>();
         float filter_percent = .6f;
         int act_lap = 0;
         ChartValues<double> distances;
         public List<Tuple<List<Tuple<double, double>>, int, int>> laps = new List<Tuple<List<Tuple<double, double>>, int, int>>();
 
-        public class SingleData
+        public class Data
         {
             public string Name;
             public ChartValues<double> Datas;
@@ -98,12 +98,12 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        public SingleData GetSingleData(string name)
+        public Data GetSingleData(string name)
         {
             return datas.Find(n => n.Name == name);
         }
 
-        public Data(string input_data_name, List<SingleData> datas)
+        public InputFile(string input_data_name, List<Data> datas)
         {
             this.file_name = input_data_name;
             this.datas = datas;
@@ -117,7 +117,7 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        public List<SingleData> Datas
+        public List<Data> Datas
         {
             get
             {

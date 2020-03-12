@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace ART_TELEMETRY_APP
 {
@@ -27,6 +28,45 @@ namespace ART_TELEMETRY_APP
             }
         }
 
+        Diagrams_UI diagrams_UI;
+        public Diagrams_UI DiagramsUI
+        {
+            get
+            {
+                return diagrams_UI;
+            }
+            set
+            {
+                diagrams_UI = value;
+            }
+        }
+
+        LapReport_UI lap_report_UI;
+        public LapReport_UI LapReportUI
+        {
+            get
+            {
+                return lap_report_UI;
+            }
+            set
+            {
+                lap_report_UI = value;
+            }
+        }
+
+        Map_UI map_UI;
+        public Map_UI MapUI
+        {
+            get
+            {
+                return map_UI;
+            }
+            set
+            {
+                map_UI = value;
+            }
+        }
+
         public Tab(string name)
         {
             this.name = name;
@@ -34,7 +74,5 @@ namespace ART_TELEMETRY_APP
             tab_item.Header = name;
             tab_item.Name = string.Format("{0}_tab_item", name);
         }
-
-        Grid charts_grid;
     }
 }

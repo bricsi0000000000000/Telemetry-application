@@ -23,22 +23,22 @@
     >
 
     <Window.Resources>
-        <ResourceDictionary>
+       <!-- <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Dragablz;component/Themes/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
-            <Style TargetType="{x:Type dragablz:TabablzControl}">
+            -->
+            <!--<Style TargetType="{x:Type dragablz:TabablzControl}">-->
                 <!--<Setter Property="NewItemFactory" Value="{x:Static local:WorkspaceNewItem.Factory}" />-->
-                <Setter Property="ItemsSource" Value="{Binding Items}" />
-                <Setter Property="ClosingItemCallback" Value="{Binding ClosingTabItemHandler}" />
-                <!--<Setter Property="ShowDefaultAddButton" Value="True" />-->
-                <Setter Property="ShowDefaultCloseButton" Value="True" />
-                <Setter Property="AdjacentHeaderItemOffset" Value="-10" />
-                <Setter Property="ItemContainerStyle" Value="{StaticResource TrapezoidDragableTabItemStyle}" />
-                <Setter Property="HeaderMemberPath" Value="Header" />
-            </Style>
-        </ResourceDictionary>
+                <!--<Setter Property="ItemsSource" Value="{Binding Items}" />-->
+            <!--<Setter Property="ClosingItemCallback" Value="{Binding ClosingTabItemHandler}" /> -->
+            <!--<Setter Property="ShowDefaultAddButton" Value="True" />-->
+            <!--<Setter Property="ShowDefaultCloseButton" Value="False" />-->
+                <!--<Setter Property="AdjacentHeaderItemOffset" Value="-10" />-->
+                <!--<Setter Property="ItemContainerStyle" Value="{StaticResource TrapezoidDragableTabItemStyle}" />-->
+            <!--<Setter Property="HeaderMemberPath" Value="Header" />
+            </Style>-->
+        <!--</ResourceDictionary>-->
     </Window.Resources>
 
     <Window.CommandBindings>
@@ -46,41 +46,45 @@
         <CommandBinding Command="{x:Static local:SwitchForms.SwitchToGroups}" CanExecute="CommandBinding_CanExecute" Executed="switchFormToGroupsExecuted"></CommandBinding>
         <CommandBinding Command="{x:Static local:SwitchForms.SwitchToCharts}" CanExecute="CommandBinding_CanExecute" Executed="switchFormToChartsExecuted"></CommandBinding>
         <CommandBinding Command="{x:Static local:ButtonCommands.ImportFile}" CanExecute="CommandBinding_CanExecute" Executed="importFileExecuted"></CommandBinding>
-        <CommandBinding Command="{x:Static local:ButtonCommands.WorkspaceSettings}" CanExecute="CommandBinding_CanExecute" Executed="workspaceSettingsExecuted"></CommandBinding>
+        <CommandBinding Command="{x:Static local:ButtonCommands.ShowPilots}" CanExecute="CommandBinding_CanExecute" Executed="showPilotsExecuted"></CommandBinding>
+        <CommandBinding Command="{x:Static local:ButtonCommands.Settings}" CanExecute="CommandBinding_CanExecute" Executed="settingsExecuted"></CommandBinding>
     </Window.CommandBindings>
 
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
-                <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Menu IsMainMenu="True"
-                  Grid.ColumnSpan="2"
-                  Grid.RowSpan="2"
                   >
-                <MenuItem Header="_File"
+                <MenuItem Header="File"
                           FontSize="10"
                           Height="30"
                           >
-                    <MenuItem Header="Import file" Command="{x:Static local:ButtonCommands.ImportFile}">
+                    <!--<MenuItem Header="Import file" Command="{x:Static local:ButtonCommands.ImportFile}">
                         <MenuItem.Icon>
                             <materialDesign:PackIcon Kind="Import" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </MenuItem>-->
                 </MenuItem>
-                <MenuItem Header="_Chart"
+                <MenuItem Header="Pilots"
+                          Command="{x:Static local:ButtonCommands.ShowPilots}"
                           FontSize="10"
                           Height="30"
-                          >
-                    <MenuItem Header="Show Charts" Click="MenuItem_Click">
-                        <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="Import" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                </MenuItem>
+                          />
+                <MenuItem Header="Settings"
+                          Command="{x:Static local:ButtonCommands.Settings}"
+                          FontSize="10"
+                          Height="30"
+                          />
             </Menu>
+                <dragablz:TabablzControl x:Name="tabs_tabablzcontrol"
+                                         Grid.Row="1">
+                    <dragablz:TabablzControl.InterTabController>
+                        <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" />
+                    </dragablz:TabablzControl.InterTabController>
+                </dragablz:TabablzControl>
             <!--<StackPanel Grid.Column="0"
                         Grid.Row="1" 
                         Grid.RowSpan="2"
@@ -142,7 +146,7 @@
                 </Button>
             </StackPanel>-->
 
-            <materialDesign:DialogHost DialogClosing="addNewWorkspaceDialog"
+            <!--<materialDesign:DialogHost DialogClosing="addNewWorkspaceDialog"
                                        Grid.Row="1"
                                        Grid.RowSpan="2"
                                        >
@@ -215,16 +219,16 @@
                             </materialDesign:PackIcon>
                         </Button>
                         <Button 
-                            Command="{x:Static local:ButtonCommands.WorkspaceSettings}"
-                            Margin="0"
-                            Height="30"
-                            Width="30"
-                            Padding="0"
-                            ToolTip="Active Workspace Settings"
-                            Background="#FFFAFAFA"
-                            BorderBrush="#FFFAFAFA"
-                            Foreground="#FF3E3E3E"
-                            materialDesign:ShadowAssist.ShadowDepth="Depth0">
+                                Command="{x:Static local:ButtonCommands.WorkspaceSettings}"
+                                Margin="0"
+                                Height="30"
+                                Width="30"
+                                Padding="0"
+                                ToolTip="Active Workspace Settings"
+                                Background="#FFFAFAFA"
+                                BorderBrush="#FFFAFAFA"
+                                Foreground="#FF3E3E3E"
+                                materialDesign:ShadowAssist.ShadowDepth="Depth0">
                             <materialDesign:PackIcon Kind="Settings"
                                                      HorizontalContentAlignment="Stretch" 
                                                      VerticalContentAlignment="Stretch"
@@ -243,16 +247,16 @@
                         </Button>
                        
                     </StackPanel>
-                        <dragablz:TabablzControl x:Name="workspaces"
+                    <dragablz:TabablzControl x:Name="workspaces"
                                                  ConsolidateOrphanedItems="True"
                                                  Grid.Row="1"
                                                  >
-                            <dragablz:TabablzControl.InterTabController>
-                                <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" />
-                            </dragablz:TabablzControl.InterTabController>
-                        </dragablz:TabablzControl>
+                        <dragablz:TabablzControl.InterTabController>
+                            <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" />
+                        </dragablz:TabablzControl.InterTabController>
+                    </dragablz:TabablzControl>
                 </Grid>
-            </materialDesign:DialogHost>
+            </materialDesign:DialogHost>-->
             <materialDesign:ColorZone x:Name="chartsColorZone"
                                       Grid.Row="2"
                                       Grid.RowSpan="2"

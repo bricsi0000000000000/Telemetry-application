@@ -77,17 +77,17 @@ namespace ART_TELEMETRY_APP
         {
             NumberFormatInfo number_format_info = new CultureInfo("hu-HU", false).NumberFormat;
 
-            List<Data.SingleData> new_datas = new List<Data.SingleData>();
+            List<InputFile.Data> new_datas = new List<InputFile.Data>();
 
             StreamReader read_file = new StreamReader(file_name, Encoding.Default);
 
             string[] attributes = read_file.ReadLine().Split(';');
             foreach (string attribute in attributes)
             {
-                Data.SingleData single_data = new Data.SingleData();
+                InputFile.Data single_data = new InputFile.Data();
                 single_data.Name = attribute;
                 single_data.Datas = new ChartValues<double>();
-                single_data.Option = new Data.LineSerieOptions
+                single_data.Option = new InputFile.LineSerieOptions
                 {
                     line_smoothness = false,
                     stroke_thickness = .7f,
@@ -119,7 +119,7 @@ namespace ART_TELEMETRY_APP
 
             read_file.Close();
 
-            Datas.Instance.AddInputData(new Data(file_name.Split('\\').Last(), new_datas));
+            Datas.Instance.AddInputData(new InputFile(file_name.Split('\\').Last(), new_datas));
         }
 
         private void workerProgressChanged(object sender, ProgressChangedEventArgs e)

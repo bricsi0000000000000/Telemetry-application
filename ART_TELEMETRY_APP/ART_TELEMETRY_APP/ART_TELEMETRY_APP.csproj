@@ -72,7 +72,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Diagrams_UI.xaml.cs">
+      <DependentUpon>Diagrams_UI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LapReport_UI.xaml.cs">
+      <DependentUpon>LapReport_UI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Map_UI.xaml.cs">
+      <DependentUpon>Map_UI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pilots\Pilot.cs" />
+    <Compile Include="Pilots\PilotManager.cs" />
+    <Compile Include="Pilots\PilotsSettings_UI.xaml.cs">
+      <DependentUpon>PilotsSettings_UI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pilots\PilotTab_UI.xaml.cs">
+      <DependentUpon>PilotTab_UI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tab.cs" />
+    <Compile Include="TabBlzWindow.xaml.cs">
+      <DependentUpon>TabBlzWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TabBuilder.cs" />
     <Compile Include="TabManager.cs" />
     <Compile Include="WorkspaceNewItem.cs" />
@@ -83,11 +103,15 @@
     <Compile Include="MapBuilder.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MyInterTabClient.cs" />
-    <Compile Include="MyWindow.xaml.cs">
-      <DependentUpon>MyWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SwitchForms.cs" />
-    <Compile Include="Workspace.cs" />
+    <Page Include="Diagrams_UI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LapReport_UI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -104,12 +128,24 @@
     <Compile Include="Group.cs" />
     <Compile Include="GroupBuilder.cs" />
     <Compile Include="Groups.cs" />
-    <Compile Include="Data.cs" />
+    <Compile Include="InputFile.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MyWindow.xaml">
+    <Page Include="Map_UI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pilots\PilotsSettings_UI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pilots\PilotTab_UI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TabBlzWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

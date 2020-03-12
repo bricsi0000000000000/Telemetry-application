@@ -12,7 +12,7 @@ namespace ART_TELEMETRY_APP
     {
         public INewTabHost<Window> GetNewHost(IInterTabClient interTabClient, object partition, TabablzControl source)
         {
-            var view = new MyWindow();
+            var view = new TabBlzWindow();
 
             return new NewTabHost<Window>(view, view.TabsContainer);
         }

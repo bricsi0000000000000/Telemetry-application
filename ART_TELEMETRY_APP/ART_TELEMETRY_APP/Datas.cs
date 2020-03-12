@@ -10,7 +10,7 @@ namespace ART_TELEMETRY_APP
 {
     class Datas
     {
-        List<Data> datas = new List<Data>();
+        List<InputFile> datas = new List<InputFile>();
         string active_file_name;
 
         #region instance
@@ -30,13 +30,13 @@ namespace ART_TELEMETRY_APP
         }
         #endregion
 
-        public void AddInputData(Data input_data)
+        public void AddInputData(InputFile input_data)
         {
             input_data.InitDistances();
             datas.Add(input_data);
         }
 
-        public Data GetData(string file_name = "")
+        public InputFile GetData(string file_name = "")
         {
             if (file_name.Equals(""))
             {

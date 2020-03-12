@@ -21,6 +21,7 @@ using System.Collections;
 using System.IO;
 using MaterialDesignThemes.Wpf;
 using Dragablz;
+using ART_TELEMETRY_APP.Pilots;
 
 namespace ART_TELEMETRY_APP
 {
@@ -33,10 +34,12 @@ namespace ART_TELEMETRY_APP
 
             this.DataContext = new MainWindowViewModell();
 
+            TabManager.InitTabs(tabs_tabablzcontrol);
+
             // groupsColorZone.Visibility = Visibility.Hidden;
             //chartsColorZone.Visibility = Visibility.Visible;
 
-            BrushConverter brush_converter = new BrushConverter();
+            //BrushConverter brush_converter = new BrushConverter();
             // swicthFormToChartsBtn.Background = (Brush)brush_converter.ConvertFrom("#FFFAFAFA");
             //swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#e53935");
 
@@ -356,17 +359,11 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        private void addNewWorkspaceDialog(object sender, DialogClosingEventArgs eventArgs)
+        private void showPilotsExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            TabManager.Instance.AddTab(new Workspace(addWorkspaceNameTxtbox.Text));
-            TabBuilder.Instance.Build(TabManager.Instance.GetTab(addWorkspaceNameTxtbox.Text).TabItem, workspaces);
-            TabManager.Instance.ActiveWorkspace = addWorkspaceNameTxtbox.Text;
-            addWorkspaceNameTxtbox.Text = "";
-        }
-
-        private void workspaceSettingsExecuted(object sender, ExecutedRoutedEventArgs e)
-        {
-            TabManager.Instance.ActiveWorkspace = ((TabItem)workspaces.SelectedItem).Name.Replace("_tab_item", "");
+            PilotsSettings pilots_settings = new PilotsSettings();
+            pilots_settings.Show();
+            /*TabManager.Instance.ActiveWorkspace = ((TabItem)workspaces.SelectedItem).Name.Replace("_tab_item", "");
             try
             {
                 TabBuilder.Instance.Build((TabManager.Instance.GetTab() as Workspace).SettingsTab.TabItem, workspaces);
@@ -374,7 +371,12 @@ namespace ART_TELEMETRY_APP
             }
             catch (Exception)
             {
-            }
+            }*/
+        }
+
+        private void settingsExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+
         }
     }
 }
