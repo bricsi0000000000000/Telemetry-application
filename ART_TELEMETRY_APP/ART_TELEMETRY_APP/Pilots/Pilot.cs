@@ -9,7 +9,7 @@ namespace ART_TELEMETRY_APP.Pilots
     public class Pilot
     {
         string name;
-        InputFile input_file;
+        List<InputFile> input_files = new List<InputFile>();
 
         public string Name
         {
@@ -19,21 +19,27 @@ namespace ART_TELEMETRY_APP.Pilots
             }
         }
 
-        public InputFile Inputfile
+        public void AddInputFile(InputFile file)
         {
-            get
-            {
-                return input_file;
-            }
-            set
-            {
-                input_file = value;
-            }
+            input_files.Add(file);
+        }
+
+        public InputFile GetInputFile(string file_name)
+        {
+            return input_files.Find(name => name.FileName == file_name);
         }
 
         public Pilot(string name)
         {
             this.name = name;
+        }
+
+        public List<InputFile> InputFiles
+        {
+            get
+            {
+                return input_files;
+            }
         }
     }
 }

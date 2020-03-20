@@ -1,4 +1,5 @@
-﻿using MaterialDesignThemes.Wpf;
+﻿using ART_TELEMETRY_APP.Settings;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -56,12 +57,12 @@ namespace ART_TELEMETRY_APP
 
         private void calculateLaps(object sender, DoWorkEventArgs e)
         {
-            for (int i = 0; i < Groups.Instance.GroupsCount; i++)
+            for (int i = 0; i < GroupManager.GroupsCount; i++)
             {
-                foreach (string attribute in Groups.Instance.GetGroups[i].Attributes)
+               /* foreach (SelectedChannelSettings_UC attribute in GroupManager.Groups[i].SelectedChannelSettingsUCs)
                 {
-                    Datas.Instance.GetData().MakeDatasInLaps(attribute);
-                }
+                    DataManager.GetData().MakeDatasInLaps(attribute.Attribute);
+                }*/
             }
         }
 
@@ -75,7 +76,7 @@ namespace ART_TELEMETRY_APP
             diagram_calculate_laps.Visibility = Visibility.Hidden;
 
             ChartBuilder.Instance.Build(charts_grid, diagram_nothing);
-            act_lap_lbl.Content = string.Format("{0}/{1}", 1, Datas.Instance.GetData().Laps.Count);
+            act_lap_lbl.Content = string.Format("{0}/{1}", 1, DataManager.GetData().Laps.Count);
         }
     }
 }

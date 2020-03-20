@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace ART_TELEMETRY_APP
 {
@@ -21,6 +22,14 @@ namespace ART_TELEMETRY_APP
             set
             {
                 active_tab = value;
+            }
+        }
+
+        public static List<Tab> Tabs
+        {
+            get
+            {
+                return tabs;
             }
         }
 

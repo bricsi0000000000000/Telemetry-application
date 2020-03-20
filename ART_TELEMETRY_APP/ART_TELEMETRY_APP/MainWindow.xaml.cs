@@ -22,11 +22,13 @@ using System.IO;
 using MaterialDesignThemes.Wpf;
 using Dragablz;
 using ART_TELEMETRY_APP.Pilots;
+using ART_TELEMETRY_APP.Settings;
 
 namespace ART_TELEMETRY_APP
 {
     public partial class MainWindow : Window
     {
+        PilotsSettings_Window pilots_settings;
 
         public MainWindow()
         {
@@ -85,36 +87,36 @@ namespace ART_TELEMETRY_APP
         {
             string name = getNameFromSender(e.Source);
             var item = ((TreeViewItem)sender).Parent;
-            Groups.Instance.ActiveGroup = ((TreeViewItem)item).Header.ToString();
-            Groups.Instance.ActiveGroupTreeViewItem = (TreeViewItem)item;
+            GroupManager.ActiveGroup = ((TreeViewItem)item).Header.ToString();
+            //GroupManager.ActiveGroupTreeViewItem = (TreeViewItem)item;
 
-            activeGroupNameLbl.Content = string.Format("{0}", Groups.Instance.ActiveGroup);
+            activeGroupNameLbl.Content = string.Format("{0}", GroupManager.ActiveGroup);
             updateGroupOptionsZoomingOption();
 
             channel_options_nothing.Visibility = Visibility.Hidden;
 
             selected_channel_lbl.Content = string.Format("{0}", name);
-            line_smoothness_toogle_button.IsChecked = Datas.Instance.GetData().GetSingleData(name).Option.line_smoothness;
-            stroke_thickness_txtbox.Text = Datas.Instance.GetData().GetSingleData(name).Option.stroke_thickness.ToString();
+            line_smoothness_toogle_button.IsChecked = DataManager.GetData().GetSingleData(name).Option.line_smoothness;
+            stroke_thickness_txtbox.Text = DataManager.GetData().GetSingleData(name).Option.stroke_thickness.ToString();
 
 
-            Trace.WriteLine(Datas.Instance.GetData().GetSingleData(name).Option.stroke_color);
+            Trace.WriteLine(DataManager.GetData().GetSingleData(name).Option.stroke_color);
 
-            stroke_color_colorpicker.Color = ((SolidColorBrush)Datas.Instance.GetData().GetSingleData(name).Option.stroke_color).Color;
+            stroke_color_colorpicker.Color = ((SolidColorBrush)DataManager.GetData().GetSingleData(name).Option.stroke_color).Color;
             Trace.WriteLine(stroke_color_colorpicker.Color);
         }
 
         private void updateChannelCmbboxItems(string name)
         {
             active_channel_items_listbox.Items.Clear();
-            foreach (var attribute in Datas.Instance.GetData(name).Datas)
+            foreach (var attribute in DataManager.GetData(name).Datas)
             {
                 ListBoxItem item = new ListBoxItem();
                 item.Content = attribute.Name;
                 item.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(channelListBoxItemClick);
                 active_channel_items_listbox.Items.Add(item);
             }
-            Datas.Instance.ActiveFileName = name;
+            DataManager.ActiveFileName = name;
         }
         private void updateFilesCmbBox(string file_name)
         {
@@ -129,8 +131,8 @@ namespace ART_TELEMETRY_APP
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
-                Groups.Instance.AddAttributeToGroup(sender.ToString().Split(':').Last().Trim());
-                Groups.Instance.ActiveGroupTreeViewItem.Items.Clear();
+                GroupManager.AddAttributeToGroup(sender.ToString().Split(':').Last().Trim());
+                //GroupManager.ActiveGroupTreeViewItem.Items.Clear();
 
                 updateGroupItems();
             }
@@ -138,18 +140,18 @@ namespace ART_TELEMETRY_APP
 
         private void updateGroupItems(string name = "")
         {
-            foreach (string attribute in Groups.Instance.GetGroupAttributes(name))
+            foreach (SelectedChannelSettings_UC attribute in GroupManager.GetGroupAttributes(name))
             {
                 TreeViewItem item = new TreeViewItem();
-                item.Header = attribute;
-                Groups.Instance.ActiveGroupTreeViewItem.Items.Add(item);
+                item.Header = attribute.Attribute;
+               // GroupManager.ActiveGroupTreeViewItem.Items.Add(item);
                 item.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(activeChannelItemClick);
             }
         }
 
         private void groupsTreeViewItemClick(object sender, MouseButtonEventArgs e)
         {
-            if (Groups.Instance.GetGroups.Find(name => name.Name == getNameFromSender(e.Source)) != null)
+            if (GroupManager.Groups.Find(name => name.Name == getNameFromSender(e.Source)) != null)
             {
                 updateGroupsTreeViewItem((TreeViewItem)sender, getNameFromSender(e.Source));
                 channel_options_nothing.Visibility = Visibility.Visible;
@@ -158,9 +160,9 @@ namespace ART_TELEMETRY_APP
 
         private void updateGroupsTreeViewItem(TreeViewItem item, string name)
         {
-            Groups.Instance.ActiveGroupTreeViewItem = item;
-            Groups.Instance.ActiveGroup = name;
-            activeGroupNameLbl.Content = string.Format("{0}", Groups.Instance.ActiveGroup);
+            //GroupManager.ActiveGroupTreeViewItem = item;
+            GroupManager.ActiveGroup = name;
+            activeGroupNameLbl.Content = string.Format("{0}", GroupManager.ActiveGroup);
             updateGroupOptionsZoomingOption();
 
             group_options_nothing.Visibility = Visibility.Hidden;
@@ -168,9 +170,9 @@ namespace ART_TELEMETRY_APP
 
         private void updateGroupOptionsZoomingOption()
         {
-            zoomingOptionsX.IsChecked = Groups.Instance.GetGroup().Zooming == ZoomingOptions.X;
-            zoomingOptionsY.IsChecked = Groups.Instance.GetGroup().Zooming == ZoomingOptions.Y;
-            zoomingOptionsXY.IsChecked = Groups.Instance.GetGroup().Zooming == ZoomingOptions.Xy;
+            zoomingOptionsX.IsChecked = GroupManager.GetGroup().Zooming == ZoomingOptions.X;
+            zoomingOptionsY.IsChecked = GroupManager.GetGroup().Zooming == ZoomingOptions.Y;
+            zoomingOptionsXY.IsChecked = GroupManager.GetGroup().Zooming == ZoomingOptions.Xy;
         }
 
         private string getNameFromSender(object sender)
@@ -193,12 +195,12 @@ namespace ART_TELEMETRY_APP
                 groups_tree_view.Items.Clear();
                 GroupBuilder group_builder = new GroupBuilder(add_group_txtbox.Text);
 
-                foreach (string name in Groups.Instance.GetGroupsNames)
+                foreach (string name in GroupManager.GetGroupsNames)
                 {
                     TreeViewItem item = new TreeViewItem();
                     item.Header = name;
                     item.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(groupsTreeViewItemClick);
-                    Groups.Instance.ActiveGroupTreeViewItem = item;
+                   // GroupManager.ActiveGroupTreeViewItem = item;
 
                     try
                     {
@@ -249,21 +251,21 @@ namespace ART_TELEMETRY_APP
         {
             if (getNameFromSender(sender).Equals("X"))
             {
-                Groups.Instance.GetGroup().Zooming = ZoomingOptions.X;
+                GroupManager.GetGroup().Zooming = ZoomingOptions.X;
             }
             else if (getNameFromSender(sender).Equals("Y"))
             {
-                Groups.Instance.GetGroup().Zooming = ZoomingOptions.Y;
+                GroupManager.GetGroup().Zooming = ZoomingOptions.Y;
             }
             else if (getNameFromSender(sender).Equals("XY"))
             {
-                Groups.Instance.GetGroup().Zooming = ZoomingOptions.Xy;
+                GroupManager.GetGroup().Zooming = ZoomingOptions.Xy;
             }
         }
 
         private void importFileExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            importFileProgressBar.Value = 0;
+            /*importFileProgressBar.Value = 0;
             loading_file_lbl.Content = string.Empty;
 
             OpenFileDialog open_file_dialog = new OpenFileDialog();
@@ -291,17 +293,17 @@ namespace ART_TELEMETRY_APP
             if (!open_file_dialog.FileName.Equals(string.Empty))
             {
                 updateFilesCmbBox(open_file_dialog.FileName);
-            }
+            }*/
         }
 
         private void lineSmoothnessToggleButtonClick(object sender, RoutedEventArgs e)
         {
-            Datas.Instance.GetData().GetSingleData(selected_channel_lbl.Content.ToString()).Option.line_smoothness = (bool)line_smoothness_toogle_button.IsChecked;
+            DataManager.GetData().GetSingleData(selected_channel_lbl.Content.ToString()).Option.line_smoothness = (bool)line_smoothness_toogle_button.IsChecked;
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Groups.Instance.GetGroup().CalculateMultiplier();
+            GroupManager.GetGroup().CalculateMultiplier();
             LapBuilder.Instance.Build(diagram_nothing,
                                       diagram_calculate_laps,
                                       charts_grid,
@@ -311,33 +313,33 @@ namespace ART_TELEMETRY_APP
 
         private void stroke_thickness_txtbox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            Datas.Instance.GetData().GetSingleData(selected_channel_lbl.Content.ToString()).Option.stroke_thickness = float.Parse(stroke_thickness_txtbox.Text);
+            DataManager.GetData().GetSingleData(selected_channel_lbl.Content.ToString()).Option.stroke_thickness = float.Parse(stroke_thickness_txtbox.Text);
         }
 
         private void stroke_color_colorpicker_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            Datas.Instance.GetData().GetSingleData(selected_channel_lbl.Content.ToString()).Option.stroke_color = new SolidColorBrush(stroke_color_colorpicker.Color);
+            DataManager.GetData().GetSingleData(selected_channel_lbl.Content.ToString()).Option.stroke_color = new SolidColorBrush(stroke_color_colorpicker.Color);
         }
 
         private void prev_lab_btn_Click(object sender, RoutedEventArgs e)
         {
-            if (Datas.Instance.GetData().ActLap - 1 >= 0)
+            if (DataManager.GetData().ActLap - 1 >= 0)
             {
-                Datas.Instance.GetData().ActLap--;
+                DataManager.GetData().ActLap--;
                 ChartBuilder.Instance.Build(charts_grid, diagram_nothing);
-                act_lap_lbl.Content = string.Format("{0}/{1}", Datas.Instance.GetData().ActLap, Datas.Instance.GetData().Laps.Count);
-                map_svg.Data = Geometry.Parse(MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1].Item1);
+                act_lap_lbl.Content = string.Format("{0}/{1}", DataManager.GetData().ActLap, DataManager.GetData().Laps.Count);
+                map_svg.Data = Geometry.Parse(MapBuilder.Instance.GetMap().SvgPathes[DataManager.GetData().ActLap - 1].Item1);
             }
         }
 
         private void next_lap_btn_Click(object sender, RoutedEventArgs e)
         {
-            if (Datas.Instance.GetData().ActLap + 1 <= Datas.Instance.GetData().Laps.Count)
+            if (DataManager.GetData().ActLap + 1 <= DataManager.GetData().Laps.Count)
             {
-                Datas.Instance.GetData().ActLap++;
+                DataManager.GetData().ActLap++;
                 ChartBuilder.Instance.Build(charts_grid, diagram_nothing);
-                act_lap_lbl.Content = string.Format("{0}/{1}", Datas.Instance.GetData().ActLap, Datas.Instance.GetData().Laps.Count);
-                map_svg.Data = Geometry.Parse(MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1].Item1);
+                act_lap_lbl.Content = string.Format("{0}/{1}", DataManager.GetData().ActLap, DataManager.GetData().Laps.Count);
+                map_svg.Data = Geometry.Parse(MapBuilder.Instance.GetMap().SvgPathes[DataManager.GetData().ActLap - 1].Item1);
             }
         }
 
@@ -348,9 +350,9 @@ namespace ART_TELEMETRY_APP
                 Point position = Mouse.GetPosition(chartsColorZone);
                 try
                 {
-                    Canvas.SetLeft(act_position_circle, MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1].Item2[Convert.ToInt32((position.X * (MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1].Item2.Count)) / chartsColorZone.ActualWidth)].Item1);
-                    Canvas.SetTop(act_position_circle, MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1].Item2[Convert.ToInt32((position.X * (MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1].Item2.Count)) / chartsColorZone.ActualWidth)].Item2);
-                    Console.WriteLine(MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1].Item2[Convert.ToInt32((position.X * (MapBuilder.Instance.GetMap().SvgPathes[Datas.Instance.GetData().ActLap - 1].Item2.Count)) / chartsColorZone.ActualWidth)].ToString());
+                    Canvas.SetLeft(act_position_circle, MapBuilder.Instance.GetMap().SvgPathes[DataManager.GetData().ActLap - 1].Item2[Convert.ToInt32((position.X * (MapBuilder.Instance.GetMap().SvgPathes[DataManager.GetData().ActLap - 1].Item2.Count)) / chartsColorZone.ActualWidth)].Item1);
+                    Canvas.SetTop(act_position_circle, MapBuilder.Instance.GetMap().SvgPathes[DataManager.GetData().ActLap - 1].Item2[Convert.ToInt32((position.X * (MapBuilder.Instance.GetMap().SvgPathes[DataManager.GetData().ActLap - 1].Item2.Count)) / chartsColorZone.ActualWidth)].Item2);
+                    Console.WriteLine(MapBuilder.Instance.GetMap().SvgPathes[DataManager.GetData().ActLap - 1].Item2[Convert.ToInt32((position.X * (MapBuilder.Instance.GetMap().SvgPathes[DataManager.GetData().ActLap - 1].Item2.Count)) / chartsColorZone.ActualWidth)].ToString());
                 }
                 catch (Exception)
                 {
@@ -361,22 +363,23 @@ namespace ART_TELEMETRY_APP
 
         private void showPilotsExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            PilotsSettings pilots_settings = new PilotsSettings();
-            pilots_settings.Show();
-            /*TabManager.Instance.ActiveWorkspace = ((TabItem)workspaces.SelectedItem).Name.Replace("_tab_item", "");
-            try
+            if (!PilotManager.SettingsIsOpen)
             {
-                TabBuilder.Instance.Build((TabManager.Instance.GetTab() as Workspace).SettingsTab.TabItem, workspaces);
-                TabManager.Instance.AddTab((TabManager.Instance.GetTab() as Workspace).SettingsTab);
+                PilotManager.SettingsIsOpen = true;
+                pilots_settings = new PilotsSettings_Window();
+                pilots_settings.Topmost = true;
+                pilots_settings.Show();
             }
-            catch (Exception)
+            else
             {
-            }*/
+                pilots_settings.Activate();
+            }
         }
 
         private void settingsExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-
+            Settings_Window settings_window = new Settings_Window();
+            settings_window.Show();
         }
     }
 }

@@ -79,12 +79,12 @@
                           Height="30"
                           />
             </Menu>
-                <dragablz:TabablzControl x:Name="tabs_tabablzcontrol"
+            <dragablz:TabablzControl x:Name="tabs_tabablzcontrol"
                                          Grid.Row="1">
-                    <dragablz:TabablzControl.InterTabController>
-                        <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" />
-                    </dragablz:TabablzControl.InterTabController>
-                </dragablz:TabablzControl>
+                <dragablz:TabablzControl.InterTabController>
+                    <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" />
+                </dragablz:TabablzControl.InterTabController>
+            </dragablz:TabablzControl>
             <!--<StackPanel Grid.Column="0"
                         Grid.Row="1" 
                         Grid.RowSpan="2"

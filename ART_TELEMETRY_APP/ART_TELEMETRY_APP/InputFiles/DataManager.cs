@@ -8,35 +8,18 @@ using System.Threading.Tasks;
 
 namespace ART_TELEMETRY_APP
 {
-    class Datas
+    static class DataManager
     {
-        List<InputFile> datas = new List<InputFile>();
-        string active_file_name;
+        static List<InputFile> datas = new List<InputFile>();
+        static string active_file_name;
 
-        #region instance
-        private static Datas instance = null;
-        private Datas() { }
-
-        public static Datas Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new Datas();
-                }
-                return instance;
-            }
-        }
-        #endregion
-
-        public void AddInputData(InputFile input_data)
+        public static void AddInputData(InputFile input_data)
         {
             input_data.InitDistances();
             datas.Add(input_data);
         }
 
-        public InputFile GetData(string file_name = "")
+        public static InputFile GetData(string file_name = "")
         {
             if (file_name.Equals(""))
             {
@@ -48,7 +31,7 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        public string ActiveFileName
+        public static string ActiveFileName
         {
             get
             {
@@ -60,7 +43,7 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        public int DatasCount
+        public static int DatasCount
         {
             get
             {

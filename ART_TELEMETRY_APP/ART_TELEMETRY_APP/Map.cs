@@ -63,11 +63,11 @@ namespace ART_TELEMETRY_APP
 
         private void calculateLaps(object sender, DoWorkEventArgs e)
         {
-            Datas.Instance.GetData().Laps.Clear();
+            DataManager.GetData().Laps.Clear();
 
             double latitude_min = double.MaxValue;
             double longitude_min = double.MaxValue;
-            foreach (var item in Datas.Instance.GetData().Latitude)
+            foreach (var item in DataManager.GetData().Latitude)
             {
                 if (item != 0 && !double.IsNaN(item))
                 {
@@ -77,7 +77,7 @@ namespace ART_TELEMETRY_APP
                     }
                 }
             }
-            foreach (var item in Datas.Instance.GetData().Longitude)
+            foreach (var item in DataManager.GetData().Longitude)
             {
                 if (item != 0 && !double.IsNaN(item))
                 {
@@ -93,8 +93,8 @@ namespace ART_TELEMETRY_APP
             List<Tuple<int, double>> latitude = new List<Tuple<int, double>>();
             List<Tuple<int, double>> longitude = new List<Tuple<int, double>>();
 
-            List<double> raw_latitude = Datas.Instance.GetData().Latitude;
-            List<double> raw_longitude = Datas.Instance.GetData().Longitude;
+            List<double> raw_latitude = DataManager.GetData().Latitude;
+            List<double> raw_longitude = DataManager.GetData().Longitude;
 
             for (int i = 0; i < raw_latitude.Count; i++)
             {
@@ -114,8 +114,8 @@ namespace ART_TELEMETRY_APP
                 }
             }
 
-            int after = 500;
-            int radius = 40;
+            short after = 500;
+            short radius = 40;
 
             List<Tuple<double, double>> act_lap = new List<Tuple<double, double>>();
 
@@ -146,7 +146,7 @@ namespace ART_TELEMETRY_APP
                         List<Tuple<double, double>> add = new List<Tuple<double, double>>(act_lap);
 
                         int lap_end_index = latitude[i].Item1;
-                        Datas.Instance.GetData().Laps.Add(new Tuple<List<Tuple<double, double>>, int, int>(add, lap_start_index, lap_end_index));
+                        DataManager.GetData().Laps.Add(new Tuple<List<Tuple<double, double>>, int, int>(add, lap_start_index, lap_end_index));
                         lap_start_index = latitude[i].Item1;
                         act_lap.Clear();
                     }
@@ -161,22 +161,22 @@ namespace ART_TELEMETRY_APP
 
         private void workerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            for (int lap = 0; lap < Datas.Instance.GetData().Laps.Count; lap++)
+            for (int lap = 0; lap < DataManager.GetData().Laps.Count; lap++)
             {
                 List<Tuple<double, double>> act_lap_coordinates = new List<Tuple<double, double>>();
                 string act_svg_path = string.Format("M{0} {1}",
-                                      Datas.Instance.GetData().Laps[lap].Item1[0].Item1,
-                                      Datas.Instance.GetData().Laps[lap].Item1[0].Item2);
-                act_lap_coordinates.Add(new Tuple<double, double>(Datas.Instance.GetData().Laps[lap].Item1[0].Item1,
-                                                                  Datas.Instance.GetData().Laps[lap].Item1[0].Item2));
+                                      DataManager.GetData().Laps[lap].Item1[0].Item1,
+                                      DataManager.GetData().Laps[lap].Item1[0].Item2);
+                act_lap_coordinates.Add(new Tuple<double, double>(DataManager.GetData().Laps[lap].Item1[0].Item1,
+                                                                  DataManager.GetData().Laps[lap].Item1[0].Item2));
 
-                for (int i = 0; i < Datas.Instance.GetData().Laps[lap].Item1.Count; i++)
+                for (int i = 0; i < DataManager.GetData().Laps[lap].Item1.Count; i++)
                 {
                     act_svg_path += string.Format(" L{0} {1}",
-                                    Datas.Instance.GetData().Laps[lap].Item1[i].Item1,
-                                    Datas.Instance.GetData().Laps[lap].Item1[i].Item2);
-                    act_lap_coordinates.Add(new Tuple<double, double>(Datas.Instance.GetData().Laps[lap].Item1[i].Item1,
-                                                                      Datas.Instance.GetData().Laps[lap].Item1[i].Item2));
+                                    DataManager.GetData().Laps[lap].Item1[i].Item1,
+                                    DataManager.GetData().Laps[lap].Item1[i].Item2);
+                    act_lap_coordinates.Add(new Tuple<double, double>(DataManager.GetData().Laps[lap].Item1[i].Item1,
+                                                                      DataManager.GetData().Laps[lap].Item1[i].Item2));
                 }
 
                 svg_pathes.Add(new Tuple<string, List<Tuple<double, double>>>(act_svg_path, act_lap_coordinates));

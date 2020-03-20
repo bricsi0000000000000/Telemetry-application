@@ -1,4 +1,5 @@
-﻿using LiveCharts;
+﻿using ART_TELEMETRY_APP.InputFiles;
+using LiveCharts;
 using LiveCharts.Defaults;
 using System;
 using System.Collections.Generic;
@@ -19,19 +20,10 @@ namespace ART_TELEMETRY_APP
         ChartValues<double> distances;
         public List<Tuple<List<Tuple<double, double>>, int, int>> laps = new List<Tuple<List<Tuple<double, double>>, int, int>>();
 
-        public class Data
+        public InputFile(string input_data_name, List<Data> datas)
         {
-            public string Name;
-            public ChartValues<double> Datas;
-            public LineSerieOptions Option;
-            public List<ChartValues<ObservablePoint>> DatasInLaps = new List<ChartValues<ObservablePoint>>();
-        }
-
-        public class LineSerieOptions
-        {
-            public bool line_smoothness;
-            public float stroke_thickness;
-            public Brush stroke_color;
+            this.file_name = input_data_name;
+            this.datas = datas;
         }
 
         public void InitDistances()
@@ -101,12 +93,6 @@ namespace ART_TELEMETRY_APP
         public Data GetSingleData(string name)
         {
             return datas.Find(n => n.Name == name);
-        }
-
-        public InputFile(string input_data_name, List<Data> datas)
-        {
-            this.file_name = input_data_name;
-            this.datas = datas;
         }
 
         public string FileName

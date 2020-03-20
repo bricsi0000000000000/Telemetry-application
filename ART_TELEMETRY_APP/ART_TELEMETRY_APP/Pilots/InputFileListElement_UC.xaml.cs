@@ -16,18 +16,15 @@ using System.Windows.Shapes;
 namespace ART_TELEMETRY_APP.Pilots
 {
     /// <summary>
-    /// Interaction logic for PilotTab.xaml
+    /// Interaction logic for InputFileListElement_UI.xaml
     /// </summary>
-    public partial class PilotTab : UserControl
+    public partial class InputFileListElement_UC : UserControl
     {
-        public PilotTab()
+        public InputFileListElement_UC(string file_name)
         {
             InitializeComponent();
-        }
 
-        private void addFileClick(object sender, RoutedEventArgs e)
-        {
-
+            file_name_lbl.Content = file_name;
         }
     }
 }

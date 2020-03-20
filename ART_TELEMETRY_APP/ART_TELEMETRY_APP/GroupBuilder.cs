@@ -14,7 +14,7 @@ namespace ART_TELEMETRY_APP
     {
         public GroupBuilder(string group_name)
         {
-            Groups.Instance.AddGroup(group_name);
+            //GroupManager.AddGroup(group_name);
             Charts.Instance.AddChart(new Chart(group_name));
         }
     }

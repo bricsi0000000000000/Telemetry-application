@@ -1,4 +1,5 @@
-﻿using LiveCharts;
+﻿using ART_TELEMETRY_APP.Settings;
+using LiveCharts;
 using LiveCharts.Defaults;
 using LiveCharts.Events;
 using LiveCharts.Wpf;
@@ -39,11 +40,11 @@ namespace ART_TELEMETRY_APP
             diagram_grid.RowDefinitions.Clear();
 
             int index = 0;
-            for (int i = 0; i < Groups.Instance.GroupsCount; i++)
+            for (int i = 0; i < GroupManager.GroupsCount; i++)
             {
                 CartesianChart chart = new CartesianChart();
                 chart.DataTooltip = null;
-                chart.Zoom = Groups.Instance.GetGroup().Zooming;
+                chart.Zoom = GroupManager.GetGroup().Zooming;
                 chart.DisableAnimations = true;
                 chart.Hoverable = false;
 
@@ -57,20 +58,20 @@ namespace ART_TELEMETRY_APP
                 RowDefinition row_down = new RowDefinition();
                 row_down.Height = new GridLength(5);
 
-                foreach (string attribute in Groups.Instance.GetGroups[i].Attributes)
+                /*foreach (SelectedChannelSettings_UC attribute in GroupManager.Groups[i].SelectedChannelSettingsUCs)
                 {
                     LineSeries serie = new LineSeries
                     {
-                        Title = Groups.Instance.GetGroups[i].Name,
-                        Values = Datas.Instance.GetData().GetSingleData(attribute).DatasInLaps[Datas.Instance.GetData().ActLap - 1],
-                        LineSmoothness = Datas.Instance.GetData().GetSingleData(attribute).Option.line_smoothness ? 1 : 0,
+                        Title = GroupManager.Groups[i].Name,
+                        Values = DataManager.GetData().GetSingleData(attribute).DatasInLaps[DataManager.GetData().ActLap - 1],
+                        LineSmoothness = DataManager.GetData().GetSingleData(attribute).Option.line_smoothness ? 1 : 0,
                         PointGeometry = null,
-                        StrokeThickness = Datas.Instance.GetData().GetSingleData(attribute).Option.stroke_thickness,
+                        StrokeThickness = DataManager.GetData().GetSingleData(attribute).Option.stroke_thickness,
                         Fill = Brushes.Transparent,
-                        Stroke = Datas.Instance.GetData().GetSingleData(attribute).Option.stroke_color
+                        Stroke = DataManager.GetData().GetSingleData(attribute).Option.stroke_color
                     };
                     chart.Series.Add(serie);
-                }
+                }*/
 
                 Grid.SetRow(chart, index++);
                 diagram_grid.Children.Add(chart);

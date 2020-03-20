@@ -19,5 +19,15 @@ namespace ART_TELEMETRY_APP.Pilots
         {
             return pilots.Find(n => n.Name == name);
         }
+
+        public static List<Pilot> Pilots
+        {
+            get
+            {
+                return pilots;
+            }
+        }
+
+        public static bool SettingsIsOpen = false;
     }
 }

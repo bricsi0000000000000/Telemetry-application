@@ -5,48 +5,33 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LiveCharts;
+using ART_TELEMETRY_APP.Pilots;
+using ART_TELEMETRY_APP.Settings;
 
 namespace ART_TELEMETRY_APP
 {
-    class Group
+    public class Group
     {
         string name;
-        List<string> attributes = new List<string>();
-        // CartesianChart chart;
-       // bool chart_disable_animations;
-       // bool chart_hoverable;
+        List<Pilot> pilots = new List<Pilot>();
+        List<string> selected_channels = new List<string>();
         ZoomingOptions zoom;
+        
+        //TODO chartsettings class
 
         public Group(string name)
         {
             this.name = name;
-         //   chart_disable_animations = true;
-          //  chart_hoverable = false;
-
-            //  chart = new CartesianChart();
-
-            //chart.DataTooltip = null;
-            //chart.Name = name;
             zoom = ZoomingOptions.X;
-            //chart.Hoverable = chart_hoverable;
-            //chart.DisableAnimations = chart_disable_animations;
-
-            /*
-            Axis a = new Axis();
-            a.Title = name;
-            a.Position = AxisPosition.LeftBottom;
-
-            chart.AxisX.Add(a);
-           */
         }
 
         public void CalculateMultiplier()
         {
             double max = 0;
             string max_attribute = "";
-            foreach (string attribute in attributes)
+            foreach (string attribute in selected_channels)
             {
-                ChartValues<double> data = Datas.Instance.GetData().GetSingleData(attribute).Datas;
+                ChartValues<double> data = DataManager.GetData().GetSingleData(attribute).Datas;
                 double act_max = data.Max();
                 if(act_max > max)
                 {
@@ -55,11 +40,11 @@ namespace ART_TELEMETRY_APP
                 }
             }
 
-            foreach (string attribute in attributes)
+            foreach (string attribute in selected_channels)
             {
                 if (!attribute.Equals(max_attribute))
                 {
-                    ChartValues<double> data = Datas.Instance.GetData().GetSingleData(attribute).Datas;
+                    ChartValues<double> data = DataManager.GetData().GetSingleData(attribute).Datas;
                     double multiplier = max / data.Max();
 
                     for (int i = 0; i < data.Count; i++)
@@ -70,38 +55,41 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        public void AddAttribute(string attribute)
-        {
-            attributes.Add(attribute);
-        }
-
         public string Name
         {
             get
             {
                 return this.name;
             }
-        }
-
-        public List<string> Attributes
-        {
-            get
+            set
             {
-                return this.attributes;
+                name = value;
             }
         }
 
-        /*public CartesianChart Chart
+        public List<string> SelectedChannels
         {
             get
             {
-                return chart;
+                return this.selected_channels;
             }
             set
             {
-                chart = value;
+                selected_channels = value;
             }
-        }*/
+        }
+
+        public List<Pilot> Pilots
+        {
+            get
+            {
+                return this.pilots;
+            }
+            set
+            {
+                pilots = value;
+            }
+        }
 
         public ZoomingOptions Zooming
         {

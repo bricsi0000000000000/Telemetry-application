@@ -32,7 +32,7 @@ namespace ART_TELEMETRY_APP
         List<Map> maps = new List<Map>();
         public void Build(Path map_svg_path, ColorZone map_nothing = null)
         {
-            map_svg_path.Data = Geometry.Parse(GetMap().SvgPathes[Datas.Instance.GetData().ActLap++].Item1);
+            map_svg_path.Data = Geometry.Parse(GetMap().SvgPathes[DataManager.GetData().ActLap++].Item1);
 
             if (map_nothing != null)
             {
@@ -60,7 +60,7 @@ namespace ART_TELEMETRY_APP
         {
             if (name.Equals(""))
             {
-                return maps.Find(n => n.Name == Datas.Instance.ActiveFileName);
+                return maps.Find(n => n.Name == DataManager.ActiveFileName);
             }
             else
             {
