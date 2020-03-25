@@ -9,7 +9,6 @@ namespace ART_TELEMETRY_APP.InputFiles
 {
     public class LineSerieOptions
     {
-        public bool line_smoothness;
         public float stroke_thickness;
         public Brush stroke_color;
     }

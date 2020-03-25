@@ -33,16 +33,24 @@ namespace ART_TELEMETRY_APP.Settings
                 TabItem item = new TabItem();
                 item.Header = tab.TabItem.Header;
                 tabs_tabcontrol.Items.Add(item);
-
-                if (tab.DiagramsUI != null)
-                {
-                    item.Content = new DiagramsSettings_UC();
-                }
             }
 
-            TabItem new_tab_item = new TabItem();
-            new_tab_item.Header = "NewTab";
-            tabs_tabcontrol.Items.Add(new_tab_item);
+            TabItem custom_tab = new TabItem();
+            custom_tab.Header = "Custom";
+            tabs_tabcontrol.Items.Add(custom_tab);
+
+            DiagramsSettings_UC diagrams_settings_UC = new DiagramsSettings_UC();
+            SettingsManager.SettingsWindowContent_UC = diagrams_settings_UC;
+
+            custom_tab.Content = diagrams_settings_UC;
+            custom_tab.IsSelected = true;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            SettingsManager.SettingsIsOpen = false;
+
+            TabManager.MakeDiagrams();
         }
     }
 }

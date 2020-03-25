@@ -29,6 +29,11 @@ namespace ART_TELEMETRY_APP.Pilots
             return input_files.Find(name => name.FileName == file_name);
         }
 
+        public void RemoveInputFile(string file_name)
+        {
+            input_files.Remove(input_files.Find(name => name.FileName.Contains(file_name)));
+        }
+
         public Pilot(string name)
         {
             this.name = name;

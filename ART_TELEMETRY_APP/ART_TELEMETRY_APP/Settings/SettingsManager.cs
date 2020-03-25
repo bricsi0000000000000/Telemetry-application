@@ -9,17 +9,28 @@ namespace ART_TELEMETRY_APP.Settings
 {
     static class SettingsManager
     {
-        static List<GroupSettings_UC> group_settings_UCs = new List<GroupSettings_UC>();
+        public static List<string> SelectedChannels = new List<string>();
+        static List<GroupSettings_UC> groups_tabs_contents = new List<GroupSettings_UC>();
+        public static DiagramsSettings_UC SettingsWindowContent_UC;
+
         public static void AddGroupSettingsUC(GroupSettings_UC group_settings_UC)
         {
-            group_settings_UCs.Add(group_settings_UC);
+            groups_tabs_contents.Add(group_settings_UC);
         }
 
-        public static void UpdatePilotsTabs(Pilot active_pilot = null)
+        public static void UpdatePilotsInGroups()
         {
-            foreach (GroupSettings_UC group_settings_UC in group_settings_UCs)
+            foreach (GroupSettings_UC group_settings_UC in groups_tabs_contents)
             {
-               // group_settings_UC.InitPilotsTabs(active_pilot);
+                group_settings_UC.InitPilots();
+            }
+        }
+
+        public static void UpdateSelectedChannelsInGroups()
+        {
+            foreach (GroupSettings_UC group_settings_UC in groups_tabs_contents)
+            {
+                group_settings_UC.InitSelectedChannelsList();
             }
         }
 
@@ -30,15 +41,18 @@ namespace ART_TELEMETRY_APP.Settings
 
         public static GroupSettings_UC GetGroupSettingsUC(string name)
         {
-            return group_settings_UCs.Find(n => n.GroupName == name);
+            return groups_tabs_contents.Find(n => n.GroupName == name);
         }
 
         public static List<GroupSettings_UC> GroupSettingsUCs
         {
             get
             {
-                return group_settings_UCs;
+                return groups_tabs_contents;
             }
         }
+
+        public static bool SettingsIsOpen = false;
+
     }
 }

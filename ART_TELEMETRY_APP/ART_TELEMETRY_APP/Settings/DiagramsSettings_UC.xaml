@@ -13,21 +13,55 @@
              d:DesignHeight="500" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="1.5*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <materialDesign:Card Grid.Row="0"
-                             Grid.Column="0"
+        <materialDesign:Card Grid.Column="0"
+                             Grid.Row="0"
+                             Margin="5 5 2.5 5"
+                             >
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="55"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBox x:Name="addPilotTxtbox"
+                         Grid.Row="0"
+                         Grid.Column="0"
+                         Margin="8"
+                         HorizontalAlignment="Stretch"
+                         materialDesign:HintAssist.IsFloating="True"
+                         materialDesign:HintAssist.Hint="Pilot's Name"
+                         KeyDown="addPilotTxtbox_KeyDown"
+                        />
+                <dragablz:TabablzControl x:Name="pilots_tabs"
+                                         Grid.Row="1"
+                                         />
+                <materialDesign:ColorZone x:Name="pilots_nothing"
+                                          Grid.Row="1"
+                                          VerticalAlignment="Stretch"
+                                          VerticalContentAlignment="Center"
+                                          HorizontalContentAlignment="Center"
+                                          >
+                    <Label Content="Add a pilot"
+                           FontSize="20"
+                           Foreground="#DDD1D1D1"
+                           />
+                </materialDesign:ColorZone>
+                <materialDesign:Snackbar Grid.Row="1"
+                                         MessageQueue="{materialDesign:MessageQueue}"
+                                         x:Name="pilot_error_snack_bar" />
+            </Grid>
+        </materialDesign:Card>
+        <materialDesign:Card Grid.Column="1"
+                             Grid.Row="0"
                              Margin="5 5 2.5 5"
                              >
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="70"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="70"/>
-                    <RowDefinition Height="60"/>
                     <RowDefinition Height="55"/>
                 </Grid.RowDefinitions>
                 <TextBox x:Name="add_group_txtbox"
@@ -46,53 +80,15 @@
                                          SelectionChanged="groupsTabs_SelectionChanged"
                                          >
                 </dragablz:TabablzControl>
-                <TextBox x:Name="change_group_name_txtbox"
-                         Grid.Row="2"
-                         KeyDown="changeGroupNameTxtbox_KeyDown"
-                         HorizontalAlignment="Stretch"
-                         materialDesign:HintAssist.IsFloating="True"
-                         materialDesign:HintAssist.Hint="Change name"
-                         materialDesign:HintAssist.HelperText="Press Enter to change name"
-                         Margin="5 5 5 20"
-                         />
-                <StackPanel Orientation="Horizontal"
-                            Grid.Row="3"
-                            HorizontalAlignment="Left"
-                            Margin="10"
-                            >
-                    <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
-                                         IsChecked="True"
-                                         Content="X axis"
-                                         ToolTip="Zoom"
-                                         Click="zoomRadioBtn_Click"
-                                         Name="x_zoom_radiobtn"
-                                         GroupName="zooms"
-                                         />
-                    <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
-                                         IsChecked="False"
-                                         Content="Y axis"
-                                         ToolTip="Zoom"
-                                         Click="zoomRadioBtn_Click"
-                                         Name="y_zoom_radiobtn"
-                                         GroupName="zooms"
-                                         />
-                    <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
-                                         IsChecked="False"
-                                         Content="XY axes"
-                                         ToolTip="Zoom"
-                                         Click="zoomRadioBtn_Click"
-                                         Name="xy_zoom_radiobtn"
-                                         GroupName="zooms"
-                                         />
-                </StackPanel>
-                <Button Grid.Row="4"
+                
+                <Button Grid.Row="2"
                         Name="delete_group_btn"
                         Content="Delete Group"
                         Margin="5 5 5 10"
                         Click="deleteGroupClick"
                         IsEnabled="False"
                         />
-                
+
                 <materialDesign:ColorZone x:Name="groups_nothing"
                                           Grid.Row="1"
                                           Grid.RowSpan="4"
@@ -109,77 +105,6 @@
                 <materialDesign:Snackbar Grid.Row="1"
                                          MessageQueue="{materialDesign:MessageQueue}"
                                          x:Name="error_snack_bar" />
-            </Grid>
-        </materialDesign:Card>
-        <materialDesign:Card Grid.Row="0"
-                             Grid.Column="1"
-                             Margin="2.5 5 2.5 5">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="70"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <TextBox x:Name="filter_selected_channels_txtbox"
-                         Grid.Row="0"
-                         Margin="5 5 5 20"
-                         KeyUp="filterSelectedChannelsTxtbox_KeyUp"
-                         HorizontalAlignment="Stretch"
-                         materialDesign:HintAssist.HelperText="Press Enter to enter data"
-                         materialDesign:HintAssist.IsFloating="True"
-                         materialDesign:HintAssist.Hint="Filter Selected Channels"
-                         />
-                <ListBox Grid.Row="1"
-                         x:Name="selected_channels_listbox"
-                         />
-            </Grid>
-        </materialDesign:Card>
-        <materialDesign:Card Grid.Row="0"
-                             Grid.Column="2"
-                             Margin="2.5 5 5 5"
-                             >
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="70"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <Label Grid.Row="0"
-                       x:Name="selected_channel_name_lbl"
-                       Margin="10 0 10 0"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                       Content="Selected channel"
-                       />
-                <TextBox Grid.Row="1"
-                         x:Name="stroke_thickness_txtbox"
-                         KeyDown="strokeThicknessTxtbox_KeyDown"
-                         materialDesign:HintAssist.Hint="Stroke Thickness"
-                         materialDesign:HintAssist.HelperText="Press Enter to enter data"
-                         materialDesign:HintAssist.IsFloating="True"
-                         Margin="10 5 10 20"
-                         />
-                <materialDesign:ColorPicker Grid.Row="2"
-                                            Name="strokeColorColorpicker"
-                                            PreviewMouseLeftButtonUp="strokeColorColorpicker_PreviewMouseLeftButtonUp"
-                                            Margin="10,0,10,0"
-                                            />
-
-
-                <materialDesign:ColorZone x:Name="channel_settings_nothing"
-                                          Grid.Row="0"
-                                          Grid.RowSpan="4"
-                                          VerticalAlignment="Stretch"
-                                          VerticalContentAlignment="Center"
-                                          HorizontalContentAlignment="Center"
-                                          Visibility="Hidden"
-                                          >
-                    <Label Content="Add channel"
-                           FontSize="20"
-                           Foreground="#DDD1D1D1"
-                           />
-                </materialDesign:ColorZone>
             </Grid>
         </materialDesign:Card>
     </Grid>

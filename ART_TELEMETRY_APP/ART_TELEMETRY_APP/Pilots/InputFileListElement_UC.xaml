@@ -23,6 +23,7 @@
                    Grid.Column="0"
                    />
             <Button Grid.Column="1"
+                    Click="deleteInputFile_Click"
                     >
                 <materialDesign:PackIcon Grid.Column="1"
                                          Kind="Close"

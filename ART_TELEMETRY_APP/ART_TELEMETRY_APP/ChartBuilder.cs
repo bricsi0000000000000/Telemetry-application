@@ -44,7 +44,6 @@ namespace ART_TELEMETRY_APP
             {
                 CartesianChart chart = new CartesianChart();
                 chart.DataTooltip = null;
-                chart.Zoom = GroupManager.GetGroup().Zooming;
                 chart.DisableAnimations = true;
                 chart.Hoverable = false;
 

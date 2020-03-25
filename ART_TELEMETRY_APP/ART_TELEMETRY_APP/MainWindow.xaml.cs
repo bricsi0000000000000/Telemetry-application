@@ -28,7 +28,7 @@ namespace ART_TELEMETRY_APP
 {
     public partial class MainWindow : Window
     {
-        PilotsSettings_Window pilots_settings;
+        Settings_Window settings_window;
 
         public MainWindow()
         {
@@ -91,12 +91,10 @@ namespace ART_TELEMETRY_APP
             //GroupManager.ActiveGroupTreeViewItem = (TreeViewItem)item;
 
             activeGroupNameLbl.Content = string.Format("{0}", GroupManager.ActiveGroup);
-            updateGroupOptionsZoomingOption();
 
             channel_options_nothing.Visibility = Visibility.Hidden;
 
             selected_channel_lbl.Content = string.Format("{0}", name);
-            line_smoothness_toogle_button.IsChecked = DataManager.GetData().GetSingleData(name).Option.line_smoothness;
             stroke_thickness_txtbox.Text = DataManager.GetData().GetSingleData(name).Option.stroke_thickness.ToString();
 
 
@@ -144,7 +142,7 @@ namespace ART_TELEMETRY_APP
             {
                 TreeViewItem item = new TreeViewItem();
                 item.Header = attribute.Attribute;
-               // GroupManager.ActiveGroupTreeViewItem.Items.Add(item);
+                // GroupManager.ActiveGroupTreeViewItem.Items.Add(item);
                 item.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(activeChannelItemClick);
             }
         }
@@ -163,17 +161,10 @@ namespace ART_TELEMETRY_APP
             //GroupManager.ActiveGroupTreeViewItem = item;
             GroupManager.ActiveGroup = name;
             activeGroupNameLbl.Content = string.Format("{0}", GroupManager.ActiveGroup);
-            updateGroupOptionsZoomingOption();
 
             group_options_nothing.Visibility = Visibility.Hidden;
         }
 
-        private void updateGroupOptionsZoomingOption()
-        {
-            zoomingOptionsX.IsChecked = GroupManager.GetGroup().Zooming == ZoomingOptions.X;
-            zoomingOptionsY.IsChecked = GroupManager.GetGroup().Zooming == ZoomingOptions.Y;
-            zoomingOptionsXY.IsChecked = GroupManager.GetGroup().Zooming == ZoomingOptions.Xy;
-        }
 
         private string getNameFromSender(object sender)
         {
@@ -200,7 +191,7 @@ namespace ART_TELEMETRY_APP
                     TreeViewItem item = new TreeViewItem();
                     item.Header = name;
                     item.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(groupsTreeViewItemClick);
-                   // GroupManager.ActiveGroupTreeViewItem = item;
+                    // GroupManager.ActiveGroupTreeViewItem = item;
 
                     try
                     {
@@ -229,38 +220,22 @@ namespace ART_TELEMETRY_APP
 
         private void switchFormToGroupsExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-           /* groupsColorZone.Visibility = Visibility.Visible;
-            chartsColorZone.Visibility = Visibility.Hidden;
+            /* groupsColorZone.Visibility = Visibility.Visible;
+             chartsColorZone.Visibility = Visibility.Hidden;
 
-            BrushConverter brush_converter = new BrushConverter();
-            switchFormToGroupsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#e53935");
-            swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#DD000000");*/
+             BrushConverter brush_converter = new BrushConverter();
+             switchFormToGroupsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#e53935");
+             swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#DD000000");*/
         }
 
         private void switchFormToChartsExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-           /* groupsColorZone.Visibility = Visibility.Hidden;
-            chartsColorZone.Visibility = Visibility.Visible;
+            /* groupsColorZone.Visibility = Visibility.Hidden;
+             chartsColorZone.Visibility = Visibility.Visible;
 
-            BrushConverter brush_converter = new BrushConverter();
-            switchFormToGroupsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#DD000000");
-            swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#e53935");*/
-        }
-
-        private void groupOptionsZoomingOptionBtn(object sender, RoutedEventArgs e)
-        {
-            if (getNameFromSender(sender).Equals("X"))
-            {
-                GroupManager.GetGroup().Zooming = ZoomingOptions.X;
-            }
-            else if (getNameFromSender(sender).Equals("Y"))
-            {
-                GroupManager.GetGroup().Zooming = ZoomingOptions.Y;
-            }
-            else if (getNameFromSender(sender).Equals("XY"))
-            {
-                GroupManager.GetGroup().Zooming = ZoomingOptions.Xy;
-            }
+             BrushConverter brush_converter = new BrushConverter();
+             switchFormToGroupsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#DD000000");
+             swicthFormToChartsBtn.Foreground = (Brush)brush_converter.ConvertFrom("#e53935");*/
         }
 
         private void importFileExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -298,7 +273,7 @@ namespace ART_TELEMETRY_APP
 
         private void lineSmoothnessToggleButtonClick(object sender, RoutedEventArgs e)
         {
-            DataManager.GetData().GetSingleData(selected_channel_lbl.Content.ToString()).Option.line_smoothness = (bool)line_smoothness_toogle_button.IsChecked;
+            //DataManager.GetData().GetSingleData(selected_channel_lbl.Content.ToString()).Option.line_smoothness = (bool)line_smoothness_toogle_button.IsChecked;
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -361,25 +336,19 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        private void showPilotsExecuted(object sender, ExecutedRoutedEventArgs e)
+        private void settingsExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            if (!PilotManager.SettingsIsOpen)
+            if (!SettingsManager.SettingsIsOpen)
             {
-                PilotManager.SettingsIsOpen = true;
-                pilots_settings = new PilotsSettings_Window();
-                pilots_settings.Topmost = true;
-                pilots_settings.Show();
+                SettingsManager.SettingsIsOpen = true;
+                settings_window = new Settings_Window();
+                settings_window.Topmost = true;
+                settings_window.Show();
             }
             else
             {
-                pilots_settings.Activate();
+                settings_window.Activate();
             }
-        }
-
-        private void settingsExecuted(object sender, ExecutedRoutedEventArgs e)
-        {
-            Settings_Window settings_window = new Settings_Window();
-            settings_window.Show();
         }
     }
 }

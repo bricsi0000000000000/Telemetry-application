@@ -120,7 +120,6 @@ namespace ART_TELEMETRY_APP
                 single_data.Datas = new ChartValues<double>();
                 single_data.Option = new LineSerieOptions
                 {
-                    line_smoothness = false,
                     stroke_thickness = .7f,
                     stroke_color = Brushes.Black
                 };
@@ -173,8 +172,8 @@ namespace ART_TELEMETRY_APP
             //if (DataManager.DatasCount > 0)
             // {
             //DataManager.ActiveFileName = file_name.Split('\\').Last();
-            files.Children.Add(new InputFileListElement_UC(file_name));
-            SettingsManager.UpdatePilotsTabs(pilot);
+            files.Children.Add(new InputFileListElement_UC(file_name, pilot, ref files));
+            SettingsManager.UpdatePilotsInGroups();
             /*MapBuilder.Instance.Make(file_name.Split('\\').Last(),
                                      map_progressbar,
                                      map_progressbar_colorzone,

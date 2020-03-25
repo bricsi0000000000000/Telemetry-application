@@ -31,6 +31,16 @@ namespace ART_TELEMETRY_APP.Pilots
 
             this.pilot = pilot;
             this.error_snack_bar = error_snack_bar;
+
+            InitInputFiles();
+        }
+
+        public void InitInputFiles()
+        {
+            foreach (InputFile file in pilot.InputFiles)
+            {
+                files_stackpanel.Children.Add(new InputFileListElement_UC(file.FileName, pilot, ref files_stackpanel));
+            }
         }
 
         private void addFileClick(object sender, RoutedEventArgs e)

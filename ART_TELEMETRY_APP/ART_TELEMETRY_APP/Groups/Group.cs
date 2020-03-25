@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using LiveCharts;
 using ART_TELEMETRY_APP.Pilots;
 using ART_TELEMETRY_APP.Settings;
+using ART_TELEMETRY_APP.InputFiles;
 
 namespace ART_TELEMETRY_APP
 {
@@ -14,37 +15,35 @@ namespace ART_TELEMETRY_APP
     {
         string name;
         List<Pilot> pilots = new List<Pilot>();
-        List<string> selected_channels = new List<string>();
-        ZoomingOptions zoom;
+        List<Data> selected_channels = new List<Data>();
         
         //TODO chartsettings class
 
         public Group(string name)
         {
             this.name = name;
-            zoom = ZoomingOptions.X;
         }
 
         public void CalculateMultiplier()
         {
             double max = 0;
             string max_attribute = "";
-            foreach (string attribute in selected_channels)
+            foreach (Data attribute in selected_channels)
             {
-                ChartValues<double> data = DataManager.GetData().GetSingleData(attribute).Datas;
+                ChartValues<double> data = DataManager.GetData().GetSingleData(attribute.Name).Datas;
                 double act_max = data.Max();
                 if(act_max > max)
                 {
                     max = act_max;
-                    max_attribute = attribute;
+                    max_attribute = attribute.Name;
                 }
             }
 
-            foreach (string attribute in selected_channels)
+            foreach (Data attribute in selected_channels)
             {
                 if (!attribute.Equals(max_attribute))
                 {
-                    ChartValues<double> data = DataManager.GetData().GetSingleData(attribute).Datas;
+                    ChartValues<double> data = DataManager.GetData().GetSingleData(attribute.Name).Datas;
                     double multiplier = max / data.Max();
 
                     for (int i = 0; i < data.Count; i++)
@@ -67,7 +66,7 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        public List<string> SelectedChannels
+        public List<Data> SelectedChannels
         {
             get
             {
@@ -88,18 +87,6 @@ namespace ART_TELEMETRY_APP
             set
             {
                 pilots = value;
-            }
-        }
-
-        public ZoomingOptions Zooming
-        {
-            get
-            {
-                return zoom;
-            }
-            set
-            {
-                zoom = value;
             }
         }
     }

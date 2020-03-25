@@ -11,7 +11,9 @@
         WindowStyle="ToolWindow"
         WindowStartupLocation="CenterScreen"
         xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
-        Title="Settings" Height="700" Width="900">
+        Title="Settings" Height="700" Width="900"
+        Closing="Window_Closing"
+        >
     <Grid>
         <dragablz:TabablzControl x:Name="tabs_tabcontrol">
         </dragablz:TabablzControl>

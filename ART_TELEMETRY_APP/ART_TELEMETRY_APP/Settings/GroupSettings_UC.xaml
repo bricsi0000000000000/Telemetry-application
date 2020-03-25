@@ -11,29 +11,112 @@
              xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="70"/>
-            <RowDefinition Height="3*"/>
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <WrapPanel Name="pilots_wrappanel"
-                   Grid.Row="0"
-                   Margin="5"
-                   />
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <TextBox x:Name="filter_channels_txtbox"
-                 Grid.Row="1"
-                 Margin="5 5 5 20"
-                 KeyUp="filterChannelsTxtbox_KeyUp"
-                 HorizontalAlignment="Stretch"
-                 materialDesign:HintAssist.HelperText="Press Enter to enter data"
-                 materialDesign:HintAssist.IsFloating="True"
-                 materialDesign:HintAssist.Hint="Filter Selected Channels"
-                 />
-        <ListBox x:Name="channels_listbox"
-                 Grid.Row="2"
-                 Margin="5"
-                 />
+            <WrapPanel Name="pilots_wrappanel"
+                       Grid.Row="0"
+                       Margin="5"
+                       />
+            <TextBox x:Name="filter_channels_txtbox"
+                     Grid.Row="1"
+                     Margin="5 5 5 20"
+                     KeyUp="filterChannelsTxtbox_KeyUp"
+                     HorizontalAlignment="Stretch"
+                     materialDesign:HintAssist.HelperText="Press Enter to enter data"
+                     materialDesign:HintAssist.IsFloating="True"
+                     materialDesign:HintAssist.Hint="Filter Selected Channels"
+                     />
+            <ListBox x:Name="channels_listbox"
+                     Grid.Row="2"
+                     Margin="5"
+                     />
+            <TextBox x:Name="change_group_name_txtbox"
+                     Grid.Row="3"
+                     KeyDown="changeGroupNameTxtbox_KeyDown"
+                     HorizontalAlignment="Stretch"
+                     materialDesign:HintAssist.IsFloating="True"
+                     materialDesign:HintAssist.Hint="Change name"
+                     materialDesign:HintAssist.HelperText="Press Enter to change name"
+                     Margin="5 5 5 20"
+                     />
+            <materialDesign:ColorZone x:Name="selected_pilots_nothing"
+                                      Grid.Row="1"
+                                      Grid.RowSpan="2"
+                                      VerticalAlignment="Stretch"
+                                      VerticalContentAlignment="Center"
+                                      HorizontalContentAlignment="Center"
+                                      >
+                <Label Content="Select pilots"
+                       FontSize="20"
+                       Foreground="#DDD1D1D1"
+                       Name="selected_pilots_nothing_lbl"
+                       />
+            </materialDesign:ColorZone>
+        </Grid>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="1.5*"/>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0"
+                     x:Name="filter_selected_channels_txtbox"
+                     Margin="5 5 5 20"
+                     KeyUp="filterSelectedChannelsTxtbox_KeyUp"
+                     HorizontalAlignment="Stretch"
+                     materialDesign:HintAssist.HelperText="Press Enter to enter data"
+                     materialDesign:HintAssist.IsFloating="True"
+                     materialDesign:HintAssist.Hint="Filter Selected Channels"
+                     />
+            <ListBox Grid.Row="1"
+                     x:Name="selected_channels_listbox"
+                     />
+            <TextBox Grid.Row="2"
+                     x:Name="stroke_thickness_txtbox"
+                     KeyDown="strokeThicknessTxtbox_KeyDown"
+                     materialDesign:HintAssist.Hint="Stroke Thickness"
+                     materialDesign:HintAssist.HelperText="Press Enter to enter data"
+                     materialDesign:HintAssist.IsFloating="True"
+                     Margin="10 5 10 20"
+                     />
+            <materialDesign:ColorPicker Grid.Row="3"
+                                        Name="stroke_color_colorpicker"
+                                        PreviewMouseLeftButtonUp="strokeColorColorpicker_PreviewMouseLeftButtonUp"
+                                        Margin="10,0,10,0"
+                                        />
+            <materialDesign:ColorZone x:Name="selected_channels_nothing"
+                                      Grid.Row="0"
+                                      Grid.RowSpan="4"
+                                      VerticalAlignment="Stretch"
+                                      VerticalContentAlignment="Center"
+                                      HorizontalContentAlignment="Center"
+                                      Visibility="Hidden"
+                                      >
+                <Label Content="Select channels"
+                       FontSize="20"
+                       Foreground="#DDD1D1D1"
+                       />
+            </materialDesign:ColorZone>
+
+            <materialDesign:ColorZone x:Name="selected_channels_properties_nothing"
+                                      Grid.Row="2"
+                                      Grid.RowSpan="2"
+                                      VerticalAlignment="Stretch"
+                                      VerticalContentAlignment="Center"
+                                      HorizontalContentAlignment="Center"
+                                      />
+        </Grid>
     </Grid>
 </UserControl>

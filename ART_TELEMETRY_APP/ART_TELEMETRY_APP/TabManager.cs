@@ -72,6 +72,13 @@ namespace ART_TELEMETRY_APP
             map_tab.TabItem.Content = map_tab.MapUI;
             tabs.Add(map_tab);
             tab_control.Items.Add(map_tab.TabItem);
+
+            Tab custom_tab = new Tab("Custom");
+            custom_tab.MapUI = new Map_UI();
+            custom_tab.TabItem.Content = custom_tab.DiagramsUI;
+            custom_tab.TabItem.IsSelected = true;
+            tabs.Add(custom_tab);
+            tab_control.Items.Add(custom_tab.TabItem);
         }
     }
 }

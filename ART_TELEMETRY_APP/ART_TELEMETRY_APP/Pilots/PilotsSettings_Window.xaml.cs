@@ -67,7 +67,7 @@ namespace ART_TELEMETRY_APP.Pilots
                         item.Content = new PilotTab_UC(pilot, error_snack_bar);
 
                         pilots_tabs.Items.Add(item);
-                        SettingsManager.UpdatePilotsTabs(pilot);
+                        SettingsManager.UpdatePilotsInGroups();
 
                         if (PilotManager.Pilots.Count > 0)
                         {

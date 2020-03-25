@@ -46,7 +46,6 @@
         <CommandBinding Command="{x:Static local:SwitchForms.SwitchToGroups}" CanExecute="CommandBinding_CanExecute" Executed="switchFormToGroupsExecuted"></CommandBinding>
         <CommandBinding Command="{x:Static local:SwitchForms.SwitchToCharts}" CanExecute="CommandBinding_CanExecute" Executed="switchFormToChartsExecuted"></CommandBinding>
         <CommandBinding Command="{x:Static local:ButtonCommands.ImportFile}" CanExecute="CommandBinding_CanExecute" Executed="importFileExecuted"></CommandBinding>
-        <CommandBinding Command="{x:Static local:ButtonCommands.ShowPilots}" CanExecute="CommandBinding_CanExecute" Executed="showPilotsExecuted"></CommandBinding>
         <CommandBinding Command="{x:Static local:ButtonCommands.Settings}" CanExecute="CommandBinding_CanExecute" Executed="settingsExecuted"></CommandBinding>
     </Window.CommandBindings>
 
@@ -68,11 +67,6 @@
                         </MenuItem.Icon>
                     </MenuItem>-->
                 </MenuItem>
-                <MenuItem Header="Pilots"
-                          Command="{x:Static local:ButtonCommands.ShowPilots}"
-                          FontSize="10"
-                          Height="30"
-                          />
                 <MenuItem Header="Settings"
                           Command="{x:Static local:ButtonCommands.Settings}"
                           FontSize="10"
@@ -553,30 +547,7 @@
                                                    HorizontalContentAlignment="Center"
                                                    Content="Zooming"
                                             />
-                                            <StackPanel Grid.Column="1"
-                                                        Name="group_options_zooming_options_grid">
-                                                <RadioButton GroupName="zooming_options"
-                                                                Click="groupOptionsZoomingOptionBtn"
-                                                                Name="zoomingOptionsX"
-                                                                VerticalContentAlignment="Center"
-                                                                >
-                                                    <Label Content="X axis"/>
-                                                </RadioButton>
-                                                <RadioButton GroupName="zooming_options"
-                                                                Click="groupOptionsZoomingOptionBtn"
-                                                                Name="zoomingOptionsY"
-                                                                Margin="0"
-                                                                VerticalContentAlignment="Center"
-                                                                >
-                                                    <Label Content="Y axis"/>
-                                                </RadioButton>
-                                                <RadioButton GroupName="zooming_options"
-                                                                Click="groupOptionsZoomingOptionBtn"
-                                                                Name="zoomingOptionsXY"
-                                                                VerticalContentAlignment="Center">
-                                                    <Label Content="XY axis"/>
-                                                </RadioButton>
-                                            </StackPanel>
+                                           
                                         </Grid>
                                         <materialDesign:Card Name="group_options_nothing"
                                                              Grid.RowSpan="3"

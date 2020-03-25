@@ -1,4 +1,5 @@
-﻿using ART_TELEMETRY_APP.Settings;
+﻿using ART_TELEMETRY_APP.InputFiles;
+using ART_TELEMETRY_APP.Settings;
 using LiveCharts;
 using System;
 using System.Collections.Generic;
@@ -102,6 +103,11 @@ namespace ART_TELEMETRY_APP
                     }*/
                 }
             }
+        }
+
+        public static Data GetSelectedChannelsData(Group group, string name)
+        {
+            return GetGroup(group.Name).SelectedChannels.Find(n => n.Name == name);
         }
 
         public static string ActiveGroup
