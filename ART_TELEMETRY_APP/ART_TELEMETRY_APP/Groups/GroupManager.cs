@@ -107,7 +107,7 @@ namespace ART_TELEMETRY_APP
 
         public static Data GetSelectedChannelsData(Group group, string name)
         {
-            return GetGroup(group.Name).SelectedChannels.Find(n => n.Name == name);
+            return GetGroup(group.Name).SelectedChannels.Find(n => n.Attribute == name);
         }
 
         public static string ActiveGroup

@@ -1,18 +1,20 @@
 ﻿<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 
-    <Color x:Key="Primary50">#1c8c84</Color>
+    <Color x:Key="Primary50">#434343</Color>
     <Color x:Key="Primary50Foreground">#ffffff</Color>
-    <Color x:Key="Primary100">#1c8c84</Color>
+    <Color x:Key="Primary100">#434343</Color>
     <Color x:Key="Primary100Foreground">#ffffff</Color>
-    <Color x:Key="Primary200">#1c8c84</Color>
+    <Color x:Key="Primary200">#434343</Color>
     <Color x:Key="Primary200Foreground">#ffffff</Color>
-    <Color x:Key="Primary300">#1c8c84</Color>
+    <Color x:Key="Primary300">#434343</Color>
     <Color x:Key="Primary300Foreground">#ffffff</Color>
-    <Color x:Key="Primary400">#1c8c84</Color>
+    <Color x:Key="Primary400">#434343</Color>
     <Color x:Key="Primary400Foreground">#ffffff</Color>
-    <Color x:Key="Primary500">#434343</Color>
+    
+    <Color x:Key="Primary500">#e21b1b</Color>
     <Color x:Key="Primary500Foreground">#ffffff</Color>
+    
     <Color x:Key="Primary600">#f44336</Color>
     <Color x:Key="Primary600Foreground">#ffffff</Color>
     <Color x:Key="Primary700">#f44336</Color>

@@ -37,14 +37,13 @@ namespace ART_TELEMETRY_APP.Settings
             this.tab = tab;
 
             InitPilots();
-            InitSelectedChannelsList();
 
             selected_channels_properties_nothing.Visibility = Visibility.Visible;
         }
 
         public void InitPilots()
         {
-            selected_pilots_nothing_lbl.Content = "Select pilot(s)";
+          //  selected_pilots_nothing_lbl.Content = "Select pilot(s)";
             pilots_wrappanel.Children.Clear();
             foreach (Pilot pilot in PilotManager.Pilots)
             {
@@ -53,7 +52,7 @@ namespace ART_TELEMETRY_APP.Settings
                 if (group.Pilots.Find(n => n.Name == pilot.Name) != null)
                 {
                     check_box.IsChecked = true;
-                    selected_pilots_nothing_lbl.Content = "Add file to the pilot";
+                   // selected_pilots_nothing_lbl.Content = "Add file to the pilot";
                 }
                 check_box.Margin = new Thickness(5);
                 check_box.Checked += new RoutedEventHandler(pilot_checkbox_Checked);
@@ -66,7 +65,7 @@ namespace ART_TELEMETRY_APP.Settings
         private void pilot_checkbox_Checked(object sender, RoutedEventArgs e)
         {
             group.Pilots.Add(PilotManager.GetPilot(((CheckBox)sender).Content.ToString()));
-            selected_pilots_nothing_lbl.Content = "Add file to the pilot";
+          //  selected_pilots_nothing_lbl.Content = "Add file to the pilot";
             InitSelectedChannelsList();
         }
 
@@ -81,14 +80,14 @@ namespace ART_TELEMETRY_APP.Settings
             }
             if (group.Pilots.Count <= 0)
             {
-                selected_pilots_nothing_lbl.Content = "Select pilot(s)";
+              //  selected_pilots_nothing_lbl.Content = "Select pilot(s)";
             }
             makeChannelsList();
         }
 
         private void makeChannelsList()
         {
-            List<Tuple<string, HashSet<string>>> attributes = new List<Tuple<string, HashSet<string>>>();
+            List<Tuple<string, string>> attributes = new List<Tuple<string, string>>();
 
             foreach (Pilot pilot in group.Pilots)
             {
@@ -96,25 +95,7 @@ namespace ART_TELEMETRY_APP.Settings
                 {
                     foreach (Data data in input_file.Datas)
                     {
-                        bool stop = false;
-                        int index;
-                        for (index = 0; index < attributes.Count && !stop; index++)
-                        {
-                            if (attributes[index].Item1 == data.Name)
-                            {
-                                stop = true;
-                            }
-                        }
-                        if (stop)
-                        {
-                            attributes[--index].Item2.Add(pilot.Name);
-                        }
-                        else
-                        {
-                            HashSet<string> pilots = new HashSet<string>();
-                            pilots.Add(pilot.Name);
-                            attributes.Add(new Tuple<string, HashSet<string>>(data.Name, pilots));
-                        }
+                        attributes.Add(new Tuple<string, string>(data.Attribute, pilot.Name));
                     }
                 }
             }
@@ -122,22 +103,14 @@ namespace ART_TELEMETRY_APP.Settings
             updateChannelsListboxItems(ref attributes);
         }
 
-        private void updateChannelsListboxItems(ref List<Tuple<string, HashSet<string>>> attributes)
+        private void updateChannelsListboxItems(ref List<Tuple<string, string>> attributes)
         {
             channels_listbox.Items.Clear();
             channel_attributes.Clear();
 
             foreach (var attribute in attributes)
             {
-                string content = string.Format("{0}", attribute.Item1);
-               // if (attribute.Item2.Count < group.Pilots.Count)
-                //{
-                    content += " ";
-                    foreach (string name in attribute.Item2)
-                    {
-                        content += string.Format("[{0}]", name);
-                    }
-               // }
+                string content = string.Format("{0} [{1}]", attribute.Item1, attribute.Item2);
                 channel_attributes.Add(content);
                 ListBoxItem item = new ListBoxItem();
                 item.Content = content;
@@ -147,23 +120,11 @@ namespace ART_TELEMETRY_APP.Settings
 
             if (channels_listbox.Items.Count > 0)
             {
-                selected_pilots_nothing.Visibility = Visibility.Hidden;
+               // selected_pilots_nothing.Visibility = Visibility.Hidden;
             }
             else
             {
-                selected_pilots_nothing.Visibility = Visibility.Visible;
-            }
-        }
-
-        private void compareChannelsWithSelectedChannels()
-        {
-            List<Data> selected_channels = GroupManager.GetGroup(group.Name).SelectedChannels;
-            foreach (Data selected_channel in selected_channels.ToList())
-            {
-                if (!channel_attributes.Contains(selected_channel.Name))
-                {
-                    selected_channels.Remove(selected_channel);
-                }
+              //  selected_pilots_nothing.Visibility = Visibility.Visible;
             }
         }
 
@@ -171,13 +132,13 @@ namespace ART_TELEMETRY_APP.Settings
         {
             makeChannelsList();
 
-            compareChannelsWithSelectedChannels();
+            //TODO a listákat összerakni
 
             selected_channels_listbox.Items.Clear();
             foreach (Data attribute in GroupManager.GetGroup(group.Name).SelectedChannels)
             {
                 ListBoxItem item = new ListBoxItem();
-                item.Content = attribute.Name;
+                item.Content = attribute.Attribute;
                 item.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(selectedChannelListBoxItemClick);
                 selected_channels_listbox.Items.Add(item);
             }
@@ -199,20 +160,36 @@ namespace ART_TELEMETRY_APP.Settings
                 string attribute = ((ListBoxItem)sender).Content.ToString();
                 if (!containsListBox(selected_channels_listbox, attribute))
                 {
-                    channel_attributes.Add(attribute);
+                    //channel_attributes.Add(attribute);
                     ListBoxItem item = new ListBoxItem();
                     item.Content = attribute;
                     item.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(selectedChannelListBoxItemClick);
                     selected_channels_listbox.Items.Add(item);
 
                     Data single_data = new Data();
-                    single_data.Name = attribute;
-                    single_data.Datas = new ChartValues<double>();
-                    single_data.Option = new LineSerieOptions
+
+                    foreach (Pilot pilot in GroupManager.GetGroup(group.Name).Pilots)
+                    {
+                        if (pilot.Name == attribute.Split(' ')[1].Substring(1, attribute.Split(' ')[1].Length - 2))
+                        {
+                            foreach (InputFile inputfile in pilot.InputFiles)
+                            {
+                                foreach (Data data in inputfile.Datas)
+                                {
+                                    if (data.Attribute == attribute.Split(' ')[0])
+                                    {
+                                        single_data = data;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                   /* single_data.Option = new LineSerieOptions
                     {
                         stroke_thickness = .7f,
                         stroke_color = Brushes.White
-                    };
+                    };*/
 
                     GroupManager.GetGroup(group.Name).SelectedChannels.Add(single_data);
 
@@ -242,7 +219,7 @@ namespace ART_TELEMETRY_APP.Settings
                 selected_channels_listbox.Items.Remove(sender);
                 channel_attributes.Remove(attribute);
                 GroupManager.GetGroup(group.Name).SelectedChannels.Remove(
-                    GroupManager.GetGroup(group.Name).SelectedChannels.Find(n => n.Name == attribute)
+                    GroupManager.GetGroup(group.Name).SelectedChannels.Find(n => n.Attribute == attribute)
                     );
 
                 if (selected_channels_listbox.Items.Count <= 0)
@@ -254,8 +231,8 @@ namespace ART_TELEMETRY_APP.Settings
             {
                 selected_channels_properties_nothing.Visibility = Visibility.Hidden;
                 active_selected_channel = ((ListBoxItem)sender).Content.ToString();
-                stroke_thickness_txtbox.Text = GroupManager.GetGroup(group.Name).SelectedChannels.Find(n => n.Name == active_selected_channel).Option.stroke_thickness.ToString();
-                stroke_color_colorpicker.Color = ((SolidColorBrush)GroupManager.GetGroup(group.Name).SelectedChannels.Find(n => n.Name == active_selected_channel).Option.stroke_color).Color;
+                stroke_thickness_txtbox.Text = GroupManager.GetGroup(group.Name).SelectedChannels.Find(n => n.Attribute == active_selected_channel.Split(' ')[0]).Option.stroke_thickness.ToString();
+                stroke_color_colorpicker.Color = ((SolidColorBrush)GroupManager.GetGroup(group.Name).SelectedChannels.Find(n => n.Attribute == active_selected_channel.Split(' ')[0]).Option.stroke_color).Color;
             }
         }
 
@@ -303,7 +280,7 @@ namespace ART_TELEMETRY_APP.Settings
                 foreach (Data attribute in GroupManager.GetGroup(group.Name).SelectedChannels)
                 {
                     ListBoxItem item = new ListBoxItem();
-                    item.Content = attribute.Name;
+                    item.Content = attribute.Attribute;
                     item.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(selectedChannelListBoxItemClick);
                     items.Add(item);
                 }
@@ -328,14 +305,14 @@ namespace ART_TELEMETRY_APP.Settings
 
         private void strokeColorColorpicker_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            GroupManager.GetSelectedChannelsData(group, active_selected_channel).Option.stroke_color = new SolidColorBrush(stroke_color_colorpicker.Color);
+            GroupManager.GetSelectedChannelsData(group, active_selected_channel.Split(' ')[0]).Option.stroke_color = new SolidColorBrush(stroke_color_colorpicker.Color);
         }
 
         private void strokeThicknessTxtbox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                GroupManager.GetSelectedChannelsData(group, active_selected_channel).Option.stroke_thickness = float.Parse(stroke_thickness_txtbox.Text);
+                GroupManager.GetSelectedChannelsData(group, active_selected_channel.Split(' ')[0]).Option.stroke_thickness = float.Parse(stroke_thickness_txtbox.Text);
             }
         }
 

@@ -1,0 +1,109 @@
+﻿<Window x:Class="ART_TELEMETRY_APP.Maps.MapEditor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ART_TELEMETRY_APP.Maps"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
+        FontFamily="{materialDesign:MaterialDesignFont}" WindowStyle="ThreeDBorderWindow"
+        xmlns:dockablz="clr-namespace:Dragablz.Dockablz;assembly=Dragablz"
+        Title="MapEditor" Height="580" Width="600">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="1.4*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Label Grid.Row="0"
+               Grid.ColumnSpan="2"
+               Name="laps_lbl"
+               Content="Lap Editor"
+               VerticalContentAlignment="Center"
+               HorizontalContentAlignment="Center"
+               FontSize="15"
+               />
+        
+        <Grid Grid.Column="0" Grid.Row="1">
+           <Canvas x:Name="all_lap_canvas"
+                   MouseMove="AllLapCanvas_MouseMove"
+                   PreviewMouseLeftButtonUp="AllLapCanvas_PreviewMouseLeftButtonUp"
+                   Background="#303030"
+                   >
+                <!--#303030-->
+                <Path x:Name="all_lap_svg"
+                      Stroke="White"
+                      StrokeThickness=".7"
+                      Stretch="Fill"
+                      Margin="10"
+                      />
+                <Ellipse Width="20"
+                         Height="20"
+                         Fill="#FFFF2E00"
+                         Canvas.Left="0"
+                         Canvas.Top="0" 
+                         Name="start_line_ellipse"
+                         RenderTransformOrigin="0.5,0.5" 
+                         >
+                    <Ellipse.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform X="-10" Y="-10"/>
+                        </TransformGroup>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+            </Canvas>
+        </Grid>
+        <Grid Grid.Column="1"
+              Grid.Row="1"
+              Name="laps_grid"
+              >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="55"/>
+            </Grid.RowDefinitions>
+
+            <Path Grid.Row="0"
+                  x:Name="one_lap_svg"
+                  Stroke="White"
+                  StrokeThickness="2"
+                  Stretch="Fill"
+                  Margin="10"
+                  />
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="1"
+                       Content="11/4"
+                       VerticalContentAlignment="Center"
+                       HorizontalContentAlignment="Center"
+                       FontSize="15"
+                       Name="act_lap_lbl"
+                       />
+                <Button Grid.Column="0" Click="PrevLap_Click">
+                    <materialDesign:PackIcon Kind="ArrowBack"/>
+                </Button>
+                <Button Grid.Column="2" Click="NextLap_Click">
+                    <materialDesign:PackIcon Kind="ArrowForward"/>
+                </Button>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ART_TELEMETRY_APP.InputFiles;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,11 @@ namespace ART_TELEMETRY_APP.Pilots
     {
         string name;
         List<InputFile> input_files = new List<InputFile>();
+
+        public Pilot(string name)
+        {
+            this.name = name;
+        }
 
         public string Name
         {
@@ -32,11 +38,6 @@ namespace ART_TELEMETRY_APP.Pilots
         public void RemoveInputFile(string file_name)
         {
             input_files.Remove(input_files.Find(name => name.FileName.Contains(file_name)));
-        }
-
-        public Pilot(string name)
-        {
-            this.name = name;
         }
 
         public List<InputFile> InputFiles

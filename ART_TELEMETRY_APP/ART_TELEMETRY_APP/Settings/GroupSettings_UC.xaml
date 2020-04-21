@@ -50,7 +50,7 @@
                      materialDesign:HintAssist.HelperText="Press Enter to change name"
                      Margin="5 5 5 20"
                      />
-            <materialDesign:ColorZone x:Name="selected_pilots_nothing"
+            <!--<materialDesign:ColorZone x:Name="selected_pilots_nothing"
                                       Grid.Row="1"
                                       Grid.RowSpan="2"
                                       VerticalAlignment="Stretch"
@@ -62,7 +62,7 @@
                        Foreground="#DDD1D1D1"
                        Name="selected_pilots_nothing_lbl"
                        />
-            </materialDesign:ColorZone>
+            </materialDesign:ColorZone>-->
         </Grid>
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>

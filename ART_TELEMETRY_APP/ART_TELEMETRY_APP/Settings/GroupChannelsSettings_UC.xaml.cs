@@ -62,7 +62,7 @@ namespace ART_TELEMETRY_APP.Settings
             foreach (Data data in input_file.Datas)
             {
                 ListBoxItem item = new ListBoxItem();
-                item.Content = data.Name;
+                item.Content = data.Attribute;
                 item.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(channelListBoxItemClick);
                 channels_listbox.Items.Add(item);
             }
@@ -75,10 +75,10 @@ namespace ART_TELEMETRY_APP.Settings
 
             foreach (Data data in input_file.Datas)
             {
-                if (string.IsNullOrEmpty(filterChannelsTxtbox.Text) || data.Name.ToUpper().Contains(filterChannelsTxtbox.Text.ToUpper()))
+                if (string.IsNullOrEmpty(filterChannelsTxtbox.Text) || data.Attribute.ToUpper().Contains(filterChannelsTxtbox.Text.ToUpper()))
                 {
                     ListBoxItem item = new ListBoxItem();
-                    item.Content = data.Name;
+                    item.Content = data.Attribute;
                     item.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(channelListBoxItemClick);
                     channels_listbox.Items.Add(item);
                 }

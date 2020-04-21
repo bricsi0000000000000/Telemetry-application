@@ -47,7 +47,7 @@ namespace ART_TELEMETRY_APP.Pilots
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            PilotManager.SettingsIsOpen = false;
+          //  PilotManager.SettingsIsOpen = false;
         }
 
         private void addPilotTxtbox_KeyDown(object sender, KeyEventArgs e)

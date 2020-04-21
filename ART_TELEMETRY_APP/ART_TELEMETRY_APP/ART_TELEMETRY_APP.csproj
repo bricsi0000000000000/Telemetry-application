@@ -72,27 +72,66 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ChannelsListBoxItem_UC.xaml.cs">
+      <DependentUpon>ChannelsListBoxItem_UC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DatasMenuContent.xaml.cs">
+      <DependentUpon>DatasMenuContent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DiagramsGroupTabs_UI.xaml.cs">
+      <DependentUpon>DiagramsGroupTabs_UI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Diagrams_UI.xaml.cs">
       <DependentUpon>Diagrams_UI.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GGDiagram_UC.xaml.cs">
+      <DependentUpon>GGDiagram_UC.xaml</DependentUpon>
+    </Compile>
     <Compile Include="InputFiles\Data.cs" />
     <Compile Include="InputFiles\LineSerieOptions.cs" />
+    <Compile Include="LapChannels.xaml.cs">
+      <DependentUpon>LapChannels.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LapListElement.xaml.cs">
+      <DependentUpon>LapListElement.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LapReport_UI.xaml.cs">
       <DependentUpon>LapReport_UI.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Map_UI.xaml.cs">
+    <Compile Include="Laps\Lap.cs" />
+    <Compile Include="Laps\LapManager.cs" />
+    <Compile Include="Maps\MapEditor.xaml.cs">
+      <DependentUpon>MapEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Maps\MapManager.cs" />
+    <Compile Include="Maps\Map_UI.xaml.cs">
       <DependentUpon>Map_UI.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pilots\InputFileListElement_UC.xaml.cs">
-      <DependentUpon>InputFileListElement_UC.xaml</DependentUpon>
+    <Compile Include="PilotContentTab.xaml.cs">
+      <DependentUpon>PilotContentTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pilots\InputFileListElement.xaml.cs">
+      <DependentUpon>InputFileListElement.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pilots\Pilot.cs" />
+    <Compile Include="Pilots\PilotContent.xaml.cs">
+      <DependentUpon>PilotContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pilots\PilotManager.cs" />
+    <Compile Include="Pilots\PilotSettings.xaml.cs">
+      <DependentUpon>PilotSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pilots\PilotsMenuContent.xaml.cs">
+      <DependentUpon>PilotsMenuContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pilots\PilotsSettings_Window.xaml.cs">
       <DependentUpon>PilotsSettings_Window.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pilots\PilotTab_UC.xaml.cs">
       <DependentUpon>PilotTab_UC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SelectPilotsAndLaps_UC.xaml.cs">
+      <DependentUpon>SelectPilotsAndLaps_UC.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\DiagramsSettings_UC.xaml.cs">
       <DependentUpon>DiagramsSettings_UC.xaml</DependentUpon>
@@ -103,10 +142,16 @@
     <Compile Include="Settings\GroupSettings_UC.xaml.cs">
       <DependentUpon>GroupSettings_UC.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings\MapSettings_UC.xaml.cs">
+      <DependentUpon>MapSettings_UC.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Settings\SelectedChannelSettings_UC.xaml.cs">
       <DependentUpon>SelectedChannelSettings_UC.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\SettingsManager.cs" />
+    <Compile Include="Settings\SettingsMenuContent.xaml.cs">
+      <DependentUpon>SettingsMenuContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Settings\Settings_Window.xaml.cs">
       <DependentUpon>Settings_Window.xaml</DependentUpon>
     </Compile>
@@ -119,10 +164,10 @@
     <Compile Include="WorkspaceNewItem.cs" />
     <Compile Include="ButtonCommands.cs" />
     <Compile Include="ChartLineColors.cs" />
-    <Compile Include="LapBuilder.cs" />
+    <Compile Include="Laps\LapBuilder.cs" />
     <Compile Include="MainWindowViewModell.cs" />
-    <Compile Include="MapBuilder.cs" />
-    <Compile Include="Map.cs" />
+    <Compile Include="Maps\MapBuilder.cs" />
+    <Compile Include="Maps\Map.cs" />
     <Compile Include="MyInterTabClient.cs" />
     <Compile Include="SwitchForms.cs" />
     <Page Include="ART_design.xaml">
@@ -133,7 +178,31 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ChannelsListBoxItem_UC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DatasMenuContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DiagramsGroupTabs_UI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Diagrams_UI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GGDiagram_UC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LapChannels.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LapListElement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -162,11 +231,31 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Map_UI.xaml">
+    <Page Include="Maps\MapEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pilots\InputFileListElement_UC.xaml">
+    <Page Include="Maps\Map_UI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PilotContentTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pilots\InputFileListElement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pilots\PilotContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pilots\PilotSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pilots\PilotsMenuContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -175,6 +264,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pilots\PilotTab_UC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SelectPilotsAndLaps_UC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -190,7 +283,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Settings\MapSettings_UC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Settings\SelectedChannelSettings_UC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Settings\SettingsMenuContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

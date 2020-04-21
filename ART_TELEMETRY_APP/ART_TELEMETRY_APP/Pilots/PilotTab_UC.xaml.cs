@@ -1,7 +1,9 @@
-﻿using MaterialDesignThemes.Wpf;
+﻿using ART_TELEMETRY_APP.Settings;
+using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,7 +41,7 @@ namespace ART_TELEMETRY_APP.Pilots
         {
             foreach (InputFile file in pilot.InputFiles)
             {
-                files_stackpanel.Children.Add(new InputFileListElement_UC(file.FileName, pilot, ref files_stackpanel));
+               // files_stackpanel.Children.Add(new InputFileListElement(file.FileName, pilot, ref files_stackpanel));
             }
         }
 
@@ -52,14 +54,14 @@ namespace ART_TELEMETRY_APP.Pilots
             {
                 string file_name = open_file_dialog.FileName.Split('\\').Last();
                 file_name_lbl.Content = file_name;
-                DataReader.Instance.ReadData(pilot,
+               /* DataReader.Instance.ReadData(pilot,
                                              open_file_dialog.FileName,
                                              progressbar_grid,
                                              ref progressbar,
                                              files_stackpanel,
                                              error_snack_bar,
                                              add_file_btn
-                                             );
+                                             );*/
             }
         }
     }

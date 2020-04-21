@@ -20,6 +20,11 @@ namespace ART_TELEMETRY_APP.Pilots
             return pilots.Find(n => n.Name == name);
         }
 
+        public static void RemovePilot(string name)
+        {
+            pilots.Remove(GetPilot(name));
+        }
+
         public static List<Pilot> Pilots
         {
             get
@@ -27,7 +32,5 @@ namespace ART_TELEMETRY_APP.Pilots
                 return pilots;
             }
         }
-
-        public static bool SettingsIsOpen = false;
     }
 }

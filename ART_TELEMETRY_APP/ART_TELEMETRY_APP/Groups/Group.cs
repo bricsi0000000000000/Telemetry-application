@@ -8,6 +8,7 @@ using LiveCharts;
 using ART_TELEMETRY_APP.Pilots;
 using ART_TELEMETRY_APP.Settings;
 using ART_TELEMETRY_APP.InputFiles;
+using ART_TELEMETRY_APP.Laps;
 
 namespace ART_TELEMETRY_APP
 {
@@ -16,7 +17,7 @@ namespace ART_TELEMETRY_APP
         string name;
         List<Pilot> pilots = new List<Pilot>();
         List<Data> selected_channels = new List<Data>();
-        
+        List<Tuple<string, List<bool>>> selected_pilots_and_laps = new List<Tuple<string, List<bool>>>();
         //TODO chartsettings class
 
         public Group(string name)
@@ -30,12 +31,12 @@ namespace ART_TELEMETRY_APP
             string max_attribute = "";
             foreach (Data attribute in selected_channels)
             {
-                ChartValues<double> data = DataManager.GetData().GetSingleData(attribute.Name).Datas;
+                ChartValues<double> data = DataManager.GetData().GetData(attribute.Attribute).Datas;
                 double act_max = data.Max();
-                if(act_max > max)
+                if (act_max > max)
                 {
                     max = act_max;
-                    max_attribute = attribute.Name;
+                    max_attribute = attribute.Attribute;
                 }
             }
 
@@ -43,7 +44,7 @@ namespace ART_TELEMETRY_APP
             {
                 if (!attribute.Equals(max_attribute))
                 {
-                    ChartValues<double> data = DataManager.GetData().GetSingleData(attribute.Name).Datas;
+                    ChartValues<double> data = DataManager.GetData().GetData(attribute.Attribute).Datas;
                     double multiplier = max / data.Max();
 
                     for (int i = 0; i < data.Count; i++)
@@ -87,6 +88,40 @@ namespace ART_TELEMETRY_APP
             set
             {
                 pilots = value;
+            }
+        }
+
+        public List<Tuple<string, List<bool>>> SelectedPilotsAndLaps
+        {
+            get
+            {
+                return this.selected_pilots_and_laps;
+            }
+            set
+            {
+                selected_pilots_and_laps = value;
+            }
+        }
+
+        public void SetLap(string pilots_name, int lap_index)
+        {
+            foreach (Tuple<string, List<bool>> item in selected_pilots_and_laps)
+            {
+                if (item.Item1 == pilots_name)
+                {
+                    item.Item2[lap_index] = !item.Item2[lap_index];
+                }
+            }
+        }
+
+        public void ClearSelectedPilotsAndLaps()
+        {
+            foreach (var item in selected_pilots_and_laps)
+            {
+                for (int i = 0; i < item.Item2.Count; i++)
+                {
+                    item.Item2[i] = false;
+                }
             }
         }
     }

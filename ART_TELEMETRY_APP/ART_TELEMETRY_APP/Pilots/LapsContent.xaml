@@ -1,0 +1,66 @@
+﻿<UserControl x:Class="ART_TELEMETRY_APP.Pilots.LapsContent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ART_TELEMETRY_APP.Pilots"
+             mc:Ignorable="d" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid x:Name="charts_grid"/>
+
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height=".6*"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height=".9*"/>
+                <RowDefinition Height="45"/>
+            </Grid.RowDefinitions>
+
+            <ComboBox Name="input_files_cmbbox" Margin="5" SelectionChanged="inputFilesCmbbox_SelectionChanged"/>
+
+            <Grid Grid.Row="1" Name="lap_datas_grid"/>
+
+            <GridSplitter HorizontalAlignment="Stretch" Grid.Row="2"></GridSplitter>
+            
+            <ScrollViewer Grid.Row="3">
+                <StackPanel Name="laps_stackpanel"/>
+            </ScrollViewer>
+
+            <GridSplitter HorizontalAlignment="Stretch" Grid.Row="4"></GridSplitter>
+            
+            <Viewbox Grid.Row="5">
+                <Path
+                      x:Name="one_lap_svg"
+                      Stroke="White"
+                      StrokeThickness="2"
+                      Margin="5"
+                      />
+            </Viewbox>
+
+            <ComboBox Grid.Row="6"
+                      Name="metric_cmbbox"
+                      Margin="5"
+                      SelectionChanged="metricCmbbox_SelectionChanged"
+                      >
+                <ComboBoxItem Content="Distance" IsSelected="True"/>
+                <ComboBoxItem Content="Time"/>
+            </ComboBox>
+        </Grid>
+    </Grid>
+</UserControl>

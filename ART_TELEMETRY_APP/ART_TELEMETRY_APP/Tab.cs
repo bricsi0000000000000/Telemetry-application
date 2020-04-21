@@ -28,16 +28,16 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        Diagrams_UI diagrams_UI;
-        public Diagrams_UI DiagramsUI
+        DiagramsGroupTabs_UI diagrams_group_tabs_UI;
+        public DiagramsGroupTabs_UI DiagramsGroupTabsUI
         {
             get
             {
-                return diagrams_UI;
+                return diagrams_group_tabs_UI;
             }
             set
             {
-                diagrams_UI = value;
+                diagrams_group_tabs_UI = value;
             }
         }
 
