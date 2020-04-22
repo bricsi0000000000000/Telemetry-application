@@ -36,7 +36,7 @@ namespace ART_TELEMETRY_APP.Pilots
         {
             PilotManager.GetPilot(pilots_name).RemoveInputFile(file_name_lbl.Content.ToString());
             ((PilotsMenuContent)TabManager.GetTab("Pilots").Content).InitPilots();
-            ((LapsContent)((DatasMenuContent)TabManager.GetTab("Datas").Content).GetTab(PilotManager.GetPilot(pilots_name).Name).Content).InitInputFileCmbbox();
+            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).InitInputFileCmbbox();
         }
 
         private void settingsInputFile_Click(object sender, RoutedEventArgs e)

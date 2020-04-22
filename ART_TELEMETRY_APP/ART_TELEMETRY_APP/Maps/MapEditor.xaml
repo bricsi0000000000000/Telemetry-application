@@ -9,33 +9,17 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
-        TextElement.FontWeight="Medium"
-        TextElement.FontSize="14"
         xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
         FontFamily="{materialDesign:MaterialDesignFont}" WindowStyle="ThreeDBorderWindow"
         xmlns:dockablz="clr-namespace:Dragablz.Dockablz;assembly=Dragablz"
-        Title="MapEditor" Height="580" Width="600">
+        Title="Track Editor" Height="580" Width="600">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="1.4*"/>
         </Grid.ColumnDefinitions>
         
-        <Label Grid.Row="0"
-               Grid.ColumnSpan="2"
-               Name="laps_lbl"
-               Content="Lap Editor"
-               VerticalContentAlignment="Center"
-               HorizontalContentAlignment="Center"
-               FontSize="15"
-               />
-        
-        <Grid Grid.Column="0" Grid.Row="1">
+        <Grid Grid.Column="0">
            <Canvas x:Name="all_lap_canvas"
                    MouseMove="AllLapCanvas_MouseMove"
                    PreviewMouseLeftButtonUp="AllLapCanvas_PreviewMouseLeftButtonUp"
@@ -68,7 +52,6 @@
             </Canvas>
         </Grid>
         <Grid Grid.Column="1"
-              Grid.Row="1"
               Name="laps_grid"
               >
             <Grid.RowDefinitions>
@@ -91,7 +74,6 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="1"
-                       Content="11/4"
                        VerticalContentAlignment="Center"
                        HorizontalContentAlignment="Center"
                        FontSize="15"
@@ -104,6 +86,28 @@
                     <materialDesign:PackIcon Kind="ArrowForward"/>
                 </Button>
             </Grid>
+        </Grid>
+
+        <Grid Grid.ColumnSpan="2"
+              Name="progressbar_grid"
+              Background="#CC303030"
+              Visibility="Hidden"
+              >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0"
+                   Content="Processing.."
+                   VerticalContentAlignment="Bottom"
+                   HorizontalContentAlignment="Center"
+                   />
+            <ProgressBar Grid.Row="1"
+                         Name="progressbar"
+                         VerticalAlignment="Top"
+                         Style="{StaticResource MaterialDesignCircularProgressBar}" 
+                         IsIndeterminate="True"
+                         />
         </Grid>
     </Grid>
 </Window>

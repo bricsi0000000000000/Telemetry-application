@@ -44,19 +44,11 @@ namespace ART_TELEMETRY_APP
         ProgressBar progressbar;
         long file_length;
         BackgroundWorker worker;
-       /* StackPanel files;
-        Snackbar error_snack_bar;
-        Button add_file_btn;*/
-
-        float duration = 1;
 
         public void ReadData(Pilot pilot,
                              string file_name,
                              Grid progressbar_grid,
-                             ref ProgressBar progressbar/*,
-                             StackPanel files,
-                             Snackbar error_snack_bar,
-                             Button add_file_btn*/
+                             ref ProgressBar progressbar
                              )
         {
             this.pilot = pilot;
@@ -66,14 +58,9 @@ namespace ART_TELEMETRY_APP
             {
                 this.progressbar_grid = progressbar_grid;
                 this.progressbar = progressbar;
-               // this.files = files;
-               // this.error_snack_bar = error_snack_bar;
-               // this.add_file_btn = add_file_btn;
                 this.file_length = File.ReadLines(file_name).Count();
 
                 this.progressbar_grid.Visibility = Visibility.Visible;
-
-               // this.add_file_btn.IsEnabled = false;
 
                 worker = new BackgroundWorker();
                 worker.WorkerReportsProgress = true;
@@ -84,8 +71,8 @@ namespace ART_TELEMETRY_APP
             }
             else
             {
-               // error_snack_bar.MessageQueue.Enqueue(string.Format("{0} already exists!", fileNameWithoutPath), null, null, null, false, true,
-                                                    // TimeSpan.FromSeconds(duration));
+                // error_snack_bar.MessageQueue.Enqueue(string.Format("{0} already exists!", fileNameWithoutPath), null, null, null, false, true,
+                // TimeSpan.FromSeconds(duration));
             }
         }
 
@@ -122,7 +109,6 @@ namespace ART_TELEMETRY_APP
                 single_data.Option = new LineSerieOptions
                 {
                     stroke_thickness = .7f,
-                    //stroke_color =(Brush)new BrushConverter().ConvertFromString("#303030")
                     stroke_color = Brushes.Black
                 };
                 single_data.InputFileName = fileNameWithoutPath;
@@ -159,7 +145,6 @@ namespace ART_TELEMETRY_APP
             read_file.Close();
 
             pilot.AddInputFile(new InputFile(fileNameWithoutPath, new_datas, pilot.Name));
-            //DataManager.AddInputData(new InputFile(fileNameWithoutPath, new_datas));
         }
 
         private void workerProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -171,25 +156,13 @@ namespace ART_TELEMETRY_APP
         {
             progressbar_grid.Visibility = Visibility.Hidden;
             progressbar.IsIndeterminate = false;
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Datas").Content).GetTab(pilot.Name).Content).GetTab("Laps").Content).InitInputFileCmbbox();
+            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilot.Name).Content).GetTab("Laps").Content).InitInputFileCmbbox();
+            ((PilotsMenuContent)TabManager.GetTab("Pilots").Content).DisableAllPilots(false, pilot.Name);
 
-            //this.add_file_btn.IsEnabled = true;
-
-            //if (DataManager.DatasCount > 0)
-            // {
-            //DataManager.ActiveFileName = file_name.Split('\\').Last();
-            // files.Children.Add(new InputFileListElement(file_name, pilot, ref files));
-            //  SettingsManager.UpdatePilotsInGroups();
-            // LapBuilder.MakeLaps();
-            //  SettingsManager.MapSettings_UC.all_lap_svg.Data = Geometry.Parse(LapManager.AllLapSVG);
-
-            /*MapBuilder.Instance.Make(file_name.Split('\\').Last(),
-                                     map_progressbar,
-                                     map_progressbar_colorzone,
-                                     map_svg,
-                                     map_nothing
-                                     );*/
-            //}
+            if (pilot.InputFiles.Last().Latitude == null || pilot.InputFiles.Last().Longitude == null)
+            {
+                ((PilotsMenuContent)TabManager.GetTab("Pilots").Content).ShowError("No longitude or latitude data found!");
+            }
         }
     }
 }

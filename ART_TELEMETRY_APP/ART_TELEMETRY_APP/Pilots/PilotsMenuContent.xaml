@@ -26,13 +26,29 @@
                      Foreground="White"
                      HorizontalAlignment="Stretch"
                      materialDesign:HintAssist.IsFloating="True"
-                     materialDesign:HintAssist.HelperText="Press Enter to enter data"
-                     materialDesign:HintAssist.Hint="Add Pilot"
+                     materialDesign:HintAssist.HelperText="Press Enter to add new pilot"
+                     materialDesign:HintAssist.Hint="Pilot's name"
                      KeyDown="addPilotTxtbox_KeyDown"
                     />
         </WrapPanel>
         <WrapPanel Grid.Row="1"
                    Name="pilots_wrappanel"
                    />
+
+        <Viewbox Grid.Row="1"
+                 x:Name="no_pilots_viewbox"
+                 Visibility="Visible"
+                 >
+            <Label Content="Add pilot"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Center"
+                   Margin="20" Foreground="#FF424242"
+                   />
+        </Viewbox>
+        <materialDesign:Snackbar Grid.Row="1"
+                                 MessageQueue="{materialDesign:MessageQueue}"
+                                 x:Name="error_snack_bar"
+                                 Foreground="White"
+                                 />
     </Grid>
 </UserControl>

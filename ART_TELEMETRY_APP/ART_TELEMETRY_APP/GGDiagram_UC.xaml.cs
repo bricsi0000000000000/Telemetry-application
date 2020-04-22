@@ -24,33 +24,47 @@ namespace ART_TELEMETRY_APP
     /// </summary>
     public partial class GGDiagram_UC : UserControl
     {
-        Group group;
-        public GGDiagram_UC(Group group = null)
+        public bool Init = false;
+        public GGDiagram_UC()
         {
             InitializeComponent();
-            this.group = group;
+            gg_chart.DataTooltip = null;
+            gg_chart.DisableAnimations = true;
+            gg_chart.Hoverable = false;
         }
 
-        public void InitScatterPlot(Group group)
+        public void InitScatterPlot(InputFile input_file)
         {
-            this.group = group;
-            if (group != null)
+            if (!Init)
             {
-                Data accx_data = group.Pilots[0].InputFiles[0].GetData("AccX");
-                Data accy_data = group.Pilots[0].InputFiles[0].GetData("AccY");
+                Data accx_data = input_file.GetData("AccX");
+                Data accy_data = input_file.GetData("AccY");
                 Console.Write(accx_data.Datas.Count + " -> ");
                 ChartValues<double> filtered_accx = filteredData(accx_data.Datas);
                 ChartValues<double> filtered_accy = filteredData(accy_data.Datas);
-                Console.WriteLine(filtered_accx.Count);
-                ChartValues<ObservablePoint> acc = new ChartValues<ObservablePoint>();
+              //  Console.WriteLine(filtered_accx.Count);
+                ChartValues<ScatterPoint> acc = new ChartValues<ScatterPoint>();
                 for (int i = 0; i < filtered_accx.Count; i++)
                 {
-                    acc.Add(new ObservablePoint(filtered_accx[i], filtered_accy[i]));
+                    acc.Add(new ScatterPoint(filtered_accx[i], filtered_accy[i]));
                 }
 
-                ScatterSeries series = new ScatterSeries();
-                series.Values = acc;
-                gg_chart.Series.Add(series);
+                gg_chart.Series.Add(new ScatterSeries
+                {
+                    Values = acc,
+                    MinPointShapeDiameter = 4,
+                });
+
+
+                Axis axis = new Axis();
+                axis.Title = "AccX";
+                gg_chart.AxisX.Add(axis);
+
+                axis = new Axis();
+                axis.Title = "AccY";
+                gg_chart.AxisY.Add(axis);
+
+                Init = true;
             }
         }
 
@@ -59,7 +73,7 @@ namespace ART_TELEMETRY_APP
             ChartValues<double> input_datas = new ChartValues<double>(datas);
             int total = input_datas.Count;
             Random rand = new Random(DateTime.Now.Millisecond);
-            while (input_datas.Count / (double)total > .01f)
+            while (input_datas.Count / (double)total > .04f)
             {
                 try
                 {

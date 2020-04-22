@@ -23,7 +23,7 @@ namespace ART_TELEMETRY_APP
     {
         private static short chart_min_height = 100;
 
-        public static void Build(Grid diagram_grid, List<Lap> laps, InputFile input_file)
+        public static void Build(Grid diagram_grid, List<Lap> laps, InputFile input_file, bool time)
         {
             diagram_grid.Children.Clear();
             diagram_grid.RowDefinitions.Clear();
@@ -38,16 +38,29 @@ namespace ART_TELEMETRY_APP
                 chart.MinHeight = chart_min_height;
                 chart.Zoom = ZoomingOptions.Xy;
 
-                /* Axis axis = new Axis();
-                 //axis.Title = pilot.Item1;
-                 axis.Separator = new LiveCharts.Wpf.Separator
-                 {
-                     IsEnabled = false,
-                     Step = 100
-                 };
+                if (laps[lap_index].SelectedChannels.Count > 0)
+                {
+                    Axis axis = new Axis();
+                    string title = "";
+                    foreach (var item in laps[lap_index].SelectedChannels)
+                    {
+                        title += item + ", ";
+                    }
+                    title = title.Substring(0, title.Length - 2);
+                    axis.Title = title;
+                    /*axis.Separator = new LiveCharts.Wpf.Separator
+                    {
+                        IsEnabled = false,
+                        Step = 100
+                    };*/
 
-                 chart.AxisX.Add(axis); //Csak az x tengelyre adtam
-                 */
+                    chart.AxisY.Add(axis); //Csak az y tengelyre adtam
+
+                    axis = new Axis();
+                    axis.Title = time ? "Time" : "Distance";
+                    chart.AxisX.Add(axis);
+                }
+
                 RowDefinition row_up = new RowDefinition();
                 RowDefinition row_down = new RowDefinition();
                 row_down.Height = new GridLength(5);
@@ -57,13 +70,12 @@ namespace ART_TELEMETRY_APP
                 {
                     if (laps[lap_index].SelectedChannels.Contains(data.Attribute))
                     {
-                        //Data data = group.SelectedChannels.Find(n => n.PilotsName == pilot.Item1);
                         LineSeries serie = new LineSeries
                         {
                             Title = data.Attribute,
-                            Values = convertToObservablePoints(ConvertLap(data, laps[lap_index], input_file)),
+                            Values = convertToObservablePoints(ConvertLap(data, laps[lap_index], input_file, time)),
                             PointGeometry = null,
-                            StrokeThickness = 1,
+                            StrokeThickness = 1.7,
                             Fill = Brushes.Transparent,
                             Stroke = ChartLineColors.Colors[rand.Next(0, ChartLineColors.Colors.Length)]
                         };
@@ -88,9 +100,16 @@ namespace ART_TELEMETRY_APP
         }
 
         static ChartValues<double> distances = new ChartValues<double>();
-        private static ChartValues<double> ConvertLap(Data data, Lap lap, InputFile input_file)
+        private static ChartValues<double> ConvertLap(Data data, Lap lap, InputFile input_file, bool time)
         {
-            distances = PilotManager.GetPilot(data.PilotsName).GetInputFile(data.InputFileName).Distances;
+            if (time)
+            {
+                distances = PilotManager.GetPilot(data.PilotsName).GetInputFile(data.InputFileName).Times;
+            }
+            else
+            {
+                distances = PilotManager.GetPilot(data.PilotsName).GetInputFile(data.InputFileName).Distances;
+            }
             int from = (data.Datas.Count * lap.FromIndex) / input_file.Laps.Sum(a => a.Points.Count);
             int to = (data.Datas.Count * lap.ToIndex) / input_file.Laps.Sum(a => a.Points.Count);
 

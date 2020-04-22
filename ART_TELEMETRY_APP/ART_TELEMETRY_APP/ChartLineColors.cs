@@ -11,15 +11,11 @@ namespace ART_TELEMETRY_APP
     {
         static public Brush[] Colors = new Brush[] {
             Brushes.Aqua,
-            Brushes.Brown,
             Brushes.Chartreuse,
             Brushes.Crimson,
-            Brushes.DeepPink,
-            Brushes.Gray,
             Brushes.Gold,
-            Brushes.Green,
-            Brushes.OrangeRed,
-            Brushes.Red,
+            Brushes.Orange,
+            Brushes.Tomato,
         };
 
        // public List<Brush> UsedColors = new List<Brush>();

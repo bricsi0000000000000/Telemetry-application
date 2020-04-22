@@ -1,5 +1,4 @@
-﻿using ART_TELEMETRY_APP.Laps;
-using ART_TELEMETRY_APP.Pilots;
+﻿using ART_TELEMETRY_APP.Pilots;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,43 +16,42 @@ using System.Windows.Shapes;
 namespace ART_TELEMETRY_APP
 {
     /// <summary>
-    /// Interaction logic for LapChannels.xaml
+    /// Interaction logic for AllLapChannels.xaml
     /// </summary>
-    public partial class LapChannels : Window
+    public partial class AllLapChannels : Window
     {
-        Lap lap;
-        List<string> channels;
-        List<string> selected_channels = new List<string>();
         string pilots_name;
+        List<string> channels;
+        List<string> selected_channels;
+        List<string> new_selected_channels = new List<string>();
 
-        public LapChannels(Lap lap, List<string> channels, string pilots_name)
+        public AllLapChannels(string pilots_name, List<string> channels, List<string> selected_channels)
         {
             InitializeComponent();
 
-            this.Title = string.Format("Select channels to {0}. lap", lap.Index);
-
-            this.lap = lap;
-            this.channels = channels;
             this.pilots_name = pilots_name;
+            this.channels = channels;
+            this.selected_channels = selected_channels;
+            //this.selected_channels = selected_channels;
 
-            initSelectedChannels();
             initChannelsListBox();
+            initSelectedChannels();
             initSelectedChannelsListBox();
         }
 
         private void initSelectedChannels()
         {
-            selected_channels.Clear();
-            foreach (string attribute in lap.SelectedChannels)
+            new_selected_channels.Clear();
+            foreach (string attribute in selected_channels)
             {
-                selected_channels.Add(attribute);
+                new_selected_channels.Add(attribute);
             }
         }
 
         private void initSelectedChannelsListBox()
         {
             selected_channels_listbox.Items.Clear();
-            foreach (string attribute in selected_channels)
+            foreach (string attribute in new_selected_channels)
             {
                 ListBoxItem item = new ListBoxItem();
                 item.Content = attribute;
@@ -61,7 +59,27 @@ namespace ART_TELEMETRY_APP
                 selected_channels_listbox.Items.Add(item);
             }
         }
+        /*  private void initSelectedChannels()
+          {
+              new_selected_channels.Clear();
+              foreach (string attribute in selected_channels)
+              {
+                  new_selected_channels.Add(attribute);
+              }
+          }
 
+          private void initSelectedChannelsListBox()
+          {
+              selected_channels_listbox.Items.Clear();
+              foreach (string attribute in new_selected_channels)
+              {
+                  ListBoxItem item = new ListBoxItem();
+                  item.Content = attribute;
+                  item.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(selectedChannelListBoxItemClick);
+                  selected_channels_listbox.Items.Add(item);
+              }
+          }
+          */
         private void initChannelsListBox()
         {
             channels_listbox.Items.Clear();
@@ -74,30 +92,20 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        private void updateLapSelectedChannels()
-        {
-            lap.SelectedChannels.Clear();
-            foreach (string attribute in selected_channels)
-            {
-                lap.SelectedChannels.Add(attribute);
-            }
-        }
-
         private void channelListBoxItemClick(object sender, MouseButtonEventArgs e)
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 string attribute = ((ListBoxItem)sender).Content.ToString();
-                selected_channels.Add(attribute);
+                new_selected_channels.Add(attribute);
                 updateSelectedListBoxItems();
-                updateLapSelectedChannels();
             }
         }
 
         private void updateSelectedListBoxItems()
         {
             selected_channels_listbox.Items.Clear();
-            foreach (string attribute in selected_channels)
+            foreach (string attribute in new_selected_channels)
             {
                 ListBoxItem item = new ListBoxItem();
                 item.Content = attribute;
@@ -111,12 +119,54 @@ namespace ART_TELEMETRY_APP
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 string attribute = ((ListBoxItem)sender).Content.ToString();
-                selected_channels.Remove(attribute);
+                new_selected_channels.Remove(attribute);
+                updateSelectedListBoxItems();
+            }
+        }
+        /*
+        private void updateLapSelectedChannels()
+        {
+            selected_channels.Clear();
+            foreach (string attribute in new_selected_channels)
+            {
+                selected_channels.Add(attribute);
+            }
+        }
+
+        private void channelListBoxItemClick(object sender, MouseButtonEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                string attribute = ((ListBoxItem)sender).Content.ToString();
+                new_selected_channels.Add(attribute);
                 updateSelectedListBoxItems();
                 updateLapSelectedChannels();
             }
         }
 
+        private void updateSelectedListBoxItems()
+        {
+            selected_channels_listbox.Items.Clear();
+            foreach (string attribute in new_selected_channels)
+            {
+                ListBoxItem item = new ListBoxItem();
+                item.Content = attribute;
+                item.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(selectedChannelListBoxItemClick);
+                selected_channels_listbox.Items.Add(item);
+            }
+        }
+
+        private void selectedChannelListBoxItemClick(object sender, MouseButtonEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                string attribute = ((ListBoxItem)sender).Content.ToString();
+                new_selected_channels.Remove(attribute);
+                updateSelectedListBoxItems();
+                updateLapSelectedChannels();
+            }
+        }
+        */
         private void filterChannelsTxtbox_KeyUp(object sender, KeyEventArgs e)
         {
             List<ListBoxItem> items = new List<ListBoxItem>();
@@ -141,13 +191,13 @@ namespace ART_TELEMETRY_APP
         private void filterSelectedChannelsTxtbox_KeyUp(object sender, KeyEventArgs e)
         {
             List<ListBoxItem> items = new List<ListBoxItem>();
-            foreach (var attribute in selected_channels)
+            foreach (var attribute in new_selected_channels)
             {
                 if (string.IsNullOrEmpty(filter_selected_channels_txtbox.Text) || attribute.ToUpper().Contains(filter_selected_channels_txtbox.Text.ToUpper()))
                 {
                     ListBoxItem item = new ListBoxItem();
                     item.Content = attribute;
-                    item.PreviewMouseLeftButtonUp+= new MouseButtonEventHandler(selectedChannelListBoxItemClick);
+                    item.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(selectedChannelListBoxItemClick);
                     items.Add(item);
                 }
             }
@@ -161,6 +211,7 @@ namespace ART_TELEMETRY_APP
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).ChangeAllSelectedChannels(new_selected_channels);
             ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).BuildCharts();
         }
     }

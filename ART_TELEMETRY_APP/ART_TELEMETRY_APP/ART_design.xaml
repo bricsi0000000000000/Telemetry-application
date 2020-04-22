@@ -8,8 +8,8 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="ART_tabblz_design.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    
-    <Color x:Key="ValidationErrorColor">#f44336</Color>
+
+    <Color x:Key="ValidationErrorColor">#434343</Color>
     <SolidColorBrush x:Key="ValidationErrorBrush" Color="{StaticResource ValidationErrorColor}" po:Freeze="True" />
 
     <SolidColorBrush x:Key="MaterialDesignBackground" Color="#434343" po:Freeze="True" />

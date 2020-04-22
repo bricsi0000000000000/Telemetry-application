@@ -9,7 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     
     <materialDesign:Card Margin="8 0 8 4"
-                         materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                         materialDesign:ShadowAssist.ShadowDepth="Depth0"
                          >
         <Grid>
             <Grid.ColumnDefinitions>
@@ -26,6 +26,7 @@
             <Button Grid.Column="1"
                     Click="settingsInputFile_Click"
                     Style="{StaticResource MaterialDesignRaisedLightButton}"
+                    materialDesign:ShadowAssist.ShadowDepth="Depth0"
                     >
                 <materialDesign:PackIcon Grid.Column="1"
                                          Kind="Settings"
@@ -36,6 +37,7 @@
             <Button Grid.Column="2"
                     Click="deleteInputFile_Click"
                     Style="{StaticResource MaterialDesignRaisedLightButton}"
+                    materialDesign:ShadowAssist.ShadowDepth="Depth0"
                     >
                 <materialDesign:PackIcon Grid.Column="1"
                                          Kind="Close"

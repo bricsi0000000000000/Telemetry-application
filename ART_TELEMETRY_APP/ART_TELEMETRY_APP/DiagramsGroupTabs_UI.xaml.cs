@@ -30,7 +30,7 @@ namespace ART_TELEMETRY_APP
 
         public void InitGroupTabs()
         {
-            foreach (Group group in GroupManager.Groups)
+           /* foreach (Group group in GroupManager.Groups)
             {
                 TabItem item = new TabItem();
                 item.Header = group.Name;
@@ -43,7 +43,7 @@ namespace ART_TELEMETRY_APP
 
                 item = new TabItem();
                 item.Header = "G-G diagram";
-                GGDiagram_UC gg_diagram_UC = new GGDiagram_UC(group);
+              //  GGDiagram_UC gg_diagram_UC = new GGDiagram_UC(group);
                 gg_diagram_UC.Name = string.Format("gg_{0}", group.Name);
                 SettingsManager.GGdiagram_UC = gg_diagram_UC;
                 item.Content = gg_diagram_UC;
@@ -53,7 +53,7 @@ namespace ART_TELEMETRY_APP
                 item.Header = "Lap report";
                 groups_tabcontrol.Items.Add(item);
                 //item.IsSelected = true;
-            }
+            }*/
         }
     }
 }

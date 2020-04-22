@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ART_TELEMETRY_APP.LapListElement"
+﻿<UserControl x:Class="ART_TELEMETRY_APP.AllLapListElement"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              d:DesignHeight="50" d:DesignWidth="800">
-    
+
     <materialDesign:Card Margin="8 0 8 4"
                          materialDesign:ShadowAssist.ShadowDepth="Depth1"
                          >
@@ -30,9 +30,7 @@
                                          />
             </Button>
 
-            <Grid Grid.Column="1"
-                  x:Name="main_grid"
-                  PreviewMouseLeftButtonUp="settingsLap_PreviewMouseLeftButtonUp">
+            <Grid Grid.Column="1" PreviewMouseLeftButtonUp="settingsLap_PreviewMouseLeftButtonUp">
                 <Label Name="lap_lbl"
                        HorizontalContentAlignment="Left"
                        VerticalContentAlignment="Center"

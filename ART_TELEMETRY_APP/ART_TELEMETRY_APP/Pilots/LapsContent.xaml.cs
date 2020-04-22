@@ -2,6 +2,7 @@
 using ART_TELEMETRY_APP.Laps;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,9 @@ namespace ART_TELEMETRY_APP.Pilots
         Pilot pilot;
         InputFile active_input_file;
         List<LapListElement> lap_list_elements = new List<LapListElement>();
+        AllLapListElement all_lap_list_element;
+        List<string> all_selected_channels = new List<string>();
+        bool dist_as_time = false;
 
         public LapsContent(Pilot pilot)
         {
@@ -56,10 +60,24 @@ namespace ART_TELEMETRY_APP.Pilots
             {
                 string file_name = ((ComboBoxItem)((ComboBox)sender).SelectedItem).Content.ToString();
                 active_input_file = pilot.GetInputFile(file_name);
-                one_lap_svg.Data = Geometry.Parse(active_input_file.AvgLapSVG);
-                updateLaps();
+                avg_lap_svg.Data = Geometry.Parse(active_input_file.AvgLapSVG);
 
+                updateLaps();
+                BuildCharts();
+                ((GGDiagram_UC)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilot.Name).Content).GetTab("Traction").Content).InitScatterPlot(active_input_file);
             }
+        }
+
+        public void ChangeAllLapsActive(bool active)
+        {
+            for (int i = 0; i < lap_list_elements.Count; i++)
+            {
+                if (lap_list_elements[i].Active != active)
+                {
+                    lap_list_elements[i].Active = active;
+                }
+            }
+            InitLapListElements();
         }
 
         public void InitLapListElements()
@@ -72,12 +90,30 @@ namespace ART_TELEMETRY_APP.Pilots
                     laps_stackpanel.Children.Add(lap_list_elements[i]);
                     active_input_file.ActiveLaps[i] = lap_list_elements[i].Active;
                 }
+                laps_stackpanel.Children.Insert(0, all_lap_list_element);
+            }
+        }
+
+        public void ChangeAllSelectedChannels(List<string> selected_channels)
+        {
+            all_selected_channels.Clear();
+            foreach (string attribute in selected_channels)
+            {
+                all_selected_channels.Add(attribute);
+            }
+            for (int i = 0; i < active_input_file.Laps.Count; i++)
+            {
+                active_input_file.Laps[i].SelectedChannels.Clear();
+                foreach (string attribute in selected_channels)
+                {
+                    active_input_file.Laps[i].SelectedChannels.Add(attribute);
+                }
             }
         }
 
         public void BuildCharts()
         {
-            ChartBuilder.Build(charts_grid, activeLaps, active_input_file);
+            ChartBuilder.Build(charts_grid, activeLaps, active_input_file, dist_as_time);
         }
 
         private List<Lap> activeLaps
@@ -108,20 +144,71 @@ namespace ART_TELEMETRY_APP.Pilots
                 channels.Add(data.Attribute);
             }
 
-            foreach (Lap lap in active_input_file.Laps)
+            TimeSpan all_time = new TimeSpan();
+
+            int worst_index = 1;
+            int best_index = 1;
+            TimeSpan worst_time = active_input_file.Laps[1].Time;
+            TimeSpan best_time = active_input_file.Laps[1].Time;
+            for (int i = 2; i < active_input_file.Laps.Count - 1; i++)
             {
-                LapListElement lap_list_element = new LapListElement(lap, pilot.Name,
-                                                                     active_input_file.ActiveLaps[lap.Index],
-                                                                     channels
-                                                                     );
+                if (active_input_file.Laps[i].Time > worst_time)
+                {
+                    worst_time = active_input_file.Laps[i].Time;
+                    worst_index = i;
+                }
+            }
+
+            for (int i = 2; i < active_input_file.Laps.Count - 1; i++)
+            {
+                if (active_input_file.Laps[i].Time < best_time)
+                {
+                    best_time = active_input_file.Laps[i].Time;
+                    best_index = i;
+                }
+            }
+
+            for (int i = 0; i < active_input_file.Laps.Count; i++)
+            {
+                LapListElement lap_list_element;
+                if (i + 1 >= active_input_file.Laps.Count)
+                {
+                    lap_list_element = new LapListElement(active_input_file.Laps[i], pilot.Name,
+                                                          active_input_file.ActiveLaps[active_input_file.Laps[i].Index],
+                                                          channels, i > 0 && i < active_input_file.Laps.Count - 1 ? i == best_index ? 1 : i == worst_index ? 0 : 2 : 2,
+                                                          true
+                                                          );
+                }
+                else
+                {
+                    lap_list_element = new LapListElement(active_input_file.Laps[i], pilot.Name,
+                                                          active_input_file.ActiveLaps[active_input_file.Laps[i].Index],
+                                                          channels, i > 0 && i < active_input_file.Laps.Count - 1 ? i == best_index ? 1 : i == worst_index ? 0 : 2 : 2
+                                                          );
+                }
+
                 lap_list_elements.Add(lap_list_element);
                 laps_stackpanel.Children.Add(lap_list_element);
+
+                all_time += active_input_file.Laps[i].Time;
             }
+
+            all_lap_list_element = new AllLapListElement(channels, all_time, pilot.Name, all_selected_channels);
+            laps_stackpanel.Children.Insert(0, all_lap_list_element);
         }
 
         private void metricCmbbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (active_input_file != null)
+            {
+                dist_as_time = !dist_as_time;
+                BuildCharts();
+            }
+        }
 
+        public void InitFirstInputFilesContent()
+        {
+            input_files_cmbbox.SelectedItem = input_files_cmbbox.Items[0];
         }
     }
 }

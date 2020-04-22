@@ -153,25 +153,23 @@ namespace ART_TELEMETRY_APP
                     avg_y /= laps.Count - 2;
                     average_lap[i] = new Point(avg_x, avg_y);
                 }
-                catch (Exception)
-                {
-                }
+                catch (Exception) { }
             }
         }
 
         public void InitDistances()
         {
-            distances = new ChartValues<double>();
-            ChartValues<double> speed = GetData("speed").Datas;
-            ChartValues<double> time = GetData("Time").Datas;
-            distances.Add(0);
-            for (int i = 1; i < speed.Count; i++)
-            {
-                if (i - 1 >= 0)
-                {
-                    distances.Add(distances[i - 1] + distance(time[i - 1], time[i], speed[i - 1] / 3.6, speed[i] / 3.6));
-                }
-            }
+             distances = new ChartValues<double>();
+             ChartValues<double> speed = GetData("speed").Datas;
+             ChartValues<double> time = GetData("Time").Datas;
+             distances.Add(0);
+             for (int i = 1; i < speed.Count; i++)
+             {
+                 if (i - 1 >= 0)
+                 {
+                     distances.Add(distances[i - 1] + distance(time[i - 1], time[i], speed[i - 1] / 3.6, speed[i] / 3.6));
+                 }
+             }
         }
 
         double distance(double time1, double time2, double speed1, double speed2)
@@ -213,6 +211,14 @@ namespace ART_TELEMETRY_APP
             set
             {
                 act_lap = value;
+            }
+        }
+
+        public ChartValues<double> Times
+        {
+            get
+            {
+                return datas.Find(n => n.Attribute == "Time").Datas;
             }
         }
 
@@ -297,12 +303,16 @@ namespace ART_TELEMETRY_APP
         {
             get
             {
-                string svg_path = string.Format("M{0} {1}", average_lap[0].X, average_lap[0].Y);
+                int radius = 10;
+                string svg_path = "M " + average_lap[0].X + " " + average_lap[0].Y + " m -" + radius + ", 0 a " + radius + "," + radius + " 0 1,0 " + (radius * 2) + ",0 a " + radius + "," + radius + ", 0 1,0 -" + (radius * 2) + ",0";
+                radius = 5;
+                svg_path += "L " + average_lap[0].X + " " + average_lap[0].Y + " m -" + radius + ", 0 a " + radius + "," + radius + " 0 1,0 " + (radius * 2) + ",0 a " + radius + "," + radius + ", 0 1,0 -" + (radius * 2) + ",0";
+                svg_path += string.Format(" L{0} {1}", average_lap[0].X, average_lap[0].Y);
                 for (int i = 0; i < average_lap.Count; i++)
                 {
                     svg_path += string.Format(" L{0} {1}", average_lap[i].X, average_lap[i].Y);
                 }
-
+                svg_path += " Z";
                 return svg_path;
             }
         }

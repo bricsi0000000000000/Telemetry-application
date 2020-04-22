@@ -7,11 +7,10 @@
              mc:Ignorable="d" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="{DynamicResource MaterialDesignPaper}"
              xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <materialDesign:Card MinWidth="300" Margin="5">
+    <materialDesign:ColorZone MinWidth="300" Margin="5" CornerRadius="3" Mode="Dark">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
@@ -21,7 +20,7 @@
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="45"/>
+                    <ColumnDefinition Width="55"/>
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Column="0"
@@ -31,16 +30,11 @@
                        />
                 <Button Grid.Column="1"
                         Click="deletePilot_Click"
+                        Margin="0 0 5 0"
+                        Name="delete_pilot_btn"
                         >
-                    <materialDesign:PackIcon Kind="Close" RenderTransformOrigin="0.5,0.5">
-                        <materialDesign:PackIcon.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
-                                <SkewTransform/>
-                                <RotateTransform/>
-                                <TranslateTransform X="-1.5"/>
-                            </TransformGroup>
-                        </materialDesign:PackIcon.RenderTransform>
+                    <materialDesign:PackIcon Kind="Close">
+                        
                     </materialDesign:PackIcon>
                 </Button>
             </Grid>
@@ -57,6 +51,7 @@
                         Click="addFile_Click"
                         Content="Add File"
                         Margin="5"
+                        Name="add_file_btn"
                         />
             </Grid>
 
@@ -81,6 +76,10 @@
                              IsIndeterminate="False"
                              />
             </Grid>
+            <Grid Grid.RowSpan="2"
+                  Name="disable_grid"
+                  Background="#CC303030"
+                  Visibility="Hidden"/>
         </Grid>
-    </materialDesign:Card>
+    </materialDesign:ColorZone>
 </UserControl>

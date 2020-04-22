@@ -55,7 +55,7 @@ namespace ART_TELEMETRY_APP.Pilots
         {
             PilotManager.RemovePilot(pilots_name);
             ((PilotsMenuContent)TabManager.GetTab("Pilots").Content).InitPilots();
-            ((DatasMenuContent)TabManager.GetTab("Datas").Content).InitPilotsTabs();
+            ((DatasMenuContent)TabManager.GetTab("Diagrams").Content).InitPilotsTabs();
         }
 
         private void addFile_Click(object sender, RoutedEventArgs e)
@@ -68,7 +68,16 @@ namespace ART_TELEMETRY_APP.Pilots
                 string file_name = open_file_dialog.FileName.Split('\\').Last();
                 InputFileListElement input_file_list_element = new InputFileListElement(file_name, pilot.Name);
                 input_files_stackpanel.Children.Add(input_file_list_element);
+                ((PilotsMenuContent)TabManager.GetTab("Pilots").Content).DisableAllPilots(true, pilots_name);
                 DataReader.Instance.ReadData(pilot, open_file_dialog.FileName, progressbar_grid, ref progressbar);
+            }
+        }
+
+        public string PilotsName
+        {
+            get
+            {
+                return pilots_name;
             }
         }
     }

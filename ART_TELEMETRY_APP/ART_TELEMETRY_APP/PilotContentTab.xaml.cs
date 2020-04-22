@@ -51,7 +51,7 @@ namespace ART_TELEMETRY_APP
 
             item = new TabItem();
             item.Header = "Traction";
-            //item.Content = new LapsContent(pilot);
+            item.Content = new GGDiagram_UC();
             item.Name = string.Format("{0}_item_traction", pilot.Name);
             tabs.Add(item);
             tabcontrol.Items.Add(item);
