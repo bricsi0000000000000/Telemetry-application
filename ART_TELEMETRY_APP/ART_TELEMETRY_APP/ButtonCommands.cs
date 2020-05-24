@@ -9,7 +9,7 @@ namespace ART_TELEMETRY_APP
 {
     class ButtonCommands
     {
-        public static readonly RoutedUICommand ImportFile = new RoutedUICommand
+       /* public static readonly RoutedUICommand ImportFile = new RoutedUICommand
           (
               "Import File",
               "ImportFile",
@@ -40,6 +40,6 @@ namespace ART_TELEMETRY_APP
             {
                 new KeyGesture(Key.F3)
             }
-        );
+        );*/
     }
 }

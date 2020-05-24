@@ -45,7 +45,7 @@ namespace ART_TELEMETRY_APP
 
 
         /* public ItemActionCallback ClosingTabItemHandler
-         {
+        /* {
              get { return ClosingTabItemHandlerImpl; }
          }
 

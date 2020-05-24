@@ -8,7 +8,7 @@
         x:Class="ART_TELEMETRY_APP.MainWindow"
         mc:Ignorable="d"
         xmlns:s="clr-namespace:System;assembly=mscorlib"
-        Title="ART telemetry"
+        Title="ART telemetry demo 1.0"
         Height="700"
         Width="1300"
         WindowStartupLocation="CenterScreen"
