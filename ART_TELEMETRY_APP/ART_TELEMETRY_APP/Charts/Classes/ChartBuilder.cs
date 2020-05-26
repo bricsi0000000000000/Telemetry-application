@@ -1,4 +1,5 @@
-﻿using ART_TELEMETRY_APP.InputFiles;
+﻿using ART_TELEMETRY_APP.Charts.Classes;
+using ART_TELEMETRY_APP.InputFiles;
 using ART_TELEMETRY_APP.Laps;
 using ART_TELEMETRY_APP.Pilots;
 using ART_TELEMETRY_APP.Settings;
@@ -16,6 +17,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using static ART_TELEMETRY_APP.Pilots.LapsContent;
 
 namespace ART_TELEMETRY_APP
 {
@@ -23,7 +25,7 @@ namespace ART_TELEMETRY_APP
     {
         private static short chart_min_height = 100;
 
-        public static void Build(Grid diagram_grid, List<Lap> laps, InputFile input_file, bool time)
+        public static void Build(Grid diagram_grid, List<Lap> laps, InputFile input_file, bool time, Filter filter)
         {
             diagram_grid.Children.Clear();
             diagram_grid.RowDefinitions.Clear();
@@ -65,21 +67,69 @@ namespace ART_TELEMETRY_APP
                 RowDefinition row_down = new RowDefinition();
                 row_down.Height = new GridLength(5);
 
-                Random rand = new Random();
                 foreach (Data data in input_file.Datas)
                 {
                     if (laps[lap_index].SelectedChannels.Contains(data.Attribute))
                     {
-                        LineSeries serie = new LineSeries
+                        float stroke_thickness = .7f;
+                        switch (filter)
                         {
-                            Title = data.Attribute,
-                            Values = convertToObservablePoints(ConvertLap(data, laps[lap_index], input_file, time)),
-                            PointGeometry = null,
-                            StrokeThickness = 1.7,
-                            Fill = Brushes.Transparent,
-                            Stroke = ChartLineColors.Colors[rand.Next(0, ChartLineColors.Colors.Length)]
-                        };
-                        chart.Series.Add(serie);
+                            case Filter.kalman:
+                                LineSeries serie_kalman = new LineSeries
+                                {
+                                    Title = data.Attribute,
+                                    Values = convertToObservablePoints(kalmanFilter(ConvertLap(data, laps[lap_index], input_file, time), getKalmanSensitivity(lap_index, data.PilotsName))),
+                                    PointGeometry = null,
+                                    LineSmoothness = 0,
+                                    StrokeThickness = stroke_thickness,
+                                    Fill = Brushes.Transparent,
+                                    Stroke = ChartLineColors.RandomColor
+                                };
+                                chart.Series.Add(serie_kalman);
+                                break;
+                            case Filter.nothing:
+                                LineSeries serie_nothing = new LineSeries
+                                {
+                                    Title = data.Attribute,
+                                    Values = convertToObservablePoints(ConvertLap(data, laps[lap_index], input_file, time)),
+                                    PointGeometry = null,
+                                    LineSmoothness = 0,
+                                    StrokeThickness = stroke_thickness,
+                                    Fill = Brushes.Transparent,
+                                    Stroke = ChartLineColors.RandomColor
+                                };
+                                chart.Series.Add(serie_nothing);
+                                break;
+                            case Filter.both:
+                                LineSeries serie_kalman_both = new LineSeries
+                                {
+                                    Title = data.Attribute,
+                                    Values = convertToObservablePoints(kalmanFilter(ConvertLap(data, laps[lap_index], input_file, time), getKalmanSensitivity(lap_index, data.PilotsName))),
+                                    PointGeometry = null,
+                                    LineSmoothness = 0,
+                                    StrokeThickness = stroke_thickness,
+                                    Fill = Brushes.Transparent,
+                                    Stroke = ChartLineColors.RandomColor
+                                };
+                                chart.Series.Add(serie_kalman_both);
+
+                                LineSeries serie_nothing_both = new LineSeries
+                                {
+                                    Title = data.Attribute,
+                                    Values = convertToObservablePoints(ConvertLap(data, laps[lap_index], input_file, time)),
+                                    PointGeometry = null,
+                                    LineSmoothness = 0,
+                                    StrokeThickness = stroke_thickness,
+                                    Fill = Brushes.Transparent,
+                                    Stroke = ChartLineColors.RandomColor
+                                };
+                                chart.Series.Add(serie_nothing_both);
+                                break;
+                            default:
+                                break;
+                        }
+                       
+                       
                     }
                 }
 
@@ -136,6 +186,23 @@ namespace ART_TELEMETRY_APP
             }
 
             return return_datas;
+        }
+
+        private static ChartValues<double> kalmanFilter(ChartValues<double> datas, double Q)
+        {
+            ChartValues<double> clean = new ChartValues<double>();
+            KalmanFilter filter = new KalmanFilter(1, 1, Q, 1, 0.1, datas[0]);
+            for (int i = 0; i < datas.Count; i++)
+            {
+                clean.Add(filter.Output(datas[i]));
+            }
+
+            return clean;
+        }
+
+        private static float getKalmanSensitivity(int lap_index, string pilots_name)
+        {
+            return ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).GetLapListElement(lap_index+1).KalmanSensitivity;
         }
     }
 }

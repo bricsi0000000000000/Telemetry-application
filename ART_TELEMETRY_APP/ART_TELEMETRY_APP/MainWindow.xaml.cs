@@ -19,6 +19,8 @@ namespace ART_TELEMETRY_APP
 
             TabManager.InitMenuItems(menu_tabcontrol);
 
+           // test t = new test();
+          //  t.Show();
 
             //this.DataContext = new MainWindowViewModell();
 

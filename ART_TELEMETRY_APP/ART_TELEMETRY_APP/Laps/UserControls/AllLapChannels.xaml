@@ -55,5 +55,10 @@
                      Margin="5"
                      />
         </Grid>
+        <materialDesign:Snackbar Grid.ColumnSpan="2"
+                                 MessageQueue="{materialDesign:MessageQueue}"
+                                 x:Name="error_snack_bar"
+                                 Foreground="White"
+                                 />
     </Grid>
 </Window>

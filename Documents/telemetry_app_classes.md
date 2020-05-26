@@ -6,6 +6,7 @@
   - *Classes*
     - ChartBuilder.cs
     - ChartLineColors.cs
+    - KalmanFilter.cs
   - *User Controls*
 - **Datas**
   - *Classes*
@@ -71,6 +72,12 @@
 > ### ChartLineColors.cs
 >
 > Contains a colors list.
+
+> ### KalmanFilter.cs
+>
+> Kalman filter.
+> The value of *Q* is the sensitivity of the filter. If *Q* the smaller is, the more sensitive will be the filter.
+>
 
 > ### Data.cs
 >

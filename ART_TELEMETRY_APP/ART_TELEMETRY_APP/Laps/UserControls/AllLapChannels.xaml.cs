@@ -97,10 +97,24 @@ namespace ART_TELEMETRY_APP
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 string attribute = ((ListBoxItem)sender).Content.ToString();
-                new_selected_channels.Add(attribute);
+                addToSelectedChannels(attribute);
                 updateSelectedListBoxItems();
             }
         }
+
+        private void addToSelectedChannels(string attribute)
+        {
+            if (!selected_channels.Contains(attribute))
+            {
+                selected_channels.Add(attribute);
+            }
+            else
+            {
+                error_snack_bar.MessageQueue.Enqueue(string.Format("'{0}' is already selected!", attribute),
+                                                     null, null, null, false, true, TimeSpan.FromSeconds(1));
+            }
+        }
+
 
         private void updateSelectedListBoxItems()
         {

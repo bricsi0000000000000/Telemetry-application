@@ -18,6 +18,15 @@ namespace ART_TELEMETRY_APP
             Brushes.Tomato,
         };
 
+        static public Brush RandomColor
+        {
+            get
+            {
+                Random rand = new Random();
+                return Colors[rand.Next(0, Colors.Length - 1)];
+            }
+        }
+
        // public List<Brush> UsedColors = new List<Brush>();
     }
 }

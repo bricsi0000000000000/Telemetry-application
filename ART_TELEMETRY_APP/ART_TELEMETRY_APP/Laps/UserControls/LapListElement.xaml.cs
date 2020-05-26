@@ -26,6 +26,7 @@ namespace ART_TELEMETRY_APP
         string pilots_name;
         List<string> channels;
         bool active = false;
+        float kalman_sensitivity = 0.2f;
 
         /// <summary>
         /// 0=worst, 1=best, 2=none
@@ -103,5 +104,7 @@ namespace ART_TELEMETRY_APP
                 active = value;
             }
         }
+
+        public float KalmanSensitivity { get => kalman_sensitivity; set => kalman_sensitivity = value; }
     }
 }

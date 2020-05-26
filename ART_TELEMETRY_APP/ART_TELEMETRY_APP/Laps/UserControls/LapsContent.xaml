@@ -30,6 +30,8 @@
                 <RowDefinition Height="5"/>
                 <RowDefinition Height=".9*"/>
                 <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
             </Grid.RowDefinitions>
 
             <ComboBox Name="input_files_cmbbox" Margin="5" SelectionChanged="inputFilesCmbbox_SelectionChanged"/>
@@ -71,6 +73,35 @@
                     <ComboBoxItem Content="Distance" IsSelected="True"/>
                     <ComboBoxItem Content="Time"/>
                 </ComboBox>
+            </Grid>
+
+            <Grid Grid.Row="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Content="Filter"
+                       VerticalContentAlignment="Center"
+                       HorizontalContentAlignment="Center"
+                       />
+
+                <ComboBox Grid.Column="1"
+                          Name="filter_cmbbox"
+                          Margin="5"
+                          SelectionChanged="filterCmbbox_SelectionChanged"
+                          >
+                    <ComboBoxItem Content="Kalman" IsSelected="True"/>
+                    <ComboBoxItem Content="Nothing"/>
+                    <ComboBoxItem Content="Both"/>
+                </ComboBox>
+            </Grid>
+
+            <Grid Grid.Row="6">
+                <Button Content="Reset zoom"
+                        Click="resetZoom_Click"
+                        Margin="5"
+                        />
             </Grid>
         </Grid>
     </Grid>

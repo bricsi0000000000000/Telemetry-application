@@ -15,15 +15,26 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
                 <RowDefinition Height="65"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBox x:Name="filter_channels_txtbox"
+            <Label Grid.Row="0"
+                   Name="all_channels_lbl"
+                   Content="All channels (100)"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Center"
+                   />
+            <TextBox Grid.Row="1"
+                     Name="filter_channels_txtbox"
                      Margin="5 5 5 20"
                      KeyUp="filterChannelsTxtbox_KeyUp"
                      HorizontalAlignment="Stretch"
@@ -31,18 +42,28 @@
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:HintAssist.Hint="Filter Channels"
                      />
-            <ListBox x:Name="channels_listbox"
-                     Grid.Row="2"
+            <ListBox Grid.Row="2"
+                     Name="channels_listbox"
                      Margin="5"
                      />
         </Grid>
 
-        <Grid Grid.Column="1">
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
+
+        <Grid Grid.Column="2">
             <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
                 <RowDefinition Height="65"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBox x:Name="filter_selected_channels_txtbox"
+            <Label Grid.Row="0"
+                   Content="Selected channels (4)"
+                   Name="selected_channels_lbl"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Center"
+                   />
+            <TextBox Grid.Row="1"
+                     Name="filter_selected_channels_txtbox"
                      Margin="5 5 5 20"
                      KeyUp="filterSelectedChannelsTxtbox_KeyUp"
                      HorizontalAlignment="Stretch"
@@ -50,10 +71,41 @@
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:HintAssist.Hint="Filter Selected Channels"
                      />
-            <ListBox x:Name="selected_channels_listbox"
-                     Grid.Row="2"
+            <ListBox Grid.Row="2"
+                     Name="selected_channels_listbox"
                      Margin="5"
                      />
         </Grid>
+
+        <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch"/>
+
+        <Grid Grid.Column="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="65"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <Label Grid.Row="0"
+                   Content="Kalman filter settings"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Center"
+                   />
+            <TextBox Grid.Row="1"
+                     Name="kalman_filter_sensitivity_txtbox"
+                     Margin="5 5 5 20"
+                     KeyUp="kalmanFilterSensitivityTxtbox_KeyUp"
+                     HorizontalAlignment="Stretch"
+                     materialDesign:HintAssist.HelperText="Press Enter to enter data"
+                     materialDesign:HintAssist.IsFloating="True"
+                     materialDesign:HintAssist.Hint="Kalman filter sensitivity"
+                     />
+        </Grid>
+        <materialDesign:Snackbar Grid.ColumnSpan="5"
+                                 MessageQueue="{materialDesign:MessageQueue}"
+                                 x:Name="error_snack_bar"
+                                 Foreground="White"
+                                 />
     </Grid>
 </Window>

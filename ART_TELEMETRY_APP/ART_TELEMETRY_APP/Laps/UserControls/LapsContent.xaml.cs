@@ -1,5 +1,6 @@
 ﻿using ART_TELEMETRY_APP.InputFiles;
 using ART_TELEMETRY_APP.Laps;
+using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,6 +30,11 @@ namespace ART_TELEMETRY_APP.Pilots
         AllLapListElement all_lap_list_element;
         List<string> all_selected_channels = new List<string>();
         bool dist_as_time = false;
+        public enum Filter
+        {
+            kalman, nothing, both
+        }
+        Filter filter = Filter.kalman;
 
         public LapsContent(Pilot pilot)
         {
@@ -113,7 +119,7 @@ namespace ART_TELEMETRY_APP.Pilots
 
         public void BuildCharts()
         {
-            ChartBuilder.Build(charts_grid, activeLaps, active_input_file, dist_as_time);
+            ChartBuilder.Build(charts_grid, activeLaps, active_input_file, dist_as_time, filter);
         }
 
         private List<Lap> activeLaps
@@ -206,9 +212,54 @@ namespace ART_TELEMETRY_APP.Pilots
             }
         }
 
+        private void filterCmbbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (active_input_file != null)
+            {
+                foreach (var item in ((ComboBox)sender).Items)
+                {
+                    if (((ComboBoxItem)item).IsSelected)
+                    {
+                        if(((ComboBoxItem)item).Content.Equals("Kalman"))
+                        {
+                            filter = Filter.kalman;
+                        }
+                        else if (((ComboBoxItem)item).Content.Equals("Both"))
+                        {
+                            filter = Filter.both;
+                        }
+                        else
+                        {
+                            filter = Filter.nothing;
+                        }
+                    }
+                }
+                BuildCharts();
+            }
+        }
+
         public void InitFirstInputFilesContent()
         {
             input_files_cmbbox.SelectedItem = input_files_cmbbox.Items[0];
+        }
+
+        public LapListElement GetLapListElement(int lap_index)
+        {
+            return lap_list_elements[lap_index];
+        }
+
+        private void resetZoom_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var child in charts_grid.Children)
+            {
+                if (child is CartesianChart)
+                {
+                    ((CartesianChart)child).AxisX[0].MinValue = double.NaN;
+                    ((CartesianChart)child).AxisX[0].MaxValue = double.NaN;
+                    ((CartesianChart)child).AxisY[0].MinValue = double.NaN;
+                    ((CartesianChart)child).AxisY[0].MaxValue = double.NaN;
+                }
+            }
         }
     }
 }

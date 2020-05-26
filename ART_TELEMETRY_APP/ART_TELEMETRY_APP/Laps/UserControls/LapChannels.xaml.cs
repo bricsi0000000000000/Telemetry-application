@@ -39,6 +39,9 @@ namespace ART_TELEMETRY_APP
             initSelectedChannels();
             initChannelsListBox();
             initSelectedChannelsListBox();
+
+            kalman_filter_sensitivity_txtbox.Text =
+                ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).GetLapListElement(lap.Index).KalmanSensitivity.ToString();
         }
 
         private void initSelectedChannels()
@@ -60,6 +63,7 @@ namespace ART_TELEMETRY_APP
                 item.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(selectedChannelListBoxItemClick);
                 selected_channels_listbox.Items.Add(item);
             }
+            selected_channels_lbl.Content = string.Format("Selected channels ({0})", selected_channels.Count);
         }
 
         private void initChannelsListBox()
@@ -72,6 +76,7 @@ namespace ART_TELEMETRY_APP
                 item.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(channelListBoxItemClick);
                 channels_listbox.Items.Add(item);
             }
+            all_channels_lbl.Content = string.Format("All channels ({0})", channels.Count);
         }
 
         private void updateLapSelectedChannels()
@@ -88,9 +93,22 @@ namespace ART_TELEMETRY_APP
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 string attribute = ((ListBoxItem)sender).Content.ToString();
-                selected_channels.Add(attribute);
+                addToSelectedChannels(attribute);
                 updateSelectedListBoxItems();
                 updateLapSelectedChannels();
+            }
+        }
+
+        private void addToSelectedChannels(string attribute)
+        {
+            if (!selected_channels.Contains(attribute))
+            {
+                selected_channels.Add(attribute);
+            }
+            else
+            {
+                error_snack_bar.MessageQueue.Enqueue(string.Format("'{0}' is already selected!", attribute),
+                                                     null, null, null, false, true, TimeSpan.FromSeconds(1));
             }
         }
 
@@ -104,6 +122,7 @@ namespace ART_TELEMETRY_APP
                 item.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(selectedChannelListBoxItemClick);
                 selected_channels_listbox.Items.Add(item);
             }
+            selected_channels_lbl.Content = string.Format("Selected channels ({0})", selected_channels.Count);
         }
 
         private void selectedChannelListBoxItemClick(object sender, MouseButtonEventArgs e)
@@ -147,7 +166,7 @@ namespace ART_TELEMETRY_APP
                 {
                     ListBoxItem item = new ListBoxItem();
                     item.Content = attribute;
-                    item.PreviewMouseLeftButtonUp+= new MouseButtonEventHandler(selectedChannelListBoxItemClick);
+                    item.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(selectedChannelListBoxItemClick);
                     items.Add(item);
                 }
             }
@@ -159,8 +178,23 @@ namespace ART_TELEMETRY_APP
             }
         }
 
+        private void kalmanFilterSensitivityTxtbox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (float.TryParse(kalman_filter_sensitivity_txtbox.Text, out float sensitivity))
+            {
+                saveKalmanSensitivity();
+            }
+        }
+
+        private void saveKalmanSensitivity()
+        {
+            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).GetLapListElement(lap.Index).KalmanSensitivity =
+                    float.Parse(kalman_filter_sensitivity_txtbox.Text);
+        }
+
         private void Window_Closed(object sender, EventArgs e)
         {
+            saveKalmanSensitivity();
             ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).BuildCharts();
         }
     }

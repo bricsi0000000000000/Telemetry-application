@@ -75,6 +75,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Charts\Classes\KalmanFilter.cs" />
     <Compile Include="Laps\UserControls\AllLapChannels.xaml.cs">
       <DependentUpon>AllLapChannels.xaml</DependentUpon>
     </Compile>
@@ -125,6 +126,9 @@
       <DependentUpon>SettingsMenuContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Classes\TabManager.cs" />
+    <Compile Include="test.xaml.cs">
+      <DependentUpon>test.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tracks\UserControls\TrackContent.xaml.cs">
       <DependentUpon>TrackContent.xaml</DependentUpon>
     </Compile>
@@ -204,6 +208,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Settings\UserControls\SettingsMenuContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="test.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
