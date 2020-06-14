@@ -9,6 +9,8 @@ namespace ART_TELEMETRY_APP
 {
     public static class ChartLineColors
     {
+        static Random rand = new Random();
+
         static public Brush[] Colors = new Brush[] {
             Brushes.Aqua,
             Brushes.Chartreuse,
@@ -22,7 +24,6 @@ namespace ART_TELEMETRY_APP
         {
             get
             {
-                Random rand = new Random();
                 return Colors[rand.Next(0, Colors.Length - 1)];
             }
         }

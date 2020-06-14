@@ -20,6 +20,7 @@
 - **Icons**
   - art.ico
   - art_logo_jBd_icon.ico
+  - art_logo.ico
 - **Laps**
   - *Classes*
     - Lap.cs
@@ -32,8 +33,13 @@
     - LapsContent.xaml
 - **Maps**
   - *Classes*
+    - Map.cs
+    - MapManager.cs
   - *User Controls*
     - MapEditor.xaml
+    - MapEditor_UC.xaml
+    - MapSettings.xaml
+    - MapSettingsItem.xaml
 - **Pilots**
   - *Classes*
     - Pilot.cs
@@ -76,8 +82,8 @@
 > ### KalmanFilter.cs
 >
 > Kalman filter.
-> The value of *Q* is the sensitivity of the filter. If *Q* the smaller is, the more sensitive will be the filter.
 >
+> The value of *Q* is the sensitivity of the filter. If *Q* the smaller is, the more sensitive will be the filter.
 
 > ### Data.cs
 >

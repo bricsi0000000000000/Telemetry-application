@@ -17,7 +17,6 @@ namespace ART_TELEMETRY_APP
     {
         string file_name;
         List<Data> datas = new List<Data>();
-        //float filter_percent = .6f;
         int act_lap = 0;
         ChartValues<double> distances;
         string pilot_name;
@@ -27,6 +26,7 @@ namespace ART_TELEMETRY_APP
         List<Point> map_points = new List<Point>();
         List<string> lapsSVGs = new List<string>();
         List<bool> active_laps = new List<bool>();
+        string map_name;
 
         public InputFile(string input_data_name, List<Data> datas, string pilot_name)
         {
@@ -326,6 +326,18 @@ namespace ART_TELEMETRY_APP
             set
             {
                 active_laps = value;
+            }
+        }
+
+        public string MapName
+        {
+            get
+            {
+                return map_name;
+            }
+            set
+            {
+                map_name = value;
             }
         }
 

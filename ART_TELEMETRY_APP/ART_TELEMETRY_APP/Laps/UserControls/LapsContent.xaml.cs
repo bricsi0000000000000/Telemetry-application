@@ -53,6 +53,7 @@ namespace ART_TELEMETRY_APP.Pilots
             int index = 0;
             foreach (InputFile input_file in pilot.InputFiles)
             {
+                Console.WriteLine(input_file.FileName);
                 ComboBoxItem combo_box_item = new ComboBoxItem();
                 combo_box_item.Content = input_file.FileName;
                 combo_box_item.Name = string.Format("cmbboxitem{0}", index++);

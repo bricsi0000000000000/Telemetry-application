@@ -8,6 +8,7 @@ using System.Diagnostics;
 using MaterialDesignThemes.Wpf;
 using Dragablz;
 using ART_TELEMETRY_APP.Settings;
+using ART_TELEMETRY_APP.Maps.Classes;
 
 namespace ART_TELEMETRY_APP
 {
@@ -17,6 +18,7 @@ namespace ART_TELEMETRY_APP
         {
             InitializeComponent();
 
+            MapManager.LoadMaps();
             TabManager.InitMenuItems(menu_tabcontrol);
 
            // test t = new test();

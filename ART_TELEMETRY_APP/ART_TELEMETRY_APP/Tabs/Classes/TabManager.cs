@@ -23,6 +23,13 @@ namespace ART_TELEMETRY_APP
             menu_items.Add(settings_menu_item);
             tab_control.Items.Add(settings_menu_item);
 
+            TabItem datas_menu_item = new TabItem();
+            datas_menu_item.Header = "Diagrams";
+            datas_menu_item.Content = new DatasMenuContent();
+            datas_menu_item.Name = "diagrams_menu_item";
+            menu_items.Add(datas_menu_item);
+            tab_control.Items.Add(datas_menu_item);
+
             TabItem pilots_menu_item = new TabItem();
             pilots_menu_item.Header = "Pilots";
             pilots_menu_item.Content = new PilotsMenuContent();
@@ -30,13 +37,6 @@ namespace ART_TELEMETRY_APP
             pilots_menu_item.IsSelected = true;
             menu_items.Add(pilots_menu_item);
             tab_control.Items.Add(pilots_menu_item);
-
-            TabItem datas_menu_item = new TabItem();
-            datas_menu_item.Header = "Diagrams";
-            datas_menu_item.Content = new DatasMenuContent();
-            datas_menu_item.Name = "diagrams_menu_item";
-            menu_items.Add(datas_menu_item);
-            tab_control.Items.Add(datas_menu_item);
         }
 
         public static TabItem GetTab(string name)

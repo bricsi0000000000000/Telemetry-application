@@ -1,8 +1,10 @@
 ﻿using ART_TELEMETRY_APP.Laps;
+using ART_TELEMETRY_APP.Maps.Classes;
 using ART_TELEMETRY_APP.Pilots;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,28 +15,45 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Windows.Threading;
 
-namespace ART_TELEMETRY_APP.Maps
+namespace ART_TELEMETRY_APP.Maps.UserControls
 {
     /// <summary>
-    /// Interaction logic for MapEditor.xaml
+    /// Interaction logic for MapEditor_UC.xaml
     /// </summary>
-    public partial class MapEditor : Window
+    public partial class MapEditor_UC : UserControl
     {
         InputFile input_file;
         int lap_index;
         BackgroundWorker worker;
         Point cursor;
+        string map_name;
 
-        public MapEditor(InputFile input_file)
+        public MapEditor_UC(InputFile input_file, string map_name)
         {
             InitializeComponent();
 
             this.input_file = input_file;
+            this.map_name = map_name;
 
             all_lap_svg.Data = Geometry.Parse(input_file.AllLapsSVG);
+
+            if (MapManager.GetMap(map_name).StarPoint != new Point(-1, -1))
+            {
+                cursor = MapManager.GetMap(map_name).StarPoint;
+            }
+
+            if (!MapManager.GetMap(map_name).Processed)
+            {
+                startWorker();
+                MapManager.GetMap(map_name).Processed = true;
+            }
+            else
+            {
+                drawActLap();
+            }
         }
 
         double distance(Point p1, Point p2)
@@ -60,120 +79,24 @@ namespace ART_TELEMETRY_APP.Maps
             Canvas.SetTop(start_line_ellipse, min_point.Y);
         }
 
-        private void AllLapCanvas_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void startWorker()
         {
-            /*input_file.Laps.Clear();
-            lapIndex = 0;
-            List<Point> nearest_map_points = new List<Point>();
-            short radius = 20;
-            cursor = Mouse.GetPosition(all_lap_canvas);
-
-            foreach (Point point in input_file.MapPoints)
-            {
-                if (distance(cursor, point) <= radius)
-                {
-                    nearest_map_points.Add(point);
-                }
-            }
-
-            if (nearest_map_points.Count >= 2)
-            {
-
-                Random rand = new Random();
-                Point random_point = nearest_map_points[rand.Next(0, nearest_map_points.Count)];
-
-                short after = 500;
-                radius = 40;
-
-                Lap act_lap = new Lap();
-
-                int new_lap_index = 0;
-                int last_circle_index = 0;
-
-                for (int i = 0; i < input_file.MapPoints.Count; i++)
-                {
-                    bool can_add = false;
-
-                    act_lap.AddPoint(input_file.MapPoints[i]);
-
-                    if (i + 1 >= input_file.MapPoints.Count)
-                    {
-                        can_add = true;
-                    }
-
-                    if (input_file.Laps.Count <= 0)
-                    {
-                        after = 0;
-                    }
-                    else
-                    {
-                        after = 500;
-                    }
-
-                    if (i >= last_circle_index + after)
-                    {
-                        if (Math.Sqrt(Math.Pow(input_file.MapPoints[i].X - random_point.X, 2) + Math.Pow(input_file.MapPoints[i].Y - random_point.Y, 2)) <= radius)
-                        {
-                            can_add = true;
-
-                            act_lap.FromIndex = last_circle_index;
-                            act_lap.ToIndex = i;
-                            act_lap.Index = new_lap_index++;
-
-                            last_circle_index = i;
-
-                            if (i + 1 < input_file.MapPoints.Count)
-                            {
-                                act_lap.AddPoint(input_file.MapPoints[i + 1]);
-                                last_circle_index = i + 1;
-                                act_lap.ToIndex = i + 1;
-                            }
-                        }
-                    }
-
-                    if (can_add)
-                    {
-                        input_file.Laps.Add(act_lap);
-                        act_lap = new Lap();
-                    }
-                }
-
-                input_file.Laps.Last().FromIndex = last_circle_index;
-                input_file.Laps.Last().ToIndex = input_file.MapPoints.Count;
-                input_file.Laps.Last().Index = new_lap_index;
-
-                input_file.LapsSVGs.Clear();
-                for (int i = 0; i < input_file.Laps.Count; i++)
-                {
-                    string svg_path = string.Format("M{0} {1}", input_file.Laps[i].GetPoint(0).X, input_file.Laps[i].GetPoint(0).Y);
-                    for (int index = 0; index < input_file.Laps[i].Points.Count; index++)
-                    {
-                        svg_path += string.Format(" L{0} {1}", input_file.Laps[i].GetPoint(index).X, input_file.Laps[i].GetPoint(index).Y);
-                    }
-                    input_file.LapsSVGs.Add(svg_path);
-                }
-
-                input_file.MakeAvgLap();
-                input_file.MakeLapTimes();
-                input_file.InitActiveLaps();
-                drawActLap();
-                */
-
-            /*  Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
-              {
-                  progressbar_grid.Visibility = Visibility.Visible;
-                  ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(input_file.PilotName).Content).GetTab("Laps").Content).InitFirstInputFilesContent();
-                  progressbar_grid.Visibility = Visibility.Hidden;
-              }));
-              */
             progressbar_grid.Visibility = Visibility.Visible;
-            cursor = Mouse.GetPosition(all_lap_canvas);
             worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
             worker.DoWork += workerDoWork;
             worker.ProgressChanged += workerProgressChanged;
             worker.RunWorkerCompleted += workerCompleted;
             worker.RunWorkerAsync(10000);
+        }
+
+        private void AllLapCanvas_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            cursor = Mouse.GetPosition(all_lap_canvas);
+
+            MapManager.ChangeMapsStartPoint(map_name, cursor);
+
+            startWorker();
         }
 
         private void workerDoWork(object sender, DoWorkEventArgs e)

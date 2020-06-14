@@ -1,4 +1,5 @@
 ﻿using ART_TELEMETRY_APP.Maps;
+using ART_TELEMETRY_APP.Maps.Classes;
 using ART_TELEMETRY_APP.Settings;
 using System;
 using System.Collections.Generic;
@@ -23,13 +24,27 @@ namespace ART_TELEMETRY_APP.Pilots
     public partial class InputFileListElement : UserControl
     {
         string pilots_name;
+        string file_name;
 
         public InputFileListElement(string file_name, string pilots_name)
         {
             InitializeComponent();
 
-            file_name_lbl.Content = file_name;
             this.pilots_name = pilots_name;
+            this.file_name = file_name;
+            file_name_lbl.Content = this.file_name;
+
+            updateMapsCmbbox();
+        }
+
+        private void updateMapsCmbbox()
+        {
+            foreach (Map map in MapManager.Maps)
+            {
+                ComboBoxItem item = new ComboBoxItem();
+                item.Content = map.Name;
+                maps_cmbbox.Items.Add(item);
+            }
         }
 
         private void deleteInputFile_Click(object sender, RoutedEventArgs e)
@@ -41,8 +56,14 @@ namespace ART_TELEMETRY_APP.Pilots
 
         private void settingsInputFile_Click(object sender, RoutedEventArgs e)
         {
-            MapEditor map_editor = new MapEditor(PilotManager.GetPilot(pilots_name).GetInputFile(file_name_lbl.Content.ToString()));
-            map_editor.Show();
+            TabManager.GetTab("Settings").IsSelected = true; //TODO: ha több settings van mint csak a Maps, akkor még azt is selected-re kell tenni. :)
+        }
+
+        private void mapsCmbbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string name = maps_cmbbox.SelectedItem.ToString().Split(':').Last();
+            name = name.Substring(1, name.Length - 1);
+            PilotManager.GetPilot(pilots_name).GetInputFile(file_name).MapName = name;
         }
     }
 }

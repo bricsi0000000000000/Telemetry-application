@@ -9,42 +9,62 @@
              d:DesignHeight="450" d:DesignWidth="800">
     
     <materialDesign:Card Margin="8 0 8 4"
+                         UniformCornerRadius="3"
                          materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                         Background="#FF303030"
+                         BorderBrush="#FF303030"
                          >
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="5*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
             <Label Name="file_name_lbl"
                    HorizontalContentAlignment="Center"
                    VerticalContentAlignment="Center"
-                   Grid.Column="0"
                    />
-            <Button Grid.Column="1"
-                    Click="settingsInputFile_Click"
-                    Style="{StaticResource MaterialDesignRaisedLightButton}"
-                    materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                    >
-                <materialDesign:PackIcon Grid.Column="1"
-                                         Kind="Settings"
-                                         HorizontalContentAlignment="Center"
-                                         VerticalContentAlignment="Center"
-                                         />
-            </Button>
-            <Button Grid.Column="2"
-                    Click="deleteInputFile_Click"
-                    Style="{StaticResource MaterialDesignRaisedLightButton}"
-                    materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                    >
-                <materialDesign:PackIcon Grid.Column="1"
-                                         Kind="Close"
-                                         HorizontalContentAlignment="Center"
-                                         VerticalContentAlignment="Center"
-                                         />
-            </Button>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <ComboBox Grid.Column="0"
+                          Name="maps_cmbbox"
+                          Margin="10 0"
+                          SelectionChanged="mapsCmbbox_SelectionChanged"
+                          />
+
+                <Button Grid.Column="1"
+                        Click="settingsInputFile_Click"
+                        Style="{StaticResource MaterialDesignRaisedLightButton}"
+                        materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                        Background="#FF303030"
+                        BorderBrush="#FF303030"
+                        >
+                    <materialDesign:PackIcon Grid.Column="1"
+                                             Kind="Map"
+                                             HorizontalContentAlignment="Center"
+                                             VerticalContentAlignment="Center"
+                                             />
+                </Button>
+                <Button Grid.Column="2"
+                        Click="deleteInputFile_Click"
+                        Style="{StaticResource MaterialDesignRaisedLightButton}"
+                        materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                        Background="#FF303030"
+                        BorderBrush="#FF303030"
+                        >
+                    <materialDesign:PackIcon Grid.Column="1"
+                                             Kind="Trash"
+                                             HorizontalContentAlignment="Center"
+                                             VerticalContentAlignment="Center"
+                                             />
+                </Button>
+            </Grid>
         </Grid>
     </materialDesign:Card>
 </UserControl>
