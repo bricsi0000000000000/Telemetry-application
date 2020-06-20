@@ -11,10 +11,10 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <materialDesign:ColorZone MinWidth="300"
-                                Background="#FF232323"
-                                CornerRadius="3"
-                                Margin="5"
-                                >
+                              Background="#FF232323"
+                              CornerRadius="3"
+                              Margin="5"
+                              >
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>

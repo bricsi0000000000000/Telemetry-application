@@ -76,6 +76,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Charts\Classes\KalmanFilter.cs" />
+    <Compile Include="Charts\Usercontrols\Chart.xaml.cs">
+      <DependentUpon>Chart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Laps\UserControls\AllLapChannels.xaml.cs">
       <DependentUpon>AllLapChannels.xaml</DependentUpon>
     </Compile>
@@ -141,6 +144,10 @@
       <DependentUpon>TrackContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="ButtonCommands.cs" />
+    <Page Include="Charts\Usercontrols\Chart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Laps\UserControls\AllLapChannels.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -270,7 +277,6 @@
     <Resource Include="Icons\art_logo_jBd_icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Charts\Usercontrols\" />
     <Folder Include="Images\" />
     <Folder Include="Settings\Classes\" />
     <Folder Include="Tabs\UserControls\" />

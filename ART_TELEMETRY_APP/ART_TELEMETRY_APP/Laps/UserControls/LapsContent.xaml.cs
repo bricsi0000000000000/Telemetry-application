@@ -1,4 +1,5 @@
-﻿using ART_TELEMETRY_APP.InputFiles;
+﻿using ART_TELEMETRY_APP.Charts.Usercontrols;
+using ART_TELEMETRY_APP.InputFiles;
 using ART_TELEMETRY_APP.Laps;
 using LiveCharts.Wpf;
 using System;
@@ -253,12 +254,9 @@ namespace ART_TELEMETRY_APP.Pilots
         {
             foreach (var child in charts_grid.Children)
             {
-                if (child is CartesianChart)
+                if (child is Chart)
                 {
-                    ((CartesianChart)child).AxisX[0].MinValue = double.NaN;
-                    ((CartesianChart)child).AxisX[0].MaxValue = double.NaN;
-                    ((CartesianChart)child).AxisY[0].MinValue = double.NaN;
-                    ((CartesianChart)child).AxisY[0].MaxValue = double.NaN;
+                    ((Chart)child).ResetZoom();
                 }
             }
         }

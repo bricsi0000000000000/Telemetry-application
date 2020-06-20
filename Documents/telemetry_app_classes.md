@@ -8,6 +8,7 @@
     - ChartLineColors.cs
     - KalmanFilter.cs
   - *User Controls*
+    - Chart.xaml
 - **Datas**
   - *Classes*
     - Data.cs
@@ -36,7 +37,6 @@
     - Map.cs
     - MapManager.cs
   - *User Controls*
-    - MapEditor.xaml
     - MapEditor_UC.xaml
     - MapSettings.xaml
     - MapSettingsItem.xaml

@@ -1,4 +1,5 @@
 ﻿using ART_TELEMETRY_APP.Charts.Classes;
+using ART_TELEMETRY_APP.Charts.Usercontrols;
 using ART_TELEMETRY_APP.InputFiles;
 using ART_TELEMETRY_APP.Laps;
 using ART_TELEMETRY_APP.Pilots;
@@ -23,8 +24,6 @@ namespace ART_TELEMETRY_APP
 {
     public static class ChartBuilder
     {
-        private static short chart_min_height = 100;
-
         public static void Build(Grid diagram_grid, List<Lap> laps, InputFile input_file, bool time, Filter filter)
         {
             diagram_grid.Children.Clear();
@@ -33,12 +32,18 @@ namespace ART_TELEMETRY_APP
             int index = 0;
             for (int lap_index = 0; lap_index < laps.Count; lap_index++)
             {
-                CartesianChart chart = new CartesianChart();
+                double max_value_x = double.MinValue;
+                double min_value_x = double.MaxValue;
+                double max_value_y = double.MinValue;
+                double min_value_y = double.MaxValue;
+
+                Chart chart = new Chart();
+                /*CartesianChart chart = new CartesianChart();
                 chart.DataTooltip = null;
                 chart.DisableAnimations = true;
                 chart.Hoverable = false;
                 chart.MinHeight = chart_min_height;
-                chart.Zoom = ZoomingOptions.Xy;
+                chart.Zoom = ZoomingOptions.Xy;*/
 
                 if (laps[lap_index].SelectedChannels.Count > 0)
                 {
@@ -56,11 +61,16 @@ namespace ART_TELEMETRY_APP
                         Step = 100
                     };*/
 
-                    chart.AxisY.Add(axis); //Csak az y tengelyre adtam
+                    chart.AddAxisY(axis);
 
                     axis = new Axis();
                     axis.Title = time ? "Time" : "Distance";
-                    chart.AxisX.Add(axis);
+                    chart.AddAxisX(axis);
+
+                    LiveCharts.Wpf.Separator sep = new LiveCharts.Wpf.Separator();
+                    sep.Step = 50;
+
+                    chart.AxisX.Separator = sep;
                 }
 
                 RowDefinition row_up = new RowDefinition();
@@ -72,66 +82,94 @@ namespace ART_TELEMETRY_APP
                     if (laps[lap_index].SelectedChannels.Contains(data.Attribute))
                     {
                         float stroke_thickness = .7f;
+                        ChartValues<ObservablePoint> serie_values = new ChartValues<ObservablePoint>();
                         switch (filter)
                         {
                             case Filter.kalman:
+                                serie_values = convertToObservablePoints(kalmanFilter(ConvertLap(data, laps[lap_index], input_file, time), getKalmanSensitivity(lap_index, data.PilotsName)));
                                 LineSeries serie_kalman = new LineSeries
                                 {
                                     Title = data.Attribute,
-                                    Values = convertToObservablePoints(kalmanFilter(ConvertLap(data, laps[lap_index], input_file, time), getKalmanSensitivity(lap_index, data.PilotsName))),
+                                    Values = serie_values,
                                     PointGeometry = null,
                                     LineSmoothness = 0,
                                     StrokeThickness = stroke_thickness,
                                     Fill = Brushes.Transparent,
                                     Stroke = ChartLineColors.RandomColor
                                 };
-                                chart.Series.Add(serie_kalman);
+                                chart.AddSerie(serie_kalman);
                                 break;
                             case Filter.nothing:
+                                serie_values = convertToObservablePoints(ConvertLap(data, laps[lap_index], input_file, time));
                                 LineSeries serie_nothing = new LineSeries
                                 {
                                     Title = data.Attribute,
-                                    Values = convertToObservablePoints(ConvertLap(data, laps[lap_index], input_file, time)),
+                                    Values = serie_values,
                                     PointGeometry = null,
                                     LineSmoothness = 0,
                                     StrokeThickness = stroke_thickness,
                                     Fill = Brushes.Transparent,
                                     Stroke = ChartLineColors.RandomColor
                                 };
-                                chart.Series.Add(serie_nothing);
+                                chart.AddSerie(serie_nothing);
                                 break;
                             case Filter.both:
+                                serie_values = convertToObservablePoints(kalmanFilter(ConvertLap(data, laps[lap_index], input_file, time), getKalmanSensitivity(lap_index, data.PilotsName)));
                                 LineSeries serie_kalman_both = new LineSeries
                                 {
                                     Title = data.Attribute,
-                                    Values = convertToObservablePoints(kalmanFilter(ConvertLap(data, laps[lap_index], input_file, time), getKalmanSensitivity(lap_index, data.PilotsName))),
+                                    Values = serie_values,
                                     PointGeometry = null,
                                     LineSmoothness = 0,
                                     StrokeThickness = stroke_thickness,
                                     Fill = Brushes.Transparent,
                                     Stroke = ChartLineColors.RandomColor
                                 };
-                                chart.Series.Add(serie_kalman_both);
+                                chart.AddSerie(serie_kalman_both);
 
+                                serie_values = convertToObservablePoints(ConvertLap(data, laps[lap_index], input_file, time));
                                 LineSeries serie_nothing_both = new LineSeries
                                 {
                                     Title = data.Attribute,
-                                    Values = convertToObservablePoints(ConvertLap(data, laps[lap_index], input_file, time)),
+                                    Values = serie_values,
                                     PointGeometry = null,
                                     LineSmoothness = 0,
                                     StrokeThickness = stroke_thickness,
                                     Fill = Brushes.Transparent,
                                     Stroke = ChartLineColors.RandomColor
                                 };
-                                chart.Series.Add(serie_nothing_both);
+                                chart.AddSerie(serie_nothing_both);
                                 break;
                             default:
                                 break;
                         }
-                       
-                       
+
+                        chart.MaxValueY = serie_values.Last().X;
+
+                        ChartValues<double> values = ConvertLap(data, laps[lap_index], input_file, time);
+                      
+                        if (values.Max() > max_value_x)
+                        {
+                            max_value_x = values.Max();
+                        }
+                        if (values.Min() < min_value_x)
+                        {
+                            min_value_x = values.Min();
+                        }
+
+                        if (values[0] < min_value_y)
+                        {
+                            min_value_y = values[0];
+                        }
                     }
                 }
+
+                chart.MaxValueX = max_value_x;
+                chart.MinValueX = min_value_x;
+                chart.MinValueY = min_value_y;
+                chart.UpdateAxisValues();
+
+                Console.WriteLine("max_value_x: {0}\tmin_value_x: {1}\tmax_value_y: {2}\tmin_value_y: {3}", max_value_x, min_value_x, max_value_y, min_value_y);
 
                 Grid.SetRow(chart, index++);
                 diagram_grid.Children.Add(chart);
@@ -202,7 +240,7 @@ namespace ART_TELEMETRY_APP
 
         private static float getKalmanSensitivity(int lap_index, string pilots_name)
         {
-            return ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).GetLapListElement(lap_index+1).KalmanSensitivity;
+            return ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).GetLapListElement(lap_index + 1).KalmanSensitivity;
         }
     }
 }

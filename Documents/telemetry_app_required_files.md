@@ -7,9 +7,9 @@
 
 > ### Maps.csv
 >
-> Contains all the saved map datas.
+> Contains all the data of the saved maps.
 >
-> **Name** and **start point** coordination.
+> **name**, **start point** coordinate and **year**.
 
 > ### Pilots.csv
 >
