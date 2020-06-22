@@ -1,0 +1,7 @@
+group_name;group_attributes
+EngineMapping;rev,ath,lam,ign_1,ti_1,gear,speed
+EngineBase;rev,rev_b,gear,batt_u,OilPress,FuelPress,mappos
+Gearbox;rev,gear,upInput,upRqe,upGoing,shiftCnt,neutral_In,clutchGoing
+Temperatures;tmot,toil,tfuel,IAT,CoolerIn,CoolerOut
+Driver;speed,gear,ath,Brake_F,Steering
+LaunchControl;speed,gear,ath,AUS_STATE,neutral_In,ign_1

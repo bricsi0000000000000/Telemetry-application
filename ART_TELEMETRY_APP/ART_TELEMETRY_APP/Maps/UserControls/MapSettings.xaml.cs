@@ -149,5 +149,27 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
             ActiveMapSettingsItem = map_settings_items.Find(n => n.MapName == changeMapName_txtbox.Text);
             UpdateActiveMapSettingsContent();
         }
+
+        public MapSettingsItem GetMapSettingsItem(string map_name, string map_date)
+        {
+            //return map_settings_items.Find(n => n.Name == map_name && n.MapYear == map_date);
+            foreach (MapSettingsItem item in map_settings_items)
+            {
+                if (item.MapName == map_name && item.MapYear == map_date)
+                {
+                    return item;
+                }
+            }
+
+            return null;
+        }
+
+        public List<MapSettingsItem> MapSettingsItems
+        {
+            get
+            {
+                return map_settings_items;
+            }
+        }
     }
 }

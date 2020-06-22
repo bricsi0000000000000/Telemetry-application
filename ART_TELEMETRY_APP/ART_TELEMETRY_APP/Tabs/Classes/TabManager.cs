@@ -1,4 +1,5 @@
-﻿using ART_TELEMETRY_APP.Pilots;
+﻿using ART_TELEMETRY_APP.Groups.UserControls;
+using ART_TELEMETRY_APP.Pilots;
 using ART_TELEMETRY_APP.Settings;
 using Dragablz;
 using System;
@@ -37,6 +38,15 @@ namespace ART_TELEMETRY_APP
             pilots_menu_item.IsSelected = true;
             menu_items.Add(pilots_menu_item);
             tab_control.Items.Add(pilots_menu_item);
+
+           /* TabItem groups_menu_item = new TabItem();
+            groups_menu_item.Header = "Groups";
+            GroupsMenuContent groups_menu_content = new GroupsMenuContent();
+            groups_menu_item.Content = groups_menu_content;
+            groups_menu_item.Name = "groups_menu_item";
+            menu_items.Add(groups_menu_item);
+            tab_control.Items.Add(groups_menu_item);
+            groups_menu_content.InitGroupsTabs();*/
         }
 
         public static TabItem GetTab(string name)

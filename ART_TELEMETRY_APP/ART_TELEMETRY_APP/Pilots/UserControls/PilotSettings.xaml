@@ -8,7 +8,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
-             d:DesignHeight="450" d:DesignWidth="800">
+             >
 
     <materialDesign:ColorZone MinWidth="300"
                               Background="#FF232323"
@@ -38,7 +38,7 @@
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="45"/>
                 </Grid.RowDefinitions>
 
                 <StackPanel x:Name="input_files_stackpanel"/>

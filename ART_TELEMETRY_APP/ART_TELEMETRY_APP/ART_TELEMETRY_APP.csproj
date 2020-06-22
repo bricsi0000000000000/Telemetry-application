@@ -79,6 +79,23 @@
     <Compile Include="Charts\Usercontrols\Chart.xaml.cs">
       <DependentUpon>Chart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Groups\Classes\Group.cs" />
+    <Compile Include="Groups\Classes\GroupManager.cs" />
+    <Compile Include="Groups\UserControls\GroupContent.xaml.cs">
+      <DependentUpon>GroupContent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Groups\UserControls\GroupSettingsAttribute.xaml.cs">
+      <DependentUpon>GroupSettingsAttribute.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Groups\UserControls\GroupSettings.xaml.cs">
+      <DependentUpon>GroupSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Groups\UserControls\GroupSettingsGroup.xaml.cs">
+      <DependentUpon>GroupSettingsGroup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Groups\UserControls\GroupsMenuContent.xaml.cs">
+      <DependentUpon>GroupsMenuContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Laps\UserControls\AllLapChannels.xaml.cs">
       <DependentUpon>AllLapChannels.xaml</DependentUpon>
     </Compile>
@@ -145,6 +162,26 @@
     </Compile>
     <Compile Include="ButtonCommands.cs" />
     <Page Include="Charts\Usercontrols\Chart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Groups\UserControls\GroupContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Groups\UserControls\GroupSettingsAttribute.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Groups\UserControls\GroupSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Groups\UserControls\GroupSettingsGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Groups\UserControls\GroupsMenuContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

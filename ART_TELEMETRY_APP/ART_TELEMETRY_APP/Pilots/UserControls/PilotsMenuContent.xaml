@@ -37,6 +37,7 @@
         -->
         <materialDesign:DialogHost HorizontalAlignment="Stretch"
                                    VerticalAlignment="Stretch"
+                                   CloseOnClickAway="True"
                                    >
             <materialDesign:DialogHost.DialogContent>
                 <StackPanel Margin="16">
@@ -89,8 +90,8 @@
                         VerticalAlignment="Bottom"
                         HorizontalAlignment="Right"
                         Margin="10"
-                        Background="#FFFF2E00"
-                        BorderBrush="#FFFF2E00"
+                        Background="#FFE21B1B"
+                        BorderBrush="#FFE21B1B"
                         >
                     <materialDesign:PackIcon Kind="RacingHelmet"
                                              Height="30"

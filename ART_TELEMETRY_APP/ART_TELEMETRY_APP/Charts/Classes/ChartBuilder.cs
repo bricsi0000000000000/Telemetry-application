@@ -24,10 +24,31 @@ namespace ART_TELEMETRY_APP
 {
     public static class ChartBuilder
     {
+        static int longest_lap_length = 0;
+        static Lap longest_lap = new Lap();
+
         public static void Build(Grid diagram_grid, List<Lap> laps, InputFile input_file, bool time, Filter filter)
         {
             diagram_grid.Children.Clear();
             diagram_grid.RowDefinitions.Clear();
+
+            longest_lap_length = input_file.Laps[1].Points.Count;
+            longest_lap = input_file.Laps[1];
+            for (int i = 2; i < input_file.Laps.Count - 1; i++)
+            {
+                if (input_file.Laps[i].Points.Count > longest_lap_length)
+                {
+                    longest_lap_length = input_file.Laps[i].Points.Count;
+                    longest_lap = input_file.Laps[i];
+                }
+            }
+
+            List<string> labels_y = new List<string>();
+            List<string> labels_x = new List<string>();
+            for (int i = 0; i < longest_lap_length; i++)
+            {
+                labels_x.Add(i.ToString());
+            }
 
             int index = 0;
             for (int lap_index = 0; lap_index < laps.Count; lap_index++)
@@ -38,40 +59,6 @@ namespace ART_TELEMETRY_APP
                 double min_value_y = double.MaxValue;
 
                 Chart chart = new Chart();
-                /*CartesianChart chart = new CartesianChart();
-                chart.DataTooltip = null;
-                chart.DisableAnimations = true;
-                chart.Hoverable = false;
-                chart.MinHeight = chart_min_height;
-                chart.Zoom = ZoomingOptions.Xy;*/
-
-                if (laps[lap_index].SelectedChannels.Count > 0)
-                {
-                    Axis axis = new Axis();
-                    string title = "";
-                    foreach (var item in laps[lap_index].SelectedChannels)
-                    {
-                        title += item + ", ";
-                    }
-                    title = title.Substring(0, title.Length - 2);
-                    axis.Title = title;
-                    /*axis.Separator = new LiveCharts.Wpf.Separator
-                    {
-                        IsEnabled = false,
-                        Step = 100
-                    };*/
-
-                    chart.AddAxisY(axis);
-
-                    axis = new Axis();
-                    axis.Title = time ? "Time" : "Distance";
-                    chart.AddAxisX(axis);
-
-                    LiveCharts.Wpf.Separator sep = new LiveCharts.Wpf.Separator();
-                    sep.Step = 50;
-
-                    chart.AxisX.Separator = sep;
-                }
 
                 RowDefinition row_up = new RowDefinition();
                 RowDefinition row_down = new RowDefinition();
@@ -147,7 +134,7 @@ namespace ART_TELEMETRY_APP
                         chart.MaxValueY = serie_values.Last().X;
 
                         ChartValues<double> values = ConvertLap(data, laps[lap_index], input_file, time);
-                      
+
                         if (values.Max() > max_value_x)
                         {
                             max_value_x = values.Max();
@@ -164,12 +151,46 @@ namespace ART_TELEMETRY_APP
                     }
                 }
 
+                for (int i = (int)min_value_x; i < max_value_x; i++)
+                {
+                    labels_y.Add(i.ToString());
+                }
+
                 chart.MaxValueX = max_value_x;
                 chart.MinValueX = min_value_x;
                 chart.MinValueY = min_value_y;
                 chart.UpdateAxisValues();
 
                 Console.WriteLine("max_value_x: {0}\tmin_value_x: {1}\tmax_value_y: {2}\tmin_value_y: {3}", max_value_x, min_value_x, max_value_y, min_value_y);
+
+                if (laps[lap_index].SelectedChannels.Count > 0)
+                {
+                    Axis axis_y = new Axis();
+                    string title = "";
+                    foreach (var item in laps[lap_index].SelectedChannels)
+                    {
+                        title += item + ", ";
+                    }
+                    title = title.Substring(0, title.Length - 2);
+                    axis_y.Title = title;
+
+                    axis_y.Labels = labels_y;
+
+                    chart.AddAxisY(axis_y);
+
+                    Axis axis_x = new Axis();
+                    axis_x.Title = time ? "Time (s)" : "Distance (m)";
+
+                    axis_x.Labels = labels_x;
+
+                    chart.AddAxisX(axis_x);
+
+                    LiveCharts.Wpf.Separator sep = new LiveCharts.Wpf.Separator();
+                    sep.Step = 10;
+                    sep.IsEnabled = false;
+
+                    chart.AxisX.Separator = sep;
+                }
 
                 Grid.SetRow(chart, index++);
                 diagram_grid.Children.Add(chart);
@@ -201,10 +222,18 @@ namespace ART_TELEMETRY_APP
             int from = (data.Datas.Count * lap.FromIndex) / input_file.Laps.Sum(a => a.Points.Count);
             int to = (data.Datas.Count * lap.ToIndex) / input_file.Laps.Sum(a => a.Points.Count);
 
+            int longest_lap_from = (data.Datas.Count * longest_lap.FromIndex) / input_file.Laps.Sum(a => a.Points.Count);
+            int longest_lap_to = (data.Datas.Count * longest_lap.ToIndex) / input_file.Laps.Sum(a => a.Points.Count);
+
             ChartValues<double> values = new ChartValues<double>();
             for (int i = from; i < to; i++)
             {
                 values.Add(data.Datas[i]);
+            }
+
+            for (int i = (to - from); i < (longest_lap_to - longest_lap_from); i++)
+            {
+                values.Add(double.NaN);
             }
 
             return values;

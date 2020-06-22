@@ -1,5 +1,6 @@
 ﻿using ART_TELEMETRY_APP.Maps;
 using ART_TELEMETRY_APP.Maps.Classes;
+using ART_TELEMETRY_APP.Maps.UserControls;
 using ART_TELEMETRY_APP.Settings;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,7 @@ namespace ART_TELEMETRY_APP.Pilots
             foreach (Map map in MapManager.Maps)
             {
                 ComboBoxItem item = new ComboBoxItem();
-                item.Content = map.Name;
+                item.Content = string.Format("{0}\t{1}", map.Year, map.Name);
                 maps_cmbbox.Items.Add(item);
             }
         }
@@ -54,16 +55,21 @@ namespace ART_TELEMETRY_APP.Pilots
             ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).InitInputFileCmbbox();
         }
 
-        private void settingsInputFile_Click(object sender, RoutedEventArgs e)
+       /* private void settingsInputFile_Click(object sender, RoutedEventArgs e)
         {
             TabManager.GetTab("Settings").IsSelected = true; //TODO: ha több settings van mint csak a Maps, akkor még azt is selected-re kell tenni. :)
-        }
+        }*/
 
         private void mapsCmbbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string name = maps_cmbbox.SelectedItem.ToString().Split(':').Last();
             name = name.Substring(1, name.Length - 1);
-            PilotManager.GetPilot(pilots_name).GetInputFile(file_name).MapName = name;
+            PilotManager.GetPilot(pilots_name).GetInputFile(file_name).MapName = name.Split('\t')[1];
+
+            ((MapSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Maps").Content).ActiveMapSettingsItem =
+                ((MapSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Maps").Content).GetMapSettingsItem(name.Split('\t')[1], name.Split('\t')[0]);
+            Console.WriteLine(((MapSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Maps").Content).GetMapSettingsItem(name.Split('\t')[1], name.Split('\t')[0]).MapName);
+            ((MapSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Maps").Content).UpdateActiveMapSettingsContent();
         }
     }
 }

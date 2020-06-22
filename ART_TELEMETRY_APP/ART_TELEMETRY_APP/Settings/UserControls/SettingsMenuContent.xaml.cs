@@ -1,4 +1,6 @@
-﻿using ART_TELEMETRY_APP.Maps.Classes;
+﻿using ART_TELEMETRY_APP.Groups.Classes;
+using ART_TELEMETRY_APP.Groups.UserControls;
+using ART_TELEMETRY_APP.Maps.Classes;
 using ART_TELEMETRY_APP.Maps.UserControls;
 using System;
 using System.Collections.Generic;
@@ -34,12 +36,19 @@ namespace ART_TELEMETRY_APP.Settings
         public void InitSettingsTabs()
         {
             settings_tabcontrol.Items.Clear();
+
             TabItem map_settings_item = new TabItem();
             map_settings_item.Header = "Maps";
             map_settings_item.Content = new MapSettings();
             map_settings_item.IsSelected = true;
             settings_tabs.Add(map_settings_item);
             settings_tabcontrol.Items.Add(map_settings_item);
+
+            TabItem group_settings_item = new TabItem();
+            group_settings_item.Header = "Groups";
+            group_settings_item.Content = new GroupSettings();
+            settings_tabs.Add(group_settings_item);
+            settings_tabcontrol.Items.Add(group_settings_item);
         }
 
         public TabItem GetTab(string name)

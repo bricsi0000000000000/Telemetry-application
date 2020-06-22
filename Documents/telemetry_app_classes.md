@@ -18,6 +18,16 @@
   - *User Controls*
     - DatasMenuContent.xaml
     - InputFileListElement.xaml
+- **Groups**
+  - *Classes*
+    - Group.cs
+    - GroupManager.cs
+  - *User Controls*
+    - GroupContent.xaml
+    - GroupSettings.xaml
+    - GroupSettingsAttribute.xaml
+    - GroupSetingsGroup.xaml
+    - GroupsMenuContent.xaml
 - **Icons**
   - art.ico
   - art_logo_jBd_icon.ico
