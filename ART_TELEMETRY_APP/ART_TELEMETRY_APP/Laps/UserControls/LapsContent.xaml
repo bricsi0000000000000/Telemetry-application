@@ -34,7 +34,10 @@
                 <RowDefinition Height="45"/>
             </Grid.RowDefinitions>
 
-            <ComboBox Name="input_files_cmbbox" Margin="5" SelectionChanged="inputFilesCmbbox_SelectionChanged"/>
+            <ComboBox Name="input_files_cmbbox"
+                      Margin="5"
+                      SelectionChanged="inputFilesCmbbox_SelectionChanged"
+                      />
 
             <!--<Grid Grid.Row="1" Name="lap_datas_grid"/>
 

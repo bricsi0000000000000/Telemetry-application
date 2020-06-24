@@ -60,6 +60,7 @@
     - PilotsMenuContent.xaml
 - **Settings**
   - *Classes*
+    - TextManager.cs
   - *User Controls*
     - SettingsMenuContent.xaml
 - **Tabs**

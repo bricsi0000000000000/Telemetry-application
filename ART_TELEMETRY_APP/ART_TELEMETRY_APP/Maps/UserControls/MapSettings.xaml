@@ -114,7 +114,7 @@
                         Margin="5"
                         Click="changeMapsDatas_Click"
                         >
-                    <materialDesign:PackIcon Kind="Pencil"/>
+                    <materialDesign:PackIcon Kind="Edit"/>
                 </Button>
             </Grid>
 

@@ -1,5 +1,6 @@
 ﻿using ART_TELEMETRY_APP.Groups.Classes;
 using ART_TELEMETRY_APP.Pilots;
+using ART_TELEMETRY_APP.Settings.Classes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,13 +37,6 @@ namespace ART_TELEMETRY_APP
 
         private void initTabs()
         {
-            TabItem item = new TabItem();
-            item.Header = "Laps";
-            item.Content = new LapsContent(pilot);
-            item.Name = string.Format("{0}_item_laps", pilot.Name);
-            tabs.Add(item);
-            tabcontrol.Items.Add(item);
-
             foreach (Group group in GroupManager.Groups)
             {
                 TabItem group_item = new TabItem();
@@ -53,26 +47,33 @@ namespace ART_TELEMETRY_APP
                 tabcontrol.Items.Add(group_item);
             }
 
-           /* item = new TabItem();
-            item.Header = "Track";
-            item.Content = new TrackContent();
-            item.Name = string.Format("{0}_item_track", pilot.Name);
+            TabItem item = new TabItem();
+            item.Header = TextManager.DiagramCustomTabName;
+            item.Content = new LapsContent(pilot);
+            item.Name = string.Format("{0}_item_laps", pilot.Name);
             tabs.Add(item);
             tabcontrol.Items.Add(item);
 
-            item = new TabItem();
-            item.Header = "Traction";
-            item.Content = new GGDiagram_UC();
-            item.Name = string.Format("{0}_item_traction", pilot.Name);
-            tabs.Add(item);
-            tabcontrol.Items.Add(item);
+            /* item = new TabItem();
+             item.Header = "Track";
+             item.Content = new TrackContent();
+             item.Name = string.Format("{0}_item_track", pilot.Name);
+             tabs.Add(item);
+             tabcontrol.Items.Add(item);
 
-            item = new TabItem();
-            item.Header = "LapReport";
-            //item.Content = new LapsContent(pilot);
-            item.Name = string.Format("{0}_item_lapreport", pilot.Name);
-            tabs.Add(item);
-            tabcontrol.Items.Add(item);*/
+             item = new TabItem();
+             item.Header = "Traction";
+             item.Content = new GGDiagram_UC();
+             item.Name = string.Format("{0}_item_traction", pilot.Name);
+             tabs.Add(item);
+             tabcontrol.Items.Add(item);
+
+             item = new TabItem();
+             item.Header = "LapReport";
+             //item.Content = new LapsContent(pilot);
+             item.Name = string.Format("{0}_item_lapreport", pilot.Name);
+             tabs.Add(item);
+             tabcontrol.Items.Add(item);*/
         }
 
         public TabItem GetTab(string name)

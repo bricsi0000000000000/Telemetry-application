@@ -27,16 +27,16 @@ namespace ART_TELEMETRY_APP.Charts.Usercontrols
         {
             get
             {
-                return (int)(max_value_x - min_value_x);
+                return max_value_x - min_value_x;
             }
         }
         private int step = 1;
         private int chart_step = 0;
 
-        private double max_value_x = 0;
-        private double min_value_x = 0;
-        private double max_value_y = 0;
-        private double min_value_y = 0;
+        private int max_value_x = 0;
+        private int min_value_x = 0;
+        private int max_value_y = 0;
+        private int min_value_y = 0;
 
         public Chart()
         {
@@ -112,9 +112,9 @@ namespace ART_TELEMETRY_APP.Charts.Usercontrols
             chart.AxisY[0].MaxValue = double.NaN;
         }
 
-        public double MaxValueX { get => max_value_x; set => max_value_x = value; }
-        public double MinValueX { get => min_value_x; set => min_value_x = value; }
-        public double MaxValueY { get => max_value_y; set => max_value_y = value; }
-        public double MinValueY { get => min_value_y; set => min_value_y = value; }
+        public int MaxValueX { get => max_value_x; set => max_value_x = value; }
+        public int MinValueX { get => min_value_x; set => min_value_x = value; }
+        public int MaxValueY { get => max_value_y; set => max_value_y = value; }
+        public int MinValueY { get => min_value_y; set => min_value_y = value; }
     }
 }

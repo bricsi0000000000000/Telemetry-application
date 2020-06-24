@@ -1,6 +1,7 @@
 ﻿using ART_TELEMETRY_APP.Groups.UserControls;
 using ART_TELEMETRY_APP.Pilots;
 using ART_TELEMETRY_APP.Settings;
+using ART_TELEMETRY_APP.Settings.Classes;
 using Dragablz;
 using System;
 using System.Collections.Generic;
@@ -18,21 +19,21 @@ namespace ART_TELEMETRY_APP
         public static void InitMenuItems(TabControl tab_control)
         {
             TabItem settings_menu_item = new TabItem();
-            settings_menu_item.Header = "Settings";
+            settings_menu_item.Header = TextManager.SettingsMenuName;
             settings_menu_item.Content = new SettingsMenuContent();
             settings_menu_item.Name = "settings_menu_item";
             menu_items.Add(settings_menu_item);
             tab_control.Items.Add(settings_menu_item);
 
             TabItem datas_menu_item = new TabItem();
-            datas_menu_item.Header = "Diagrams";
+            datas_menu_item.Header = TextManager.DiagramsMenuName;
             datas_menu_item.Content = new DatasMenuContent();
             datas_menu_item.Name = "diagrams_menu_item";
             menu_items.Add(datas_menu_item);
             tab_control.Items.Add(datas_menu_item);
 
             TabItem pilots_menu_item = new TabItem();
-            pilots_menu_item.Header = "Pilots";
+            pilots_menu_item.Header = TextManager.PilotsMenuName;
             pilots_menu_item.Content = new PilotsMenuContent();
             pilots_menu_item.Name = "pilots_menu_item";
             pilots_menu_item.IsSelected = true;

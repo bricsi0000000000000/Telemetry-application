@@ -53,10 +53,10 @@ namespace ART_TELEMETRY_APP
             int index = 0;
             for (int lap_index = 0; lap_index < laps.Count; lap_index++)
             {
-                double max_value_x = double.MinValue;
-                double min_value_x = double.MaxValue;
-                double max_value_y = double.MinValue;
-                double min_value_y = double.MaxValue;
+                int max_value_x = int.MinValue;
+                int min_value_x = int.MaxValue;
+                int max_value_y = int.MinValue;
+                int min_value_y = int.MaxValue;
 
                 Chart chart = new Chart();
 
@@ -131,27 +131,51 @@ namespace ART_TELEMETRY_APP
                                 break;
                         }
 
-                        chart.MaxValueY = serie_values.Last().X;
+                        for (int i = serie_values.Count - 1; i >= 0 && !double.IsNaN(serie_values[i].X); i--)
+                        {
+                            if (!double.IsNaN(serie_values[i].X))
+                            {
+                                min_value_y = (int)serie_values[i].X;
+                            }
+                        }
 
                         ChartValues<double> values = ConvertLap(data, laps[lap_index], input_file, time);
 
-                        if (values.Max() > max_value_x)
+                        for (int i = 0; i < values.Count; i++)
                         {
-                            max_value_x = values.Max();
-                        }
-                        if (values.Min() < min_value_x)
-                        {
-                            min_value_x = values.Min();
+                            if (!double.IsNaN(values[i]))
+                            {
+                                if (values[i] > max_value_x)
+                                {
+                                    max_value_x = (int)values[i];
+                                }
+                            }
                         }
 
-                        if (values[0] < min_value_y)
+                        for (int i = 0; i < values.Count; i++)
                         {
-                            min_value_y = values[0];
+                            if (!double.IsNaN(values[i]))
+                            {
+                                if (values[i] < min_value_x)
+                                {
+                                    min_value_x = (int)values[i];
+                                }
+                            }
                         }
+
+                        for (int i = 0; i < serie_values.Count && !double.IsNaN(serie_values[i].X); i++)
+                        {
+                            if (!double.IsNaN(serie_values[i].X))
+                            {
+                                max_value_y = (int)serie_values[i].X;
+                            }
+                        }
+
+                        Console.WriteLine("max_value_x: {0}\tmin_value_x: {1}\tmax_value_y: {2}\tmin_value_y: {3}", max_value_x, min_value_x, max_value_y, min_value_y);
                     }
                 }
 
-                for (int i = (int)min_value_x; i < max_value_x; i++)
+                for (int i = min_value_x; i < max_value_x; i++)
                 {
                     labels_y.Add(i.ToString());
                 }
@@ -159,9 +183,8 @@ namespace ART_TELEMETRY_APP
                 chart.MaxValueX = max_value_x;
                 chart.MinValueX = min_value_x;
                 chart.MinValueY = min_value_y;
+                chart.MaxValueY = max_value_y;
                 chart.UpdateAxisValues();
-
-                Console.WriteLine("max_value_x: {0}\tmin_value_x: {1}\tmax_value_y: {2}\tmin_value_y: {3}", max_value_x, min_value_x, max_value_y, min_value_y);
 
                 if (laps[lap_index].SelectedChannels.Count > 0)
                 {
@@ -219,6 +242,7 @@ namespace ART_TELEMETRY_APP
             {
                 distances = PilotManager.GetPilot(data.PilotsName).GetInputFile(data.InputFileName).Distances;
             }
+
             int from = (data.Datas.Count * lap.FromIndex) / input_file.Laps.Sum(a => a.Points.Count);
             int to = (data.Datas.Count * lap.ToIndex) / input_file.Laps.Sum(a => a.Points.Count);
 

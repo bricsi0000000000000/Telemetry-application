@@ -150,6 +150,7 @@
     <Compile Include="Pilots\UserControls\PilotsMenuContent.xaml.cs">
       <DependentUpon>PilotsMenuContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings\Classes\TextManager.cs" />
     <Compile Include="Settings\UserControls\SettingsMenuContent.xaml.cs">
       <DependentUpon>SettingsMenuContent.xaml</DependentUpon>
     </Compile>
@@ -315,7 +316,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
-    <Folder Include="Settings\Classes\" />
     <Folder Include="Tabs\UserControls\" />
     <Folder Include="Tracks\Classes\" />
   </ItemGroup>
