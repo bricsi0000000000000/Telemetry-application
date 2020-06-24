@@ -47,7 +47,7 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
             }
         }
 
-        public void UpdateActiveMapSettingsContent()
+        public void UpdateActiveMapSettingsContent(Grid progressbar_grid = null)
         {
             mapEditor_grid.Children.Clear();
             changeMapName_txtbox.Text = ActiveMapSettingsItem.MapName;
@@ -72,7 +72,7 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
                 {
                     if (input_file.MapName == ActiveMapSettingsItem.MapName)
                     {
-                        mapEditor_grid.Children.Add(new MapEditor_UC(input_file, ActiveMapSettingsItem.MapName));
+                        mapEditor_grid.Children.Add(new MapEditor_UC(input_file, ActiveMapSettingsItem.MapName, progressbar_grid));
                         found = true;
                     }
                 }

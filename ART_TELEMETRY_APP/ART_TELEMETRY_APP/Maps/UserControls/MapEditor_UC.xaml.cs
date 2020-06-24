@@ -30,13 +30,15 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
         BackgroundWorker worker;
         Point cursor;
         string map_name;
+        Grid pilot_progressbar_grid;
 
-        public MapEditor_UC(InputFile input_file, string map_name)
+        public MapEditor_UC(InputFile input_file, string map_name, Grid pilot_progressbar_grid = null)
         {
             InitializeComponent();
 
             this.input_file = input_file;
             this.map_name = map_name;
+            this.pilot_progressbar_grid = pilot_progressbar_grid;
 
             all_lap_svg.Data = Geometry.Parse(input_file.AllLapsSVG);
 
@@ -81,6 +83,10 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
 
         private void startWorker()
         {
+            if(pilot_progressbar_grid != null)
+            {
+                pilot_progressbar_grid.Visibility = Visibility.Visible;
+            }
             progressbar_grid.Visibility = Visibility.Visible;
             worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
@@ -207,6 +213,10 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
 
         private void workerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            if (pilot_progressbar_grid != null)
+            {
+                pilot_progressbar_grid.Visibility = Visibility.Hidden;
+            }
             progressbar_grid.Visibility = Visibility.Hidden;
             drawActLap();
         }

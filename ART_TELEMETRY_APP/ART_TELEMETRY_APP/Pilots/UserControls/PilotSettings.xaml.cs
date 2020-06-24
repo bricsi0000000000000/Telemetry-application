@@ -44,7 +44,12 @@ namespace ART_TELEMETRY_APP.Pilots
                 input_files_stackpanel.Children.Clear();
                 foreach (InputFile input_file in pilot.InputFiles)
                 {
-                    InputFileListElement input_file_list_element = new InputFileListElement(input_file.FileName, pilot.Name);
+                    InputFileListElement input_file_list_element = new InputFileListElement(input_file.FileName,
+                                                                                            pilot.Name,
+                                                                                            ref progressbar_grid,
+                                                                                            ref progressbar,
+                                                                                            ref progressbar_lbl
+                                                                                            );
                     input_files_stackpanel.Children.Add(input_file_list_element);
                     input_files.Add(input_file_list_element);
                 }
@@ -60,13 +65,20 @@ namespace ART_TELEMETRY_APP.Pilots
 
         private void addFile_Click(object sender, RoutedEventArgs e)
         {
+            progressbar_lbl.Content = "Reading file..";
+
             OpenFileDialog open_file_dialog = new OpenFileDialog();
             open_file_dialog.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
 
             if (open_file_dialog.ShowDialog() == true)
             {
                 string file_name = open_file_dialog.FileName.Split('\\').Last();
-                InputFileListElement input_file_list_element = new InputFileListElement(file_name, pilot.Name);
+                InputFileListElement input_file_list_element = new InputFileListElement(file_name,
+                                                                                        pilot.Name,
+                                                                                        ref progressbar_grid,
+                                                                                        ref progressbar,
+                                                                                        ref progressbar_lbl
+                                                                                        );
                 input_files_stackpanel.Children.Add(input_file_list_element);
                 ((PilotsMenuContent)TabManager.GetTab("Pilots").Content).DisableAllPilots(true, pilots_name);
                 DataReader.Instance.ReadData(pilot, open_file_dialog.FileName, progressbar_grid, ref progressbar);

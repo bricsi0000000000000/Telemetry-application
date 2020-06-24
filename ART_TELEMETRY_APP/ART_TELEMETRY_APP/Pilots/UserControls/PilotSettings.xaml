@@ -69,30 +69,31 @@
             </Grid>
 
             <Grid Grid.RowSpan="2"
-                    Name="progressbar_grid"
-                    Background="#CC303030"
-                    Visibility="Hidden"
-                    >
+                  Name="progressbar_grid"
+                  Background="#CC303030"
+                  Visibility="Hidden"
+                  >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Label Grid.Row="0"
-                        Content="Reading file.."
-                        VerticalContentAlignment="Bottom"
-                        HorizontalContentAlignment="Center"
-                        />
+                       Name="progressbar_lbl"
+                       Content="Reading file.."
+                       VerticalContentAlignment="Bottom"
+                       HorizontalContentAlignment="Center"
+                       />
                 <ProgressBar Grid.Row="1"
-                                Name="progressbar"
-                                VerticalAlignment="Top"
-                                Style="{StaticResource MaterialDesignCircularProgressBar}" 
-                                IsIndeterminate="False"
-                                />
+                             Name="progressbar"
+                             VerticalAlignment="Top"
+                             Style="{StaticResource MaterialDesignCircularProgressBar}" 
+                             IsIndeterminate="False"
+                             />
             </Grid>
             <Grid Grid.RowSpan="2"
-                    Name="disable_grid"
-                    Background="#CC303030"
-                    Visibility="Hidden"/>
+                  Name="disable_grid"
+                  Background="#CC303030"
+                  Visibility="Hidden"/>
         </Grid>
     </materialDesign:ColorZone>
 </UserControl>

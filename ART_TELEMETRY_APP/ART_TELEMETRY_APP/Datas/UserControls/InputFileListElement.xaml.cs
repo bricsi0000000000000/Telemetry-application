@@ -26,13 +26,25 @@ namespace ART_TELEMETRY_APP.Pilots
     {
         string pilots_name;
         string file_name;
+        Grid progressbar_grid;
+        ProgressBar progressbar;
+        Label progressbar_lbl;
 
-        public InputFileListElement(string file_name, string pilots_name)
+        public InputFileListElement(string file_name,
+                                    string pilots_name,
+                                    ref Grid progressbar_grid,
+                                    ref ProgressBar progressbar,
+                                    ref Label progressbar_lbl
+                                    )
         {
             InitializeComponent();
 
             this.pilots_name = pilots_name;
             this.file_name = file_name;
+            this.progressbar_grid = progressbar_grid;
+            this.progressbar = progressbar;
+            this.progressbar_lbl = progressbar_lbl;
+
             file_name_lbl.Content = this.file_name;
 
             updateMapsCmbbox();
@@ -55,10 +67,10 @@ namespace ART_TELEMETRY_APP.Pilots
             ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).InitInputFileCmbbox();
         }
 
-       /* private void settingsInputFile_Click(object sender, RoutedEventArgs e)
-        {
-            TabManager.GetTab("Settings").IsSelected = true; //TODO: ha több settings van mint csak a Maps, akkor még azt is selected-re kell tenni. :)
-        }*/
+        /* private void settingsInputFile_Click(object sender, RoutedEventArgs e)
+         {
+             TabManager.GetTab("Settings").IsSelected = true; //TODO: ha több settings van mint csak a Maps, akkor még azt is selected-re kell tenni. :)
+         }*/
 
         private void mapsCmbbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -66,10 +78,13 @@ namespace ART_TELEMETRY_APP.Pilots
             name = name.Substring(1, name.Length - 1);
             PilotManager.GetPilot(pilots_name).GetInputFile(file_name).MapName = name.Split('\t')[1];
 
+            progressbar.Visibility = Visibility.Visible;
+            progressbar.IsIndeterminate = true;
+            progressbar_lbl.Content = "Calculating laps..";
+
             ((MapSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Maps").Content).ActiveMapSettingsItem =
                 ((MapSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Maps").Content).GetMapSettingsItem(name.Split('\t')[1], name.Split('\t')[0]);
-            Console.WriteLine(((MapSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Maps").Content).GetMapSettingsItem(name.Split('\t')[1], name.Split('\t')[0]).MapName);
-            ((MapSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Maps").Content).UpdateActiveMapSettingsContent();
+            ((MapSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Maps").Content).UpdateActiveMapSettingsContent(progressbar_grid);
         }
     }
 }

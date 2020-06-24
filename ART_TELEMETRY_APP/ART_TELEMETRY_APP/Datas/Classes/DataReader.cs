@@ -60,6 +60,8 @@ namespace ART_TELEMETRY_APP
                 this.file_length = File.ReadLines(file_name).Count();
 
                 this.progressbar_grid.Visibility = Visibility.Visible;
+                this.progressbar.IsIndeterminate = false;
+                this.progressbar.Value = 0;
 
                 worker = new BackgroundWorker();
                 worker.WorkerReportsProgress = true;

@@ -118,5 +118,10 @@ namespace ART_TELEMETRY_APP.Pilots
                 updateAddPilotVisibility();
             }
         }
+
+        public PilotSettings GetPilotSetting(string name)
+        {
+            return all_pilot_settings.Find(n => n.PilotsName == name);
+        }
     }
 }
