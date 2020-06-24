@@ -1,22 +1,13 @@
 ﻿using ART_TELEMETRY_APP.Charts.Usercontrols;
+using ART_TELEMETRY_APP.Groups.Classes;
 using ART_TELEMETRY_APP.InputFiles;
 using ART_TELEMETRY_APP.Laps;
-using LiveCharts.Wpf;
+using ART_TELEMETRY_APP.Settings.Classes;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ART_TELEMETRY_APP.Pilots
 {
@@ -37,14 +28,25 @@ namespace ART_TELEMETRY_APP.Pilots
         }
         Filter filter = Filter.kalman;
 
-        public LapsContent(Pilot pilot)
+        Group group;
+
+        public LapsContent(Pilot pilot, Group group)
         {
             InitializeComponent();
 
             this.pilot = pilot;
+            this.group = group;
 
             InitInputFileCmbbox();
             InitLapListElements();
+            if (group != null)
+            {
+                foreach (string attribute in group.Attributes)
+                {
+                    all_selected_channels.Add(attribute);
+                }
+                //BuildCharts();
+            }
         }
 
         public void InitInputFileCmbbox()
@@ -54,7 +56,6 @@ namespace ART_TELEMETRY_APP.Pilots
             int index = 0;
             foreach (InputFile input_file in pilot.InputFiles)
             {
-                Console.WriteLine(input_file.FileName);
                 ComboBoxItem combo_box_item = new ComboBoxItem();
                 combo_box_item.Content = input_file.FileName;
                 combo_box_item.Name = string.Format("cmbboxitem{0}", index++);
@@ -121,7 +122,7 @@ namespace ART_TELEMETRY_APP.Pilots
 
         public void BuildCharts()
         {
-            ChartBuilder.Build(charts_grid, activeLaps, active_input_file, dist_as_time, filter);
+            ChartBuilder.Build(charts_grid, activeLaps, active_input_file, dist_as_time, filter, group == null ? TextManager.DiagramCustomTabName : group.Name);
         }
 
         private List<Lap> activeLaps
@@ -184,6 +185,7 @@ namespace ART_TELEMETRY_APP.Pilots
                     lap_list_element = new LapListElement(active_input_file.Laps[i], pilot.Name,
                                                           active_input_file.ActiveLaps[active_input_file.Laps[i].Index],
                                                           channels, i > 0 && i < active_input_file.Laps.Count - 1 ? i == best_index ? 1 : i == worst_index ? 0 : 2 : 2,
+                                                          group == null ? TextManager.DiagramCustomTabName : group.Name,
                                                           true
                                                           );
                 }
@@ -191,7 +193,8 @@ namespace ART_TELEMETRY_APP.Pilots
                 {
                     lap_list_element = new LapListElement(active_input_file.Laps[i], pilot.Name,
                                                           active_input_file.ActiveLaps[active_input_file.Laps[i].Index],
-                                                          channels, i > 0 && i < active_input_file.Laps.Count - 1 ? i == best_index ? 1 : i == worst_index ? 0 : 2 : 2
+                                                          channels, i > 0 && i < active_input_file.Laps.Count - 1 ? i == best_index ? 1 : i == worst_index ? 0 : 2 : 2,
+                                                          group == null ? TextManager.DiagramCustomTabName : group.Name
                                                           );
                 }
 
@@ -222,7 +225,7 @@ namespace ART_TELEMETRY_APP.Pilots
                 {
                     if (((ComboBoxItem)item).IsSelected)
                     {
-                        if(((ComboBoxItem)item).Content.Equals("Kalman"))
+                        if (((ComboBoxItem)item).Content.Equals("Kalman"))
                         {
                             filter = Filter.kalman;
                         }

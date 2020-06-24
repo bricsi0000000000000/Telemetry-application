@@ -1,6 +1,7 @@
 ﻿using ART_TELEMETRY_APP.Laps;
 using ART_TELEMETRY_APP.Maps.Classes;
 using ART_TELEMETRY_APP.Pilots;
+using ART_TELEMETRY_APP.Settings.Classes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -202,7 +203,7 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(input_file.PilotName).Content).GetTab("Laps").Content).InitFirstInputFilesContent();
+                    ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(input_file.PilotName).Content).GetTab(TextManager.DiagramCustomTabName).Content).InitFirstInputFilesContent();
                 });
             }
         }

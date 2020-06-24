@@ -1,5 +1,7 @@
-﻿using ART_TELEMETRY_APP.Laps;
+﻿using ART_TELEMETRY_APP.Groups.Classes;
+using ART_TELEMETRY_APP.Laps;
 using ART_TELEMETRY_APP.Pilots;
+using ART_TELEMETRY_APP.Settings.Classes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +28,7 @@ namespace ART_TELEMETRY_APP
         string pilots_name;
         List<string> channels;
         bool active = false;
+        string group_name;
         float kalman_sensitivity = 0.2f;
 
         /// <summary>
@@ -37,13 +40,14 @@ namespace ART_TELEMETRY_APP
         /// <param name="channels"></param>
         /// <param name="time_state"></param>
         /// <param name="last_lap"></param>
-        public LapListElement(Lap lap, string pilots_name, bool active, List<string> channels, int time_state, bool last_lap = false)
+        public LapListElement(Lap lap, string pilots_name, bool active, List<string> channels, int time_state, string group_name, bool last_lap = false)
         {
             InitializeComponent();
 
             this.pilots_name = pilots_name;
             this.lap = lap;
             this.channels = channels;
+            this.group_name = group_name;
 
             Active = active;
             check_icon.Kind = active ?
@@ -80,8 +84,8 @@ namespace ART_TELEMETRY_APP
         {
             Active = !Active;
 
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).InitLapListElements();
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).BuildCharts();
+            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).InitLapListElements();
+            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).BuildCharts();
         }
 
         private void settingsLap_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)

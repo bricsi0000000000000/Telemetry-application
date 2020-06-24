@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using ART_TELEMETRY_APP.Settings.Classes;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -59,8 +60,8 @@ namespace ART_TELEMETRY_APP.Pilots
         private void deletePilot_Click(object sender, RoutedEventArgs e)
         {
             PilotManager.RemovePilot(pilots_name);
-            ((PilotsMenuContent)TabManager.GetTab("Pilots").Content).InitPilots();
-            ((DatasMenuContent)TabManager.GetTab("Diagrams").Content).InitPilotsTabs();
+            ((PilotsMenuContent)TabManager.GetTab(TextManager.PilotsMenuName).Content).InitPilots();
+            ((DatasMenuContent)TabManager.GetTab(TextManager.DiagramCustomTabName).Content).InitPilotsTabs();
         }
 
         private void addFile_Click(object sender, RoutedEventArgs e)
@@ -80,7 +81,7 @@ namespace ART_TELEMETRY_APP.Pilots
                                                                                         ref progressbar_lbl
                                                                                         );
                 input_files_stackpanel.Children.Add(input_file_list_element);
-                ((PilotsMenuContent)TabManager.GetTab("Pilots").Content).DisableAllPilots(true, pilots_name);
+                ((PilotsMenuContent)TabManager.GetTab(TextManager.PilotsMenuName).Content).DisableAllPilots(true, pilots_name);
                 DataReader.Instance.ReadData(pilot, open_file_dialog.FileName, progressbar_grid, ref progressbar);
             }
         }

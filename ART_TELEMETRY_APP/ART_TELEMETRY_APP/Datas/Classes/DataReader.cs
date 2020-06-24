@@ -2,6 +2,7 @@
 using ART_TELEMETRY_APP.Laps;
 using ART_TELEMETRY_APP.Pilots;
 using ART_TELEMETRY_APP.Settings;
+using ART_TELEMETRY_APP.Settings.Classes;
 using LiveCharts;
 using MaterialDesignThemes.Wpf;
 using System;
@@ -157,12 +158,16 @@ namespace ART_TELEMETRY_APP
         {
             progressbar_grid.Visibility = Visibility.Hidden;
             progressbar.IsIndeterminate = false;
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilot.Name).Content).GetTab("Laps").Content).InitInputFileCmbbox();
-            ((PilotsMenuContent)TabManager.GetTab("Pilots").Content).DisableAllPilots(false, pilot.Name);
+            //((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilot.Name).Content).GetTab(TextManager.DiagramCustomTabName).Content).InitInputFileCmbbox();
+            foreach (TabItem item in ((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilot.Name).Content).Tabs)
+            {
+                ((LapsContent)item.Content).InitInputFileCmbbox();
+            }
+            ((PilotsMenuContent)TabManager.GetTab(TextManager.PilotsMenuName).Content).DisableAllPilots(false, pilot.Name);
 
             if (pilot.InputFiles.Last().Latitude == null || pilot.InputFiles.Last().Longitude == null)
             {
-                ((PilotsMenuContent)TabManager.GetTab("Pilots").Content).ShowError("No longitude or latitude data found!");
+                ((PilotsMenuContent)TabManager.GetTab(TextManager.PilotsMenuName).Content).ShowError("No longitude or latitude data found!");
             }
         }
     }

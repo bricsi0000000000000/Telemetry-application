@@ -4,6 +4,7 @@ using ART_TELEMETRY_APP.InputFiles;
 using ART_TELEMETRY_APP.Laps;
 using ART_TELEMETRY_APP.Pilots;
 using ART_TELEMETRY_APP.Settings;
+using ART_TELEMETRY_APP.Settings.Classes;
 using LiveCharts;
 using LiveCharts.Defaults;
 using LiveCharts.Events;
@@ -12,6 +13,7 @@ using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,9 +28,11 @@ namespace ART_TELEMETRY_APP
     {
         static int longest_lap_length = 0;
         static Lap longest_lap = new Lap();
+        static string group_name;
 
-        public static void Build(Grid diagram_grid, List<Lap> laps, InputFile input_file, bool time, Filter filter)
+        public static void Build(Grid diagram_grid, List<Lap> laps, InputFile input_file, bool time, Filter filter, string name_group)
         {
+            group_name = name_group;
             diagram_grid.Children.Clear();
             diagram_grid.RowDefinitions.Clear();
 
@@ -293,7 +297,7 @@ namespace ART_TELEMETRY_APP
 
         private static float getKalmanSensitivity(int lap_index, string pilots_name)
         {
-            return ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).GetLapListElement(lap_index + 1).KalmanSensitivity;
+            return ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).GetLapListElement(lap_index + 1).KalmanSensitivity;
         }
     }
 }

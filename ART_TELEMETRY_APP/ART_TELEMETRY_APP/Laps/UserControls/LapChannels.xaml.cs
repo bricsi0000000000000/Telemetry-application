@@ -1,5 +1,6 @@
 ﻿using ART_TELEMETRY_APP.Laps;
 using ART_TELEMETRY_APP.Pilots;
+using ART_TELEMETRY_APP.Settings.Classes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace ART_TELEMETRY_APP
             initSelectedChannelsListBox();
 
             kalman_filter_sensitivity_txtbox.Text =
-                ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).GetLapListElement(lap.Index).KalmanSensitivity.ToString();
+                ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(TextManager.DiagramCustomTabName).Content).GetLapListElement(lap.Index).KalmanSensitivity.ToString();
         }
 
         private void initSelectedChannels()
@@ -188,14 +189,14 @@ namespace ART_TELEMETRY_APP
 
         private void saveKalmanSensitivity()
         {
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).GetLapListElement(lap.Index).KalmanSensitivity =
+            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(TextManager.DiagramCustomTabName).Content).GetLapListElement(lap.Index).KalmanSensitivity =
                     float.Parse(kalman_filter_sensitivity_txtbox.Text);
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
             saveKalmanSensitivity();
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).BuildCharts();
+            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(TextManager.DiagramCustomTabName).Content).BuildCharts();
         }
     }
 }

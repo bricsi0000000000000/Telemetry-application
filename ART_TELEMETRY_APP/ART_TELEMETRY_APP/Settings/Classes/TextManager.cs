@@ -14,5 +14,7 @@ namespace ART_TELEMETRY_APP.Settings.Classes
 
         public static string MapsSettingsName = "Maps";
         public static string GroupsSettingsName = "Groups";
+
+        public static string DiagramCustomTabName = "Custom";
     }
 }

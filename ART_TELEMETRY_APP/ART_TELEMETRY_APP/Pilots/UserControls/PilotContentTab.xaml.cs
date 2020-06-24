@@ -41,7 +41,7 @@ namespace ART_TELEMETRY_APP
             {
                 TabItem group_item = new TabItem();
                 group_item.Header = group.Name;
-                group_item.Content = new LapsContent(pilot);
+                group_item.Content = new LapsContent(pilot, group);
                 group_item.Name = string.Format("{0}_item_laps", pilot.Name);
                 tabs.Add(group_item);
                 tabcontrol.Items.Add(group_item);
@@ -49,7 +49,7 @@ namespace ART_TELEMETRY_APP
 
             TabItem item = new TabItem();
             item.Header = TextManager.DiagramCustomTabName;
-            item.Content = new LapsContent(pilot);
+            item.Content = new LapsContent(pilot, null);
             item.Name = string.Format("{0}_item_laps", pilot.Name);
             tabs.Add(item);
             tabcontrol.Items.Add(item);
@@ -79,6 +79,14 @@ namespace ART_TELEMETRY_APP
         public TabItem GetTab(string name)
         {
             return tabs.Find(n => n.Header.Equals(name));
+        }
+
+        public List<TabItem> Tabs
+        {
+            get
+            {
+                return tabs;
+            }
         }
     }
 }
