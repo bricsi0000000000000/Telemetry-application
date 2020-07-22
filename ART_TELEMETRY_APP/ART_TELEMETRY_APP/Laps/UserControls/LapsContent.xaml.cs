@@ -5,6 +5,8 @@ using ART_TELEMETRY_APP.Laps;
 using ART_TELEMETRY_APP.Settings.Classes;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -21,7 +23,7 @@ namespace ART_TELEMETRY_APP.Pilots
         List<LapListElement> lap_list_elements = new List<LapListElement>();
         AllLapListElement all_lap_list_element;
         List<string> all_selected_channels = new List<string>();
-        bool dist_as_time = false;
+        bool distance_as_time = false;
         public enum Filter
         {
             kalman, nothing, both
@@ -39,14 +41,6 @@ namespace ART_TELEMETRY_APP.Pilots
 
             InitInputFileCmbbox();
             InitLapListElements();
-            if (group != null)
-            {
-                foreach (string attribute in group.Attributes)
-                {
-                    all_selected_channels.Add(attribute);
-                }
-                //BuildCharts();
-            }
         }
 
         public void InitInputFileCmbbox()
@@ -122,7 +116,13 @@ namespace ART_TELEMETRY_APP.Pilots
 
         public void BuildCharts()
         {
-            ChartBuilder.Build(charts_grid, activeLaps, active_input_file, dist_as_time, filter, group == null ? TextManager.DiagramCustomTabName : group.Name);
+            ChartBuilder.Build(charts_grid, activeLaps, active_input_file, distance_as_time, filter, group == null ? TextManager.DiagramCustomTabName : group.Name);
+            StreamWriter sw = new StreamWriter("gps_adatok.csv");
+            foreach (var item in active_input_file.MapPoints)
+            {
+                sw.WriteLine("{0};{1}", item.X, item.Y);
+            }
+            sw.Close();
         }
 
         private List<Lap> activeLaps
@@ -179,21 +179,34 @@ namespace ART_TELEMETRY_APP.Pilots
 
             for (int i = 0; i < active_input_file.Laps.Count; i++)
             {
+                if (group != null)
+                {
+                    foreach (string attribute in group.Attributes)
+                    {
+                        active_input_file.Laps[i].SelectedChannels.Add(attribute);
+                        //TODO: valyon egy diagrammon jelentíse meg? Hmm
+                    }
+                }
+
                 LapListElement lap_list_element;
                 if (i + 1 >= active_input_file.Laps.Count)
                 {
-                    lap_list_element = new LapListElement(active_input_file.Laps[i], pilot.Name,
+                    lap_list_element = new LapListElement(active_input_file.Laps[i],
+                                                          pilot.Name,
                                                           active_input_file.ActiveLaps[active_input_file.Laps[i].Index],
-                                                          channels, i > 0 && i < active_input_file.Laps.Count - 1 ? i == best_index ? 1 : i == worst_index ? 0 : 2 : 2,
+                                                          channels,
+                                                          i > 0 && i < active_input_file.Laps.Count - 1 ? i == best_index ? 1 : i == worst_index ? 0 : 2 : 2,
                                                           group == null ? TextManager.DiagramCustomTabName : group.Name,
                                                           true
                                                           );
                 }
                 else
                 {
-                    lap_list_element = new LapListElement(active_input_file.Laps[i], pilot.Name,
+                    lap_list_element = new LapListElement(active_input_file.Laps[i],
+                                                          pilot.Name,
                                                           active_input_file.ActiveLaps[active_input_file.Laps[i].Index],
-                                                          channels, i > 0 && i < active_input_file.Laps.Count - 1 ? i == best_index ? 1 : i == worst_index ? 0 : 2 : 2,
+                                                          channels,
+                                                          i > 0 && i < active_input_file.Laps.Count - 1 ? i == best_index ? 1 : i == worst_index ? 0 : 2 : 2,
                                                           group == null ? TextManager.DiagramCustomTabName : group.Name
                                                           );
                 }
@@ -212,7 +225,7 @@ namespace ART_TELEMETRY_APP.Pilots
         {
             if (active_input_file != null)
             {
-                dist_as_time = !dist_as_time;
+                distance_as_time = !distance_as_time;
                 BuildCharts();
             }
         }

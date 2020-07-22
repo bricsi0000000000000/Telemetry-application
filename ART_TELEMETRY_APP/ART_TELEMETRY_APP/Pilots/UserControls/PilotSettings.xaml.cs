@@ -60,7 +60,7 @@ namespace ART_TELEMETRY_APP.Pilots
         private void deletePilot_Click(object sender, RoutedEventArgs e)
         {
             PilotManager.RemovePilot(pilots_name);
-            ((PilotsMenuContent)TabManager.GetTab(TextManager.PilotsMenuName).Content).InitPilots();
+            ((PilotsMenuContent)TabManager.GetTab(TextManager.DriversMenuName).Content).InitPilots();
             ((DatasMenuContent)TabManager.GetTab(TextManager.DiagramCustomTabName).Content).InitPilotsTabs();
         }
 
@@ -69,6 +69,9 @@ namespace ART_TELEMETRY_APP.Pilots
             progressbar_lbl.Content = "Reading file..";
 
             OpenFileDialog open_file_dialog = new OpenFileDialog();
+            open_file_dialog.Title = "Add file";
+            open_file_dialog.DefaultExt = ".csv";
+            open_file_dialog.Multiselect = false;
             open_file_dialog.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
 
             if (open_file_dialog.ShowDialog() == true)
@@ -81,7 +84,7 @@ namespace ART_TELEMETRY_APP.Pilots
                                                                                         ref progressbar_lbl
                                                                                         );
                 input_files_stackpanel.Children.Add(input_file_list_element);
-                ((PilotsMenuContent)TabManager.GetTab(TextManager.PilotsMenuName).Content).DisableAllPilots(true, pilots_name);
+                ((PilotsMenuContent)TabManager.GetTab(TextManager.DriversMenuName).Content).DisableAllPilots(true, pilots_name);
                 DataReader.Instance.ReadData(pilot, open_file_dialog.FileName, progressbar_grid, ref progressbar);
             }
         }

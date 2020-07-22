@@ -163,11 +163,11 @@ namespace ART_TELEMETRY_APP
             {
                 ((LapsContent)item.Content).InitInputFileCmbbox();
             }
-            ((PilotsMenuContent)TabManager.GetTab(TextManager.PilotsMenuName).Content).DisableAllPilots(false, pilot.Name);
+            ((PilotsMenuContent)TabManager.GetTab(TextManager.DriversMenuName).Content).DisableAllPilots(false, pilot.Name);
 
             if (pilot.InputFiles.Last().Latitude == null || pilot.InputFiles.Last().Longitude == null)
             {
-                ((PilotsMenuContent)TabManager.GetTab(TextManager.PilotsMenuName).Content).ShowError("No longitude or latitude data found!");
+                ((PilotsMenuContent)TabManager.GetTab(TextManager.DriversMenuName).Content).ShowError("No longitude or latitude data found!");
             }
         }
     }

@@ -82,104 +82,71 @@
 
 <!-- pagebreak -->
 
-> ### ChartBuilder.cs
->
-> Builds charts.
+## User Controls
 
-> ### ChartLineColors.cs
->
-> Contains a colors list.
+- Chart.xaml
 
-> ### KalmanFilter.cs
->
-> Kalman filter.
->
-> The value of *Q* is the sensitivity of the filter. If *Q* the smaller is, the more sensitive will be the filter.
+  !["Chart.xaml"](images/chart.PNG)
+- DatasMenuContent.xaml
 
-> ### Data.cs
->
-> Contains a single data from **InputFile**.
+  !["DatasMenuContent.xaml"](images/datas_menu_content.PNG)
+- InputFileListElement.xaml
 
-> ### DataReader.cs
->
-> Reads a file into a **Pilot**.
+  !["InputFileListElement.xaml"](images/input_file_list_element.PNG)
+- GroupContent.xaml
 
-> ### InputFile.cs
->
-> Contains all the **Data** to a **Pilot** from a file.
+  !["GroupContent.xaml"](images/group_content.PNG)
+- GroupSettings.xaml
 
-> ### LineSeriesOption.cs
->
-> Contains a stroke thickness and a stroke color.
+  !["GroupSettings.xaml"](images/group_settings.PNG)
+- GroupSettingsAttribute.xaml
 
-> ### DatasMenuContent.xaml
->
-> The content of the *Diagrams* tab.
+  !["GroupSettingsAttribute.xaml"](images/group_settings_attribute.PNG)
+- GroupSetingsGroup.xaml
 
-> ### InputFileListElement.xaml
->
-> Rrepresents an input file of a **Pilot**.
+  !["GroupSetingsGroup.xaml"](images/group_settings_group.PNG)
+- GroupsMenuContent.xaml
 
-> ### Lap.cs
->
-> Contatins all data to a lap.
+  !["GroupsMenuContent.xaml"](images/groups_menu_content.PNG)
+- AllLapChannels.xaml
 
-> ### AllLapChannels.xaml
->
-> The content of the *All laps* lap on the Pilots *Laps* tab.
+  !["AllLapChannels.xaml"](images/all_lap_channels.PNG)
+- AllLapListElement.xaml
 
-> ### AllLapListElement.xaml
->
-> Rrepresents the *All laps* lap on the Pilots *Laps* tab.
+  !["AllLapListElement.xaml"](images/all_lap_list_element.PNG)
+- LapChannels.xaml
 
-> ### LapChannels.xaml
->
-> The content of the *laps* lap on the Pilots *Laps* tab.
+  !["LapChannels.xaml"](images/lap_channels.PNG)
+- LapListElement.xaml
 
-> ### LapListElement.xaml
->
-> Rrepresents the *laps* lap on the Pilots *Laps* tab.
+  !["LapListElement.xaml"](images/lap_list_element.PNG)
+- LapReportContent.xaml
 
-> ### LapReportContent.xaml
->
-> The content of the lap report.
+  !["LapReportContent.xaml"](images/lap_report_content.PNG)
+- LapsContent.xaml
 
-> ### LapsContent.xaml
->
-> The content of a *Pilot* tab.
+  !["LapsContent.xaml"](images/laps_content.PNG)
+- MapEditor_UC.xaml
 
-> ### MapEditor.xaml
->
-> You can edit the input file's map.
+  !["MapEditor_UC.xaml"](images/map_editor_uc.PNG)
+- MapSettings.xaml
 
-> ### Pilot.cs
->
-> Contains all the **InputFile**s to a pilot.
+  !["MapSettings.xaml"](images/map_settings.PNG)
+- MapSettingsItem.xaml
 
-> ### PilotManager.cs
->
-> Contains all the **Pilot**s.
+  !["MapSettingsItem.xaml"](images/map_settings_item.PNG)
+- PilotContentTab.xaml
 
-> ### PilotContentTab.xaml
->
-> Contains all the tabs to a pilot.
+  !["PilotContentTab.xaml"](images/pilot_content_tab.PNG)
+- PilotSettings.xaml
 
-> ### PilotSettings.xaml
->
-> Rrepresents a pilot in the *Pilots* tab.
+  !["PilotSettings.xaml"](images/pilot_settings.PNG)
+- PilotsMenuContent.xaml
 
-> ### PilotsMenuContent.xaml
->
-> Rrepresents the content of the *Pilots* tab.
+  !["PilotsMenuContent.xaml"](images/pilots_menu_content.PNG)
+- SettingsMenuContent.xaml
 
-> ### SettingsMenuContent.xaml
->
-> Rrepresents the content of the *Settings* tab.
+  !["SettingsMenuContent.xaml"](images/settings_menu_content.PNG)
+- TrackContent.xaml
 
-> ### TabManager.cs
->
-> Contains all the tab items of the menu.
-
-> ### TrackContent.xaml
->
-> Rrepresents the content of the *Track* tab.
+  !["TrackContent.xaml"](images/track_content.PNG)

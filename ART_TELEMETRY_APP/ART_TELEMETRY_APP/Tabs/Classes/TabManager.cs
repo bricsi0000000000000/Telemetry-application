@@ -33,7 +33,7 @@ namespace ART_TELEMETRY_APP
             tab_control.Items.Add(datas_menu_item);
 
             TabItem pilots_menu_item = new TabItem();
-            pilots_menu_item.Header = TextManager.PilotsMenuName;
+            pilots_menu_item.Header = TextManager.DriversMenuName;
             pilots_menu_item.Content = new PilotsMenuContent();
             pilots_menu_item.Name = "pilots_menu_item";
             pilots_menu_item.IsSelected = true;

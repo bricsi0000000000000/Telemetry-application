@@ -26,8 +26,9 @@ namespace ART_TELEMETRY_APP
         List<string> channels;
         List<string> selected_channels = new List<string>();
         string pilots_name;
+        string group_name;
 
-        public LapChannels(Lap lap, List<string> channels, string pilots_name)
+        public LapChannels(Lap lap, List<string> channels, string pilots_name, string group_name)
         {
             InitializeComponent();
 
@@ -36,13 +37,14 @@ namespace ART_TELEMETRY_APP
             this.lap = lap;
             this.channels = channels;
             this.pilots_name = pilots_name;
+            this.group_name = group_name;
 
             initSelectedChannels();
             initChannelsListBox();
             initSelectedChannelsListBox();
 
             kalman_filter_sensitivity_txtbox.Text =
-                ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(TextManager.DiagramCustomTabName).Content).GetLapListElement(lap.Index).KalmanSensitivity.ToString();
+                ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).GetLapListElement(lap.Index).KalmanSensitivity.ToString();
         }
 
         private void initSelectedChannels()
@@ -189,14 +191,14 @@ namespace ART_TELEMETRY_APP
 
         private void saveKalmanSensitivity()
         {
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(TextManager.DiagramCustomTabName).Content).GetLapListElement(lap.Index).KalmanSensitivity =
+            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).GetLapListElement(lap.Index).KalmanSensitivity =
                     float.Parse(kalman_filter_sensitivity_txtbox.Text);
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
             saveKalmanSensitivity();
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(TextManager.DiagramCustomTabName).Content).BuildCharts();
+            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).BuildCharts();
         }
     }
 }

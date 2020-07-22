@@ -90,7 +90,7 @@ namespace ART_TELEMETRY_APP
 
         private void settingsLap_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            LapChannels lap_channels_window = new LapChannels(lap, channels, pilots_name);
+            LapChannels lap_channels_window = new LapChannels(lap, channels, pilots_name, group_name);
             lap_channels_window.Show();
         }
 

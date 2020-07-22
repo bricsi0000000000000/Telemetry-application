@@ -12,6 +12,7 @@ using LiveCharts.Wpf;
 using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -74,6 +75,7 @@ namespace ART_TELEMETRY_APP
                     {
                         float stroke_thickness = .7f;
                         ChartValues<ObservablePoint> serie_values = new ChartValues<ObservablePoint>();
+
                         switch (filter)
                         {
                             case Filter.kalman:
@@ -135,6 +137,7 @@ namespace ART_TELEMETRY_APP
                                 break;
                         }
 
+
                         for (int i = serie_values.Count - 1; i >= 0 && !double.IsNaN(serie_values[i].X); i--)
                         {
                             if (!double.IsNaN(serie_values[i].X))
@@ -175,7 +178,7 @@ namespace ART_TELEMETRY_APP
                             }
                         }
 
-                        Console.WriteLine("max_value_x: {0}\tmin_value_x: {1}\tmax_value_y: {2}\tmin_value_y: {3}", max_value_x, min_value_x, max_value_y, min_value_y);
+                        //Console.WriteLine("max_value_x: {0}\tmin_value_x: {1}\tmax_value_y: {2}\tmin_value_y: {3}", max_value_x, min_value_x, max_value_y, min_value_y);
                     }
                 }
 

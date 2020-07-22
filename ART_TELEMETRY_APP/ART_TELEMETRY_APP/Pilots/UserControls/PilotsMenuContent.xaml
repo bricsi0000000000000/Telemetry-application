@@ -41,7 +41,7 @@
                                    >
             <materialDesign:DialogHost.DialogContent>
                 <StackPanel Margin="16">
-                    <TextBlock Text="Add new pilot"/>
+                    <TextBlock Text="Add new driver"/>
                     <TextBox Margin="0 8 0 0"
                              Name="addPilot_txtbox"
                              HorizontalAlignment="Stretch"
@@ -73,7 +73,7 @@
                 <WrapPanel Name="pilots_wrappanel"
                            />
 
-                <Label Content="No pilots added"
+                <Label Content="No driver added"
                        Name="noPilots_lbl"
                        VerticalContentAlignment="Center"
                        HorizontalContentAlignment="Center"
