@@ -145,12 +145,12 @@ namespace ART_TELEMETRY_APP.Pilots
         public void BuildCharts()
         {
             ChartBuilder.Build(charts_grid, activeLaps, group == null ? SelectedChannels : group.Attributes, active_input_file, distance_as_time, filter, group == null ? TextManager.DiagramCustomTabName : group.Name);
-            StreamWriter sw = new StreamWriter("gps_adatok.csv");
+          /*  StreamWriter sw = new StreamWriter("gps_adatok.csv");
             foreach (var item in active_input_file.MapPoints)
             {
                 sw.WriteLine("{0};{1}", item.X, item.Y);
             }
-            sw.Close();
+            sw.Close();*/
         }
 
         private List<Lap> activeLaps
