@@ -1,5 +1,6 @@
 ﻿using ART_TELEMETRY_APP.Maps.Classes;
 using ART_TELEMETRY_APP.Pilots;
+using ART_TELEMETRY_APP.Settings.Classes;
 using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
@@ -31,8 +32,11 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
             InitializeComponent();
 
             InitMapSettingsItems();
-            ActiveMapSettingsItem = map_settings_items.First();
-            UpdateActiveMapSettingsContent();
+            if (map_settings_items.Count > 0)
+            {
+                ActiveMapSettingsItem = map_settings_items.First();
+                UpdateActiveMapSettingsContent();
+            }
         }
 
         public void InitMapSettingsItems()
@@ -72,6 +76,7 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
                 {
                     if (input_file.MapName == ActiveMapSettingsItem.MapName)
                     {
+                        MapManager.GetMap(input_file.MapName).Processed = false;
                         mapEditor_grid.Children.Add(new MapEditor_UC(input_file, ActiveMapSettingsItem.MapName, progressbar_grid));
                         found = true;
                     }
@@ -120,6 +125,7 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
                     InitMapSettingsItems();
                     ActiveMapSettingsItem = map_settings_items.Last();
                     UpdateActiveMapSettingsContent();
+                    ((PilotsMenuContent)TabManager.GetTab(TextManager.DriversMenuName).Content).InitPilots();
                 }
                 else
                 {

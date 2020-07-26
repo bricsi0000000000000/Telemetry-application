@@ -9,7 +9,6 @@
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
              >
-
     <materialDesign:ColorZone MinWidth="300"
                               Background="#FF232323"
                               CornerRadius="3"

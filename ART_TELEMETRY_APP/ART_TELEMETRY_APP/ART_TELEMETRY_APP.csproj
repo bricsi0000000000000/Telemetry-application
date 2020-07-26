@@ -122,6 +122,9 @@
       <DependentUpon>LapReportContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Laps\Classes\Lap.cs" />
+    <Compile Include="Laps\UserControls\OnlyLapListElement.xaml.cs">
+      <DependentUpon>OnlyLapListElement.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Maps\Classes\Map.cs" />
     <Compile Include="Maps\Classes\MapManager.cs" />
     <Compile Include="Maps\UserControls\MapEditor_UC.xaml.cs">
@@ -155,9 +158,6 @@
       <DependentUpon>SettingsMenuContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Classes\TabManager.cs" />
-    <Compile Include="test.xaml.cs">
-      <DependentUpon>test.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Tracks\UserControls\TrackContent.xaml.cs">
       <DependentUpon>TrackContent.xaml</DependentUpon>
     </Compile>
@@ -222,6 +222,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Laps\UserControls\OnlyLapListElement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -269,10 +273,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Settings\UserControls\SettingsMenuContent.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="test.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

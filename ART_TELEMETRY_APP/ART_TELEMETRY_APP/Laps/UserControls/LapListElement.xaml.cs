@@ -27,6 +27,7 @@ namespace ART_TELEMETRY_APP
         Lap lap;
         string pilots_name;
         List<string> channels;
+        List<string> selected_channels;
         bool active = false;
         string group_name;
         float kalman_sensitivity = 0.2f;
@@ -40,13 +41,22 @@ namespace ART_TELEMETRY_APP
         /// <param name="channels"></param>
         /// <param name="time_state"></param>
         /// <param name="last_lap"></param>
-        public LapListElement(Lap lap, string pilots_name, bool active, List<string> channels, int time_state, string group_name, bool last_lap = false)
+        public LapListElement(Lap lap,
+                              string pilots_name,
+                              bool active,
+                              List<string> channels,
+                              List<string> selected_channels,
+                              int time_state,
+                              string group_name,
+                              bool last_lap = false
+                             )
         {
             InitializeComponent();
 
             this.pilots_name = pilots_name;
             this.lap = lap;
             this.channels = channels;
+            this.selected_channels = selected_channels;
             this.group_name = group_name;
 
             Active = active;
@@ -90,7 +100,7 @@ namespace ART_TELEMETRY_APP
 
         private void settingsLap_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            LapChannels lap_channels_window = new LapChannels(lap, channels, pilots_name, group_name);
+            LapChannels lap_channels_window = new LapChannels(lap, channels, selected_channels, pilots_name, group_name);
             lap_channels_window.Show();
         }
 

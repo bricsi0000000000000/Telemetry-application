@@ -32,11 +32,12 @@ namespace ART_TELEMETRY_APP
 
             this.pilot = pilot;
 
-            initTabs();
+            InitTabs();
         }
 
-        private void initTabs()
+        public void InitTabs()
         {
+            tabcontrol.Items.Clear();
             foreach (Group group in GroupManager.Groups)
             {
                 TabItem group_item = new TabItem();

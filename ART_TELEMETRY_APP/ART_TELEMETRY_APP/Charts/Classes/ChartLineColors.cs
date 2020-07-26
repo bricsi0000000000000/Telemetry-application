@@ -24,10 +24,19 @@ namespace ART_TELEMETRY_APP
         {
             get
             {
-                return Colors[rand.Next(0, Colors.Length - 1)];
+                if(all_colors.Count <= 0)
+                {
+                    foreach (Brush item in Colors)
+                    {
+                        all_colors.Add(item);
+                    }
+                }
+                Brush color = all_colors[rand.Next(0, all_colors.Count - 1)];
+                all_colors.Remove(color);
+                return color;
             }
         }
 
-       // public List<Brush> UsedColors = new List<Brush>();
+        static private List<Brush> all_colors = new List<Brush>();
     }
 }

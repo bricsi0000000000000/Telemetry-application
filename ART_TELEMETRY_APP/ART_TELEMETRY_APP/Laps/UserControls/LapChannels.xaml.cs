@@ -28,7 +28,7 @@ namespace ART_TELEMETRY_APP
         string pilots_name;
         string group_name;
 
-        public LapChannels(Lap lap, List<string> channels, string pilots_name, string group_name)
+        public LapChannels(Lap lap, List<string> channels, List<string> selected_channels, string pilots_name, string group_name)
         {
             InitializeComponent();
 
@@ -36,10 +36,11 @@ namespace ART_TELEMETRY_APP
 
             this.lap = lap;
             this.channels = channels;
+            this.selected_channels = selected_channels;
             this.pilots_name = pilots_name;
             this.group_name = group_name;
 
-            initSelectedChannels();
+           // initSelectedChannels();
             initChannelsListBox();
             initSelectedChannelsListBox();
 
@@ -47,14 +48,14 @@ namespace ART_TELEMETRY_APP
                 ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).GetLapListElement(lap.Index).KalmanSensitivity.ToString();
         }
 
-        private void initSelectedChannels()
+       /* private void initSelectedChannels()
         {
             selected_channels.Clear();
             foreach (string attribute in lap.SelectedChannels)
             {
                 selected_channels.Add(attribute);
             }
-        }
+        }*/
 
         private void initSelectedChannelsListBox()
         {
@@ -82,15 +83,19 @@ namespace ART_TELEMETRY_APP
             all_channels_lbl.Content = string.Format("All channels ({0})", channels.Count);
         }
 
-        private void updateLapSelectedChannels()
+       /* private void updateLapSelectedChannels()
         {
-            lap.SelectedChannels.Clear();
+            /*lap.SelectedChannels.Clear();
             foreach (string attribute in selected_channels)
             {
                 lap.SelectedChannels.Add(attribute);
+            }*/
+          /*  foreach (string attribute in selected_channels)
+            {
+                ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).SelectedChannels.Add(attribute);
             }
         }
-
+*/
         private void channelListBoxItemClick(object sender, MouseButtonEventArgs e)
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
@@ -98,7 +103,7 @@ namespace ART_TELEMETRY_APP
                 string attribute = ((ListBoxItem)sender).Content.ToString();
                 addToSelectedChannels(attribute);
                 updateSelectedListBoxItems();
-                updateLapSelectedChannels();
+               // updateLapSelectedChannels();
             }
         }
 
@@ -107,6 +112,7 @@ namespace ART_TELEMETRY_APP
             if (!selected_channels.Contains(attribute))
             {
                 selected_channels.Add(attribute);
+                //((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).SelectedChannels.Add(attribute);
             }
             else
             {
@@ -134,15 +140,16 @@ namespace ART_TELEMETRY_APP
             {
                 string attribute = ((ListBoxItem)sender).Content.ToString();
                 selected_channels.Remove(attribute);
+                ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).SelectedChannels.Remove(attribute);
                 updateSelectedListBoxItems();
-                updateLapSelectedChannels();
+                //updateLapSelectedChannels();
             }
         }
 
         private void filterChannelsTxtbox_KeyUp(object sender, KeyEventArgs e)
         {
             List<ListBoxItem> items = new List<ListBoxItem>();
-            foreach (var attribute in channels)
+            foreach (string attribute in channels)
             {
                 if (string.IsNullOrEmpty(filter_channels_txtbox.Text) || attribute.ToUpper().Contains(filter_channels_txtbox.Text.ToUpper()))
                 {

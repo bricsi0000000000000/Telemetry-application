@@ -17,7 +17,9 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid x:Name="charts_grid"/>
+        <ScrollViewer>
+            <Grid x:Name="charts_grid"/>
+        </ScrollViewer>
 
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
 

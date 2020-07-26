@@ -23,6 +23,7 @@ namespace ART_TELEMETRY_APP.Charts.Usercontrols
     public partial class Chart : UserControl
     {
         private short chart_min_height = 100;
+        private short chart_height = 350;
         private int max_step_x
         {
             get
@@ -46,7 +47,9 @@ namespace ART_TELEMETRY_APP.Charts.Usercontrols
             chart.DisableAnimations = true;
             chart.Hoverable = false;
             chart.MinHeight = chart_min_height;
+            chart.Height = chart_height;
             chart.Zoom = ZoomingOptions.Xy;
+            UpdateAxisValues();
         }
 
         public void UpdateAxisValues()

@@ -2,10 +2,13 @@
 using ART_TELEMETRY_APP.Maps.Classes;
 using ART_TELEMETRY_APP.Maps.UserControls;
 using ART_TELEMETRY_APP.Settings;
+using ART_TELEMETRY_APP.Settings.Classes;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -63,8 +66,8 @@ namespace ART_TELEMETRY_APP.Pilots
         private void deleteInputFile_Click(object sender, RoutedEventArgs e)
         {
             PilotManager.GetPilot(pilots_name).RemoveInputFile(file_name_lbl.Content.ToString());
-            ((PilotsMenuContent)TabManager.GetTab("Pilots").Content).InitPilots();
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).InitInputFileCmbbox();
+            ((PilotsMenuContent)TabManager.GetTab(TextManager.DriversMenuName).Content).InitPilots();
+            //((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab("Laps").Content).InitInputFileCmbbox();
         }
 
         /* private void settingsInputFile_Click(object sender, RoutedEventArgs e)
@@ -82,9 +85,12 @@ namespace ART_TELEMETRY_APP.Pilots
             progressbar.IsIndeterminate = true;
             progressbar_lbl.Content = "Calculating laps..";
 
-            ((MapSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Maps").Content).ActiveMapSettingsItem =
-                ((MapSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Maps").Content).GetMapSettingsItem(name.Split('\t')[1], name.Split('\t')[0]);
-            ((MapSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Maps").Content).UpdateActiveMapSettingsContent(progressbar_grid);
+            ((MapSettings)((SettingsMenuContent)TabManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.MapsSettingsName).Content).ActiveMapSettingsItem =
+                ((MapSettings)((SettingsMenuContent)TabManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.MapsSettingsName).Content).GetMapSettingsItem(name.Split('\t')[1], name.Split('\t')[0]);
+            ((MapSettings)((SettingsMenuContent)TabManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.MapsSettingsName).Content).UpdateActiveMapSettingsContent(progressbar_grid);
+
+            //((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(TextManager.DiagramCustomTabName).Content).InputFilesCmbboxSelectionChange();
+         
         }
     }
 }

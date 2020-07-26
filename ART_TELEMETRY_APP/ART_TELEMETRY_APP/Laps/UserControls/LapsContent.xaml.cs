@@ -23,6 +23,10 @@ namespace ART_TELEMETRY_APP.Pilots
         List<LapListElement> lap_list_elements = new List<LapListElement>();
         AllLapListElement all_lap_list_element;
         List<string> all_selected_channels = new List<string>();
+        public List<string> SelectedChannels = new List<string>();
+
+        List<Tuple<ushort, List<string>>> laps_selected_channels = new List<Tuple<ushort, List<string>>>();
+
         bool distance_as_time = false;
         public enum Filter
         {
@@ -38,6 +42,14 @@ namespace ART_TELEMETRY_APP.Pilots
 
             this.pilot = pilot;
             this.group = group;
+
+            //if (group != null)
+            //{
+            //    foreach (string attribute in group.Attributes)
+            //    {
+            //        all_selected_channels.Add(attribute);
+            //    }
+            //}
 
             InitInputFileCmbbox();
             InitLapListElements();
@@ -59,16 +71,32 @@ namespace ART_TELEMETRY_APP.Pilots
 
         private void inputFilesCmbbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (((ComboBoxItem)((ComboBox)sender).SelectedItem) != null)
+            /*if (((ComboBoxItem)((ComboBox)sender).SelectedItem) != null)
             {
                 string file_name = ((ComboBoxItem)((ComboBox)sender).SelectedItem).Content.ToString();
                 active_input_file = pilot.GetInputFile(file_name);
+                Console.WriteLine(active_input_file.FileName);
                 avg_lap_svg.Data = Geometry.Parse(active_input_file.AvgLapSVG);
 
                 updateLaps();
                 BuildCharts();
                 //((GGDiagram_UC)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilot.Name).Content).GetTab("Traction").Content).InitScatterPlot(active_input_file);
+            }*/
+            if (input_files_cmbbox.SelectedItem != null)
+            {
+                InputFilesCmbboxSelectionChange();
             }
+        }
+
+        public void InputFilesCmbboxSelectionChange()
+        {
+            string file_name = input_files_cmbbox.SelectedItem.ToString();
+            file_name = file_name.Substring(38, file_name.Length - 38);
+            active_input_file = pilot.GetInputFile(file_name);
+            avg_lap_svg.Data = Geometry.Parse(active_input_file.AvgLapSVG);
+
+            updateLaps();
+            BuildCharts();
         }
 
         public void ChangeAllLapsActive(bool active)
@@ -99,24 +127,24 @@ namespace ART_TELEMETRY_APP.Pilots
 
         public void ChangeAllSelectedChannels(List<string> selected_channels)
         {
-            all_selected_channels.Clear();
-            foreach (string attribute in selected_channels)
-            {
-                all_selected_channels.Add(attribute);
-            }
-            for (int i = 0; i < active_input_file.Laps.Count; i++)
-            {
-                active_input_file.Laps[i].SelectedChannels.Clear();
-                foreach (string attribute in selected_channels)
-                {
-                    active_input_file.Laps[i].SelectedChannels.Add(attribute);
-                }
-            }
+            /*  all_selected_channels.Clear();
+              foreach (string attribute in selected_channels)
+              {
+                  all_selected_channels.Add(attribute);
+              }
+              for (int i = 0; i < active_input_file.Laps.Count; i++)
+              {
+                  active_input_file.Laps[i].SelectedChannels.Clear();
+                  foreach (string attribute in selected_channels)
+                  {
+                      active_input_file.Laps[i].SelectedChannels.Add(attribute);
+                  }
+              }*/
         }
 
         public void BuildCharts()
         {
-            ChartBuilder.Build(charts_grid, activeLaps, active_input_file, distance_as_time, filter, group == null ? TextManager.DiagramCustomTabName : group.Name);
+            ChartBuilder.Build(charts_grid, activeLaps, group == null ? SelectedChannels : group.Attributes, active_input_file, distance_as_time, filter, group == null ? TextManager.DiagramCustomTabName : group.Name);
             StreamWriter sw = new StreamWriter("gps_adatok.csv");
             foreach (var item in active_input_file.MapPoints)
             {
@@ -179,15 +207,6 @@ namespace ART_TELEMETRY_APP.Pilots
 
             for (int i = 0; i < active_input_file.Laps.Count; i++)
             {
-                if (group != null)
-                {
-                    foreach (string attribute in group.Attributes)
-                    {
-                        active_input_file.Laps[i].SelectedChannels.Add(attribute);
-                        //TODO: valyon egy diagrammon jelentíse meg? Hmm
-                    }
-                }
-
                 LapListElement lap_list_element;
                 if (i + 1 >= active_input_file.Laps.Count)
                 {
@@ -195,6 +214,7 @@ namespace ART_TELEMETRY_APP.Pilots
                                                           pilot.Name,
                                                           active_input_file.ActiveLaps[active_input_file.Laps[i].Index],
                                                           channels,
+                                                          group == null ? SelectedChannels : group.Attributes,
                                                           i > 0 && i < active_input_file.Laps.Count - 1 ? i == best_index ? 1 : i == worst_index ? 0 : 2 : 2,
                                                           group == null ? TextManager.DiagramCustomTabName : group.Name,
                                                           true
@@ -206,6 +226,7 @@ namespace ART_TELEMETRY_APP.Pilots
                                                           pilot.Name,
                                                           active_input_file.ActiveLaps[active_input_file.Laps[i].Index],
                                                           channels,
+                                                          group == null ? SelectedChannels : group.Attributes,
                                                           i > 0 && i < active_input_file.Laps.Count - 1 ? i == best_index ? 1 : i == worst_index ? 0 : 2 : 2,
                                                           group == null ? TextManager.DiagramCustomTabName : group.Name
                                                           );

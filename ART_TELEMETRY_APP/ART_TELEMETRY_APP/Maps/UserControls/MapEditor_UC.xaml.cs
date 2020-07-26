@@ -1,4 +1,6 @@
-﻿using ART_TELEMETRY_APP.Laps;
+﻿using ART_TELEMETRY_APP.InputFiles;
+using ART_TELEMETRY_APP.Laps;
+using ART_TELEMETRY_APP.Laps.UserControls;
 using ART_TELEMETRY_APP.Maps.Classes;
 using ART_TELEMETRY_APP.Pilots;
 using ART_TELEMETRY_APP.Settings.Classes;
@@ -32,6 +34,7 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
         Point cursor;
         string map_name;
         Grid pilot_progressbar_grid;
+        List<OnlyLapListElement> lap_list_elements = new List<OnlyLapListElement>();
 
         public MapEditor_UC(InputFile input_file, string map_name, Grid pilot_progressbar_grid = null)
         {
@@ -55,7 +58,8 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
             }
             else
             {
-                drawActLap();
+                avg_lap_svg.Data = Geometry.Parse(input_file.AvgLapSVG);
+                makeLapData();
             }
         }
 
@@ -84,7 +88,7 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
 
         private void startWorker()
         {
-            if(pilot_progressbar_grid != null)
+            if (pilot_progressbar_grid != null)
             {
                 pilot_progressbar_grid.Visibility = Visibility.Visible;
             }
@@ -109,7 +113,6 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
         private void workerDoWork(object sender, DoWorkEventArgs e)
         {
             input_file.Laps.Clear();
-            lapIndex = 0;
             List<Point> nearest_map_points = new List<Point>();
             short radius = 20;
 
@@ -203,7 +206,14 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(input_file.PilotName).Content).GetTab(TextManager.DiagramCustomTabName).Content).InitFirstInputFilesContent();
+                    foreach (TabItem item in ((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(input_file.PilotName).Content).Tabs)
+                    {
+                        ((LapsContent)item.Content).InitFirstInputFilesContent();
+                        ((LapsContent)item.Content).InputFilesCmbboxSelectionChange();
+                    }
+                    //((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(input_file.PilotName).Content).GetTab(TextManager.DiagramCustomTabName).Content).InitFirstInputFilesContent();
+                    //((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(input_file.PilotName).Content).InitTabs();
+                    //((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).InitPilotsTabs();
                 });
             }
         }
@@ -219,10 +229,70 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
                 pilot_progressbar_grid.Visibility = Visibility.Hidden;
             }
             progressbar_grid.Visibility = Visibility.Hidden;
-            drawActLap();
+
+            avg_lap_svg.Data = Geometry.Parse(input_file.AvgLapSVG);
+            makeLapData();
         }
 
-        private void drawActLap()
+        private void makeLapData()
+        {
+            lap_list_elements.Clear();
+            laps_stackpanel.Children.Clear();
+
+            TimeSpan all_time = new TimeSpan();
+
+            int worst_index = 1;
+            int best_index = 1;
+            TimeSpan worst_time = input_file.Laps[1].Time;
+            TimeSpan best_time = input_file.Laps[1].Time;
+            for (int i = 2; i < input_file.Laps.Count - 1; i++)
+            {
+                if (input_file.Laps[i].Time > worst_time)
+                {
+                    worst_time = input_file.Laps[i].Time;
+                    worst_index = i;
+                }
+            }
+
+            for (int i = 2; i < input_file.Laps.Count - 1; i++)
+            {
+                if (input_file.Laps[i].Time < best_time)
+                {
+                    best_time = input_file.Laps[i].Time;
+                    best_index = i;
+                }
+            }
+
+            for (int i = 0; i < input_file.Laps.Count; i++)
+            {
+                OnlyLapListElement lap_list_element;
+                if (i + 1 >= input_file.Laps.Count)
+                {
+                    lap_list_element = new OnlyLapListElement(input_file.Laps[i],
+                                                              i > 0 && i < input_file.Laps.Count - 1 ? i == best_index ? 1 : i == worst_index ? 0 : 2 : 2,
+                                                              true
+                                                              );
+                }
+                else
+                {
+                    lap_list_element = new OnlyLapListElement(input_file.Laps[i],
+                                                              i > 0 && i < input_file.Laps.Count - 1 ? i == best_index ? 1 : i == worst_index ? 0 : 2 : 2
+                                                              );
+                }
+
+                lap_list_elements.Add(lap_list_element);
+                laps_stackpanel.Children.Add(lap_list_element);
+
+                all_time += input_file.Laps[i].Time;
+            }
+
+            OnlyLapListElement all_lap_list_element = new OnlyLapListElement(all_time);
+            laps_stackpanel.Children.Insert(0, all_lap_list_element);
+        }
+
+        //private void
+
+        /*private void drawActLap()
         {
             if (input_file.Laps.Count > 0)
             {
@@ -251,9 +321,9 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
         {
             lapIndex++;
             drawActLap();
-        }
+        }*/
 
-        public int lapIndex
+       /* public int lapIndex
         {
             get
             {
@@ -266,6 +336,6 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
                     lap_index = value;
                 }
             }
-        }
+        }*/
     }
 }
