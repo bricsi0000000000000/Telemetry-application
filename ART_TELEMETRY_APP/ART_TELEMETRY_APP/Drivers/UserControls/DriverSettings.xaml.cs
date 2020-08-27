@@ -19,34 +19,35 @@ using System.Windows.Shapes;
 namespace ART_TELEMETRY_APP.Pilots
 {
     /// <summary>
-    /// Interaction logic for PilotSettings.xaml
+    /// This User Control represents one <seealso cref="Driver"/> on <seealso cref="DriversMenuContent"/>
     /// </summary>
-    public partial class PilotSettings : UserControl
+    public partial class DriverSettings : UserControl
     {
-        string pilots_name;
-        List<InputFileListElement> input_files = new List<InputFileListElement>();
-        Pilot pilot;
+        private readonly List<InputFileListElement> input_files = new List<InputFileListElement>();
+        private readonly Driver driver;
 
-        public PilotSettings(string pilots_name)
+        public string DriverName { get; private set; }
+
+        public DriverSettings(string driver_name)
         {
             InitializeComponent();
 
-            this.pilots_name = pilots_name;
-            pilot = PilotManager.GetPilot(pilots_name);
-            pilots_name_lbl.Content = pilots_name;
+            DriverName = driver_name;
+            driver = DriverManager.GetDriver(driver_name);
+            pilots_name_lbl.Content = driver_name;
 
             initInputFiles();
         }
 
         private void initInputFiles()
         {
-            if (pilot != null)
+            if (driver != null)
             {
                 input_files_stackpanel.Children.Clear();
-                foreach (InputFile input_file in pilot.InputFiles)
+                foreach (InputFile input_file in driver.InputFiles)
                 {
                     InputFileListElement input_file_list_element = new InputFileListElement(input_file.FileName,
-                                                                                            pilot.Name,
+                                                                                            driver.Name,
                                                                                             ref progressbar_grid,
                                                                                             ref progressbar,
                                                                                             ref progressbar_lbl
@@ -59,9 +60,9 @@ namespace ART_TELEMETRY_APP.Pilots
 
         private void deletePilot_Click(object sender, RoutedEventArgs e)
         {
-            PilotManager.RemovePilot(pilots_name);
-            ((PilotsMenuContent)TabManager.GetTab(TextManager.DriversMenuName).Content).InitPilots();
-            ((DatasMenuContent)TabManager.GetTab(TextManager.DiagramCustomTabName).Content).InitPilotsTabs();
+            DriverManager.RemoveDriver(DriverName);
+            ((DriversMenuContent)TabManager.GetTab(TextManager.DriversMenuName).Content).InitDrivers();
+            ((DatasMenuContent)TabManager.GetTab(TextManager.DiagramCustomTabName).Content).InitDriversTabs();
         }
 
         private void addFile_Click(object sender, RoutedEventArgs e)
@@ -78,22 +79,14 @@ namespace ART_TELEMETRY_APP.Pilots
             {
                 string file_name = open_file_dialog.FileName.Split('\\').Last();
                 InputFileListElement input_file_list_element = new InputFileListElement(file_name,
-                                                                                        pilot.Name,
+                                                                                        driver.Name,
                                                                                         ref progressbar_grid,
                                                                                         ref progressbar,
                                                                                         ref progressbar_lbl
                                                                                         );
                 input_files_stackpanel.Children.Add(input_file_list_element);
-                ((PilotsMenuContent)TabManager.GetTab(TextManager.DriversMenuName).Content).DisableAllPilots(true, pilots_name);
-                DataReader.Instance.ReadData(pilot, open_file_dialog.FileName, progressbar_grid, ref progressbar);
-            }
-        }
-
-        public string PilotsName
-        {
-            get
-            {
-                return pilots_name;
+                ((DriversMenuContent)TabManager.GetTab(TextManager.DriversMenuName).Content).DisableAllDrivers(true, DriverName);
+                DataReader.Instance.ReadData(driver, open_file_dialog.FileName, progressbar_grid, ref progressbar);
             }
         }
     }

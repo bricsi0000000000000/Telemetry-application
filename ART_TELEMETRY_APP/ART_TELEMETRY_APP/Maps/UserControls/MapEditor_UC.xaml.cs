@@ -1,4 +1,5 @@
-﻿using ART_TELEMETRY_APP.InputFiles;
+﻿using ART_TELEMETRY_APP.Charts.Classes;
+using ART_TELEMETRY_APP.InputFiles;
 using ART_TELEMETRY_APP.Laps;
 using ART_TELEMETRY_APP.Laps.UserControls;
 using ART_TELEMETRY_APP.Maps.Classes;
@@ -7,19 +8,11 @@ using ART_TELEMETRY_APP.Settings.Classes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ART_TELEMETRY_APP.Maps.UserControls
 {
@@ -28,45 +21,41 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
     /// </summary>
     public partial class MapEditor_UC : UserControl
     {
-        InputFile input_file;
-        int lap_index;
-        BackgroundWorker worker;
-        Point cursor;
-        string map_name;
-        Grid pilot_progressbar_grid;
-        List<OnlyLapListElement> lap_list_elements = new List<OnlyLapListElement>();
+        private readonly InputFile input_file;
+        private readonly Map map;
+        private readonly Grid pilot_progressbar_grid;
+        private readonly List<OnlyLapListElement> lap_list_elements = new List<OnlyLapListElement>();
+        private BackgroundWorker worker;
+        private Point cursor;
 
-        public MapEditor_UC(InputFile input_file, string map_name, Grid pilot_progressbar_grid = null)
+        public MapEditor_UC(InputFile input_file, Map map, Grid pilot_progressbar_grid = null)
         {
             InitializeComponent();
 
             this.input_file = input_file;
-            this.map_name = map_name;
+            this.map = map;
             this.pilot_progressbar_grid = pilot_progressbar_grid;
 
             all_lap_svg.Data = Geometry.Parse(input_file.AllLapsSVG);
 
-            if (MapManager.GetMap(map_name).StarPoint != new Point(-1, -1))
+            if (MapManager.GetMap(map).StarPoint != new Point(-1, -1))
             {
-                cursor = MapManager.GetMap(map_name).StarPoint;
+                cursor = MapManager.GetMap(map).StarPoint;
             }
 
-            if (!MapManager.GetMap(map_name).Processed)
+            if (!MapManager.GetMap(map).Processed)
             {
                 startWorker();
-                MapManager.GetMap(map_name).Processed = true;
+                MapManager.GetMap(map).Processed = true;
             }
             else
             {
-                avg_lap_svg.Data = Geometry.Parse(input_file.AvgLapSVG);
+                //avg_lap_svg.Data = Geometry.Parse(input_file.OneLap());
                 makeLapData();
             }
         }
 
-        double distance(Point p1, Point p2)
-        {
-            return Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
-        }
+        double distance(Point start_point, Point end_point) => Math.Sqrt(Math.Pow(start_point.X - end_point.X, 2) + Math.Pow(start_point.Y - end_point.Y, 2));
 
         private void AllLapCanvas_MouseMove(object sender, MouseEventArgs e)
         {
@@ -105,7 +94,7 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
         {
             cursor = Mouse.GetPosition(all_lap_canvas);
 
-            MapManager.ChangeMapsStartPoint(map_name, cursor);
+            MapManager.ChangeMapsStartPoint(map, cursor);
 
             startWorker();
         }
@@ -201,15 +190,18 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
                 }
 
                 input_file.MakeAvgLap();
-                input_file.MakeLapTimes();
+                input_file.CalculateLapTimes();
                 input_file.InitActiveLaps();
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    foreach (TabItem item in ((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(input_file.PilotName).Content).Tabs)
+                    foreach (TabItem item in ((DriverContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(input_file.DriverName).Content).Tabs)
                     {
-                        ((LapsContent)item.Content).InitFirstInputFilesContent();
-                        ((LapsContent)item.Content).InputFilesCmbboxSelectionChange();
+                        if (item is LapsContent)
+                        {
+                            ((LapsContent)item.Content).InitFirstInputFilesContent();
+                            ((LapsContent)item.Content).InputFilesCmbboxSelectionChange();
+                        }
                     }
                     //((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(input_file.PilotName).Content).GetTab(TextManager.DiagramCustomTabName).Content).InitFirstInputFilesContent();
                     //((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(input_file.PilotName).Content).InitTabs();
@@ -230,8 +222,12 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
             }
             progressbar_grid.Visibility = Visibility.Hidden;
 
-            avg_lap_svg.Data = Geometry.Parse(input_file.AvgLapSVG);
-            makeLapData();
+            //  avg_lap_svg.Data = Geometry.Parse(input_file.OneLap());
+
+            if (input_file.Laps.Count > 0)
+            {
+                makeLapData();
+            }
         }
 
         private void makeLapData()
@@ -241,11 +237,11 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
 
             TimeSpan all_time = new TimeSpan();
 
-            int worst_index = 1;
-            int best_index = 1;
+            ushort worst_index = 1;
+            ushort best_index = 1;
             TimeSpan worst_time = input_file.Laps[1].Time;
             TimeSpan best_time = input_file.Laps[1].Time;
-            for (int i = 2; i < input_file.Laps.Count - 1; i++)
+            for (ushort i = 2; i < input_file.Laps.Count - 1; i++)
             {
                 if (input_file.Laps[i].Time > worst_time)
                 {
@@ -254,7 +250,7 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
                 }
             }
 
-            for (int i = 2; i < input_file.Laps.Count - 1; i++)
+            for (ushort i = 2; i < input_file.Laps.Count - 1; i++)
             {
                 if (input_file.Laps[i].Time < best_time)
                 {
@@ -263,7 +259,7 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
                 }
             }
 
-            for (int i = 0; i < input_file.Laps.Count; i++)
+            for (ushort i = 0; i < input_file.Laps.Count; i++)
             {
                 OnlyLapListElement lap_list_element;
                 if (i + 1 >= input_file.Laps.Count)
@@ -323,19 +319,19 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
             drawActLap();
         }*/
 
-       /* public int lapIndex
-        {
-            get
-            {
-                return lap_index;
-            }
-            set
-            {
-                if (value >= 0 && value < input_file.Laps.Count)
-                {
-                    lap_index = value;
-                }
-            }
-        }*/
+        /* public int lapIndex
+         {
+             get
+             {
+                 return lap_index;
+             }
+             set
+             {
+                 if (value >= 0 && value < input_file.Laps.Count)
+                 {
+                     lap_index = value;
+                 }
+             }
+         }*/
     }
 }

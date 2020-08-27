@@ -1,18 +1,6 @@
 ﻿using ART_TELEMETRY_APP.Groups.Classes;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ART_TELEMETRY_APP.Groups.UserControls
 {
@@ -21,7 +9,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
     /// </summary>
     public partial class GroupsMenuContent : UserControl
     {
-        List<TabItem> groups_tabs = new List<TabItem>();
+        private readonly List<TabItem> groups_tabs = new List<TabItem>();
 
         public GroupsMenuContent()
         {
@@ -42,9 +30,6 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
             }
         }
 
-        public TabItem GetTab(string name)
-        {
-            return groups_tabs.Find(n => n.Header.Equals(name));
-        }
+        public TabItem GetTab(string name) => groups_tabs.Find(n => n.Header.Equals(name));
     }
 }

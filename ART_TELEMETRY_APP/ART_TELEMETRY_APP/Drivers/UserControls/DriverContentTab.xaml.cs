@@ -1,36 +1,25 @@
 ﻿using ART_TELEMETRY_APP.Groups.Classes;
 using ART_TELEMETRY_APP.Pilots;
 using ART_TELEMETRY_APP.Settings.Classes;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ART_TELEMETRY_APP
 {
     /// <summary>
-    /// Interaction logic for PilotContentTabs.xaml
+    /// On this page will be shown all the charts
     /// </summary>
-    public partial class PilotContentTab : UserControl
+    public partial class DriverContentTab : UserControl
     {
-        List<TabItem> tabs = new List<TabItem>();
-        Pilot pilot;
+        public List<TabItem> Tabs { get; } = new List<TabItem>();
 
-        public PilotContentTab(Pilot pilot)
+        private readonly Driver driver;
+
+        public DriverContentTab(Driver driver)
         {
             InitializeComponent();
 
-            this.pilot = pilot;
+            this.driver = driver;
 
             InitTabs();
         }
@@ -42,17 +31,17 @@ namespace ART_TELEMETRY_APP
             {
                 TabItem group_item = new TabItem();
                 group_item.Header = group.Name;
-                group_item.Content = new LapsContent(pilot, group);
-                group_item.Name = string.Format("{0}_item_laps", pilot.Name);
-                tabs.Add(group_item);
+                group_item.Content = new LapsContent(driver, group);
+                group_item.Name = string.Format("{0}_item_laps", driver.Name);
+                Tabs.Add(group_item);
                 tabcontrol.Items.Add(group_item);
             }
 
             TabItem item = new TabItem();
             item.Header = TextManager.DiagramCustomTabName;
-            item.Content = new LapsContent(pilot, null);
-            item.Name = string.Format("{0}_item_laps", pilot.Name);
-            tabs.Add(item);
+            item.Content = new LapsContent(driver, null);
+            item.Name = string.Format("{0}_item_laps", driver.Name);
+            Tabs.Add(item);
             tabcontrol.Items.Add(item);
 
             /* item = new TabItem();
@@ -77,17 +66,6 @@ namespace ART_TELEMETRY_APP
              tabcontrol.Items.Add(item);*/
         }
 
-        public TabItem GetTab(string name)
-        {
-            return tabs.Find(n => n.Header.Equals(name));
-        }
-
-        public List<TabItem> Tabs
-        {
-            get
-            {
-                return tabs;
-            }
-        }
+        public TabItem GetTab(string name) => Tabs.Find(n => n.Header.Equals(name));
     }
 }

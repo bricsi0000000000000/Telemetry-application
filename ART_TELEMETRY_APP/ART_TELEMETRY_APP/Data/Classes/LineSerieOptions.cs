@@ -9,7 +9,7 @@ namespace ART_TELEMETRY_APP.InputFiles
 {
     public class LineSerieOptions
     {
-        public float stroke_thickness;
-        public Brush stroke_color;
+        public float StrokeThickness { get; set; }
+        public Brush StrokeColor { get; set; }
     }
 }

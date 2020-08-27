@@ -9,29 +9,27 @@ namespace ART_TELEMETRY_APP
 {
     public static class ChartLineColors
     {
-        static Random rand = new Random();
+        static Random random = new Random();
 
-        static public Brush[] Colors = new Brush[] {
-            Brushes.Aqua,
-            Brushes.Chartreuse,
-            Brushes.Crimson,
-            Brushes.Gold,
-            Brushes.Orange,
-            Brushes.Tomato,
-        };
+        private static Brush[] colors => new Brush[]{ Brushes.Aqua,
+                                                      Brushes.Chartreuse,
+                                                      Brushes.Crimson,
+                                                      Brushes.Gold,
+                                                      Brushes.Orange,
+                                                      Brushes.Tomato };
 
-        static public Brush RandomColor
+        public static Brush RandomColor
         {
             get
             {
-                if(all_colors.Count <= 0)
+                if (all_colors.Count <= 0)
                 {
-                    foreach (Brush item in Colors)
+                    foreach (Brush item in colors)
                     {
                         all_colors.Add(item);
                     }
                 }
-                Brush color = all_colors[rand.Next(0, all_colors.Count - 1)];
+                Brush color = all_colors[random.Next(0, all_colors.Count - 1)];
                 all_colors.Remove(color);
                 return color;
             }

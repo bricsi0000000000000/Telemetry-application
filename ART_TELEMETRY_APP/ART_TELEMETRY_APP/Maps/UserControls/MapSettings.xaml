@@ -36,17 +36,18 @@
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
                             <Button Style="{StaticResource MaterialDesignFlatButton}"
                                     Command="materialDesign:DialogHost.CloseDialogCommand"
-                                    IsDefault="True"
+                                    IsCancel="True"
                                     Margin="0 8 8 0"
-                                    Content="ADD"
-                                    Click="addMap_Click"
+                                    Content="CANCEL"
+                                    Click="cancelAddMap_Click"
                                     >
                             </Button>
                             <Button Style="{StaticResource MaterialDesignFlatButton}"
                                     Command="materialDesign:DialogHost.CloseDialogCommand"
-                                    IsCancel="True"
+                                    IsDefault="True"
                                     Margin="0 8 8 0"
-                                    Content="CANCEL"
+                                    Content="ADD"
+                                    Click="addMap_Click"
                                     >
                             </Button>
                         </StackPanel>
@@ -65,9 +66,11 @@
                            HorizontalContentAlignment="Center"
                            FontWeight="Bold"
                            />
-                    <StackPanel Grid.Row="1"
-                                x:Name="savedMaps_stackpanel"
-                                />
+                    
+                    <ScrollViewer Grid.Row="1">
+                        <StackPanel x:Name="savedMaps_stackpanel"/>
+                    </ScrollViewer>
+
                     <Button Grid.Row="2"
                             Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
                             Margin="10 5"

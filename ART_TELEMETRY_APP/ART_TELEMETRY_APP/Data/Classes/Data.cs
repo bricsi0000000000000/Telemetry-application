@@ -8,15 +8,18 @@ using System.Threading.Tasks;
 
 namespace ART_TELEMETRY_APP.InputFiles
 {
+    /// <summary>
+    /// This class represents one single column, from an <seealso cref="InputFile"/>.
+    /// </summary>
     public class Data
     {
-        public string Attribute;
-        public ChartValues<double> Datas;
-        public LineSerieOptions Option;
-        public string InputFileName;
-        public string PilotsName;
+        public string Attribute { get; set; }
+        public ChartValues<double> AllData { get; set; }
+        public LineSerieOptions Option { get; set; }
+        public string InputFileName { get; set; }
+        public string DriverName { get; set; }
 
-        float filter_percent = .6f;
+        //private float filter_percent = .6f;
 
         /*public void MakeDatasInLaps(string attribute)
         {
@@ -26,7 +29,7 @@ namespace ART_TELEMETRY_APP.InputFiles
             }
         }*/
 
-        ChartValues<double> filteredData(ChartValues<double> datas)
+       /* ChartValues<double> filteredData(ChartValues<double> datas)
         {
             ChartValues<double> input_datas = new ChartValues<double>(datas);
             int total = input_datas.Count;
@@ -43,6 +46,6 @@ namespace ART_TELEMETRY_APP.InputFiles
             }
 
             return input_datas;
-        }
+        }*/
     }
 }

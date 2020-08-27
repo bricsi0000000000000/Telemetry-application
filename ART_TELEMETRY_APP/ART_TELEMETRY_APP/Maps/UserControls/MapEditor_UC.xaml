@@ -27,12 +27,12 @@
                        VerticalContentAlignment="Center"
                        />
                 <Canvas Grid.Row="1"
-                       x:Name="all_lap_canvas"
-                       MouseMove="AllLapCanvas_MouseMove"
-                       PreviewMouseLeftButtonUp="AllLapCanvas_PreviewMouseLeftButtonUp"
-                       Background="#FF434343"
-                       Margin="10"
-                       >
+                        x:Name="all_lap_canvas"
+                        MouseMove="AllLapCanvas_MouseMove"
+                        PreviewMouseLeftButtonUp="AllLapCanvas_PreviewMouseLeftButtonUp"
+                        Background="#FF434343"
+                        Margin="10"
+                        >
                     <Path x:Name="all_lap_svg"
                           Stroke="White"
                           StrokeThickness=".7"
@@ -56,6 +56,21 @@
                             </TransformGroup>
                         </Ellipse.RenderTransform>
                     </Ellipse>
+                     <!--<Image Source="Images/start_circle.png"
+                            Name="start_line_ellipse"
+                            Width="20"
+                            Height="20"
+                            RenderTransformOrigin="0.5,0.5"
+                            >
+                        <Image.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform X="-10" Y="-10"/>
+                            </TransformGroup>
+                        </Image.RenderTransform>
+                    </Image>-->
                 </Canvas>
             </Grid>
         </materialDesign:Card>
@@ -80,7 +95,7 @@
                 <Viewbox Grid.Row="1">
                     <Path x:Name="avg_lap_svg"
                       Stroke="White"
-                      StrokeThickness="3"
+                      StrokeThickness="1.5"
                       Margin="5"
                       />
                 </Viewbox>

@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ART_TELEMETRY_APP.Settings.Classes
+﻿namespace ART_TELEMETRY_APP.Settings.Classes
 {
     public static class TextManager
     {
-        public static string SettingsMenuName = "Settings";
-        public static string DiagramsMenuName = "Diagrams";
-        public static string DriversMenuName = "Drivers";
+        public static readonly string SettingsMenuName = "Settings";
+        public static readonly string DiagramsMenuName = "Diagrams";
+        public static readonly string DriversMenuName = "Drivers";
 
-        public static string MapsSettingsName = "Maps";
-        public static string GroupsSettingsName = "Groups";
+        public static readonly string MapsSettingsName = "Maps";
+        public static readonly string GroupsSettingsName = "Groups";
 
-        public static string DiagramCustomTabName = "Custom";
+        public static readonly string DiagramCustomTabName = "Custom";
+
+        public static readonly string SectorsSettingsName = "Sectors";
     }
 }

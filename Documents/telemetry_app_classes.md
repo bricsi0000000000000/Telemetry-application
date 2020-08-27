@@ -18,6 +18,14 @@
   - *User Controls*
     - DatasMenuContent.xaml
     - InputFileListElement.xaml
+- **Drivers**
+  - *Classes*
+    - Driver.cs
+    - DriverManager.cs
+  - *User Controls*
+    - DriverContentTab.xaml
+    - DriverSettings.xaml
+    - DriversMenuContent.xaml
 - **Groups**
   - *Classes*
     - Group.cs
@@ -50,14 +58,10 @@
     - MapEditor_UC.xaml
     - MapSettings.xaml
     - MapSettingsItem.xaml
-- **Pilots**
+- **Sectors**
   - *Classes*
-    - Pilot.cs
-    - PilotManager.cs
   - *User Controls*
-    - PilotContentTab.xaml
-    - PilotSettings.xaml
-    - PilotsMenuContent.xaml
+    - SectorsContent.xaml
 - **Settings**
   - *Classes*
     - TextManager.cs
@@ -135,15 +139,15 @@
 - MapSettingsItem.xaml
 
   !["MapSettingsItem.xaml"](images/map_settings_item.PNG)
-- PilotContentTab.xaml
+- DriverContentTab.xaml
 
-  !["PilotContentTab.xaml"](images/pilot_content_tab.PNG)
-- PilotSettings.xaml
+  !["DriverContentTab.xaml"](images/pilot_content_tab.PNG)
+- DriverSettings.xaml
 
-  !["PilotSettings.xaml"](images/pilot_settings.PNG)
-- PilotsMenuContent.xaml
+  !["DriverSettings.xaml"](images/pilot_settings.PNG)
+- DriversMenuContent.xaml
 
-  !["PilotsMenuContent.xaml"](images/pilots_menu_content.PNG)
+  !["DriversMenuContent.xaml"](images/pilots_menu_content.PNG)
 - SettingsMenuContent.xaml
 
   !["SettingsMenuContent.xaml"](images/settings_menu_content.PNG)

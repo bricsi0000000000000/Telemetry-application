@@ -20,13 +20,9 @@ namespace ART_TELEMETRY_APP.Laps.UserControls
     /// </summary>
     public partial class OnlyLapListElement : UserControl
     {
-        Lap lap;
-
         public OnlyLapListElement(Lap lap, int time_state, bool last_lap = false)
         {
             InitializeComponent();
-
-            this.lap = lap;
 
             if (lap.Index == 0)
             {

@@ -39,9 +39,9 @@ namespace ART_TELEMETRY_APP
             {
                 Data accx_data = input_file.GetData("AccX");
                 Data accy_data = input_file.GetData("AccY");
-                Console.Write(accx_data.Datas.Count + " -> ");
-                ChartValues<double> filtered_accx = filteredData(accx_data.Datas);
-                ChartValues<double> filtered_accy = filteredData(accy_data.Datas);
+                Console.Write(accx_data.AllData.Count + " -> ");
+                ChartValues<double> filtered_accx = filteredData(accx_data.AllData);
+                ChartValues<double> filtered_accy = filteredData(accy_data.AllData);
               //  Console.WriteLine(filtered_accx.Count);
                 ChartValues<ScatterPoint> acc = new ChartValues<ScatterPoint>();
                 for (int i = 0; i < filtered_accx.Count; i++)

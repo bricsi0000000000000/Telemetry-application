@@ -1,21 +1,11 @@
-﻿using ART_TELEMETRY_APP.Groups.Classes;
-using ART_TELEMETRY_APP.Laps;
+﻿using ART_TELEMETRY_APP.Laps;
 using ART_TELEMETRY_APP.Pilots;
 using ART_TELEMETRY_APP.Settings.Classes;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ART_TELEMETRY_APP
 {
@@ -24,13 +14,13 @@ namespace ART_TELEMETRY_APP
     /// </summary>
     public partial class LapListElement : UserControl
     {
-        Lap lap;
-        string pilots_name;
-        List<string> channels;
-        List<string> selected_channels;
-        bool active = false;
-        string group_name;
-        float kalman_sensitivity = 0.2f;
+        private readonly Lap lap;
+        private readonly string pilots_name;
+        private readonly List<string> channels;
+        private readonly List<string> selected_channels;
+        private readonly string group_name;
+        private bool active = false;
+        public float KalmanSensitivity { get; set; } = 0.2f;
 
         /// <summary>
         /// 0=worst, 1=best, 2=none
@@ -94,8 +84,8 @@ namespace ART_TELEMETRY_APP
         {
             Active = !Active;
 
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).InitLapListElements();
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).BuildCharts();
+            ((LapsContent)((DriverContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).InitLapListElements();
+            ((LapsContent)((DriverContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).BuildCharts();
         }
 
         private void settingsLap_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -119,6 +109,5 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        public float KalmanSensitivity { get => kalman_sensitivity; set => kalman_sensitivity = value; }
     }
 }

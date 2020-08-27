@@ -8,17 +8,22 @@ namespace ART_TELEMETRY_APP.Charts.Classes
 {
     public class KalmanFilter
     {
-        private double A, H, Q, R, P, x;
-
         public KalmanFilter(double A, double H, double Q, double R, double initial_P, double initial_x)
         {
             this.A = A;
             this.H = H;
             this.Q = Q;
             this.R = R;
-            this.P = initial_P;
-            this.x = initial_x;
+            P = initial_P;
+            x = initial_x;
         }
+
+        private readonly double A;
+        private readonly double H;
+        private readonly double Q;
+        private readonly double R;
+        private double P;
+        private double x;
 
         public double Output(double input)
         {
@@ -28,7 +33,7 @@ namespace ART_TELEMETRY_APP.Charts.Classes
 
             // measurement update - correction
             double K = P * H / (H * P * H + R);
-            x = x + K * (input - H * x);
+            x += K * (input - H * x);
             P = (1 - K * H) * P;
 
             return x;

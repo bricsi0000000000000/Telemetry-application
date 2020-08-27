@@ -26,6 +26,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,6 +36,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Icons\art_logo_jBd_icon.ico</ApplicationIcon>
@@ -104,14 +106,15 @@
     </Compile>
     <Compile Include="Charts\Classes\ChartBuilder.cs" />
     <Compile Include="Charts\Classes\ChartLineColors.cs" />
-    <Compile Include="Datas\UserControls\DatasMenuContent.xaml.cs">
+    <Compile Include="Data\UserControls\DatasMenuContent.xaml.cs">
       <DependentUpon>DatasMenuContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="GGDiagram_UC.xaml.cs">
       <DependentUpon>GGDiagram_UC.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Datas\Classes\Data.cs" />
-    <Compile Include="Datas\Classes\LineSerieOptions.cs" />
+    <Compile Include="Data\Classes\Data.cs" />
+    <Compile Include="Data\Classes\LineSerieOptions.cs" />
+    <Compile Include="Laps\Classes\Filter.cs" />
     <Compile Include="Laps\UserControls\LapChannels.xaml.cs">
       <DependentUpon>LapChannels.xaml</DependentUpon>
     </Compile>
@@ -136,22 +139,28 @@
     <Compile Include="Maps\UserControls\MapSettingsItem.xaml.cs">
       <DependentUpon>MapSettingsItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pilots\UserControls\PilotContentTab.xaml.cs">
-      <DependentUpon>PilotContentTab.xaml</DependentUpon>
+    <Compile Include="Drivers\UserControls\DriverContentTab.xaml.cs">
+      <DependentUpon>DriverContentTab.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Datas\UserControls\InputFileListElement.xaml.cs">
+    <Compile Include="Data\UserControls\InputFileListElement.xaml.cs">
       <DependentUpon>InputFileListElement.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pilots\Classes\Pilot.cs" />
+    <Compile Include="Drivers\Classes\Driver.cs" />
     <Compile Include="Laps\UserControls\LapsContent.xaml.cs">
       <DependentUpon>LapsContent.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pilots\Classes\PilotManager.cs" />
-    <Compile Include="Pilots\UserControls\PilotSettings.xaml.cs">
-      <DependentUpon>PilotSettings.xaml</DependentUpon>
+    <Compile Include="Drivers\Classes\DriverManager.cs" />
+    <Compile Include="Drivers\UserControls\DriverSettings.xaml.cs">
+      <DependentUpon>DriverSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pilots\UserControls\PilotsMenuContent.xaml.cs">
-      <DependentUpon>PilotsMenuContent.xaml</DependentUpon>
+    <Compile Include="Drivers\UserControls\DriversMenuContent.xaml.cs">
+      <DependentUpon>DriversMenuContent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Sectors\UserControls\SectorSettingsItem.xaml.cs">
+      <DependentUpon>SectorSettingsItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Sectors\UserControls\SectorsSettings.xaml.cs">
+      <DependentUpon>SectorsSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\Classes\TextManager.cs" />
     <Compile Include="Settings\UserControls\SettingsMenuContent.xaml.cs">
@@ -202,7 +211,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Datas\UserControls\DatasMenuContent.xaml">
+    <Page Include="Data\UserControls\DatasMenuContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -234,8 +243,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Datas\Classes\DataReader.cs" />
-    <Compile Include="Datas\Classes\InputFile.cs" />
+    <Compile Include="Data\Classes\DataReader.cs" />
+    <Compile Include="Data\Classes\InputFile.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -252,11 +261,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pilots\UserControls\PilotContentTab.xaml">
+    <Page Include="Drivers\UserControls\DriverContentTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Datas\UserControls\InputFileListElement.xaml">
+    <Page Include="Data\UserControls\InputFileListElement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -264,11 +273,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pilots\UserControls\PilotSettings.xaml">
+    <Page Include="Drivers\UserControls\DriverSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pilots\UserControls\PilotsMenuContent.xaml">
+    <Page Include="Drivers\UserControls\DriversMenuContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Sectors\UserControls\SectorSettingsItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Sectors\UserControls\SectorsSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -316,6 +333,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
+    <Folder Include="Sectors\Classes\" />
     <Folder Include="Tabs\UserControls\" />
     <Folder Include="Tracks\Classes\" />
   </ItemGroup>

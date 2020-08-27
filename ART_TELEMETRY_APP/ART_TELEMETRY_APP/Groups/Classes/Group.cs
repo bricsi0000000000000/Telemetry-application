@@ -6,40 +6,21 @@ using System.Threading.Tasks;
 
 namespace ART_TELEMETRY_APP.Groups.Classes
 {
+    /// <summary>
+    /// Represents one group
+    /// </summary>
     public class Group
     {
-        string name;
-        List<string> attributes = new List<string>();
+        public string Name { get; }
+        public List<string> Attributes { get; } = new List<string>();
 
         public Group(string name)
         {
-            this.name = name;
+            Name = name;
         }
 
-        public string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
+        public void AddAttribute(string attribute) => Attributes.Add(attribute);
 
-        public void AddAttribute(string attribute)
-        {
-            attributes.Add(attribute);
-        }
-
-        public void RemoveAttribute(string attribute)
-        {
-            attributes.Remove(attribute);
-        }
-
-        public List<string> Attributes
-        {
-            get
-            {
-                return attributes;
-            }
-        }
+        public void RemoveAttribute(string attribute) => Attributes.Remove(attribute);
     }
 }

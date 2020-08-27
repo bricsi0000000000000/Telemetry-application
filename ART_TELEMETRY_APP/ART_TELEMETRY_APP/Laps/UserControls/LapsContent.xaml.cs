@@ -5,8 +5,6 @@ using ART_TELEMETRY_APP.Laps;
 using ART_TELEMETRY_APP.Settings.Classes;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -18,29 +16,26 @@ namespace ART_TELEMETRY_APP.Pilots
     /// </summary>
     public partial class LapsContent : UserControl
     {
-        Pilot pilot;
-        InputFile active_input_file;
-        List<LapListElement> lap_list_elements = new List<LapListElement>();
-        AllLapListElement all_lap_list_element;
-        List<string> all_selected_channels = new List<string>();
-        public List<string> SelectedChannels = new List<string>();
+        private readonly Driver driver;
+        private readonly List<LapListElement> lap_list_elements = new List<LapListElement>();
+        private readonly List<string> all_selected_channels = new List<string>();
+        private AllLapListElement all_lap_list_element;
+        private InputFile active_input_file;
 
-        List<Tuple<ushort, List<string>>> laps_selected_channels = new List<Tuple<ushort, List<string>>>();
+        public List<string> SelectedChannels { get; set; } = new List<string>();
 
-        bool distance_as_time = false;
-        public enum Filter
-        {
-            kalman, nothing, both
-        }
-        Filter filter = Filter.kalman;
+        //  private List<Tuple<ushort, List<string>>> laps_selected_channels = new List<Tuple<ushort, List<string>>>();
 
-        Group group;
+        private bool distance_as_time = false;
+        private Filter filter = Filter.kalman;
 
-        public LapsContent(Pilot pilot, Group group)
+        private readonly Group group;
+
+        public LapsContent(Driver driver, Group group)
         {
             InitializeComponent();
 
-            this.pilot = pilot;
+            this.driver = driver;
             this.group = group;
 
             //if (group != null)
@@ -59,14 +54,19 @@ namespace ART_TELEMETRY_APP.Pilots
         {
             input_files_cmbbox.Items.Clear();
 
-            int index = 0;
-            foreach (InputFile input_file in pilot.InputFiles)
+            ushort name_index = 0;
+            foreach (InputFile input_file in driver.InputFiles)
             {
                 ComboBoxItem combo_box_item = new ComboBoxItem();
                 combo_box_item.Content = input_file.FileName;
-                combo_box_item.Name = string.Format("cmbboxitem{0}", index++);
+                combo_box_item.Name = string.Format("cmbboxitem{0}", name_index++);
                 input_files_cmbbox.Items.Add(combo_box_item);
             }
+
+            ComboBoxItem nothing_combo_box_item = new ComboBoxItem();
+            nothing_combo_box_item.Content = "Choose file";
+            nothing_combo_box_item.Name = string.Format("cmbboxitem{0}", name_index++);
+            input_files_cmbbox.Items.Add(nothing_combo_box_item);
         }
 
         private void inputFilesCmbbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -92,11 +92,28 @@ namespace ART_TELEMETRY_APP.Pilots
         {
             string file_name = input_files_cmbbox.SelectedItem.ToString();
             file_name = file_name.Substring(38, file_name.Length - 38);
-            active_input_file = pilot.GetInputFile(file_name);
-            avg_lap_svg.Data = Geometry.Parse(active_input_file.AvgLapSVG);
+            if (!file_name.Equals("Choose file"))
+            {
+                active_input_file = driver.GetInputFile(file_name);
 
-            updateLaps();
-            BuildCharts();
+                if (active_input_file.Laps.Count > 0)
+                {
+                    avg_lap_svg.Data = Geometry.Parse(active_input_file.OneLapSVG(6));
+
+                    updateLaps();
+                    BuildCharts();
+                }
+                else
+                {
+                    error_snack_bar.MessageQueue.Enqueue(string.Format("No laps calculated. Change it in the map settings."),
+                                                         null, null, null, false, true, TimeSpan.FromSeconds(3));
+                }
+            }
+            else
+            {
+                charts_grid.Children.Clear();
+                charts_grid.RowDefinitions.Clear();
+            }
         }
 
         public void ChangeAllLapsActive(bool active)
@@ -144,13 +161,20 @@ namespace ART_TELEMETRY_APP.Pilots
 
         public void BuildCharts()
         {
-            ChartBuilder.Build(charts_grid, activeLaps, group == null ? SelectedChannels : group.Attributes, active_input_file, distance_as_time, filter, group == null ? TextManager.DiagramCustomTabName : group.Name);
-          /*  StreamWriter sw = new StreamWriter("gps_adatok.csv");
-            foreach (var item in active_input_file.MapPoints)
-            {
-                sw.WriteLine("{0};{1}", item.X, item.Y);
-            }
-            sw.Close();*/
+            ChartBuilder.Build(ref charts_grid,
+                               activeLaps,
+                               group == null ? SelectedChannels : group.Attributes,
+                               active_input_file,
+                               distance_as_time,
+                               filter,
+                               group == null ? TextManager.DiagramCustomTabName : group.Name
+                               );
+            /*  StreamWriter sw = new StreamWriter("gps_adatok.csv");
+              foreach (var item in active_input_file.MapPoints)
+              {
+                  sw.WriteLine("{0};{1}", item.X, item.Y);
+              }
+              sw.Close();*/
         }
 
         private List<Lap> activeLaps
@@ -158,7 +182,7 @@ namespace ART_TELEMETRY_APP.Pilots
             get
             {
                 List<Lap> active_laps = new List<Lap>();
-                for (int i = 0; i < active_input_file.ActiveLaps.Count; i++)
+                for (ushort i = 0; i < active_input_file.ActiveLaps.Count; i++)
                 {
                     if (active_input_file.ActiveLaps[i])
                     {
@@ -176,18 +200,18 @@ namespace ART_TELEMETRY_APP.Pilots
             laps_stackpanel.Children.Clear();
 
             List<string> channels = new List<string>();
-            foreach (Data data in active_input_file.Datas)
+            foreach (Data data in active_input_file.AllData)
             {
                 channels.Add(data.Attribute);
             }
 
             TimeSpan all_time = new TimeSpan();
 
-            int worst_index = 1;
-            int best_index = 1;
+            ushort worst_index = 1;
+            ushort best_index = 1;
             TimeSpan worst_time = active_input_file.Laps[1].Time;
             TimeSpan best_time = active_input_file.Laps[1].Time;
-            for (int i = 2; i < active_input_file.Laps.Count - 1; i++)
+            for (ushort i = 2; i < active_input_file.Laps.Count - 1; i++)
             {
                 if (active_input_file.Laps[i].Time > worst_time)
                 {
@@ -196,7 +220,7 @@ namespace ART_TELEMETRY_APP.Pilots
                 }
             }
 
-            for (int i = 2; i < active_input_file.Laps.Count - 1; i++)
+            for (ushort i = 2; i < active_input_file.Laps.Count - 1; i++)
             {
                 if (active_input_file.Laps[i].Time < best_time)
                 {
@@ -205,13 +229,13 @@ namespace ART_TELEMETRY_APP.Pilots
                 }
             }
 
-            for (int i = 0; i < active_input_file.Laps.Count; i++)
+            for (ushort i = 0; i < active_input_file.Laps.Count; i++)
             {
                 LapListElement lap_list_element;
                 if (i + 1 >= active_input_file.Laps.Count)
                 {
                     lap_list_element = new LapListElement(active_input_file.Laps[i],
-                                                          pilot.Name,
+                                                          driver.Name,
                                                           active_input_file.ActiveLaps[active_input_file.Laps[i].Index],
                                                           channels,
                                                           group == null ? SelectedChannels : group.Attributes,
@@ -223,7 +247,7 @@ namespace ART_TELEMETRY_APP.Pilots
                 else
                 {
                     lap_list_element = new LapListElement(active_input_file.Laps[i],
-                                                          pilot.Name,
+                                                          driver.Name,
                                                           active_input_file.ActiveLaps[active_input_file.Laps[i].Index],
                                                           channels,
                                                           group == null ? SelectedChannels : group.Attributes,
@@ -238,7 +262,7 @@ namespace ART_TELEMETRY_APP.Pilots
                 all_time += active_input_file.Laps[i].Time;
             }
 
-            all_lap_list_element = new AllLapListElement(channels, all_time, pilot.Name, all_selected_channels);
+            all_lap_list_element = new AllLapListElement(channels, all_time, driver.Name, all_selected_channels);
             laps_stackpanel.Children.Insert(0, all_lap_list_element);
         }
 
@@ -277,15 +301,9 @@ namespace ART_TELEMETRY_APP.Pilots
             }
         }
 
-        public void InitFirstInputFilesContent()
-        {
-            input_files_cmbbox.SelectedItem = input_files_cmbbox.Items[0];
-        }
+        public void InitFirstInputFilesContent() => input_files_cmbbox.SelectedItem = input_files_cmbbox.Items[0];
 
-        public LapListElement GetLapListElement(int lap_index)
-        {
-            return lap_list_elements[lap_index];
-        }
+        public LapListElement GetLapListElement(int lap_index) => lap_list_elements[lap_index];
 
         private void resetZoom_Click(object sender, RoutedEventArgs e)
         {

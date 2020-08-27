@@ -1,24 +1,17 @@
 ﻿using ART_TELEMETRY_APP.InputFiles;
-using ART_TELEMETRY_APP.Laps;
 using ART_TELEMETRY_APP.Pilots;
-using ART_TELEMETRY_APP.Settings;
 using ART_TELEMETRY_APP.Settings.Classes;
 using LiveCharts;
-using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace ART_TELEMETRY_APP
 {
@@ -38,27 +31,27 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        Pilot pilot;
-        string file_name;
-        Grid progressbar_grid;
-        ProgressBar progressbar;
-        long file_length;
-        BackgroundWorker worker;
+        private Driver driver;
+        private string input_file_name;
+        private Grid progressbar_grid;
+        private ProgressBar progressbar;
+        private long file_length;
+        private BackgroundWorker worker;
 
-        public void ReadData(Pilot pilot,
-                             string file_name,
+        public void ReadData(Driver driver,
+                             string input_file_name,
                              Grid progressbar_grid,
                              ref ProgressBar progressbar
                              )
         {
-            this.pilot = pilot;
-            this.file_name = file_name;
+            this.driver = driver;
+            this.input_file_name = input_file_name;
 
             if (isFileNew)
             {
                 this.progressbar_grid = progressbar_grid;
                 this.progressbar = progressbar;
-                this.file_length = File.ReadLines(file_name).Count();
+                file_length = File.ReadLines(input_file_name).Count();
 
                 this.progressbar_grid.Visibility = Visibility.Visible;
                 this.progressbar.IsIndeterminate = false;
@@ -78,64 +71,52 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        string fileNameWithoutPath
-        {
-            get
-            {
-                return file_name.Split('\\').Last();
-            }
-        }
+        private string fileNameWithoutPath => input_file_name.Split('\\').Last();
 
-        bool isFileNew
-        {
-            get
-            {
-                return pilot.GetInputFile(fileNameWithoutPath) == null;
-            }
-        }
+        private bool isFileNew => driver.GetInputFile(fileNameWithoutPath) == null;
 
         private void workerDoWork(object sender, DoWorkEventArgs e)
         {
             NumberFormatInfo number_format_info = new CultureInfo("hu-HU", false).NumberFormat;
 
-            List<Data> new_datas = new List<Data>();
+            List<Data> new_data = new List<Data>();
 
-            StreamReader read_file = new StreamReader(file_name, Encoding.Default);
+            StreamReader file_reader = new StreamReader(input_file_name, Encoding.Default);
 
-            string[] attributes = read_file.ReadLine().Split(';');
+            string[] attributes = file_reader.ReadLine().Split(';');
             foreach (string attribute in attributes)
             {
                 Data single_data = new Data();
                 single_data.Attribute = attribute;
-                single_data.Datas = new ChartValues<double>();
+                single_data.AllData = new ChartValues<double>();
                 single_data.Option = new LineSerieOptions
                 {
-                    stroke_thickness = .7f,
-                    stroke_color = Brushes.Black
+                    StrokeThickness = .7f,
+                    StrokeColor = Brushes.Black
                 };
                 single_data.InputFileName = fileNameWithoutPath;
-                single_data.PilotsName = pilot.Name;
-                new_datas.Add(single_data);
+                single_data.DriverName = driver.Name;
+                new_data.Add(single_data);
             }
 
             uint index = 0;
 
-            while (!read_file.EndOfStream)
+            while (!file_reader.EndOfStream)
             {
-                string[] row = read_file.ReadLine().Split(';');
-                for (int i = 0; i < new_datas.Count; i++)
+                string[] row = file_reader.ReadLine().Split(';');
+                for (ushort i = 0; i < new_data.Count; i++)
                 {
-                    if (row[i] == "")
+                    if (row[i].Equals(string.Empty))
                     {
-                        new_datas[i].Datas.Add(double.NaN);
+                        new_data[i].AllData.Add(double.NaN);
                     }
                     else
                     {
-                        new_datas[i].Datas.Add(double.Parse(row[i], number_format_info));
+                        new_data[i].AllData.Add(double.Parse(row[i], number_format_info));
                     }
                 }
 
-                worker.ReportProgress(Convert.ToInt32((index++ / (float)file_length) * 100));
+                worker.ReportProgress(Convert.ToInt32(index++ / (float)file_length * 100));
             }
 
             Application.Current.Dispatcher.Invoke(() =>
@@ -144,9 +125,9 @@ namespace ART_TELEMETRY_APP
                 progressbar.IsIndeterminate = true;
             });
 
-            read_file.Close();
+            file_reader.Close();
 
-            pilot.AddInputFile(new InputFile(fileNameWithoutPath, new_datas, pilot.Name));
+            driver.AddInputFile(new InputFile(fileNameWithoutPath, new_data, driver.Name));
         }
 
         private void workerProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -159,15 +140,19 @@ namespace ART_TELEMETRY_APP
             progressbar_grid.Visibility = Visibility.Hidden;
             progressbar.IsIndeterminate = false;
             //((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilot.Name).Content).GetTab(TextManager.DiagramCustomTabName).Content).InitInputFileCmbbox();
-            foreach (TabItem item in ((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilot.Name).Content).Tabs)
+            foreach (TabItem item in ((DriverContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(driver.Name).Content).Tabs)
             {
-                ((LapsContent)item.Content).InitInputFileCmbbox();
+                try
+                {
+                    ((LapsContent)item.Content).InitInputFileCmbbox();
+                }
+                catch (Exception) { }
             }
-            ((PilotsMenuContent)TabManager.GetTab(TextManager.DriversMenuName).Content).DisableAllPilots(false, pilot.Name);
+            ((DriversMenuContent)TabManager.GetTab(TextManager.DriversMenuName).Content).DisableAllDrivers(false, driver.Name);
 
-            if (pilot.InputFiles.Last().Latitude == null || pilot.InputFiles.Last().Longitude == null)
+            if (driver.InputFiles.Last().Latitude == null || driver.InputFiles.Last().Longitude == null)
             {
-                ((PilotsMenuContent)TabManager.GetTab(TextManager.DriversMenuName).Content).ShowError("No longitude or latitude data found!");
+                ((DriversMenuContent)TabManager.GetTab(TextManager.DriversMenuName).Content).ShowError("No longitude or latitude data found!");
             }
         }
     }

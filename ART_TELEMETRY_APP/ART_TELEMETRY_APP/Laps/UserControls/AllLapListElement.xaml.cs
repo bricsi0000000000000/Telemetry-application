@@ -2,18 +2,9 @@
 using ART_TELEMETRY_APP.Pilots;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ART_TELEMETRY_APP
 {
@@ -22,18 +13,16 @@ namespace ART_TELEMETRY_APP
     /// </summary>
     public partial class AllLapListElement : UserControl
     {
-        List<string> channels;
-        TimeSpan all_time;
-        string pilots_name;
-        bool all_laps_active;
-        List<string> all_selected_channels;
+        private readonly List<string> channels;
+        private readonly string pilots_name;
+        private readonly List<string> all_selected_channels;
+        private bool all_laps_active;
 
         public AllLapListElement(List<string> channels, TimeSpan all_time, string pilots_name, List<string> all_selected_channels)
         {
             InitializeComponent();
 
             this.channels = channels;
-            this.all_time = all_time;
             this.pilots_name = pilots_name;
             this.all_selected_channels = all_selected_channels;
 
@@ -52,8 +41,8 @@ namespace ART_TELEMETRY_APP
 
             all_laps_active = !all_laps_active;
 
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).ChangeAllLapsActive(all_laps_active);
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).BuildCharts();
+            ((LapsContent)((DriverContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).ChangeAllLapsActive(all_laps_active);
+            ((LapsContent)((DriverContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).BuildCharts();
         }
 
         private void settingsLap_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)

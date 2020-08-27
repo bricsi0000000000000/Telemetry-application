@@ -2,17 +2,9 @@
 using ART_TELEMETRY_APP.Settings.Classes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ART_TELEMETRY_APP
 {
@@ -21,10 +13,10 @@ namespace ART_TELEMETRY_APP
     /// </summary>
     public partial class AllLapChannels : Window
     {
-        string pilots_name;
-        List<string> channels;
-        List<string> selected_channels;
-        List<string> new_selected_channels = new List<string>();
+        private readonly string pilots_name;
+        private readonly List<string> channels;
+        private readonly List<string> selected_channels;
+        private readonly List<string> new_selected_channels = new List<string>();
 
         public AllLapChannels(string pilots_name, List<string> channels, List<string> selected_channels)
         {
@@ -226,8 +218,8 @@ namespace ART_TELEMETRY_APP
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab("Laps").Content).ChangeAllSelectedChannels(new_selected_channels);
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab("Laps").Content).BuildCharts();
+            ((LapsContent)((DriverContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab("Laps").Content).ChangeAllSelectedChannels(new_selected_channels);
+            ((LapsContent)((DriverContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab("Laps").Content).BuildCharts();
         }
     }
 }

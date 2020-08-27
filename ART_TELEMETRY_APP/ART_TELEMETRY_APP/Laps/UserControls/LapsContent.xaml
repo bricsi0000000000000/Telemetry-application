@@ -54,7 +54,7 @@
             <Viewbox Grid.Row="3">
                 <Path x:Name="avg_lap_svg"
                         Stroke="White"
-                        StrokeThickness="3"
+                        StrokeThickness="1.5"
                         Margin="5"
                         />
             </Viewbox>
@@ -109,5 +109,10 @@
                         />
             </Grid>
         </Grid>
+
+        <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
+                                 x:Name="error_snack_bar"
+                                 Foreground="White"
+                                 />
     </Grid>
 </UserControl>

@@ -3,17 +3,9 @@ using ART_TELEMETRY_APP.Pilots;
 using ART_TELEMETRY_APP.Settings.Classes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ART_TELEMETRY_APP
 {
@@ -22,17 +14,17 @@ namespace ART_TELEMETRY_APP
     /// </summary>
     public partial class LapChannels : Window
     {
-        Lap lap;
-        List<string> channels;
-        List<string> selected_channels = new List<string>();
-        string pilots_name;
-        string group_name;
+        private readonly Lap lap;
+        private readonly List<string> channels;
+        private readonly List<string> selected_channels = new List<string>();
+        private readonly string pilots_name;
+        private readonly string group_name;
 
         public LapChannels(Lap lap, List<string> channels, List<string> selected_channels, string pilots_name, string group_name)
         {
             InitializeComponent();
 
-            this.Title = string.Format("Select channels to {0}. lap", lap.Index);
+            Title = string.Format("Select channels to {0}. lap", lap.Index);
 
             this.lap = lap;
             this.channels = channels;
@@ -45,7 +37,7 @@ namespace ART_TELEMETRY_APP
             initSelectedChannelsListBox();
 
             kalman_filter_sensitivity_txtbox.Text =
-                ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).GetLapListElement(lap.Index).KalmanSensitivity.ToString();
+                ((LapsContent)((DriverContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).GetLapListElement(lap.Index).KalmanSensitivity.ToString();
         }
 
        /* private void initSelectedChannels()
@@ -140,7 +132,7 @@ namespace ART_TELEMETRY_APP
             {
                 string attribute = ((ListBoxItem)sender).Content.ToString();
                 selected_channels.Remove(attribute);
-                ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).SelectedChannels.Remove(attribute);
+                ((LapsContent)((DriverContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).SelectedChannels.Remove(attribute);
                 updateSelectedListBoxItems();
                 //updateLapSelectedChannels();
             }
@@ -198,14 +190,14 @@ namespace ART_TELEMETRY_APP
 
         private void saveKalmanSensitivity()
         {
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).GetLapListElement(lap.Index).KalmanSensitivity =
+            ((LapsContent)((DriverContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).GetLapListElement(lap.Index).KalmanSensitivity =
                     float.Parse(kalman_filter_sensitivity_txtbox.Text);
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
             saveKalmanSensitivity();
-            ((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).BuildCharts();
+            ((LapsContent)((DriverContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).BuildCharts();
         }
     }
 }

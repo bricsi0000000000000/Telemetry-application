@@ -1,21 +1,12 @@
 ﻿using ART_TELEMETRY_APP.Maps.Classes;
 using ART_TELEMETRY_APP.Pilots;
 using ART_TELEMETRY_APP.Settings.Classes;
-using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ART_TELEMETRY_APP.Maps.UserControls
 {
@@ -24,17 +15,16 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
     /// </summary>
     public partial class MapSettings : UserControl
     {
-        List<MapSettingsItem> map_settings_items = new List<MapSettingsItem>();
-        public MapSettingsItem ActiveMapSettingsItem;
+        public MapSettingsItem ActiveMapSettingsItem { get; set; }
 
         public MapSettings()
         {
             InitializeComponent();
 
             InitMapSettingsItems();
-            if (map_settings_items.Count > 0)
+            if (MapSettingsItems.Count > 0)
             {
-                ActiveMapSettingsItem = map_settings_items.First();
+                ActiveMapSettingsItem = MapSettingsItems.First();
                 UpdateActiveMapSettingsContent();
             }
         }
@@ -42,11 +32,11 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
         public void InitMapSettingsItems()
         {
             savedMaps_stackpanel.Children.Clear();
-            map_settings_items.Clear();
+            MapSettingsItems.Clear();
             foreach (Map map in MapManager.Maps)
             {
-                MapSettingsItem item = new MapSettingsItem(map.Name, map.Year);
-                map_settings_items.Add(item);
+                MapSettingsItem item = new MapSettingsItem(map);
+                MapSettingsItems.Add(item);
                 savedMaps_stackpanel.Children.Add(item);
             }
         }
@@ -54,12 +44,12 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
         public void UpdateActiveMapSettingsContent(Grid progressbar_grid = null)
         {
             mapEditor_grid.Children.Clear();
-            changeMapName_txtbox.Text = ActiveMapSettingsItem.MapName;
-            changeMapDate_txtbox.Text = ActiveMapSettingsItem.MapYear;
+            changeMapName_txtbox.Text = ActiveMapSettingsItem.ActiveMap.Name;
+            changeMapDate_txtbox.Text = ActiveMapSettingsItem.ActiveMap.Year.ToString();
 
-            foreach (MapSettingsItem item in map_settings_items)
+            foreach (MapSettingsItem item in MapSettingsItems)
             {
-                if (item.MapName == ActiveMapSettingsItem.MapName && item.MapYear == ActiveMapSettingsItem.MapYear)
+                if (item.ActiveMap.Equals(ActiveMapSettingsItem.ActiveMap))
                 {
                     item.ChangeColorMode(true);
                 }
@@ -70,14 +60,14 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
             }
 
             bool found = false;
-            foreach (Pilot pilot in PilotManager.Pilots)
+            foreach (Driver pilot in DriverManager.Drivers)
             {
                 foreach (InputFile input_file in pilot.InputFiles)
                 {
-                    if (input_file.MapName == ActiveMapSettingsItem.MapName)
+                    if (input_file.ActiveMap.Name == ActiveMapSettingsItem.ActiveMap.Name)
                     {
-                        MapManager.GetMap(input_file.MapName).Processed = false;
-                        mapEditor_grid.Children.Add(new MapEditor_UC(input_file, ActiveMapSettingsItem.MapName, progressbar_grid));
+                        MapManager.GetMap(input_file.ActiveMap).Processed = false;
+                        mapEditor_grid.Children.Add(new MapEditor_UC(input_file, ActiveMapSettingsItem.ActiveMap, progressbar_grid));
                         found = true;
                     }
                 }
@@ -86,7 +76,7 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
             if (!found)
             {
                 notConnected_lbl.Visibility = Visibility.Visible;
-                notConnected_lbl.Content = string.Format("{0} is not connected to any inputfile.", ActiveMapSettingsItem.MapName);
+                notConnected_lbl.Content = string.Format("{0} is not connected to any inputfile.", ActiveMapSettingsItem.ActiveMap.Name);
             }
             else
             {
@@ -95,9 +85,12 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
             }
         }
 
-        public void ChangeActiveMapSettingsItem()
+        public void ChangeActiveMapSettingsItem() => ActiveMapSettingsItem = MapSettingsItems.Last();
+
+        private void cancelAddMap_Click(object sender, RoutedEventArgs e)
         {
-            ActiveMapSettingsItem = map_settings_items.Last();
+            addMapTxtbox.Text = string.Empty;
+            addMapDateTxtbox.Text = string.Empty;
         }
 
         private void addMap_Click(object sender, RoutedEventArgs e)
@@ -119,13 +112,13 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
             }
             else
             {
-                if (MapManager.GetMap(addMapTxtbox.Text) == null)
+                if (MapManager.GetMap(addMapTxtbox.Text, int.Parse(addMapDateTxtbox.Text)) == null)
                 {
-                    MapManager.AddMap(addMapTxtbox.Text, addMapDateTxtbox.Text);
+                    MapManager.AddMap(addMapTxtbox.Text, int.Parse(addMapDateTxtbox.Text));
                     InitMapSettingsItems();
-                    ActiveMapSettingsItem = map_settings_items.Last();
+                    ActiveMapSettingsItem = MapSettingsItems.Last();
                     UpdateActiveMapSettingsContent();
-                    ((PilotsMenuContent)TabManager.GetTab(TextManager.DriversMenuName).Content).InitPilots();
+                    ((DriversMenuContent)TabManager.GetTab(TextManager.DriversMenuName).Content).InitDrivers();
                 }
                 else
                 {
@@ -133,35 +126,28 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
                                                          null, null, null, false, true, TimeSpan.FromSeconds(2));
                 }
             }
-            addMapTxtbox.Text = "";
-            addMapDateTxtbox.Text = "";
+            addMapTxtbox.Text = string.Empty;
+            addMapDateTxtbox.Text = string.Empty;
         }
 
-        private void changeMapName_txtbox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            changeMapName_txtbox.Text = "";
-        }
+        private void changeMapName_txtbox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e) => changeMapName_txtbox.Text = string.Empty;
 
-        private void changeMapDate_txtbox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            changeMapDate_txtbox.Text = "";
-        }
+        private void changeMapDate_txtbox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e) => changeMapDate_txtbox.Text = string.Empty;
 
         private void changeMapsDatas_Click(object sender, RoutedEventArgs e)
         {
-            MapManager.GetMap(ActiveMapSettingsItem.MapName).Name = changeMapName_txtbox.Text;
-            MapManager.GetMap(changeMapName_txtbox.Text).Year = changeMapDate_txtbox.Text;
+            MapManager.ChangeMap(ActiveMapSettingsItem.ActiveMap, changeMapName_txtbox.Text, int.Parse(changeMapDate_txtbox.Text));
             InitMapSettingsItems();
-            ActiveMapSettingsItem = map_settings_items.Find(n => n.MapName == changeMapName_txtbox.Text);
+            ActiveMapSettingsItem = MapSettingsItems.Find(n => n.ActiveMap.Name.Equals(changeMapName_txtbox.Text) && n.ActiveMap.Year.Equals(int.Parse(changeMapDate_txtbox.Text)));
             UpdateActiveMapSettingsContent();
         }
 
-        public MapSettingsItem GetMapSettingsItem(string map_name, string map_date)
+        public MapSettingsItem GetMapSettingsItem(string map_name, int map_date)
         {
             //return map_settings_items.Find(n => n.Name == map_name && n.MapYear == map_date);
-            foreach (MapSettingsItem item in map_settings_items)
+            foreach (MapSettingsItem item in MapSettingsItems)
             {
-                if (item.MapName == map_name && item.MapYear == map_date)
+                if (item.ActiveMap.Name.Equals(map_name) && item.ActiveMap.Year.Equals(map_date))
                 {
                     return item;
                 }
@@ -170,12 +156,6 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
             return null;
         }
 
-        public List<MapSettingsItem> MapSettingsItems
-        {
-            get
-            {
-                return map_settings_items;
-            }
-        }
+        public List<MapSettingsItem> MapSettingsItems { get; } = new List<MapSettingsItem>();
     }
 }

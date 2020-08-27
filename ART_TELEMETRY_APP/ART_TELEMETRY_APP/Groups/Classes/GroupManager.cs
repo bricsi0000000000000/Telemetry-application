@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ART_TELEMETRY_APP.Groups.Classes
 {
     static class GroupManager
     {
-        static List<Group> groups = new List<Group>();
+        public static List<Group> Groups { get; } = new List<Group>();
 
         public static void InitGroups()
         {
-            StreamReader sr = new StreamReader("groups.csv");
-            sr.ReadLine();
-            while (!sr.EndOfStream)
+            StreamReader stream_reader = new StreamReader("groups.csv");
+            stream_reader.ReadLine();
+            while (!stream_reader.EndOfStream)
             {
-                string[] row = sr.ReadLine().Split(';');
+                string[] row = stream_reader.ReadLine().Split(';');
                 Group group = new Group(row[0]);
                 string[] attributes = row[1].Split(',');
                 foreach (string attribute in attributes)
@@ -26,30 +22,13 @@ namespace ART_TELEMETRY_APP.Groups.Classes
                 }
                 AddGroup(group);
             }
-            sr.Close();
+            stream_reader.Close();
         }
 
-        public static void AddGroup(Group group)
-        {
-            groups.Add(group);
-        }
+        public static void AddGroup(Group group) => Groups.Add(group);
 
-        public static Group GetGroup(string name)
-        {
-            return groups.Find(n => n.Name == name);
-        }
+        public static Group GetGroup(string name) => Groups.Find(n => n.Name.Equals(name));
 
-        public static void RemoveGroup(string name)
-        {
-            groups.Remove(GetGroup(name));
-        }
-
-        public static List<Group> Groups
-        {
-            get
-            {
-                return groups;
-            }
-        }
+        public static void RemoveGroup(string name) => Groups.Remove(GetGroup(name));
     }
 }
