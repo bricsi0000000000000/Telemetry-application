@@ -1,6 +1,8 @@
 ﻿using ART_TELEMETRY_APP.Maps.Classes;
 using ART_TELEMETRY_APP.Pilots;
 using ART_TELEMETRY_APP.Settings.Classes;
+using ART_TELEMETRY_APP.ShowError.Classes;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +19,13 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
     {
         public MapSettingsItem ActiveMapSettingsItem { get; set; }
 
+        private ErrorMessage error_message;
+
         public MapSettings()
         {
             InitializeComponent();
+
+            error_message = showError;
 
             InitMapSettingsItems();
             if (MapSettingsItems.Count > 0)
@@ -64,7 +70,7 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
             {
                 foreach (InputFile input_file in pilot.InputFiles)
                 {
-                    if (input_file.ActiveMap.Name == ActiveMapSettingsItem.ActiveMap.Name)
+                    if (input_file.ActiveMap.Name.Equals(ActiveMapSettingsItem.ActiveMap.Name))
                     {
                         MapManager.GetMap(input_file.ActiveMap).Processed = false;
                         mapEditor_grid.Children.Add(new MapEditor_UC(input_file, ActiveMapSettingsItem.ActiveMap, progressbar_grid));
@@ -95,20 +101,17 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
 
         private void addMap_Click(object sender, RoutedEventArgs e)
         {
-            if (addMapTxtbox.Text.Equals("") && addMapDateTxtbox.Text.Equals(""))
+            if (addMapTxtbox.Text.Equals(string.Empty) && addMapDateTxtbox.Text.Equals(string.Empty))
             {
-                error_snack_bar.MessageQueue.Enqueue(string.Format("Map's name and date are empty!"),
-                                                     null, null, null, false, true, TimeSpan.FromSeconds(2));
+                error_message(ref error_snack_bar, "Map's name and date are empty!", 2);
             }
-            else if (addMapTxtbox.Text.Equals(""))
+            else if (addMapTxtbox.Text.Equals(string.Empty))
             {
-                error_snack_bar.MessageQueue.Enqueue(string.Format("Map's name is empty!"),
-                                                     null, null, null, false, true, TimeSpan.FromSeconds(2));
+                error_message(ref error_snack_bar, "Map's name is empty!", 2);
             }
-            else if (addMapDateTxtbox.Text.Equals(""))
+            else if (addMapDateTxtbox.Text.Equals(string.Empty))
             {
-                error_snack_bar.MessageQueue.Enqueue(string.Format("Date is empty!"),
-                                                     null, null, null, false, true, TimeSpan.FromSeconds(2));
+                error_message(ref error_snack_bar, "Date is empty!", 2);
             }
             else
             {
@@ -122,10 +125,10 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
                 }
                 else
                 {
-                    error_snack_bar.MessageQueue.Enqueue(string.Format("{0} is already exists!", addMapTxtbox.Text),
-                                                         null, null, null, false, true, TimeSpan.FromSeconds(2));
+                    error_message(ref error_snack_bar, string.Format("{0} is already exists!", addMapTxtbox.Text), 2);
                 }
             }
+
             addMapTxtbox.Text = string.Empty;
             addMapDateTxtbox.Text = string.Empty;
         }
@@ -157,5 +160,8 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
         }
 
         public List<MapSettingsItem> MapSettingsItems { get; } = new List<MapSettingsItem>();
+
+        private void showError(ref Snackbar snackbar, string message, double time) 
+            => snackbar.MessageQueue.Enqueue(message, null, null, null, false, true, TimeSpan.FromSeconds(time));
     }
 }

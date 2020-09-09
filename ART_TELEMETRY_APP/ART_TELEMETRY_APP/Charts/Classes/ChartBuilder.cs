@@ -7,8 +7,11 @@ using ART_TELEMETRY_APP.Settings.Classes;
 using LiveCharts;
 using LiveCharts.Defaults;
 using LiveCharts.Wpf;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -18,8 +21,16 @@ namespace ART_TELEMETRY_APP
 {
     public static class ChartBuilder
     {
-        private static ushort longest_lap_length = 0;
-        private static Lap longest_lap = new Lap();
+        // private static Stopwatch stopWatch;
+
+        private static Lap longest_lap;
+
+        /// <summary>
+        /// This list contains either distances or times. Later the X axis will be order based on this lists content.
+        /// </summary>
+        private static ChartValues<double> xAxisOrderByData = new ChartValues<double>();
+        private static ushort xAxisOrderByFromIndex = 0;
+        private static ushort xAxisOrderByToIndex = 0;
 
         /// <summary>
         /// Builds all charts on the selected Grid.
@@ -40,211 +51,214 @@ namespace ART_TELEMETRY_APP
                                  string group_name
                                  )
         {
+            if (selected_channels.Count <= 0) return;
+
+            //  stopWatch = new Stopwatch();
+            // stopWatch.Start();
+
             diagram_grid.Children.Clear();
             diagram_grid.RowDefinitions.Clear();
 
-            #region Calculate the longest lap
-            longest_lap_length = (ushort)input_file.Laps[1].Points.Count;
-            longest_lap = input_file.Laps[1];
-            for (ushort i = 2; i < input_file.Laps.Count - 1; i++)
-            {
-                if (input_file.Laps[i].Points.Count > longest_lap_length)
-                {
-                    longest_lap_length = (ushort)input_file.Laps[i].Points.Count;
-                    longest_lap = input_file.Laps[i];
-                }
-            }
-            #endregion
+            longest_lap = calculateLongestLap(ref input_file);
 
-            List<string> labels_y_axis = new List<string>();
-            List<string> labels_x_axis = new List<string>();
-            for (ushort i = 0; i < longest_lap_length; i++)
-            {
-                labels_x_axis.Add(i.ToString());
-            }
-
-            int grid_row_index = 0;
+            ushort grid_row_index = 0;
             foreach (Data data in input_file.AllData)
             {
                 if (selected_channels.Contains(data.Attribute))
                 {
-                    short max_value_x_axis = short.MinValue;
-                    short min_value_x_axis = short.MaxValue;
-                    short max_value_y_axis = short.MinValue;
-                    short min_value_y_axis = short.MaxValue;
-
                     Chart chart = new Chart();
-
-                    RowDefinition row_above = new RowDefinition();
-                    RowDefinition row_down = new RowDefinition();
-                    row_down.Height = new GridLength(5);
 
                     for (ushort lap_index = 0; lap_index < active_laps.Count; lap_index++)
                     {
-                        float stroke_thickness = .7f;
-                        ChartValues<ObservablePoint> serie_values = new ChartValues<ObservablePoint>();
-
                         switch (filter)
                         {
                             case Filter.kalman:
-                                serie_values = convertToObservablePoints(kalmanFilter(ConvertLap(data, active_laps[lap_index], input_file, time), getKalmanSensitivity(lap_index, data.DriverName, group_name)));
-                                LineSeries serie_kalman = new LineSeries
-                                {
-                                    Title = data.Attribute,
-                                    Values = serie_values,
-                                    PointGeometry = null,
-                                    LineSmoothness = 0,
-                                    StrokeThickness = stroke_thickness,
-                                    Fill = Brushes.Transparent,
-                                    Stroke = ChartLineColors.RandomColor
-                                };
-                                chart.AddSerie(serie_kalman);
+                                chart.AddSerie(calculateSerieValues(true, data, ref active_laps, lap_index, ref input_file, group_name, ref chart, time));
                                 break;
                             case Filter.nothing:
-                                serie_values = convertToObservablePoints(ConvertLap(data, active_laps[lap_index], input_file, time));
-                                LineSeries serie_nothing = new LineSeries
-                                {
-                                    Title = data.Attribute,
-                                    Values = serie_values,
-                                    PointGeometry = null,
-                                    LineSmoothness = 0,
-                                    StrokeThickness = stroke_thickness,
-                                    Fill = Brushes.Transparent,
-                                    Stroke = ChartLineColors.RandomColor
-                                };
-                                chart.AddSerie(serie_nothing);
+                                chart.AddSerie(calculateSerieValues(false, data, ref active_laps, lap_index, ref input_file, group_name, ref chart, time));
                                 break;
                             case Filter.both:
-                                serie_values = convertToObservablePoints(kalmanFilter(ConvertLap(data, active_laps[lap_index], input_file, time), getKalmanSensitivity(lap_index, data.DriverName, group_name)));
-                                LineSeries serie_kalman_both = new LineSeries
-                                {
-                                    Title = data.Attribute,
-                                    Values = serie_values,
-                                    PointGeometry = null,
-                                    LineSmoothness = 0,
-                                    StrokeThickness = stroke_thickness,
-                                    Fill = Brushes.Transparent,
-                                    Stroke = ChartLineColors.RandomColor
-                                };
-                                chart.AddSerie(serie_kalman_both);
-
-                                serie_values = convertToObservablePoints(ConvertLap(data, active_laps[lap_index], input_file, time));
-                                LineSeries serie_nothing_both = new LineSeries
-                                {
-                                    Title = data.Attribute,
-                                    Values = serie_values,
-                                    PointGeometry = null,
-                                    LineSmoothness = 0,
-                                    StrokeThickness = stroke_thickness,
-                                    Fill = Brushes.Transparent,
-                                    Stroke = ChartLineColors.RandomColor
-                                };
-                                chart.AddSerie(serie_nothing_both);
+                                chart.AddSerie(calculateSerieValues(true, data, ref active_laps, lap_index, ref input_file, group_name, ref chart, time));
+                                chart.AddSerie(calculateSerieValues(false, data, ref active_laps, lap_index, ref input_file, group_name, ref chart, time));
                                 break;
-                            default:
-                                break;
-                        }
-
-                        #region Calculating minimum and maximum values on X and Y axes
-                        for (short i = (short)(serie_values.Count - 1); i >= 0 && !double.IsNaN(serie_values[i].X); i--)
-                        {
-                            if (!double.IsNaN(serie_values[i].X))
-                            {
-                                min_value_y_axis = (short)serie_values[i].X;
-                            }
-                        }
-
-                        ChartValues<double> lap_values = ConvertLap(data, active_laps[lap_index], input_file, time);
-
-                        for (ushort i = 0; i < lap_values.Count; i++)
-                        {
-                            if (!double.IsNaN(lap_values[i]))
-                            {
-                                if (lap_values[i] > max_value_x_axis)
-                                {
-                                    max_value_x_axis = (short)lap_values[i];
-                                }
-                            }
-                        }
-
-                        for (ushort i = 0; i < lap_values.Count; i++)
-                        {
-                            if (!double.IsNaN(lap_values[i]))
-                            {
-                                if (lap_values[i] < min_value_x_axis)
-                                {
-                                    min_value_x_axis = (short)lap_values[i];
-                                }
-                            }
-                        }
-
-                        for (ushort i = 0; i < serie_values.Count && !double.IsNaN(serie_values[i].X); i++)
-                        {
-                            if (!double.IsNaN(serie_values[i].X))
-                            {
-                                max_value_y_axis = (short)serie_values[i].X;
-                            }
-                        }
-                        #endregion
-
-                        for (short i = min_value_x_axis; i < max_value_x_axis; i++)
-                        {
-                            labels_y_axis.Add(i.ToString());
                         }
                     }
 
-                    chart.MaxValueX = max_value_x_axis;
-                    chart.MinValueX = min_value_x_axis;
-                    chart.MinValueY = min_value_y_axis;
-                    chart.MaxValueY = max_value_y_axis;
                     chart.UpdateAxisValues();
 
-                    if (selected_channels.Count > 0)
-                    {
-                        Axis axis_y = new Axis();
-                        string title_axis_y = data.Attribute;
+                    chart.AddAxisY(axisY(data, ref chart));
+                    chart.AddAxisX(axisX(time));
 
-                        title_axis_y = title_axis_y.Substring(0, title_axis_y.Length - 2);
-                        axis_y.Title = title_axis_y;
-
-                        axis_y.Labels = labels_y_axis;
-
-                        chart.AddAxisY(axis_y);
-
-                        Axis axis_x = new Axis();
-                        axis_x.Title = time ? "Time (s)" : "Distance (m)";
-
-                        axis_x.Labels = labels_x_axis;
-
-                        chart.AddAxisX(axis_x);
-
-                        LiveCharts.Wpf.Separator x_axis_separator = new LiveCharts.Wpf.Separator();
-                        x_axis_separator.Step = 10;
-                        x_axis_separator.IsEnabled = false;
-
-                        chart.AxisX.Separator = x_axis_separator;
-                    }
+                    chart.AxisX.Separator = xAxisSeparator;
 
                     Grid.SetRow(chart, grid_row_index++);
                     diagram_grid.Children.Add(chart);
 
-                    GridSplitter splitter = new GridSplitter();
-                    splitter.ResizeDirection = GridResizeDirection.Rows;
-                    splitter.HorizontalAlignment = HorizontalAlignment.Stretch;
-                    Grid.SetRow(splitter, grid_row_index++);
+                    Grid.SetRow(gridSplitter, grid_row_index++);
+                    diagram_grid.Children.Add(gridSplitter);
 
-                    diagram_grid.Children.Add(splitter);
+                    RowDefinition row_above = new RowDefinition();
+                    RowDefinition row_down = new RowDefinition();
+                    row_down.Height = new GridLength(5);
                     diagram_grid.RowDefinitions.Add(row_above);
                     diagram_grid.RowDefinitions.Add(row_down);
                 }
             }
+
+            //stopWatch.Stop();
+            // Console.WriteLine(stopWatch.ElapsedMilliseconds);
             // SettingsManager.GGdiagram_UC.InitScatterPlot(group);
         }
 
-        /// <summary>
-        /// This list contains either distances or times. Later the X axis will be order based on this lists content.
-        /// </summary>
-        private static ChartValues<double> xAxisOrderByData = new ChartValues<double>();
+        private static GridSplitter gridSplitter
+        {
+            get
+            {
+                GridSplitter splitter = new GridSplitter();
+                splitter.ResizeDirection = GridResizeDirection.Rows;
+                splitter.HorizontalAlignment = HorizontalAlignment.Stretch;
+
+                return splitter;
+            }
+        }
+
+        private static LiveCharts.Wpf.Separator xAxisSeparator
+        {
+            get
+            {
+                LiveCharts.Wpf.Separator separator = new LiveCharts.Wpf.Separator();
+                separator.Step = 10;
+                separator.IsEnabled = false;
+
+                return separator;
+            }
+        }
+
+        private static Axis axisX(bool time)
+        {
+            Axis axis = new Axis();
+            axis.Title = time ? "Time (s)" : "Distance (m)";
+            axis.Labels = xAxisLabels;
+
+            return axis;
+        }
+
+        private static Axis axisY(Data data, ref Chart chart)
+        {
+            string title_axis_y = data.Attribute;
+            title_axis_y = title_axis_y.Substring(0, title_axis_y.Length - 2);
+
+            Axis axis = new Axis();
+            axis.Title = title_axis_y;
+            axis.Labels = yAxisLabels(ref chart);
+
+            return axis;
+        }
+
+        private static List<string> xAxisLabels => (from i in Enumerable.Range(0, longest_lap.LapLength) select i.ToString()).ToList();
+        private static List<string> yAxisLabels(ref Chart chart) => (from i in Enumerable.Range(chart.MinValueX, chart.MaxValueX) select i.ToString()).ToList();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static LineSeries calculateSerieValues(bool use_filter,
+                                                           Data data,
+                                                           ref List<Lap> active_laps,
+                                                           int lap_index,
+                                                           ref InputFile input_file,
+                                                           string group_name,
+                                                           ref Chart chart,
+                                                           bool time)
+        {
+            ChartValues<ObservablePoint> serie_values = use_filter ?
+                                         convertToObservablePoints(filteredData(ConvertLap(data, active_laps[lap_index], input_file, time),
+                                                                   getKalmanSensitivity(lap_index, data.DriverName, group_name)), active_laps[lap_index], data) :
+                                         convertToObservablePoints(ConvertLap(data, active_laps[lap_index], input_file, time), active_laps[lap_index], data);
+
+            ChartValues<double> lap_values = ConvertLap(data, active_laps[lap_index], input_file, time);
+
+            calculateChartMinimumYValue(ref chart, ref serie_values);
+            calculateChartMaximumYValue(ref chart, ref serie_values);
+            calculateChartMinimumXValue(ref chart, ref lap_values);
+            calculateChartMaximumXValue(ref chart, ref lap_values);
+
+            return new LineSeries
+            {
+                Title = data.Attribute,
+                Values = serie_values,
+                PointGeometry = null,
+                LineSmoothness = 0,
+                StrokeThickness = .7f,
+                Fill = Brushes.Transparent,
+                Stroke = ChartLineColors.RandomColor
+            };
+        }
+
+        private static void calculateChartMinimumYValue(ref Chart chart, ref ChartValues<ObservablePoint> serie_values)
+        {
+            for (short index = (short)(serie_values.Count - 1); index >= 0 && !double.IsNaN(serie_values[index].X); index--)
+            {
+                if (!double.IsNaN(serie_values[index].X))
+                {
+                    chart.MinValueY = (short)serie_values[index].X;
+                }
+            }
+        }
+
+        private static void calculateChartMaximumYValue(ref Chart chart, ref ChartValues<ObservablePoint> serie_values)
+        {
+            for (ushort index = 0; index < serie_values.Count && !double.IsNaN(serie_values[index].X); index++)
+            {
+                if (!double.IsNaN(serie_values[index].X))
+                {
+                    chart.MaxValueY = (short)serie_values[index].X;
+                }
+            }
+        }
+
+        private static void calculateChartMaximumXValue(ref Chart chart, ref ChartValues<double> lap_values)
+        {
+            for (ushort index = 0; index < lap_values.Count; index++)
+            {
+                if (!double.IsNaN(lap_values[index]))
+                {
+                    if (lap_values[index] > chart.MaxValueX)
+                    {
+                        chart.MaxValueX = (short)lap_values[index];
+                    }
+                }
+            }
+        }
+
+        private static void calculateChartMinimumXValue(ref Chart chart, ref ChartValues<double> lap_values)
+        {
+            for (ushort index = 0; index < lap_values.Count; index++)
+            {
+                if (!double.IsNaN(lap_values[index]))
+                {
+                    if (lap_values[index] < chart.MinValueX)
+                    {
+                        chart.MinValueX = (short)lap_values[index];
+                    }
+                }
+            }
+        }
+
+        private static Lap calculateLongestLap(ref InputFile input_file)
+        {
+            ushort longest_lap_length = (ushort)input_file.Laps.First().Points.Count;
+            Lap lap = input_file.Laps.First();
+            for (ushort index = 2; index < input_file.Laps.Count - 1; index++)
+            {
+                if (input_file.Laps[index].Points.Count > longest_lap_length)
+                {
+                    longest_lap_length = (ushort)input_file.Laps[index].Points.Count;
+                    lap = input_file.Laps[index];
+                }
+            }
+
+            return lap;
+        }
+
 
         /// <summary>
         /// Gets one lap from all the laps.
@@ -256,12 +270,15 @@ namespace ART_TELEMETRY_APP
         /// <returns>One lap</returns>
         private static ChartValues<double> ConvertLap(Data data, Lap lap, InputFile input_file, bool time)
         {
-            xAxisOrderByData = time ?
-                        DriverManager.GetDriver(data.DriverName).GetInputFile(data.InputFileName).Times :
-                        DriverManager.GetDriver(data.DriverName).GetInputFile(data.InputFileName).Distances;
+            /*  xAxisOrderByData = time ?
+                          DriverManager.GetDriver(data.DriverName).GetInputFile(data.InputFileName).Times :
+                          DriverManager.GetDriver(data.DriverName).GetInputFile(data.InputFileName).Distances;*/
 
             ushort from_index = (ushort)(data.AllData.Count * lap.FromIndex / input_file.Laps.Sum(a => a.Points.Count));
             ushort to_index = (ushort)(data.AllData.Count * lap.ToIndex / input_file.Laps.Sum(a => a.Points.Count));
+
+            xAxisOrderByFromIndex = from_index;
+            xAxisOrderByToIndex = to_index;
 
             ushort longest_lap_from_index = (ushort)(data.AllData.Count * longest_lap.FromIndex / input_file.Laps.Sum(a => a.Points.Count));
             ushort longest_lap_to_index = (ushort)(data.AllData.Count * longest_lap.ToIndex / input_file.Laps.Sum(a => a.Points.Count));
@@ -272,10 +289,10 @@ namespace ART_TELEMETRY_APP
                 converted_lap_values.Add(data.AllData[i]);
             }
 
-            for (ushort i = (ushort)(to_index - from_index); i < (longest_lap_to_index - longest_lap_from_index); i++)
+           /* for (ushort i = (ushort)(to_index - from_index); i < (longest_lap_to_index - longest_lap_from_index); i++)
             {
                 converted_lap_values.Add(double.NaN);
-            }
+            }*/
 
             return converted_lap_values;
         }
@@ -285,15 +302,16 @@ namespace ART_TELEMETRY_APP
         /// </summary>
         /// <param name="lap_data"></param>
         /// <returns></returns>
-        private static ChartValues<ObservablePoint> convertToObservablePoints(ChartValues<double> lap_data)
+        private static ChartValues<ObservablePoint> convertToObservablePoints(ChartValues<double> lap_data, Lap lap, Data data)
         {
+            List<ChartValues<double>> a = DriverManager.GetDriver(data.DriverName).GetInputFile(data.InputFileName).Distances;
             ChartValues<ObservablePoint> return_datas = new ChartValues<ObservablePoint>();
 
             for (ushort i = 0; i < lap_data.Count; i++)
             {
                 return_datas.Add(new ObservablePoint
                 {
-                    X = xAxisOrderByData[i],
+                    X = a[lap.Index][i],
                     Y = lap_data[i]
                 });
             }
@@ -306,8 +324,8 @@ namespace ART_TELEMETRY_APP
         /// </summary>
         /// <param name="data"></param>
         /// <param name="Q">Sensitivity of the filter. The smaller this value is, more "smoother" will be the data.</param>
-        /// <returns>Filtered data</returns>
-        private static ChartValues<double> kalmanFilter(ChartValues<double> data, double Q)
+        /// <returns></returns>
+        private static ChartValues<double> filteredData(ChartValues<double> data, double Q)
         {
             ChartValues<double> filtered_data = new ChartValues<double>();
             KalmanFilter filter = new KalmanFilter(1, 1, Q, 1, 0.1, data[0]);

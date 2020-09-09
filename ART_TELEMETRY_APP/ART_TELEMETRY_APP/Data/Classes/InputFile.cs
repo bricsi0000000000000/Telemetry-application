@@ -4,6 +4,7 @@ using ART_TELEMETRY_APP.Maps.Classes;
 using LiveCharts;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 
@@ -21,7 +22,7 @@ namespace ART_TELEMETRY_APP
             DriverName = driver_name;
 
             makeAllLapsSVG();
-            InitDistances();
+            //InitDistances();
         }
 
         /// <summary>
@@ -38,7 +39,11 @@ namespace ART_TELEMETRY_APP
         public List<Data> AllData { get; } = new List<Data>();
         public List<Point> AverageLap { get; private set; } = new List<Point>();
         public List<Point> MapPoints { get; set; } = new List<Point>();
-        public ChartValues<double> Distances { get; private set; }
+
+        /// <summary>
+        /// Distances lap by lap
+        /// </summary>
+        public List<ChartValues<double>> Distances { get; private set; } = new List<ChartValues<double>>();
         public Map ActiveMap { get; set; } = null;
         public string DriverName { get; }
 
@@ -195,21 +200,32 @@ namespace ART_TELEMETRY_APP
             }
         }
 
+        /// <summary>
+        /// Calculates <seealso cref="Distances"/> based on speed and time
+        /// </summary>
         public void InitDistances()
         {
-            Distances = new ChartValues<double>();
+            ChartValues<double> allDistances = new ChartValues<double>();
             ChartValues<double> speed = GetData("speed").AllData;
             ChartValues<double> time = GetData("Time").AllData;
-            Distances.Add(0);
+            allDistances.Add(0);
             for (int i = 1; i < time.Count; i++)
             {
-                Distances.Add(Distances[i - 1] + distance(time[i - 1], time[i], speed[i - 1] / 3.6, speed[i] / 3.6));
+                allDistances.Add(allDistances[i - 1] + distance(time[i - 1], time[i], speed[i] / 3.6));
+            }
+
+            Distances.Clear();
+            foreach (Lap lap in Laps)
+            {
+                ChartValues<double> act_lap_distances = new ChartValues<double>();
+                for (int i = lap.FromIndex; i < lap.ToIndex; i++)
+                {
+                    act_lap_distances.Add(allDistances[i]);
+                }
+                Distances.Add(act_lap_distances);
             }
         }
-
-        private double distance(double time1, double time2, double speed1, double speed2) =>
-              //return ((speed1 + speed2) / 2) * (time2 - time1);
-              speed2 * (time2 - time1);
+        private double distance(double time1, double time2, double speed) => speed * (time2 - time1);
 
         public ChartValues<double> Times => AllData.Find(n => n.Attribute.Equals("Time")).AllData;
 
@@ -277,23 +293,23 @@ namespace ART_TELEMETRY_APP
               return return_datas;
           }*/
 
-      /*  ChartValues<double> filteredData(ChartValues<double> datas)
-        {
-            ChartValues<double> input_datas = new ChartValues<double>(datas);
-            int total = input_datas.Count;
-            Random rand = new Random(DateTime.Now.Millisecond);
-            while (input_datas.Count / (double)total > filter_percent)
-            {
-                try
-                {
-                    input_datas.RemoveAt(rand.Next(1, input_datas.Count - 1));
-                }
-                catch (Exception)
-                {
-                }
-            }
+        /*  ChartValues<double> filteredData(ChartValues<double> datas)
+          {
+              ChartValues<double> input_datas = new ChartValues<double>(datas);
+              int total = input_datas.Count;
+              Random rand = new Random(DateTime.Now.Millisecond);
+              while (input_datas.Count / (double)total > filter_percent)
+              {
+                  try
+                  {
+                      input_datas.RemoveAt(rand.Next(1, input_datas.Count - 1));
+                  }
+                  catch (Exception)
+                  {
+                  }
+              }
 
-            return input_datas;
-        }*/
+              return input_datas;
+          }*/
     }
 }

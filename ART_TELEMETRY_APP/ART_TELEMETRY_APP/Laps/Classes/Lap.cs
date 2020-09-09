@@ -23,5 +23,7 @@ namespace ART_TELEMETRY_APP.Laps
         public string Svg { get; set; }
 
         public TimeSpan Time { get; set; }
+
+        public ushort LapLength => (ushort)Points.Count;
     }
 }

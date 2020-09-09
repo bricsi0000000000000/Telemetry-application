@@ -166,6 +166,7 @@
     <Compile Include="Settings\UserControls\SettingsMenuContent.xaml.cs">
       <DependentUpon>SettingsMenuContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ShowError\Classes\ShowError.cs" />
     <Compile Include="Tabs\Classes\TabManager.cs" />
     <Compile Include="Tracks\UserControls\TrackContent.xaml.cs">
       <DependentUpon>TrackContent.xaml</DependentUpon>

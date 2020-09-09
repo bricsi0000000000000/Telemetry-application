@@ -52,6 +52,8 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
             {
                 //avg_lap_svg.Data = Geometry.Parse(input_file.OneLap());
                 makeLapData();
+                input_file.InitDistances();
+
             }
         }
 
@@ -192,6 +194,7 @@ namespace ART_TELEMETRY_APP.Maps.UserControls
                 input_file.MakeAvgLap();
                 input_file.CalculateLapTimes();
                 input_file.InitActiveLaps();
+                input_file.InitDistances();
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
