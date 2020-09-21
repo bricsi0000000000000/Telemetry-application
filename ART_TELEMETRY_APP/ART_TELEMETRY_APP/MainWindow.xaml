@@ -3,12 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ART_TELEMETRY_APP"
-        xmlns:Wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         x:Class="ART_TELEMETRY_APP.MainWindow"
         mc:Ignorable="d"
-        xmlns:s="clr-namespace:System;assembly=mscorlib"
-        Title="ART telemetry demo 1.0"
+        Title="ART telemetry v_2.0"
         Height="700"
         Width="1300"
         WindowStartupLocation="CenterScreen"
@@ -17,7 +14,12 @@
         Background="{DynamicResource MaterialDesignPaper}"
         xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
         FontFamily="{materialDesign:MaterialDesignFont}" WindowStyle="ThreeDBorderWindow"
-        xmlns:dockablz="clr-namespace:Dragablz.Dockablz;assembly=Dragablz"
     >
-    <dragablz:TabablzControl x:Name="menu_tabcontrol"/>
+    <Grid>
+    <dragablz:TabablzControl x:Name="MainMenuTabControl"/>
+        <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
+                                 x:Name="ErrorSnackbar"
+                                 Foreground="White"
+                                 />
+    </Grid>
 </Window>

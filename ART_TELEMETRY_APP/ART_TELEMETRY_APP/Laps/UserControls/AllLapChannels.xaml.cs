@@ -1,4 +1,5 @@
-﻿using ART_TELEMETRY_APP.Pilots;
+﻿using ART_TELEMETRY_APP.Drivers.UserControls;
+using ART_TELEMETRY_APP.Laps.Classes;
 using ART_TELEMETRY_APP.Settings.Classes;
 using System;
 using System.Collections.Generic;
@@ -218,8 +219,8 @@ namespace ART_TELEMETRY_APP
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            ((LapsContent)((DriverContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab("Laps").Content).ChangeAllSelectedChannels(new_selected_channels);
-            ((LapsContent)((DriverContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab("Laps").Content).BuildCharts();
+//            ((LapsContent)((DriverContentTab)((DiagramsMenu)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab("Laps").Content).ChangeAllSelectedChannels(new_selected_channels);
+  //          ((LapsContent)((DriverContentTab)((DiagramsMenu)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab("Laps").Content).BuildCharts();
         }
     }
 }

@@ -1,10 +1,7 @@
-﻿namespace ART_TELEMETRY_APP.Pilots
+﻿namespace ART_TELEMETRY_APP.Laps.Classes
 {
-    public partial class LapsContent
+    public enum Filter
     {
-        public enum Filter
-        {
-            kalman, nothing, both
-        }
+        kalman, nothing, both
     }
 }

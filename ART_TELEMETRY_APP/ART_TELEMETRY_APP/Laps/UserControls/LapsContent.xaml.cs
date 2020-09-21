@@ -1,7 +1,10 @@
 ﻿using ART_TELEMETRY_APP.Charts.Usercontrols;
+using ART_TELEMETRY_APP.Drivers.Classes;
 using ART_TELEMETRY_APP.Groups.Classes;
 using ART_TELEMETRY_APP.InputFiles;
+using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.Laps;
+using ART_TELEMETRY_APP.Laps.Classes;
 using ART_TELEMETRY_APP.Settings.Classes;
 using System;
 using System.Collections.Generic;
@@ -9,7 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace ART_TELEMETRY_APP.Pilots
+namespace ART_TELEMETRY_APP.Laps.UserControls
 {
     /// <summary>
     /// Interaction logic for PilotContent.xaml
@@ -52,7 +55,7 @@ namespace ART_TELEMETRY_APP.Pilots
 
         public void InitInputFileCmbbox()
         {
-            input_files_cmbbox.Items.Clear();
+          /*  input_files_cmbbox.Items.Clear();
 
             ushort name_index = 0;
             foreach (InputFile input_file in driver.InputFiles)
@@ -66,7 +69,7 @@ namespace ART_TELEMETRY_APP.Pilots
             ComboBoxItem nothing_combo_box_item = new ComboBoxItem();
             nothing_combo_box_item.Content = "Choose file";
             nothing_combo_box_item.Name = string.Format("cmbboxitem{0}", name_index++);
-            input_files_cmbbox.Items.Add(nothing_combo_box_item);
+            input_files_cmbbox.Items.Add(nothing_combo_box_item);*/
         }
 
         private void inputFilesCmbbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -90,7 +93,7 @@ namespace ART_TELEMETRY_APP.Pilots
 
         public void InputFilesCmbboxSelectionChange()
         {
-            string file_name = input_files_cmbbox.SelectedItem.ToString();
+           /* string file_name = input_files_cmbbox.SelectedItem.ToString();
             file_name = file_name.Substring(38, file_name.Length - 38);
             if (!file_name.Equals("Choose file"))
             {
@@ -113,7 +116,7 @@ namespace ART_TELEMETRY_APP.Pilots
             {
                 charts_grid.Children.Clear();
                 charts_grid.RowDefinitions.Clear();
-            }
+            }*/
         }
 
         public void ChangeAllLapsActive(bool active)
@@ -136,7 +139,7 @@ namespace ART_TELEMETRY_APP.Pilots
                 for (int i = 0; i < lap_list_elements.Count; i++)
                 {
                     laps_stackpanel.Children.Add(lap_list_elements[i]);
-                    active_input_file.ActiveLaps[i] = lap_list_elements[i].Active;
+                   // active_input_file.ActiveLaps[i] = lap_list_elements[i].Active;
                 }
                 laps_stackpanel.Children.Insert(0, all_lap_list_element);
             }
@@ -161,14 +164,14 @@ namespace ART_TELEMETRY_APP.Pilots
 
         public void BuildCharts()
         {
-            ChartBuilder.Build(ref charts_grid,
-                               activeLaps,
+            /*ChartBuilder.Build(ref charts_grid,
+                               ActiveLaps,
                                group == null ? SelectedChannels : group.Attributes,
                                active_input_file,
                                distance_as_time,
                                filter,
                                group == null ? TextManager.DiagramCustomTabName : group.Name
-                               );
+                               );*/
             /*  StreamWriter sw = new StreamWriter("gps_adatok.csv");
               foreach (var item in active_input_file.MapPoints)
               {
@@ -177,26 +180,26 @@ namespace ART_TELEMETRY_APP.Pilots
               sw.Close();*/
         }
 
-        private List<Lap> activeLaps
+        private List<Lap> ActiveLaps
         {
             get
             {
-                List<Lap> active_laps = new List<Lap>();
+                /*List<Lap> activeLaps = new List<Lap>();
                 for (ushort i = 0; i < active_input_file.ActiveLaps.Count; i++)
                 {
                     if (active_input_file.ActiveLaps[i])
                     {
-                        active_laps.Add(active_input_file.Laps[i]);
+                        activeLaps.Add(active_input_file.Laps[i]);
                     }
-                }
+                }*/
 
-                return active_laps;
+                return null;
             }
         }
 
         private void updateLaps()
         {
-            lap_list_elements.Clear();
+           /* lap_list_elements.Clear();
             laps_stackpanel.Children.Clear();
 
             List<string> channels = new List<string>();
@@ -263,7 +266,7 @@ namespace ART_TELEMETRY_APP.Pilots
             }
 
             all_lap_list_element = new AllLapListElement(channels, all_time, driver.Name, all_selected_channels);
-            laps_stackpanel.Children.Insert(0, all_lap_list_element);
+            laps_stackpanel.Children.Insert(0, all_lap_list_element);*/
         }
 
         private void metricCmbbox_SelectionChanged(object sender, SelectionChangedEventArgs e)

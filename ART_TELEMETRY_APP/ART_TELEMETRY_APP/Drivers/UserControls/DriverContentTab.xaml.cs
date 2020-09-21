@@ -1,10 +1,11 @@
-﻿using ART_TELEMETRY_APP.Groups.Classes;
-using ART_TELEMETRY_APP.Pilots;
+﻿using ART_TELEMETRY_APP.Drivers.Classes;
+using ART_TELEMETRY_APP.Groups.Classes;
+using ART_TELEMETRY_APP.Laps.UserControls;
 using ART_TELEMETRY_APP.Settings.Classes;
 using System.Collections.Generic;
 using System.Windows.Controls;
 
-namespace ART_TELEMETRY_APP
+namespace ART_TELEMETRY_APP.Drivers.UserControls
 {
     /// <summary>
     /// On this page will be shown all the charts
@@ -26,23 +27,27 @@ namespace ART_TELEMETRY_APP
 
         public void InitTabs()
         {
-            tabcontrol.Items.Clear();
+            TabControl.Items.Clear();
             foreach (Group group in GroupManager.Groups)
             {
-                TabItem group_item = new TabItem();
-                group_item.Header = group.Name;
-                group_item.Content = new LapsContent(driver, group);
-                group_item.Name = string.Format("{0}_item_laps", driver.Name);
+                TabItem group_item = new TabItem
+                {
+                    Header = group.Name,
+                    Content = new LapsContent(driver, group),
+                    Name = string.Format("{0}_item_laps", driver.Name)
+                };
                 Tabs.Add(group_item);
-                tabcontrol.Items.Add(group_item);
+                TabControl.Items.Add(group_item);
             }
 
-            TabItem item = new TabItem();
-            item.Header = TextManager.DiagramCustomTabName;
-            item.Content = new LapsContent(driver, null);
-            item.Name = string.Format("{0}_item_laps", driver.Name);
+            TabItem item = new TabItem
+            {
+                Header = TextManager.DiagramCustomTabName,
+                Content = new LapsContent(driver, null),
+                Name = string.Format("{0}_item_laps", driver.Name)
+            };
             Tabs.Add(item);
-            tabcontrol.Items.Add(item);
+            TabControl.Items.Add(item);
 
             /* item = new TabItem();
              item.Header = "Track";
@@ -66,6 +71,6 @@ namespace ART_TELEMETRY_APP
              tabcontrol.Items.Add(item);*/
         }
 
-        public TabItem GetTab(string name) => Tabs.Find(n => n.Header.Equals(name));
+        public TabItem GetTab(string name) => Tabs.Find(x => x.Header.Equals(name));
     }
 }

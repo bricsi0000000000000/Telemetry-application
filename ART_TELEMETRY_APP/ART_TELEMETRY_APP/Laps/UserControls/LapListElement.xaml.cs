@@ -1,5 +1,5 @@
 ﻿using ART_TELEMETRY_APP.Laps;
-using ART_TELEMETRY_APP.Pilots;
+using ART_TELEMETRY_APP.Laps.Classes;
 using ART_TELEMETRY_APP.Settings.Classes;
 using System.Collections.Generic;
 using System.Windows;
@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace ART_TELEMETRY_APP
+namespace ART_TELEMETRY_APP.Laps.UserControls
 {
     /// <summary>
     /// Interaction logic for LapListElement.xaml
@@ -38,6 +38,7 @@ namespace ART_TELEMETRY_APP
                               List<string> selected_channels,
                               int time_state,
                               string group_name,
+                              /*Brush lapColor,*/
                               bool last_lap = false
                              )
         {
@@ -48,6 +49,8 @@ namespace ART_TELEMETRY_APP
             this.channels = channels;
             this.selected_channels = selected_channels;
             this.group_name = group_name;
+
+           /* BackgroundCard.Background = lapColor;*/
 
             Active = active;
             check_icon.Kind = active ?
@@ -84,8 +87,8 @@ namespace ART_TELEMETRY_APP
         {
             Active = !Active;
 
-            ((LapsContent)((DriverContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).InitLapListElements();
-            ((LapsContent)((DriverContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).BuildCharts();
+           // ((LapsContent)((DriverContentTab)((DiagramsMenu)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).InitLapListElements();
+           // ((LapsContent)((DriverContentTab)((DiagramsMenu)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(group_name).Content).BuildCharts();
         }
 
         private void settingsLap_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)

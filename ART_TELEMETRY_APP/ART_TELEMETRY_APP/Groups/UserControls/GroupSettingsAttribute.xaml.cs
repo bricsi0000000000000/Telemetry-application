@@ -29,14 +29,14 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         private void deleteAttribute_Click(object sender, RoutedEventArgs e)
         {
             GroupManager.GetGroup(group_name).RemoveAttribute(Attribute);
-            ((GroupSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Groups").Content).ActiveAttribute = GroupManager.Groups.First().Attributes.First();
-            ((GroupSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Groups").Content).InitGroups();
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab("Settings").Content).GetTab("Groups").Content).ActiveAttribute = GroupManager.Groups.First().Attributes.First();
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab("Settings").Content).GetTab("Groups").Content).InitGroups();
         }
 
         private void Grid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            ((GroupSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Groups").Content).ActiveAttribute = Attribute;
-            ((GroupSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Groups").Content).InitAttributes();
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab("Settings").Content).GetTab("Groups").Content).ActiveAttribute = Attribute;
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab("Settings").Content).GetTab("Groups").Content).InitAttributes();
         }
 
         public void ChangeColorMode(bool change)

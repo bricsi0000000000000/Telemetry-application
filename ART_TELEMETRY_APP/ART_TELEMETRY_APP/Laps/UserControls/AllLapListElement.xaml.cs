@@ -1,5 +1,4 @@
 ﻿using ART_TELEMETRY_APP.Laps;
-using ART_TELEMETRY_APP.Pilots;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -41,8 +40,8 @@ namespace ART_TELEMETRY_APP
 
             all_laps_active = !all_laps_active;
 
-            ((LapsContent)((DriverContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).ChangeAllLapsActive(all_laps_active);
-            ((LapsContent)((DriverContentTab)((DatasMenuContent)TabManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).BuildCharts();
+            //((LapsContent)((DriverContentTab)((DiagramsMenu)MenuManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).ChangeAllLapsActive(all_laps_active);
+           // ((LapsContent)((DriverContentTab)((DiagramsMenu)MenuManager.GetTab("Diagrams").Content).GetTab(pilots_name).Content).GetTab("Laps").Content).BuildCharts();
         }
 
         private void settingsLap_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)

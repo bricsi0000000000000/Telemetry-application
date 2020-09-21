@@ -1,0 +1,141 @@
+﻿<UserControl x:Class="ART_TELEMETRY_APP.Tracks.UserControls.TrackSettings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid>
+            <materialDesign:DialogHost CloseOnClickAway="True"
+                                       >
+                <materialDesign:DialogHost.DialogContent>
+                    <StackPanel Margin="16">
+                        <TextBox Margin="0 8 0 0"
+                                 HorizontalAlignment="Stretch"
+                                 x:Name="AddTrackTxtBox"
+                                 materialDesign:HintAssist.Hint="Track name"
+                                 materialDesign:HintAssist.IsFloating="True"
+                                 />
+                        <TextBox Margin="0 8 0 0"
+                                 HorizontalAlignment="Stretch"
+                                 x:Name="AddTrackDateTxtBox"
+                                 materialDesign:HintAssist.Hint="Track date"
+                                 materialDesign:HintAssist.IsFloating="True"
+                                 />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                    Command="materialDesign:DialogHost.CloseDialogCommand"
+                                    IsCancel="True"
+                                    Margin="0 8 8 0"
+                                    Content="CANCEL"
+                                    Click="CancelAddTrack_Click"
+                                    >
+                            </Button>
+                            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                    Command="materialDesign:DialogHost.CloseDialogCommand"
+                                    IsDefault="True"
+                                    Margin="0 8 8 0"
+                                    Content="ADD"
+                                    Click="AddTrack_Click"
+                                    >
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </materialDesign:DialogHost.DialogContent>
+
+                <Grid Margin="5 0 0 0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+
+                    <Label Content="Saved tracks"
+                           VerticalContentAlignment="Center"
+                           HorizontalContentAlignment="Center"
+                           FontWeight="Bold"
+                           />
+                    
+                    <ScrollViewer Grid.Row="1">
+                        <StackPanel x:Name="TracksStackPanel"/>
+                    </ScrollViewer>
+
+                    <Button Grid.Row="2"
+                            Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+                            Margin="10 5"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Content="Add new track"
+                            >
+                    </Button>
+                </Grid>
+            </materialDesign:DialogHost>
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="55"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width=".3*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox x:Name="ChangeTrackNameTxtBox"
+                         Grid.Column="0"
+                         Margin="5 5 2.5 5"
+                         Foreground="White"
+                         HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Center"
+                        />
+                
+                <TextBox x:Name="ChangeTrackDateTxtBox"
+                         Grid.Column="1"
+                         Margin="2.5 5 5 5"
+                         Foreground="White"
+                         HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Center"
+                        />
+                <Button Grid.Column="2"
+                        Margin="5"
+                        Click="ChangeTracksData_Click"
+                        >
+                    <materialDesign:PackIcon Kind="Edit"/>
+                </Button>
+            </Grid>
+
+            <Grid Grid.Row="1"
+                  Name="TrackEditorGrid"
+                  Margin="10"
+                  />
+            <Label Name="NotConnectedLbl"
+                   Grid.Row="1"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Center"
+                   Foreground="#FF767676"
+                   FontSize="20"
+                   />
+        </Grid>
+        
+        <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
+                                 x:Name="ErrorSnackbar"
+                                 Foreground="White"
+                                 Grid.ColumnSpan="2"
+                                 />
+    </Grid>
+</UserControl>

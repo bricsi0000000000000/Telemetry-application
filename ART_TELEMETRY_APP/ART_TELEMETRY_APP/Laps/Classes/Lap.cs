@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Media;
 
-namespace ART_TELEMETRY_APP.Laps
+namespace ART_TELEMETRY_APP.Laps.Classes
 {
     public class Lap
     {
@@ -20,10 +21,10 @@ namespace ART_TELEMETRY_APP.Laps
 
         public int ToIndex { get; set; }
 
-        public string Svg { get; set; }
-
         public TimeSpan Time { get; set; }
 
         public ushort LapLength => (ushort)Points.Count;
+
+        public Brush LapColor { get; set; }
     }
 }

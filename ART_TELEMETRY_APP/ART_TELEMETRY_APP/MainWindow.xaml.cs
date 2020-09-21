@@ -1,6 +1,4 @@
 ﻿using System.Windows;
-using ART_TELEMETRY_APP.Maps.Classes;
-using ART_TELEMETRY_APP.Groups.Classes;
 
 namespace ART_TELEMETRY_APP
 {
@@ -10,9 +8,9 @@ namespace ART_TELEMETRY_APP
         {
             InitializeComponent();
 
-            MapManager.LoadMaps();
-            GroupManager.InitGroups();
-            TabManager.InitMenuItems(menu_tabcontrol);
+            TrackManager.LoadTracks(ref ErrorSnackbar);
+            //GroupManager.InitGroups();
+            MenuManager.InitMainMenuTabs(MainMenuTabControl);
         }
     }
 }

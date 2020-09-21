@@ -1,0 +1,100 @@
+﻿<UserControl x:Class="ART_TELEMETRY_APP.Drivers.UserControls.DriverCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             >
+    <materialDesign:ColorZone MinWidth="300"
+                              Background="#FF232323"
+                              CornerRadius="3"
+                              Margin="5"
+                              >
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0"
+                       x:Name="DriverNameLbl"
+                       VerticalContentAlignment="Center"
+                       HorizontalContentAlignment="Center"
+                       FontSize="15"
+                       FontWeight="Bold"
+                       />
+            </Grid>
+        
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="45"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel x:Name="InputFilesStackPanel"/>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Click="DeleteDriver_Click"
+                            Margin="8 4 4 8"
+                            Name="DeleteDriverBtn"
+                            Background="#FF303030"
+                            BorderBrush="#FF303030"
+                            >
+                        <materialDesign:PackIcon Kind="Trash"/>
+                    </Button>
+
+                    <Button Grid.Column="1"
+                            Click="AddInputFile_Click"
+                            Margin="4 4 8 8"
+                            Name="AddFileBtn"
+                            >
+                        <materialDesign:PackIcon Kind="File"/>
+                    </Button>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.RowSpan="2"
+                  Name="ReadFileProgressBarGrid"
+                  Background="#CC303030"
+                  Visibility="Hidden"
+                  >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0"
+                       Name="ReadFileProgressBarLbl"
+                       Content="Reading file.."
+                       VerticalContentAlignment="Bottom"
+                       HorizontalContentAlignment="Center"
+                       />
+                <ProgressBar Grid.Row="1"
+                             Name="ReadFileProgressBar"
+                             VerticalAlignment="Top"
+                             Style="{StaticResource MaterialDesignCircularProgressBar}" 
+                             IsIndeterminate="False"
+                             />
+            </Grid>
+            <Grid Grid.RowSpan="2"
+                  Name="DisableGrid"
+                  Background="#CC303030"
+                  Visibility="Hidden"/>
+            <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
+                                 x:Name="ErrorSnackbar"
+                                 Foreground="White"
+                                 />
+        </Grid>
+    </materialDesign:ColorZone>
+</UserControl>
