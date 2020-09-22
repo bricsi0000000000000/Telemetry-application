@@ -1,9 +1,12 @@
 ﻿using ART_TELEMETRY_APP.Drivers.Classes;
 using ART_TELEMETRY_APP.Drivers.UserControls;
+using ART_TELEMETRY_APP.Errors.Classes;
 using ART_TELEMETRY_APP.InputFiles.Classes;
+using ART_TELEMETRY_APP.InputFiles.UserControls;
 using ART_TELEMETRY_APP.Laps.Classes;
 using ART_TELEMETRY_APP.Settings.Classes;
 using LiveCharts;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,11 +16,13 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using static ART_TELEMETRY_APP.InputFiles.Classes.InputFile;
 
 namespace ART_TELEMETRY_APP.Datas.Classes
 {
     class DataReader
     {
+        #region instance
         private static DataReader instance = null;
         private DataReader() { }
         public static DataReader Instance
@@ -31,24 +36,33 @@ namespace ART_TELEMETRY_APP.Datas.Classes
                 return instance;
             }
         }
+        #endregion
 
         private Driver driver;
         private string fileName;
         private Grid progressBarGrid;
         private ProgressBar progressBar;
+        private Snackbar errorSnackbar;
         private long fileLength;
         private BackgroundWorker worker;
+        private List<Channel> addChannels;
+        private InputFileListElement inputFileListElement;
 
         public void ReadData(Driver driver,
                              string fileName,
-                             ref Grid progressBarGrid,
-                             ref ProgressBar progressBar
+                             Grid progressBarGrid,
+                             ProgressBar progressBar,
+                             Snackbar errorSnackbar,
+                             ref InputFileListElement inputFileListElement
                              )
         {
             this.driver = driver;
             this.fileName = fileName;
             this.progressBarGrid = progressBarGrid;
             this.progressBar = progressBar;
+            this.errorSnackbar = errorSnackbar;
+            this.inputFileListElement = inputFileListElement;
+
             progressBarGrid.Visibility = Visibility.Visible;
             this.progressBar.IsIndeterminate = false;
             this.progressBar.Value = 0;
@@ -76,7 +90,7 @@ namespace ART_TELEMETRY_APP.Datas.Classes
         {
             NumberFormatInfo numberFormatInfo = new CultureInfo("hu-HU", false).NumberFormat;
 
-            var channels = new List<Channel>();
+            addChannels = new List<Channel>();
 
             using var reader = new StreamReader(fileName, Encoding.Default);
 
@@ -84,14 +98,14 @@ namespace ART_TELEMETRY_APP.Datas.Classes
             foreach (var channelName in channelNames)
             {
                 //channel.AllData = new ChartValues<double>();
-               /* channel.Option = new LineSerieOptions
-                {
-                    StrokeThickness = .7f,
-                    StrokeColor = Brushes.Black
-                };*/
+                /* channel.Option = new LineSerieOptions
+                 {
+                     StrokeThickness = .7f,
+                     StrokeColor = Brushes.Black
+                 };*/
                 //channel.InputFileName = fileNameWithoutPath;
                 //channel.DriverName = driver.Name;
-                channels.Add(new Channel(channelName));
+                addChannels.Add(new Channel(channelName));
             }
 
             uint progressIndex = 0;
@@ -99,15 +113,15 @@ namespace ART_TELEMETRY_APP.Datas.Classes
             while (!reader.EndOfStream)
             {
                 string[] row = reader.ReadLine().Split(';');
-                for (ushort i = 0; i < channels.Count; i++)
+                for (ushort i = 0; i < addChannels.Count; i++)
                 {
                     if (row[i].Equals(string.Empty))
                     {
-                        channels[i].AddChannelData(double.NaN);
+                        addChannels[i].AddChannelData(float.NaN);
                     }
                     else
                     {
-                        channels[i].AddChannelData(double.Parse(row[i], numberFormatInfo));
+                        addChannels[i].AddChannelData(float.Parse(row[i], numberFormatInfo));
                     }
                 }
 
@@ -120,7 +134,6 @@ namespace ART_TELEMETRY_APP.Datas.Classes
                 progressBar.IsIndeterminate = true;
             });
 
-            InputFileManager.AddInputFile(new InputFile(FileNameWithoutPath, driver.Name, channels));
         }
 
         private void WorkerProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -132,6 +145,13 @@ namespace ART_TELEMETRY_APP.Datas.Classes
         {
             progressBarGrid.Visibility = Visibility.Hidden;
             progressBar.IsIndeterminate = false;
+
+
+            InputFileManager.AddInputFile(new InputFile(FileNameWithoutPath, driver.Name, addChannels, ref errorSnackbar, (bool found) =>
+            {
+                inputFileListElement.ChangeBackground(found);
+            }));
+
             //((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilot.Name).Content).GetTab(TextManager.DiagramCustomTabName).Content).InitInputFileCmbbox();
             /*foreach (TabItem item in ((DriverContentTab)((DiagramsMenu)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(driver.Name).Content).Tabs)
             {
@@ -141,12 +161,11 @@ namespace ART_TELEMETRY_APP.Datas.Classes
                 }
                 catch (Exception) { }
             }*/
-            ((DriversMenu)MenuManager.GetTab(TextManager.DriversMenuName).Content).DisableAllDrivers(disable: false, driver.Name);
 
-          /*  if (driver.InputFiles.Last().Latitude == null || driver.InputFiles.Last().Longitude == null)
-            {
-                ((DriversMenu)MenuManager.GetTab(TextManager.DriversMenuName).Content).ShowError("No longitude or latitude data found!");
-            }*/
+            /*  if (driver.InputFiles.Last().Latitude == null || driver.InputFiles.Last().Longitude == null)
+              {
+                  ((DriversMenu)MenuManager.GetTab(TextManager.DriversMenuName).Content).ShowError("No longitude or latitude data found!");
+              }*/
         }
     }
 }

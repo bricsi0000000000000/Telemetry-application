@@ -9,5 +9,10 @@ namespace ART_TELEMETRY_APP.Errors.Classes
         {
             snackbar.MessageQueue.Enqueue(message, null, null, null, false, true, TimeSpan.FromSeconds(time));
         }
+
+        public static void ShowErrorMessage(Snackbar snackbar, string message, double time)
+        {
+            snackbar.MessageQueue.Enqueue(message, null, null, null, false, true, TimeSpan.FromSeconds(time));
+        }
     }
 }

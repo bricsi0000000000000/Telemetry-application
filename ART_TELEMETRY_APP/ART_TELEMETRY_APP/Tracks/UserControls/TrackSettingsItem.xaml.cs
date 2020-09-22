@@ -20,19 +20,20 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
 
             ActiveTrack = track;
             TrackNameLbl.Content = track.Name;
-            TrackDateLbl.Content = string.Format("- {0}", track.Year);
+            TrackDescriptionLbl.Content = track.Description;
         }
 
         private void DeleteTrack_Click(object sender, RoutedEventArgs e)
         {
-            TrackManager.DeleteMap(ActiveTrack);
+            TrackManager.DeleteTrack(ActiveTrack);
             ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content).InitTrackSettingsItems();
         }
 
         private void Grid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content).ActiveTrackSettingsItem = this;
-            ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content).UpdateActiveMapSettingsContent();
+            ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content).UpdateActiveTrackSettingsContent();
+            ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content).UpdateTrackData();
         }
 
         public void ChangeColorMode(bool change)
@@ -41,13 +42,13 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
             {
                 colorZone.Mode = MaterialDesignThemes.Wpf.ColorZoneMode.Inverted;
                 TrackNameLbl.Foreground = Brushes.Black;
-                TrackDateLbl.Foreground = Brushes.Black;
+                TrackDescriptionLbl.Foreground = Brushes.Black;
             }
             else
             {
                 colorZone.Mode = MaterialDesignThemes.Wpf.ColorZoneMode.Dark;
                 TrackNameLbl.Foreground = Brushes.White;
-                TrackDateLbl.Foreground = Brushes.White;
+                TrackDescriptionLbl.Foreground = Brushes.White;
             }
         }
     }

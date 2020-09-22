@@ -4,19 +4,19 @@ namespace ART_TELEMETRY_APP
 {
     public class Track
     {
-        public Track(string name, int year)
+        public Track(string name, string description)
         {
             Name = name;
-            Year = year;
+            Description = description;
             Processed = false;
         }
 
         public string Name { get; set; }
-        public int Year { get; set; }
+        public string Description{ get; set; }
         public Point StarPoint { get; set; }
         public bool Processed { get; set; }
 
-        private bool Equals(Track map) => map.Name.Equals(Name) && map.Year.Equals(Year);
+        private bool Equals(Track track) => track.Name.Equals(Name) && track.Description.Equals(Description);
 
         public override bool Equals(object obj) => Equals(obj as Track);
 

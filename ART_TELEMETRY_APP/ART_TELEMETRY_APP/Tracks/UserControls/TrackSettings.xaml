@@ -9,11 +9,6 @@
              Background="{DynamicResource MaterialDesignPaper}"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="3*"/>
-        </Grid.ColumnDefinitions>
-
         <Grid>
             <materialDesign:DialogHost CloseOnClickAway="True"
                                        >
@@ -21,14 +16,14 @@
                     <StackPanel Margin="16">
                         <TextBox Margin="0 8 0 0"
                                  HorizontalAlignment="Stretch"
-                                 x:Name="AddTrackTxtBox"
+                                 x:Name="AddTrackNameTxtBox"
                                  materialDesign:HintAssist.Hint="Track name"
                                  materialDesign:HintAssist.IsFloating="True"
                                  />
                         <TextBox Margin="0 8 0 0"
                                  HorizontalAlignment="Stretch"
-                                 x:Name="AddTrackDateTxtBox"
-                                 materialDesign:HintAssist.Hint="Track date"
+                                 x:Name="AddTrackDescriptionTxtBox"
+                                 materialDesign:HintAssist.Hint="Track description"
                                  materialDesign:HintAssist.IsFloating="True"
                                  />
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
@@ -52,84 +47,126 @@
                     </StackPanel>
                 </materialDesign:DialogHost.DialogContent>
 
-                <Grid Margin="5 0 0 0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="35"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="50"/>
-                    </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width=".6*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width=".6*"/>
+                    </Grid.ColumnDefinitions>
 
-                    <Label Content="Saved tracks"
-                           VerticalContentAlignment="Center"
-                           HorizontalContentAlignment="Center"
-                           FontWeight="Bold"
-                           />
+                    <Grid Margin="5 0 0 0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="35"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="50"/>
+                        </Grid.RowDefinitions>
+
+                        <Label Content="Saved tracks"
+                               VerticalContentAlignment="Center"
+                               HorizontalContentAlignment="Center"
+                               FontWeight="Bold"
+                               />
                     
-                    <ScrollViewer Grid.Row="1">
-                        <StackPanel x:Name="TracksStackPanel"/>
-                    </ScrollViewer>
+                        <ScrollViewer Grid.Row="1">
+                            <StackPanel x:Name="TracksStackPanel"/>
+                        </ScrollViewer>
 
-                    <Button Grid.Row="2"
-                            Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
-                            Margin="10 5"
-                            VerticalContentAlignment="Center"
-                            HorizontalContentAlignment="Center"
-                            Content="Add new track"
-                            >
-                    </Button>
+                        <Button Grid.Row="2"
+                                Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+                                Margin="10 5"
+                                VerticalContentAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                Content="Add new track"
+                                Background="#494949"
+                                BorderThickness="0"
+                                >
+                        </Button>
+                    </Grid>
+
+                    <Grid Grid.Column="1">
+                        <Grid Grid.Row="1"
+                              Name="TrackEditorGrid"
+                              Margin="10"
+                              />
+                        <Label Name="NotConnectedLbl"
+                               Grid.Row="1"
+                               VerticalContentAlignment="Center"
+                               HorizontalContentAlignment="Center"
+                               Foreground="#FF767676"
+                               FontSize="20"
+                               />
+                    </Grid>
+                    <Grid Grid.Column="2">
+                        <Grid Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="55"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            
+                            <Label Content="Track data"
+                                   VerticalContentAlignment="Center"
+                                   HorizontalContentAlignment="Center"
+                                   FontWeight="Bold"
+                                   />
+
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBox x:Name="ChangeTrackNameTxtBox"
+                                         Grid.Column="0"
+                                         Margin="5 5 2.5 5"
+                                         Foreground="White"
+                                         HorizontalAlignment="Stretch"
+                                         VerticalContentAlignment="Center"
+                                         HorizontalContentAlignment="Center"
+                                         />
+
+                                <TextBox x:Name="ChangeTrackDescriptionTxtBox"
+                                         Grid.Column="1"
+                                         Margin="2.5 5 5 5"
+                                         Foreground="White"
+                                         HorizontalAlignment="Stretch"
+                                         VerticalContentAlignment="Center"
+                                         HorizontalContentAlignment="Center"
+                                         />
+                                <Button Grid.Column="2"
+                                        Margin="5"
+                                        Click="ChangeTracksData_Click"
+                                            Background="#494949"
+                                            BorderThickness="0"
+                                        >
+                                    <materialDesign:PackIcon Kind="Edit"/>
+                                </Button>
+                            </Grid>
+
+                            <Label Grid.Row="2"
+                                   Name="LapsCountLbl"
+                                   VerticalContentAlignment="Center"
+                                   Margin="10 0 0 0"
+                                   />
+                            <Label Grid.Row="3"
+                                   Name="TrackLengthCountLbl"
+                                   VerticalContentAlignment="Center"
+                                   Margin="10 0 0 0"
+                                   />
+                            <Label Grid.Row="4"
+                                   Name="OneLapAverageLengthLbl"
+                                   VerticalContentAlignment="Center"
+                                   Margin="10 0 0 0"
+                                   />
+                        </Grid>
+                      
+                    </Grid>
                 </Grid>
             </materialDesign:DialogHost>
-        </Grid>
-
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="55"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width=".3*"/>
-                </Grid.ColumnDefinitions>
-
-                <TextBox x:Name="ChangeTrackNameTxtBox"
-                         Grid.Column="0"
-                         Margin="5 5 2.5 5"
-                         Foreground="White"
-                         HorizontalAlignment="Stretch"
-                         VerticalContentAlignment="Center"
-                         HorizontalContentAlignment="Center"
-                        />
-                
-                <TextBox x:Name="ChangeTrackDateTxtBox"
-                         Grid.Column="1"
-                         Margin="2.5 5 5 5"
-                         Foreground="White"
-                         HorizontalAlignment="Stretch"
-                         VerticalContentAlignment="Center"
-                         HorizontalContentAlignment="Center"
-                        />
-                <Button Grid.Column="2"
-                        Margin="5"
-                        Click="ChangeTracksData_Click"
-                        >
-                    <materialDesign:PackIcon Kind="Edit"/>
-                </Button>
-            </Grid>
-
-            <Grid Grid.Row="1"
-                  Name="TrackEditorGrid"
-                  Margin="10"
-                  />
-            <Label Name="NotConnectedLbl"
-                   Grid.Row="1"
-                   VerticalContentAlignment="Center"
-                   HorizontalContentAlignment="Center"
-                   Foreground="#FF767676"
-                   FontSize="20"
-                   />
         </Grid>
         
         <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"

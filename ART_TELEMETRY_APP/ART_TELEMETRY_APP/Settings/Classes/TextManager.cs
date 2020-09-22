@@ -2,18 +2,27 @@
 {
     public static class TextManager
     {
-        public static readonly string SettingsMenuName = "Settings";
-        public static readonly string DiagramsMenuName = "Diagrams";
-        public static readonly string DriversMenuName = "Drivers";
-
+        #region menu names
+        public static string SettingsMenuName { get; private set; } = "Settings";
+        public static string DiagramsMenuName { get; private set; } = "Diagrams";
+        public static string DriversMenuName { get; private set; } = "Drivers";
         public static string TracksSettingsName { get; private set; } = "Tracks";
-        public static readonly string GroupsSettingsName = "Groups";
+        public static string GroupsSettingsName { get; private set; } = "Groups";
+        public static string DiagramCustomTabName { get; private set; } = "Custom";
+        public static string SectorsSettingsName { get; private set; } = "Sectors";
+        public static string GeneralSettingsName { get; private set; } = "General";
+        #endregion
 
-        public static readonly string DiagramCustomTabName = "Custom";
+        #region input file names
+        public static string DriversFileName { get; private set; } = "drivers.csv";
+        public static string TracksFileName { get; private set; } = "tracks.csv";
+        #endregion
 
-        public static readonly string SectorsSettingsName = "Sectors";
-
-        public static string DriversCSV { get; private set; } = "drivers.csv";
-        public static readonly string TracksCSV = "tracks.csv";
+        #region input file default channel names
+        public static string DefaultSpeedChannelName { get; private set; } = "speed";
+        public static string DefaultTimeChannelName { get; private set; } = "Time";
+        public static string DefaultLongitudeChannelName { get; private set; } = "Longitude";
+        public static string DefaultLatitudeChannelName { get; private set; } = "Latitude";
+        #endregion
     }
 }

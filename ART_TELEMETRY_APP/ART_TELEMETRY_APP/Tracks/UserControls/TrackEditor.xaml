@@ -9,12 +9,7 @@
              Background="{DynamicResource MaterialDesignPaper}"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="1.4*"/>
-        </Grid.ColumnDefinitions>
-
-        <materialDesign:Card Grid.Column="0" Margin="5 5 2.5 5">
+        <materialDesign:Card Margin="5 5 2.5 5">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
@@ -54,88 +49,9 @@
                             </TransformGroup>
                         </Ellipse.RenderTransform>
                     </Ellipse>
-                     <!--<Image Source="Images/start_circle.png"
-                            Name="start_line_ellipse"
-                            Width="20"
-                            Height="20"
-                            RenderTransformOrigin="0.5,0.5"
-                            >
-                        <Image.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform/>
-                                <SkewTransform/>
-                                <RotateTransform/>
-                                <TranslateTransform X="-10" Y="-10"/>
-                            </TransformGroup>
-                        </Image.RenderTransform>
-                    </Image>-->
                 </Canvas>
             </Grid>
         </materialDesign:Card>
-
-        <materialDesign:Card Grid.Column="1" Margin="2.5 5 5 5">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="1.6*"/>
-                </Grid.ColumnDefinitions>
-
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <Label Content="Laps"
-                   Grid.ColumnSpan="2"
-                   HorizontalContentAlignment="Center"
-                   VerticalContentAlignment="Center"
-                   />
-                <Viewbox Grid.Row="1">
-                    <Path x:Name="AverageLapSVG"
-                      Stroke="White"
-                      StrokeThickness="1.5"
-                      Margin="5"
-                      />
-                </Viewbox>
-                <StackPanel Margin="10 0 0 0" Grid.Column="1" Grid.Row="1" Name="LapsStackPanel"/>
-            </Grid>
-        </materialDesign:Card>
-        <!--<Grid Grid.Column="1"
-              Name="laps_grid"
-              >
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="55"/>
-            </Grid.RowDefinitions>
-
-            <Path Grid.Row="0"
-                  x:Name="one_lap_svg"
-                  Stroke="White"
-                  StrokeThickness="2"
-                  Stretch="Fill"
-                  Margin="10"
-                  />
-
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="4*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="1"
-                       VerticalContentAlignment="Center"
-                       HorizontalContentAlignment="Center"
-                       FontSize="15"
-                       Name="act_lap_lbl"
-                       />
-                <Button Grid.Column="0" Click="PrevLap_Click">
-                    <materialDesign:PackIcon Kind="ArrowBack"/>
-                </Button>
-                <Button Grid.Column="2" Click="NextLap_Click">
-                    <materialDesign:PackIcon Kind="ArrowForward"/>
-                </Button>
-            </Grid>
-        </Grid>-->
 
         <Grid Grid.ColumnSpan="2"
               Name="ProgressBarGrid"

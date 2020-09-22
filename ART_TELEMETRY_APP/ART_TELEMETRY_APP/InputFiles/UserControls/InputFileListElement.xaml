@@ -10,8 +10,8 @@
     <materialDesign:Card Margin="8 0 8 4"
                          UniformCornerRadius="3"
                          materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                         Background="#FF303030"
-                         BorderBrush="#FF303030"
+                         Background="white"
+                         Name="Card"
                          >
         <Grid>
             <Grid.ColumnDefinitions>
@@ -24,6 +24,7 @@
                    HorizontalContentAlignment="Left"
                    VerticalContentAlignment="Center"
                    Margin="10 0 0 0"
+                   Foreground="#232323"
                    />
 
             <ComboBox Grid.Column="1"
@@ -32,14 +33,15 @@
                       HorizontalAlignment="Stretch"
                       HorizontalContentAlignment="Left"
                       SelectionChanged="TrackNamesCmbBox_SelectionChanged"
+                      Foreground="#232323"
                       />
 
             <Button Grid.Column="2"
                     Click="DeleteInputFile_Click"
                     Style="{StaticResource MaterialDesignRaisedLightButton}"
                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                    Background="#FF303030"
-                    BorderBrush="#FF303030"
+                    Background="#FFE21B1B"
+                    BorderThickness="0"
                     >
                 <materialDesign:PackIcon Kind="Trash"
                                          HorizontalContentAlignment="Center"

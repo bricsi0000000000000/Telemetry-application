@@ -5,6 +5,7 @@ using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.Laps;
 using ART_TELEMETRY_APP.Laps.Classes;
 using ART_TELEMETRY_APP.Laps.UserControls;
+using ART_TELEMETRY_APP.Settings;
 using ART_TELEMETRY_APP.Settings.Classes;
 using System;
 using System.Collections.Generic;
@@ -48,30 +49,33 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
                 StartWorker();
                 TrackManager.GetTrack(track).Processed = true;
             }
-            else
+         /*   else
             {
+                inputFile.CalculateLapTimes();
                 inputFile.CalculateAllDistances();
-            }
+                ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content)
+                    .UpdateTrackData();
+            }*/
         }
 
         double Distance(Point startPoint, Point endPoint) => Math.Sqrt(Math.Pow(startPoint.X - endPoint.X, 2) + Math.Pow(startPoint.Y - endPoint.Y, 2));
 
         private void AllLapsCanvas_MouseMove(object sender, MouseEventArgs e)
         {
-            /* Point cursor = Mouse.GetPosition(all_lap_canvas);
-             double min_distance = double.MaxValue;
-             Point min_point = new Point();
-             foreach (Point point in input_file.MapPoints)
+             Point cursor = Mouse.GetPosition(AllLapsCanvas);
+             double minDistance = double.MaxValue;
+             Point minPoint = new Point();
+             foreach (Point point in inputFile.TrackPoints)
              {
-                 if (distance(cursor, point) < min_distance)
+                 if (Distance(cursor, point) < minDistance)
                  {
-                     min_distance = distance(cursor, point);
-                     min_point = point;
+                     minDistance = Distance(cursor, point);
+                     minPoint = point;
                  }
              }
 
-             Canvas.SetLeft(start_line_ellipse, min_point.X);
-             Canvas.SetTop(start_line_ellipse, min_point.Y);*/
+             Canvas.SetLeft(StartLineEllipse, minPoint.X);
+             Canvas.SetTop(StartLineEllipse, minPoint.Y);
         }
 
         private void StartWorker()
@@ -80,7 +84,8 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
             {
                 driverProgressBarGrid.Visibility = Visibility.Visible;
             }
-            driverProgressBarGrid.Visibility = Visibility.Visible;
+            ProgressBarGrid.Visibility = Visibility.Visible;
+
             worker = new BackgroundWorker
             {
                 WorkerReportsProgress = true
@@ -95,7 +100,7 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
         {
             cursor = Mouse.GetPosition(AllLapsCanvas);
 
-            TrackManager.ChangeMapsStartPoint(track, cursor);
+            TrackManager.ChangeTrackStartPoint(track, cursor);
 
             StartWorker();
         }
@@ -180,13 +185,13 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
                     input_file.LapsSVGs.Add(svg_path);
                 }*/
 
-               // inputFile.MakeAvgLap();
-                inputFile.CalculateLapTimes();
+                // inputFile.MakeAvgLap();
                 //inputFile.InitActiveLaps();
-                inputFile.CalculateAllDistances();
+          
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
+                  
                     /*foreach (TabItem item in ((DriverContentTab)((DiagramsMenu)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(inputFile.DriverName).Content).Tabs)
                     {
                         var lapsContent = (LapsContent)item.Content;
@@ -215,6 +220,11 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
             }
             ProgressBarGrid.Visibility = Visibility.Hidden;
 
+            inputFile.CalculateLapTimes();
+            inputFile.CalculateAllDistances();
+
+            ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content)
+                .UpdateTrackData();
             //  avg_lap_svg.Data = Geometry.Parse(input_file.OneLap());
 
             /*   if (input_file.Laps.Count > 0)

@@ -9,6 +9,7 @@ using System;
 using ART_TELEMETRY_APP.Drivers.Classes;
 using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.Tracks.UserControls;
+using ART_TELEMETRY_APP.Drivers.UserControls;
 
 namespace ART_TELEMETRY_APP.InputFiles.UserControls
 {
@@ -23,9 +24,9 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
         private readonly Label ProgressBarLbl;
 
         public InputFileListElement(string fileName,
-                                    ref Grid ProgressBarGrid,
-                                    ref ProgressBar ProgressBar,
-                                    ref Label ProgressBarLbl
+                                    Grid ProgressBarGrid,
+                                    ProgressBar ProgressBar,
+                                    Label ProgressBarLbl
                                     )
         {
             InitializeComponent();
@@ -46,15 +47,15 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
             {
                 TrackNamesCmbBox.Items.Add(new ComboBoxItem
                 {
-                    Content = string.Format("{0}\t{1}", nameAndYear.Item2, nameAndYear.Item1)
+                    Content = string.Format("{0}\t{1}", nameAndYear.Item1, nameAndYear.Item2)
                 });
             }
         }
 
         private void DeleteInputFile_Click(object sender, RoutedEventArgs e)
         {
-            // DriverManager.GetDriver(driver_name).RemoveInputFile(file_name_lbl.Content.ToString());
-            //  ((DriversMenu)MenuManager.GetTab(TextManager.DriversMenuName).Content).InitDriverCards();
+            InputFileManager.RemoveInputFile(fileName);
+            ((DriversMenu)MenuManager.GetTab(TextManager.DriversMenuName).Content).InitDriverCards();
             //((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab("Laps").Content).InitInputFileCmbbox();
         }
 
@@ -65,23 +66,31 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
 
         private void TrackNamesCmbBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-              string name = TrackNamesCmbBox.SelectedItem.ToString().Split(':').Last();
-              name = name.Substring(1, name.Length - 1);
+            string name = TrackNamesCmbBox.SelectedItem.ToString().Split(':').Last();
+            name = name.Substring(1, name.Length - 1);
 
-              InputFileManager.GetInputFile(fileName).ActiveTrack =
-                  TrackManager.GetTrack(name.Split('\t')[1], int.Parse(name.Split('\t')[0]));
+            InputFileManager.GetInputFile(fileName).ActiveTrack =
+                TrackManager.GetTrack(name.Split('\t')[0], name.Split('\t')[1]);
 
-              ProgressBar.Visibility = Visibility.Visible;
-              ProgressBar.IsIndeterminate = true;
-              ProgressBarLbl.Content = "Calculating laps..";
+            ProgressBar.Visibility = Visibility.Visible;
+            ProgressBar.IsIndeterminate = true;
+            ProgressBarLbl.Content = "Calculating laps..";
 
-              ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content)
-                .SetActiveTrackSettingsItem(name.Split('\t')[1], int.Parse(name.Split('\t')[0]));
+            ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content)
+              .SetActiveTrackSettingsItem(name.Split('\t')[0], name.Split('\t')[1]);
 
-              ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content)
-                .UpdateActiveMapSettingsContent(ProgressBarGrid);
-            
+            ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content)
+              .UpdateActiveTrackSettingsContent(ProgressBarGrid);
+
+           
+
             //((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(TextManager.DiagramCustomTabName).Content).InputFilesCmbboxSelectionChange();
+        }
+
+        public void ChangeBackground(bool isGood)
+        {
+            Card.Background = isGood ? ColorManager.InputFileListElementCasualColor : ColorManager.InputFileListElementBadColor;
+            TrackNamesCmbBox.IsEnabled = isGood;
         }
     }
 }

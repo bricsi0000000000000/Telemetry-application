@@ -1,8 +1,11 @@
 ﻿using ART_TELEMETRY_APP.Charts.Classes;
 using ART_TELEMETRY_APP.Datas.Classes;
+using ART_TELEMETRY_APP.Errors.Classes;
 using ART_TELEMETRY_APP.Laps;
 using ART_TELEMETRY_APP.Laps.Classes;
+using ART_TELEMETRY_APP.Settings.Classes;
 using LiveCharts;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,11 +19,14 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
     /// </summary>
     public class InputFile
     {
-        public InputFile(string fileName, string driverName, List<Channel> channels)
+        public InputFile(string fileName, string driverName, List<Channel> channels, ref Snackbar errorSnackbar, Feedback feedback)
         {
             FileName = fileName;
             DriverName = driverName;
             this.channels = channels;
+
+            GetImportantChannelNames(ref errorSnackbar, feedback);
+
             TrackPoints = new List<Point>();
             Laps = new List<Lap>();
             CalculateAllLapsSVG();
@@ -28,29 +34,83 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
 
         private readonly List<Channel> channels = new List<Channel>();
 
+
+        public delegate void Feedback(bool foundAll);
+
+        private void GetImportantChannelNames(ref Snackbar errorSnackbar, Feedback feedback)
+        {
+            var cantFindChannelNames = new List<string>();
+
+            if (CanFindChannelName(TextManager.DefaultLatitudeChannelName))
+                latitudeChannelName = TextManager.DefaultLatitudeChannelName;
+            else
+                cantFindChannelNames.Add(TextManager.DefaultLatitudeChannelName);
+
+
+            if (CanFindChannelName(TextManager.DefaultLongitudeChannelName))
+                longitudeChannelName = TextManager.DefaultLongitudeChannelName;
+            else
+                cantFindChannelNames.Add(TextManager.DefaultLongitudeChannelName);
+
+
+            if (CanFindChannelName(TextManager.DefaultSpeedChannelName))
+                speedChannelName = TextManager.DefaultSpeedChannelName;
+            else
+                cantFindChannelNames.Add(TextManager.DefaultSpeedChannelName);
+
+
+            if (CanFindChannelName(TextManager.DefaultTimeChannelName))
+                timeChannelName = TextManager.DefaultTimeChannelName;
+            else
+                cantFindChannelNames.Add(TextManager.DefaultTimeChannelName);
+
+            if (cantFindChannelNames.Count > 0)
+            {
+                feedback(false);
+                string errorMessage = "";
+                foreach (var channelName in cantFindChannelNames)
+                {
+                    errorMessage += channelName + ", ";
+                }
+                errorMessage = errorMessage.Substring(0, errorMessage.Length - 2);
+                ShowError.ShowErrorMessage(ref errorSnackbar, string.Format("'{0}' not found! You can change it in settings", errorMessage), 3);
+            }
+        }
+
+        private bool CanFindChannelName(string defaultChannelName)
+        {
+            return channels.Find(x => x.ChannelName.Equals(defaultChannelName)) != null;
+        }
+
+        private string latitudeChannelName;
+        private string longitudeChannelName;
+        private string timeChannelName;
+        private string speedChannelName;
+
         private int ChannelDataCount => channels.First().ChannelData.Count;
         public string FileName { get; private set; }
         public string DriverName { get; private set; }
         public Track ActiveTrack { get; set; }
         public string AllLapsSVG { get; private set; }
-        public List<double> Latitude => channels.Find(x => x.ChannelName.Equals("Latitude")).ChannelData.ToList();
-        public List<double> Longitude => channels.Find(x => x.ChannelName.Equals("Longitude")).ChannelData.ToList();
-        public ChartValues<double> Times => channels.Find(x => x.ChannelName.Equals("Time")).ChannelData;
-        public ChartValues<double> Speeds => channels.Find(x => x.ChannelName.Equals("speed")).ChannelData;
+        public List<float> Latitude => channels.Find(x => x.ChannelName.Equals(TextManager.DefaultLatitudeChannelName)).ChannelData.ToList();
+        public List<float> Longitude => channels.Find(x => x.ChannelName.Equals(TextManager.DefaultLongitudeChannelName)).ChannelData.ToList();
+        public List<float> Times => channels.Find(x => x.ChannelName.Equals(TextManager.DefaultTimeChannelName)).ChannelData;
+        public List<float> Speeds => channels.Find(x => x.ChannelName.Equals(TextManager.DefaultSpeedChannelName)).ChannelData;
         public Channel GetChannel(string name) => channels.Find(x => x.ChannelName.Equals(name));
         public List<Point> TrackPoints { get; set; }
         public List<Lap> Laps { get; private set; }
+        public float AverageLapLength => Distances.Average(x => x.DistanceSum);
 
 
         /// <summary>
         /// Distances for all laps
         /// </summary>
         public List<OneLapDistance> Distances { get; private set; } = new List<OneLapDistance>();
-        public ChartValues<double> AllDistances { get; private set; } = new ChartValues<double>();
+        public List<float> AllDistances { get; private set; } = new List<float>();
         private void CalculateAllLapsSVG()
         {
-            List<double> latitude = Latitude;
-            List<double> longitude = Longitude;
+            List<float> latitude = Latitude;
+            List<float> longitude = Longitude;
 
             if (latitude.Count > 0 && longitude.Count > 0)
             {
@@ -118,21 +178,22 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
         public void CalculateAllDistances()
         {
             AllDistances.Clear();
-            ChartValues<double> speed = Speeds;
-            ChartValues<double> time = Times;
+            List<float> speed = Speeds;
+            List<float> time = Times;
             AllDistances.Add(0);
             for (int i = 1; i < time.Count; i++)
             {
-                AllDistances.Add(AllDistances[i - 1] + Distance(time[i - 1], time[i], speed[i] / 3.6));
+                AllDistances.Add(AllDistances[i - 1] + Distance(time[i - 1], time[i], speed[i] / 3.6f));
             }
 
             CalculateDistances();
         }
 
-        private double Distance(double time1, double time2, double speed) => speed * (time2 - time1);
+        private float Distance(float time1, float time2, float speed) => speed * (time2 - time1);
 
         public void CalculateDistances()
         {
+            //TODO one lap distance rossz
             for (int index = 0; index < Laps.Count; index++)
             {
                 var distance = new OneLapDistance();
@@ -147,8 +208,8 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
                     distance.DistanceValues.Add(AllDistances[i]);
                 }
 
-                distance.DistanceSum = index > 0 
-                                     ? distance.DistanceValues.Last() - Distances[index - 1].DistanceValues.Last() 
+                distance.DistanceSum = index > 0
+                                     ? distance.DistanceValues.Last() - Distances[index - 1].DistanceValues.Last()
                                      : distance.DistanceValues.Last();
 
                 Distances.Add(distance);
@@ -162,21 +223,29 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
                 }
             }
 
-           /* StreamWriter sw = new StreamWriter("distances.txt");
-            foreach (var item in Distances)
+             StreamWriter sw = new StreamWriter("distances.txt");
+             foreach (var item in Distances)
+             {
+                 sw.WriteLine(item.DistanceSum);
+             }
+             sw.Close();
+
+            sw = new StreamWriter("alldistances.txt");
+            foreach (var item in AllDistances)
             {
-                sw.WriteLine(item.DistanceSum);
+                sw.WriteLine(item);
             }
-            sw.Close();*/
+            sw.Close();
         }
 
         public void CalculateLapTimes()
         {
             var times = Times;
+            int pointsSum = Laps.Sum(x => x.Points.Count);
             foreach (Lap lap in Laps)
             {
-                int from = times.Count * lap.FromIndex / Laps.Sum(a => a.Points.Count);
-                int to = times.Count * lap.ToIndex / Laps.Sum(a => a.Points.Count);
+                int from = times.Count * lap.FromIndex / pointsSum;
+                int to = times.Count * lap.ToIndex / pointsSum;
 
                 lap.Time = TimeSpan.FromSeconds(times[to] - times[from]);
             }

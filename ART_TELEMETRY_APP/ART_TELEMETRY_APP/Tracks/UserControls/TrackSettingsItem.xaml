@@ -18,29 +18,34 @@
               >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="65"/>
             </Grid.ColumnDefinitions>
 
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
             <Label Name="TrackNameLbl"
                    VerticalContentAlignment="Center"
-                   HorizontalContentAlignment="Right"
+                   HorizontalContentAlignment="Center"
                    />
             
-            <Label Grid.Column="1"
-                   Name="TrackDateLbl"
+            <Label Grid.Row="1"
+                   Name="TrackDescriptionLbl"
                    VerticalContentAlignment="Center"
-                   HorizontalContentAlignment="Left"
+                   HorizontalContentAlignment="Center"
                    FontWeight="Light"
                    FontStyle="Italic"
                    />
             
-            <Button Grid.Column="2"
+            <Button Grid.Column="1"
+                    Grid.RowSpan="2"
                     Click="DeleteTrack_Click"
                     Margin="5"
-                    Name="deleteMap_btn"
+                    Name="DeleteTrackBtn"
                     >
-                    <materialDesign:PackIcon Kind="Close"
+                    <materialDesign:PackIcon Kind="Delete"
                                              />
             </Button>
         </Grid>

@@ -4,6 +4,7 @@ using ART_TELEMETRY_APP.Sectors.UserControls;
 using ART_TELEMETRY_APP.Settings.Classes;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using ART_TELEMETRY_APP.Settings.UserControls;
 
 namespace ART_TELEMETRY_APP.Settings
 {
@@ -41,6 +42,12 @@ namespace ART_TELEMETRY_APP.Settings
             {
                 Header = TextManager.GroupsSettingsName,
                 /*Content = new GroupSettings()*/
+            });
+
+            AddSettingsTab(new TabItem
+            {
+                Header = TextManager.GeneralSettingsName,
+                Content = new GeneralSettings()
             });
         }
 

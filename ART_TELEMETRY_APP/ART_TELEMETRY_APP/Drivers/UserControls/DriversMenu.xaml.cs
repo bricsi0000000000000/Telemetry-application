@@ -32,13 +32,13 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
             }
             catch (FileNotFoundException)
             {
-                ShowError.ShowErrorMessage(ref ErrorSnackbar, string.Format("Couldn't load drivers, because file '{0}' not found!", TextManager.DriversCSV), 3);
+                ShowError.ShowErrorMessage(ref ErrorSnackbar, string.Format("Couldn't load drivers, because file '{0}' not found!", TextManager.DriversFileName), 3);
             }
         }
 
         private void DriverReader()
         {
-            using (var reader = new StreamReader(TextManager.DriversCSV, Encoding.Default))
+            using (var reader = new StreamReader(TextManager.DriversFileName, Encoding.Default))
             {
                 while (!reader.EndOfStream)
                 {
@@ -53,22 +53,22 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
 
         private void SaveDriver(Driver driver)
         {
-            if (File.Exists(TextManager.DriversCSV))
+            if (File.Exists(TextManager.DriversFileName))
             {
-                using var writer = new StreamWriter(TextManager.DriversCSV, true);
+                using var writer = new StreamWriter(TextManager.DriversFileName, true, Encoding.Default);
                 writer.WriteLine(driver.Name);
             }
             else
             {
-                ShowError.ShowErrorMessage(ref ErrorSnackbar, string.Format("Couldn't save '{0}' into '{1}', because file '{1}' not found!", driver.Name, TextManager.DriversCSV), 3);
+                ShowError.ShowErrorMessage(ref ErrorSnackbar, string.Format("Couldn't save '{0}' into '{1}', because file '{1}' not found!", driver.Name, TextManager.DriversFileName), 3);
             }
         }
 
         public void DeleteDriver(string driverName)
         {
-            if (File.Exists(TextManager.DriversCSV))
+            if (File.Exists(TextManager.DriversFileName))
             {
-                using var writer = new StreamWriter(TextManager.DriversCSV, false);
+                using var writer = new StreamWriter(TextManager.DriversFileName, false);
                 foreach (var driver in DriverManager.Drivers)
                 {
                     if (!driver.Name.EndsWith(driverName))
@@ -79,7 +79,7 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
             }
             else
             {
-                ShowError.ShowErrorMessage(ref ErrorSnackbar, string.Format("Couldn't delete '{0}' from '{1}', because file '{1}' not found!", driverName, TextManager.DriversCSV), 3);
+                ShowError.ShowErrorMessage(ref ErrorSnackbar, string.Format("Couldn't delete '{0}' from '{1}', because file '{1}' not found!", driverName, TextManager.DriversFileName), 3);
             }
         }
 
@@ -97,20 +97,14 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
 
         private void AddDriverCard(Driver driver)
         {
-            DriversWrappanel.Children.Add(new DriverCard(driver));
+            var driverCard = new DriverCard(driver, 
+                                            ref ErrorSnackbar,
+                                            ref ReadFileProgressBarGrid,
+                                            ref ReadFileProgressBar,
+                                            ref ReadFileProgressBarLbl);
+            DriversWrappanel.Children.Add(driverCard);
+            driverCards.Add(driverCard);
         }
-
-         public void DisableAllDrivers(bool disable, string driverName)
-         {
-             AddDriverBtn.IsEnabled = !disable;
-             foreach (var driverCard in driverCards)
-             {
-                 if (!driverCard.Driver.Name.Equals(driverName))
-                 {
-                     driverCard.DisableGrid.Visibility = disable ? Visibility.Visible : Visibility.Hidden;
-                 }
-             }
-         }
 
         private void AddDriver_Click(object sender, RoutedEventArgs e)
         {

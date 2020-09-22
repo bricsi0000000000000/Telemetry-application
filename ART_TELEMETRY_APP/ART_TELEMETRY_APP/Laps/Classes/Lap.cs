@@ -23,8 +23,6 @@ namespace ART_TELEMETRY_APP.Laps.Classes
 
         public TimeSpan Time { get; set; }
 
-        public ushort LapLength => (ushort)Points.Count;
-
         public Brush LapColor { get; set; }
     }
 }

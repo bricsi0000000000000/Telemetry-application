@@ -5,6 +5,7 @@ using ART_TELEMETRY_APP.InputFiles;
 using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.InputFiles.UserControls;
 using ART_TELEMETRY_APP.Settings.Classes;
+using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -22,13 +23,26 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
         private static readonly List<InputFileListElement> inputFileListElements = new List<InputFileListElement>();
 
         public Driver Driver { get; private set; }
+        private readonly Snackbar errorSnackbar;
+        private readonly Grid readFileProgressBarGrid;
+        private readonly ProgressBar readFileProgressBar;
+        private readonly Label readFileProgressBarLbl;
 
-        public DriverCard(Driver driver)
+        public DriverCard(Driver driver,
+                          ref Snackbar errorSnackbar,
+                          ref Grid readFileProgressBarGrid,
+                          ref ProgressBar readFileProgressBar,
+                          ref Label readFileProgressBarLbl)
         {
             InitializeComponent();
 
             Driver = driver;
             DriverNameLbl.Content = driver.Name;
+
+            this.errorSnackbar = errorSnackbar;
+            this.readFileProgressBarGrid = readFileProgressBarGrid;
+            this.readFileProgressBar = readFileProgressBar;
+            this.readFileProgressBarLbl = readFileProgressBarLbl;
 
             InitInputFileListElements();
         }
@@ -41,7 +55,10 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
                 InputFilesStackPanel.Children.Clear();
                 foreach (InputFile inputFile in InputFileManager.InputFiles)
                 {
-                    AddInputFileListElement(inputFile.FileName);
+                    if (inputFile.DriverName.Equals(Driver.Name))
+                    {
+                        AddInputFileListElement(inputFile.FileName);
+                    }
                 }
             }
         }
@@ -49,9 +66,9 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
         private void AddInputFileListElement(string fileName)
         {
             InputFileListElement inputFileListElement = new InputFileListElement(fileName,
-                                                                                 ref ReadFileProgressBarGrid,
-                                                                                 ref ReadFileProgressBar,
-                                                                                 ref ReadFileProgressBarLbl
+                                                                                 readFileProgressBarGrid,
+                                                                                 readFileProgressBar,
+                                                                                 readFileProgressBarLbl
                                                                                  );
             InputFilesStackPanel.Children.Add(inputFileListElement);
             inputFileListElements.Add(inputFileListElement);
@@ -67,7 +84,6 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
 
         private void AddInputFile_Click(object sender, RoutedEventArgs e)
         {
-            ReadFileProgressBarLbl.Content = "Reading file..";
 
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
@@ -80,16 +96,22 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
             if (openFileDialog.ShowDialog() == true)
             {
                 string fileName = openFileDialog.FileName.Split('\\').Last();
+                readFileProgressBarLbl.Content = $"Reading \"{fileName}\" for {Driver.Name}";
                 if (InputFileManager.GetInputFile(fileName) == null)
                 {
                     AddInputFileListElement(fileName);
 
-                    ((DriversMenu)MenuManager.GetTab(TextManager.DriversMenuName).Content).DisableAllDrivers(disable: true, Driver.Name);
-                    DataReader.Instance.ReadData(Driver, openFileDialog.FileName, ref ReadFileProgressBarGrid, ref ReadFileProgressBar);
+                    InputFileListElement listElement = inputFileListElements.Last();
+                    DataReader.Instance.ReadData(Driver, 
+                                                 openFileDialog.FileName, 
+                                                 readFileProgressBarGrid, 
+                                                 readFileProgressBar, 
+                                                 errorSnackbar, 
+                                                 ref listElement);
                 }
                 else
                 {
-                    MessageBox.Show(string.Format("'{0}' has already been read!", fileName), "File already been read", MessageBoxButton.OK, MessageBoxImage.Hand);
+                    ShowError.ShowErrorMessage(errorSnackbar, string.Format("'{0}' has already been read!", fileName), 3);
                 }
             }
         }

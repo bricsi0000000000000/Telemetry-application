@@ -1,5 +1,6 @@
 ﻿using ART_TELEMETRY_APP.InputFiles;
 using LiveCharts;
+using System.Collections.Generic;
 
 namespace ART_TELEMETRY_APP.Datas.Classes
 {
@@ -11,12 +12,12 @@ namespace ART_TELEMETRY_APP.Datas.Classes
         public Channel(string channelName)
         {
             ChannelName = channelName;
-            ChannelData = new ChartValues<double>();
+            ChannelData = new List<float>();
         }
         public string ChannelName { get; private set; }
-        public ChartValues<double> ChannelData { get; private set; }
+        public List<float> ChannelData { get; private set; }
 
-        public void AddChannelData(double data) => ChannelData.Add(data);
+        public void AddChannelData(float data) => ChannelData.Add(data);
 
 
        // public LineSerieOptions Option { get; set; }
