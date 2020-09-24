@@ -1,4 +1,5 @@
 ﻿using ART_TELEMETRY_APP.Errors.Classes;
+using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.Settings.Classes;
 using MaterialDesignThemes.Wpf;
 using System;
@@ -20,11 +21,11 @@ namespace ART_TELEMETRY_APP
 
         private static void ReadTracks(ref Snackbar errorSnackbar)
         {
-            try
+            if (File.Exists(TextManager.TracksFileName))
             {
                 TrackReader();
             }
-            catch (FileNotFoundException)
+            else
             {
                 ShowError.ShowErrorMessage(ref errorSnackbar, string.Format("Couldn't load tracks, because '{0}' file not found!", TextManager.TracksFileName), 3);
             }
@@ -55,7 +56,7 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        public static List<Tuple<string, string>> TrackNamesAndYears
+        public static List<Tuple<string, string>> TrackNamesAndDesctiptions
         {
             get
             {
@@ -68,7 +69,7 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        private static void SaveTracks()
+        public static void SaveTracks()
         {
             using var writer = new StreamWriter(TextManager.TracksFileName);
             writer.WriteLine("map_name;start_point_x;start_point_y;year");
@@ -90,9 +91,19 @@ namespace ART_TELEMETRY_APP
             SaveTracks();
         }
 
-        public static Track GetTrack(string name, string description) => Tracks.Find(x => x.Name.Equals(name) && x.Description.Equals(description));
+        public static Track GetTrack(string trackName, string description) =>
+              Tracks.Find(x => x.Name.Equals(trackName) &&
+                          x.Description.Equals(description));
 
-        public static Track GetTrack(Track track) => Tracks.Find(x => x.Name.Equals(track.Name) && x.Description.Equals(track.Description));
+        public static Track GetTrack(string trackName, string description, string fileName, string driverName) => 
+               Tracks.Find(x => x.Name.Equals(trackName) && 
+                           x.Description.Equals(description) &&
+                           x.InputFileFileName.Equals(InputFileManager.GetInputFile(fileName, driverName)));
+
+        public static Track GetTrack(Track track) => 
+               Tracks.Find(x => x.Name.Equals(track.Name) && 
+                           x.Description.Equals(track.Description) &&
+                           x.InputFileFileName.Equals(track.InputFileFileName));
 
         public static void ChangeTrack(Track track, string name, string description)
         {

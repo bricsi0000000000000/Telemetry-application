@@ -15,6 +15,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using LiveCharts.Geared;
 
 namespace ART_TELEMETRY_APP
 {

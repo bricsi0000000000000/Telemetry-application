@@ -100,6 +100,19 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
         public List<Point> TrackPoints { get; set; }
         public List<Lap> Laps { get; private set; }
         public float AverageLapLength => Distances.Average(x => x.DistanceSum);
+        public int PointsSum { get; set; }
+        public TimeSpan OneLapAverageTime
+        {
+            get
+            {
+                var times = new List<TimeSpan>();
+                for (int i = 1; i < Laps.Count - 1; i++)
+                {
+                    times.Add(Laps[i].Time);
+                }
+                return new TimeSpan(Convert.ToInt64(times.Average(x => x.Ticks)));
+            }
+        }
 
 
         /// <summary>
@@ -107,6 +120,18 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
         /// </summary>
         public List<OneLapDistance> Distances { get; private set; } = new List<OneLapDistance>();
         public List<float> AllDistances { get; private set; } = new List<float>();
+        public float OneLapAverageDistance
+        {
+            get
+            {
+                float distance = 0;
+                for (int i = 1; i < Distances.Count - 1; i++)
+                {
+                    distance += Distances[i].DistanceSum;
+                }
+                return distance / (float)(Distances.Count - 2);
+            }
+        }
         private void CalculateAllLapsSVG()
         {
             List<float> latitude = Latitude;
@@ -193,13 +218,12 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
 
         public void CalculateDistances()
         {
-            //TODO one lap distance rossz
+            Distances.Clear();
             for (int index = 0; index < Laps.Count; index++)
             {
                 var distance = new OneLapDistance();
-                int pointsSum = Laps.Sum(x => x.Points.Count);
-                int fromIndex = ChannelDataCount * Laps[index].FromIndex / pointsSum;
-                int toIndex = ChannelDataCount * Laps[index].ToIndex / pointsSum;
+                int fromIndex = ChannelDataCount * Laps[index].FromIndex / PointsSum;
+                int toIndex = ChannelDataCount * Laps[index].ToIndex / PointsSum;
 
                 distance.DistanceValues.Clear();
 
@@ -223,31 +247,22 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
                 }
             }
 
-             StreamWriter sw = new StreamWriter("distances.txt");
-             foreach (var item in Distances)
-             {
-                 sw.WriteLine(item.DistanceSum);
-             }
-             sw.Close();
-
-            sw = new StreamWriter("alldistances.txt");
-            foreach (var item in AllDistances)
+            using var writer = new StreamWriter("distances.txt");
+            foreach (var item in Distances)
             {
-                sw.WriteLine(item);
+                writer.WriteLine(item.DistanceSum);
             }
-            sw.Close();
         }
 
         public void CalculateLapTimes()
         {
             var times = Times;
-            int pointsSum = Laps.Sum(x => x.Points.Count);
             foreach (Lap lap in Laps)
             {
-                int from = times.Count * lap.FromIndex / pointsSum;
-                int to = times.Count * lap.ToIndex / pointsSum;
+                int fromIndex = ChannelDataCount * lap.FromIndex / PointsSum;
+                int toIndex = ChannelDataCount * lap.ToIndex / PointsSum;
 
-                lap.Time = TimeSpan.FromSeconds(times[to] - times[from]);
+                lap.Time = TimeSpan.FromSeconds(times[toIndex] - times[fromIndex]);
             }
         }
 

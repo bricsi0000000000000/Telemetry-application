@@ -19,11 +19,13 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
     public partial class InputFileListElement : UserControl
     {
         private readonly string fileName;
+        private readonly string driverName;
         private readonly Grid ProgressBarGrid;
         private readonly ProgressBar ProgressBar;
         private readonly Label ProgressBarLbl;
 
         public InputFileListElement(string fileName,
+                                    string driverName,
                                     Grid ProgressBarGrid,
                                     ProgressBar ProgressBar,
                                     Label ProgressBarLbl
@@ -32,6 +34,7 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
             InitializeComponent();
 
             this.fileName = fileName;
+            this.driverName = driverName;
             this.ProgressBarGrid = ProgressBarGrid;
             this.ProgressBar = ProgressBar;
             this.ProgressBarLbl = ProgressBarLbl;
@@ -43,7 +46,7 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
 
         private void UpdateTrackNamesCmbBox()
         {
-            foreach (var nameAndYear in TrackManager.TrackNamesAndYears)
+            foreach (var nameAndYear in TrackManager.TrackNamesAndDesctiptions)
             {
                 TrackNamesCmbBox.Items.Add(new ComboBoxItem
                 {
@@ -68,21 +71,25 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
         {
             string name = TrackNamesCmbBox.SelectedItem.ToString().Split(':').Last();
             name = name.Substring(1, name.Length - 1);
+            var trackNameAndDescription = name.Split('\t');
 
-            InputFileManager.GetInputFile(fileName).ActiveTrack =
-                TrackManager.GetTrack(name.Split('\t')[0], name.Split('\t')[1]);
+            var track = TrackManager.GetTrack(trackNameAndDescription[0], trackNameAndDescription[1]);
+
+            track.DriverName = driverName;
+            track.InputFileFileName = fileName;
+
+            InputFileManager.GetInputFile(fileName, driverName).ActiveTrack = track;
 
             ProgressBar.Visibility = Visibility.Visible;
             ProgressBar.IsIndeterminate = true;
             ProgressBarLbl.Content = "Calculating laps..";
 
             ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content)
-              .SetActiveTrackSettingsItem(name.Split('\t')[0], name.Split('\t')[1]);
+              .SetActiveTrackSettingsItem(trackNameAndDescription[0], trackNameAndDescription[1]);
 
             ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content)
               .UpdateActiveTrackSettingsContent(ProgressBarGrid);
 
-           
 
             //((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab(TextManager.DiagramCustomTabName).Content).InputFilesCmbboxSelectionChange();
         }

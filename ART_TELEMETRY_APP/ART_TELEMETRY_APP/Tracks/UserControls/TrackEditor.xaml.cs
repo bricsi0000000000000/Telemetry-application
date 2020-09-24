@@ -34,52 +34,55 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
             InitializeComponent();
 
             this.inputFile = inputFile;
-            this.track = track;
+            track.InputFileFileName = inputFile.FileName;
+            this.track = TrackManager.GetTrack(track);
             this.driverProgressBarGrid = driverProgressBarGrid;
 
             AllLapsSVG.Data = Geometry.Parse(inputFile.AllLapsSVG);
 
-            if (TrackManager.GetTrack(track).StarPoint != new Point(-1, -1))
+            if (track.StarPoint != new Point(-1, -1))
             {
-                cursor = TrackManager.GetTrack(track).StarPoint;
+                cursor = track.StarPoint;
             }
 
-            if (!TrackManager.GetTrack(track).Processed)
+            if (!this.track.Processed)
             {
                 StartWorker();
-                TrackManager.GetTrack(track).Processed = true;
             }
-         /*   else
-            {
-                inputFile.CalculateLapTimes();
-                inputFile.CalculateAllDistances();
-                ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content)
-                    .UpdateTrackData();
-            }*/
+
+            /*   else
+               {
+                   inputFile.CalculateLapTimes();
+                   inputFile.CalculateAllDistances();
+                   ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content)
+                       .UpdateTrackData();
+               }*/
         }
 
         double Distance(Point startPoint, Point endPoint) => Math.Sqrt(Math.Pow(startPoint.X - endPoint.X, 2) + Math.Pow(startPoint.Y - endPoint.Y, 2));
 
         private void AllLapsCanvas_MouseMove(object sender, MouseEventArgs e)
         {
-             Point cursor = Mouse.GetPosition(AllLapsCanvas);
-             double minDistance = double.MaxValue;
-             Point minPoint = new Point();
-             foreach (Point point in inputFile.TrackPoints)
-             {
-                 if (Distance(cursor, point) < minDistance)
-                 {
-                     minDistance = Distance(cursor, point);
-                     minPoint = point;
-                 }
-             }
+            Point cursor = Mouse.GetPosition(AllLapsCanvas);
+            double minDistance = double.MaxValue;
+            Point minPoint = new Point();
+            foreach (Point point in inputFile.TrackPoints)
+            {
+                if (Distance(cursor, point) < minDistance)
+                {
+                    minDistance = Distance(cursor, point);
+                    minPoint = point;
+                }
+            }
 
-             Canvas.SetLeft(StartLineEllipse, minPoint.X);
-             Canvas.SetTop(StartLineEllipse, minPoint.Y);
+            Canvas.SetLeft(StartLineEllipse, minPoint.X);
+            Canvas.SetTop(StartLineEllipse, minPoint.Y);
         }
 
         private void StartWorker()
         {
+            track.Processed = true;
+
             if (driverProgressBarGrid != null)
             {
                 driverProgressBarGrid.Visibility = Visibility.Visible;
@@ -108,6 +111,7 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
         private void WorkerDoWork(object sender, DoWorkEventArgs e)
         {
             inputFile.Laps.Clear();
+
             var nearestPoints = new List<Point>();
             short radius = 20;
 
@@ -140,7 +144,7 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
 
                     canAdd = trackPointIndex + 1 >= inputFile.TrackPoints.Count;
 
-                    after = inputFile.Laps.Count <= 0 ? (short)0 : (short)500;
+                    after = inputFile.Laps.Count == 0 ? (short)0 : (short)500;
 
                     if (trackPointIndex >= lastCircleIndex + after)
                     {
@@ -173,6 +177,7 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
                 inputFile.Laps.Last().FromIndex = lastCircleIndex;
                 inputFile.Laps.Last().ToIndex = inputFile.TrackPoints.Count;
                 inputFile.Laps.Last().Index = newLapIndex;
+                inputFile.PointsSum = inputFile.Laps.Sum(x => x.Points.Count);
 
                 /*inputFile.LapsSVGs.Clear();
                 for (int i = 0; i < input_file.Laps.Count; i++)
@@ -187,11 +192,11 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
 
                 // inputFile.MakeAvgLap();
                 //inputFile.InitActiveLaps();
-          
+
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                  
+
                     /*foreach (TabItem item in ((DriverContentTab)((DiagramsMenu)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(inputFile.DriverName).Content).Tabs)
                     {
                         var lapsContent = (LapsContent)item.Content;
@@ -219,7 +224,6 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
                 driverProgressBarGrid.Visibility = Visibility.Hidden;
             }
             ProgressBarGrid.Visibility = Visibility.Hidden;
-
             inputFile.CalculateLapTimes();
             inputFile.CalculateAllDistances();
 

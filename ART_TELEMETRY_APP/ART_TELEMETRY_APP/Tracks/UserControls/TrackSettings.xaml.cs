@@ -72,15 +72,18 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
                 bool found = false;
                 foreach (Driver driver in DriverManager.Drivers)
                 {
-                    foreach (InputFile inputFile in InputFileManager.InputFiles)
+                    if (!found)
                     {
-                        if (inputFile.ActiveTrack != null)
+                        foreach (InputFile inputFile in InputFileManager.InputFiles)
                         {
-                            if (inputFile.ActiveTrack.Name.Equals(ActiveTrackSettingsItem.ActiveTrack.Name))
+                            if (inputFile.ActiveTrack != null)
                             {
-                                TrackManager.GetTrack(inputFile.ActiveTrack).Processed = false;
-                                TrackEditorGrid.Children.Add(new TrackEditor(inputFile, ActiveTrackSettingsItem.ActiveTrack, progressBarGrid));
-                                found = true;
+                                if (inputFile.ActiveTrack.Equals(ActiveTrackSettingsItem.ActiveTrack))
+                                {
+                                    TrackEditorGrid.Children.Add(new TrackEditor(inputFile, ActiveTrackSettingsItem.ActiveTrack, progressBarGrid));
+                                    found = true;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -164,22 +167,31 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
 
         public void UpdateTrackData()
         {
+            bool found = false;
             foreach (Driver driver in DriverManager.Drivers)
             {
-                foreach (InputFile inputFile in InputFileManager.InputFiles)
+                if (!found)
                 {
-                    if (inputFile.ActiveTrack != null)
+                    foreach (InputFile inputFile in InputFileManager.InputFiles)
                     {
-                        if (inputFile.ActiveTrack.Name.Equals(ActiveTrackSettingsItem.ActiveTrack.Name))
+                        if (inputFile.Laps.Count > 0)
                         {
-                            LapsCountLbl.Content = $"Laps: {inputFile.Laps.Count}";
-                            TrackLengthCountLbl.Content = $"Track length: {inputFile.AllDistances.Last()} m";
-                            OneLapAverageLengthLbl.Content = $"Average lap length: {inputFile.AverageLapLength} m";
+                            if (inputFile.ActiveTrack != null)
+                            {
+                                if (inputFile.ActiveTrack.Name.Equals(ActiveTrackSettingsItem.ActiveTrack.Name))
+                                {
+                                    LapsCountLbl.Content = $"Laps count: {inputFile.Laps.Count - 2}";
+                                    TrackLengthLbl.Content = $"Track length: {inputFile.OneLapAverageDistance:f2} m";
+                                    var averageTime = inputFile.OneLapAverageTime;
+                                    OneLapAverageTimeLbl.Content = string.Format("Average lap time: {0:00}:{1:00}:{2:00}", averageTime.Minutes, averageTime.Seconds, averageTime.Milliseconds);
+                                    found = true;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
             }
-
         }
     }
 }

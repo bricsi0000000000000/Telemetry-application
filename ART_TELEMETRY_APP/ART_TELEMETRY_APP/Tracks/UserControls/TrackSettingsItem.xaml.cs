@@ -34,6 +34,7 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
             ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content).ActiveTrackSettingsItem = this;
             ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content).UpdateActiveTrackSettingsContent();
             ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content).UpdateTrackData();
+            TrackManager.SaveTracks();
         }
 
         public void ChangeColorMode(bool change)

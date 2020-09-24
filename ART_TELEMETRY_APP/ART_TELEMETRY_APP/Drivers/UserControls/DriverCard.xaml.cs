@@ -66,6 +66,7 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
         private void AddInputFileListElement(string fileName)
         {
             InputFileListElement inputFileListElement = new InputFileListElement(fileName,
+                                                                                 Driver.Name,
                                                                                  readFileProgressBarGrid,
                                                                                  readFileProgressBar,
                                                                                  readFileProgressBarLbl
@@ -97,16 +98,16 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
             {
                 string fileName = openFileDialog.FileName.Split('\\').Last();
                 readFileProgressBarLbl.Content = $"Reading \"{fileName}\" for {Driver.Name}";
-                if (InputFileManager.GetInputFile(fileName) == null)
+                if (InputFileManager.GetInputFile(fileName, Driver.Name) == null)
                 {
                     AddInputFileListElement(fileName);
 
                     InputFileListElement listElement = inputFileListElements.Last();
-                    DataReader.Instance.ReadData(Driver, 
-                                                 openFileDialog.FileName, 
-                                                 readFileProgressBarGrid, 
-                                                 readFileProgressBar, 
-                                                 errorSnackbar, 
+                    DataReader.Instance.ReadData(Driver,
+                                                 openFileDialog.FileName,
+                                                 readFileProgressBarGrid,
+                                                 readFileProgressBar,
+                                                 errorSnackbar,
                                                  ref listElement);
                 }
                 else

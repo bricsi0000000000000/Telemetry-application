@@ -12,11 +12,15 @@ namespace ART_TELEMETRY_APP
         }
 
         public string Name { get; set; }
-        public string Description{ get; set; }
+        public string Description { get; set; }
+        public string InputFileFileName { get; set; }
+        public string DriverName { get; set; }
         public Point StarPoint { get; set; }
         public bool Processed { get; set; }
 
-        private bool Equals(Track track) => track.Name.Equals(Name) && track.Description.Equals(Description);
+        private bool Equals(Track track) => track.Name.Equals(Name) 
+                                         && track.Description.Equals(Description)/*
+                                         && track.InputFileFileName.Equals(InputFileFileName)*/;
 
         public override bool Equals(object obj) => Equals(obj as Track);
 

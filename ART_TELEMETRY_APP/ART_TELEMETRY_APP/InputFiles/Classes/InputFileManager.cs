@@ -16,6 +16,7 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
         public static void RemoveInputFile(InputFile inputFile) => InputFiles.Remove(inputFile);
         public static void RemoveInputFile(string fileName) => InputFiles.Remove(InputFiles.Find(x => x.FileName.Equals(fileName)));
 
-        public static InputFile GetInputFile(string fileName) => InputFiles.Find(x => x.FileName.Equals(fileName));
+        public static InputFile GetInputFile(string fileName, string driverName)
+            => InputFiles.Find(x => x.FileName.Equals(fileName) && x.DriverName.Equals(driverName));
     }
 }
