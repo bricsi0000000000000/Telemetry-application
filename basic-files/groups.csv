@@ -1,4 +1,3 @@
-group_name;group_attributes
 EngineMapping;rev,ath,lam,ign_1,ti_1,gear,speed
 EngineBase;rev,rev_b,gear,batt_u,OilPress,FuelPress,mappos
 Gearbox;rev,gear,upInput,upRqe,upGoing,shiftCnt,neutral_In,clutchGoing

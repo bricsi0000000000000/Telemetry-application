@@ -1,4 +1,5 @@
-﻿using LiveCharts;
+﻿using ART_TELEMETRY_APP.Groups.Classes;
+using LiveCharts;
 using LiveCharts.Wpf;
 using System;
 using System.IO;
@@ -14,48 +15,48 @@ namespace ART_TELEMETRY_APP
         {
             InitializeComponent();
 
-             TrackManager.LoadTracks(ref ErrorSnackbar);
-            //GroupManager.InitGroups();
-             MenuManager.InitMainMenuTabs(MainMenuTabControl);
+            TrackManager.LoadTracks(ref ErrorSnackbar);
+            GroupManager.InitGroups(ref ErrorSnackbar);
+            MenuManager.InitMainMenuTabs(MainMenuTabControl);
 
-         /*   using var reader = new StreamReader("alldistances.txt");
-            var allData = new ChartValues<float>();
-            while (!reader.EndOfStream)
-            {
-                allData.Add(float.Parse(reader.ReadLine()));
-            }
+            /*   using var reader = new StreamReader("alldistances.txt");
+               var allData = new ChartValues<float>();
+               while (!reader.EndOfStream)
+               {
+                   allData.Add(float.Parse(reader.ReadLine()));
+               }
 
-            var allDataFiltered = filteredData(allData, .05f);
+               var allDataFiltered = filteredData(allData, .05f);
 
 
-            chart.DisableAnimations = true;
-            chart.Series.Add(new LineSeries
-            {
-                Values = allDataFiltered,
-                LineSmoothness = 0,
-                PointGeometrySize = 1
-            });*/
+               chart.DisableAnimations = true;
+               chart.Series.Add(new LineSeries
+               {
+                   Values = allDataFiltered,
+                   LineSmoothness = 0,
+                   PointGeometrySize = 1
+               });*/
 
-           /* for (int i = 1; i < 11; i++)
-            {
-                using var actReader = new StreamReader(string.Format("distance{0}.txt",i));
+            /* for (int i = 1; i < 11; i++)
+             {
+                 using var actReader = new StreamReader(string.Format("distance{0}.txt",i));
 
-                var actData = new ChartValues<float>();
-                while (!actReader.EndOfStream)
-                {
-                    actData.Add(float.Parse(actReader.ReadLine()));
-                }
+                 var actData = new ChartValues<float>();
+                 while (!actReader.EndOfStream)
+                 {
+                     actData.Add(float.Parse(actReader.ReadLine()));
+                 }
 
-                var actDataFiltered = filteredData(actData, .05f);
+                 var actDataFiltered = filteredData(actData, .05f);
 
-                chart.Series.Add(new LineSeries
-                {
-                    Values = actDataFiltered,
-                    LineSmoothness = 0,
-                    PointGeometrySize = 1,
-                    Fill = Brushes.Transparent
-                });
-            }*/
+                 chart.Series.Add(new LineSeries
+                 {
+                     Values = actDataFiltered,
+                     LineSmoothness = 0,
+                     PointGeometrySize = 1,
+                     Fill = Brushes.Transparent
+                 });
+             }*/
         }
 
         ChartValues<float> filteredData(ChartValues<float> datas, float filter)

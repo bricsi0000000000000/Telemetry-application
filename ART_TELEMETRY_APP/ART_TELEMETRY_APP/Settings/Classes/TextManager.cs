@@ -16,6 +16,7 @@
         #region input file names
         public static string DriversFileName { get; private set; } = "drivers.csv";
         public static string TracksFileName { get; private set; } = "tracks.csv";
+        public static string GroupsFileName { get; private set; } = "groups.csv";
         #endregion
 
         #region input file default channel names

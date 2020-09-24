@@ -19,7 +19,14 @@ namespace ART_TELEMETRY_APP.Groups.Classes
             Name = name;
         }
 
-        public void AddAttribute(string attribute) => Attributes.Add(attribute);
+        public void AddAttribute(string attribute)
+        {
+            if (attribute.Equals(string.Empty))
+            {
+                return;
+            }
+            Attributes.Add(attribute);
+        }
 
         public void RemoveAttribute(string attribute) => Attributes.Remove(attribute);
     }

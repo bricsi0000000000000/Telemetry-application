@@ -20,15 +20,15 @@ namespace ART_TELEMETRY_APP
 
         public void InitDriversTabs()
         {
-            driversTabControl.Items.Clear();
-            foreach (Driver driver in DriverManager.Drivers)
+            DriversTabControl.Items.Clear();
+            foreach (var driver in DriverManager.Drivers)
             {
                 TabItem driverTab = new TabItem
                 {
                     Header = driver.Name,
                     Content = new DriverContentTab(driver)
                 };
-                driversTabControl.Items.Add(driverTab);
+                DriversTabControl.Items.Add(driverTab);
                 driverTabs.Add(driverTab);
             }
         }

@@ -23,20 +23,21 @@ namespace ART_TELEMETRY_APP
 
             menuTab = new TabItem
             {
-                Header = TextManager.DiagramsMenuName,
-                Content = new DiagramsMenu(),
-                Name = "diagramsMenuTab"
+                Header = TextManager.DriversMenuName,
+                Content = new DriversMenu(),
+                Name = "driversMenuTab",
+                IsSelected = true
             };
             menuItems.Add(menuTab);
             tabControl.Items.Add(menuTab);
 
             menuTab = new TabItem
             {
-                Header = TextManager.DriversMenuName,
-                Content = new DriversMenu(),
-                Name = "pilotsMenuTab",
-                IsSelected = true
+                Header = TextManager.DiagramsMenuName,
+                Content = new DiagramsMenu(),
+                Name = "diagramsMenuTab"
             };
+          
             menuItems.Add(menuTab);
             tabControl.Items.Add(menuTab);
         }

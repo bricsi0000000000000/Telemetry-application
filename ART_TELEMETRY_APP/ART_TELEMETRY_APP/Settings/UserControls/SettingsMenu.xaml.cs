@@ -41,7 +41,7 @@ namespace ART_TELEMETRY_APP.Settings
             AddSettingsTab(new TabItem
             {
                 Header = TextManager.GroupsSettingsName,
-                /*Content = new GroupSettings()*/
+                Content = new GroupSettings()
             });
 
             AddSettingsTab(new TabItem

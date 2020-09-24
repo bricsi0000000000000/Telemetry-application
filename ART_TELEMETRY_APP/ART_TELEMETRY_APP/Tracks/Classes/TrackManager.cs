@@ -36,7 +36,6 @@ namespace ART_TELEMETRY_APP
             Tracks.Clear();
 
             using var reader = new StreamReader(TextManager.TracksFileName);
-            reader.ReadLine();
             while (!reader.EndOfStream)
             {
                 string[] row = reader.ReadLine().Split(';');

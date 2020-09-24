@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using ART_TELEMETRY_APP.Drivers.Classes;
+using System.Linq;
 
 namespace ART_TELEMETRY_APP.Drivers.UserControls
 {
@@ -42,10 +43,13 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
             {
                 while (!reader.EndOfStream)
                 {
-                    string row = reader.ReadLine();
-                    if (!row.Equals(string.Empty))
+                    string[] drivers = reader.ReadLine().Split(';');
+                    if (drivers.Length > 0)
                     {
-                        DriverManager.AddDriver(new Driver(row));
+                        foreach (var driver in drivers)
+                        {
+                            DriverManager.AddDriver(new Driver(driver));
+                        }
                     }
                 }
             };
@@ -56,7 +60,11 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
             if (File.Exists(TextManager.DriversFileName))
             {
                 using var writer = new StreamWriter(TextManager.DriversFileName, true, Encoding.Default);
-                writer.WriteLine(driver.Name);
+                if(DriverManager.Drivers.Count > 0)
+                {
+                    writer.Write(";");
+                }
+                writer.Write(driver.Name);
             }
             else
             {
@@ -97,7 +105,7 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
 
         private void AddDriverCard(Driver driver)
         {
-            var driverCard = new DriverCard(driver, 
+            var driverCard = new DriverCard(driver,
                                             ref ErrorSnackbar,
                                             ref ReadFileProgressBarGrid,
                                             ref ReadFileProgressBar,

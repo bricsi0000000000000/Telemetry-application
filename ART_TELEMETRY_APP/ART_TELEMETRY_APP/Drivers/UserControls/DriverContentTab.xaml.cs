@@ -34,7 +34,7 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
                 {
                     Header = group.Name,
                     Content = new LapsContent(driver, group),
-                    Name = string.Format("{0}_item_laps", driver.Name)
+                    Name = string.Format("{0}GroupTabItem", driver.Name)
                 };
                 Tabs.Add(group_item);
                 TabControl.Items.Add(group_item);
@@ -44,7 +44,7 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
             {
                 Header = TextManager.DiagramCustomTabName,
                 Content = new LapsContent(driver, null),
-                Name = string.Format("{0}_item_laps", driver.Name)
+                Name = string.Format("{0}GroupTabItem", driver.Name)
             };
             Tabs.Add(item);
             TabControl.Items.Add(item);
