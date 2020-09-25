@@ -31,6 +31,8 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
             ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
 
             GroupManager.SaveGroups();
+
+            ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
         }
 
         private void Grid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)

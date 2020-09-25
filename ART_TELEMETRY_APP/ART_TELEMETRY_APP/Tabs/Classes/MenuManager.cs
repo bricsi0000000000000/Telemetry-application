@@ -1,6 +1,7 @@
 ﻿using ART_TELEMETRY_APP.Drivers.UserControls;
 using ART_TELEMETRY_APP.Settings;
 using ART_TELEMETRY_APP.Settings.Classes;
+using ART_TELEMETRY_APP.Settings.UserControls;
 using System.Collections.Generic;
 using System.Windows.Controls;
 
@@ -34,10 +35,20 @@ namespace ART_TELEMETRY_APP
             menuTab = new TabItem
             {
                 Header = TextManager.DiagramsMenuName,
-                Content = new DiagramsMenu(),
+                Content = new Diagrams(),
                 Name = "diagramsMenuTab"
             };
           
+            menuItems.Add(menuTab);
+            tabControl.Items.Add(menuTab);
+
+            menuTab = new TabItem
+            {
+                Header = TextManager.DiagramsSettingsMenuName,
+                Content = new SelectDriversAndInputFiles(),
+                Name = "diagramsSettingsMenuTab"
+            };
+
             menuItems.Add(menuTab);
             tabControl.Items.Add(menuTab);
         }

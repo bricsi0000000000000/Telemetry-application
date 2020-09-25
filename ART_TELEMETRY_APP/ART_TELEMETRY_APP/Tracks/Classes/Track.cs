@@ -19,8 +19,7 @@ namespace ART_TELEMETRY_APP
         public bool Processed { get; set; }
 
         private bool Equals(Track track) => track.Name.Equals(Name) 
-                                         && track.Description.Equals(Description)/*
-                                         && track.InputFileFileName.Equals(InputFileFileName)*/;
+                                         && track.Description.Equals(Description);
 
         public override bool Equals(object obj) => Equals(obj as Track);
 

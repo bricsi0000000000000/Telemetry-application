@@ -59,7 +59,7 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
         {
             InputFileManager.RemoveInputFile(fileName);
             ((DriversMenu)MenuManager.GetTab(TextManager.DriversMenuName).Content).InitDriverCards();
-            //((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilots_name).Content).GetTab("Laps").Content).InitInputFileCmbbox();
+            ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
         }
 
         /* private void settingsInputFile_Click(object sender, RoutedEventArgs e)

@@ -14,8 +14,8 @@
         Background="{DynamicResource MaterialDesignPaper}"
         xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
         xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
-        FontFamily="{materialDesign:MaterialDesignFont}" WindowStyle="ThreeDBorderWindow"
-    >
+        FontFamily="{materialDesign:MaterialDesignFont}" WindowStyle="ThreeDBorderWindow">
+    
     <Grid>
         <dragablz:TabablzControl x:Name="MainMenuTabControl"/>
         <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
@@ -23,5 +23,6 @@
                                  Foreground="White"
                                  />
         <!--<wpf:CartesianChart Name="chart"/>-->
+        <!--<Canvas x:Name="canvas"/>-->
     </Grid>
 </Window>

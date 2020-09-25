@@ -2,10 +2,10 @@
 using LiveCharts;
 using LiveCharts.Wpf;
 using System;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace ART_TELEMETRY_APP
 {
@@ -18,6 +18,53 @@ namespace ART_TELEMETRY_APP
             TrackManager.LoadTracks(ref ErrorSnackbar);
             GroupManager.InitGroups(ref ErrorSnackbar);
             MenuManager.InitMainMenuTabs(MainMenuTabControl);
+
+
+
+          /*  PathFigure myPathFigure = new PathFigure
+            {
+                StartPoint = new Point(10, 50)
+            };
+
+            LineSegment myLineSegment = new LineSegment();
+            myLineSegment.Point = new Point(200, 70);
+            LineSegment myLineSegment2 = new LineSegment();
+            myLineSegment2.Point = new Point(50, 100);
+
+            PathSegmentCollection myPathSegmentCollection = new PathSegmentCollection();
+            myPathSegmentCollection.Add(myLineSegment);
+            myPathSegmentCollection.Add(myLineSegment2);
+
+            myPathFigure.Segments = myPathSegmentCollection;
+
+            PathFigureCollection myPathFigureCollection = new PathFigureCollection
+            {
+                myPathFigure
+            };
+
+            PathGeometry myPathGeometry = new PathGeometry
+            {
+                Figures = myPathFigureCollection
+            };
+
+            Path myPath = new Path
+            {
+                Stroke = Brushes.Black,
+                StrokeThickness = 1,
+                Data = myPathGeometry
+            };
+
+            canvas.Children.Add(myPath);*/
+
+
+
+
+
+
+
+
+
+
 
             /*   using var reader = new StreamReader("alldistances.txt");
                var allData = new ChartValues<float>();

@@ -21,18 +21,9 @@ namespace ART_TELEMETRY_APP
 {
     public static class ChartBuilder
     {
-        public static void Build(ref Grid diagramGrid,
-                                 List<Lap> activeLaps,
-                                 List<string> selectedChannels,
-                                 InputFile inputFile,
-                                 bool time,
-                                 Filter filter,
-                                 string groupName
-                                 )
-        { }
         // private static Stopwatch stopWatch;
 
-        /* private static Lap longestLap;
+         private static Lap longestLap;
 
          private static OrderBy orderBy;
 
@@ -46,7 +37,7 @@ namespace ART_TELEMETRY_APP
          /// <param name="time">If this is set to true, the X axis will be order by time, otherwise by distance.</param>
          /// <param name="filter"></param>
          /// <param name="name_group"></param>
-         public static void Build(ref Grid diagramGrid,
+    /*     public static void Build(ref Grid diagramGrid,
                                   List<Lap> activeLaps,
                                   List<string> selectedChannels,
                                   InputFile inputFile,
@@ -266,7 +257,7 @@ namespace ART_TELEMETRY_APP
                            DriverManager.GetDriver(data.DriverName).GetInputFile(data.InputFileName).Times :
                            DriverManager.GetDriver(data.DriverName).GetInputFile(data.InputFileName).Distances;*/
 
-        /* orderBy.FromIndex = data.AllData.Count * lap.FromIndex / inputFile.Laps.Sum(x => x.Points.Count);
+       /*  orderBy.FromIndex = data.AllData.Count * lap.FromIndex / inputFile.Laps.Sum(x => x.Points.Count);
          orderBy.ToIndex = data.AllData.Count * lap.ToIndex / inputFile.Laps.Sum(x => x.Points.Count);
          //ushort longestLapFromIndex = (ushort)(data.AllData.Count * longestLap.FromIndex / inputFile.Laps.Sum(x => x.Points.Count));
          // ushort longestLapToIndex = (ushort)(data.AllData.Count * longestLap.ToIndex / inputFile.Laps.Sum(x => x.Points.Count));
@@ -286,8 +277,8 @@ namespace ART_TELEMETRY_APP
           {
               converted_lap_values.Add(double.NaN);
           }*/
-
-        /* return convertedLapValues;
+       /*
+         return convertedLapValues;
      }
 
      /// <summary>
@@ -319,8 +310,8 @@ namespace ART_TELEMETRY_APP
          }
          sw.WriteLine(orderBy.Data.Sum());
          sw.Close();*/
-
-        /* return returnData;
+       /*
+         return returnData;
      }
 
      /// <summary>
@@ -343,6 +334,6 @@ namespace ART_TELEMETRY_APP
 
      private static float GetKalmanSensitivity(int lapIndex, string driverName, string groupName)
                  => ((LapsContent)((DriverContentTab)((DiagramsMenu)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(driverName).Content).GetTab(groupName).Content).GetLapListElement(lapIndex + 1).KalmanSensitivity;
-*/
+       */
       }
 }

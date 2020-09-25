@@ -8,7 +8,7 @@
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              >
     <materialDesign:ColorZone MinWidth="300"
-                              Background="white"
+                              Background="#FF232323"
                               CornerRadius="3"
                               Margin="5"
                               >
@@ -29,7 +29,7 @@
                        HorizontalContentAlignment="Center"
                        FontSize="15"
                        FontWeight="Bold" 
-                       Foreground="#232323"
+                       Foreground="White"
                        
                        />
             </Grid>
@@ -61,11 +61,11 @@
                             Click="AddInputFile_Click"
                             Margin="4 4 8 8"
                             Name="AddFileBtn"
-                            Background="#232323"
+                            Background="White"
                             BorderThickness="0"
                             >
                         <materialDesign:PackIcon Kind="File"
-                                                 Foreground="White"/>
+                                                 Foreground="#FF232323"/>
                     </Button>
                 </Grid>
             </Grid>

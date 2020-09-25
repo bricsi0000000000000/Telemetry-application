@@ -4,7 +4,9 @@ using ART_TELEMETRY_APP.Errors.Classes;
 using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.InputFiles.UserControls;
 using ART_TELEMETRY_APP.Laps.Classes;
+using ART_TELEMETRY_APP.Laps.UserControls;
 using ART_TELEMETRY_APP.Settings.Classes;
+using ART_TELEMETRY_APP.Settings.UserControls;
 using LiveCharts;
 using MaterialDesignThemes.Wpf;
 using System;
@@ -144,13 +146,16 @@ namespace ART_TELEMETRY_APP.Datas.Classes
         private void WorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             progressBarGrid.Visibility = Visibility.Hidden;
-            progressBar.IsIndeterminate = false;
+            progressBar.IsIndeterminate = true;
 
 
             InputFileManager.AddInputFile(new InputFile(FileNameWithoutPath, driver.Name, addChannels, ref errorSnackbar, (bool found) =>
             {
                 inputFileListElement.ChangeBackground(found);
             }));
+
+            ((SelectDriversAndInputFiles)MenuManager.GetTab(TextManager.DiagramsSettingsMenuName).Content).InitDriversItems();
+            ((SelectDriversAndInputFiles)MenuManager.GetTab(TextManager.DiagramsSettingsMenuName).Content).InitLapItems();
 
             //((LapsContent)((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(pilot.Name).Content).GetTab(TextManager.DiagramCustomTabName).Content).InitInputFileCmbbox();
             /*foreach (TabItem item in ((DriverContentTab)((DiagramsMenu)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(driver.Name).Content).Tabs)

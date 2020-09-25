@@ -10,22 +10,28 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width=".8*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="4*"/>
             <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <ScrollViewer>
-            <Grid x:Name="charts_grid"/>
+            <StackPanel Name="LapsStackPanel"/>
         </ScrollViewer>
 
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
 
-        <Grid Grid.Column="2">
+        <ScrollViewer Grid.Column="2">
+            <Grid x:Name="ChartsGrid"/>
+        </ScrollViewer>
+
+        <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch"/>
+
+        <Grid Grid.Column="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="45"/>
-                <!--<RowDefinition Height=".6*"/>
-                <RowDefinition Height="5"/>-->
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="5"/>
                 <RowDefinition Height=".9*"/>
@@ -34,23 +40,11 @@
                 <RowDefinition Height="45"/>
             </Grid.RowDefinitions>
 
-            <ComboBox Name="input_files_cmbbox"
-                      Margin="5"
-                      SelectionChanged="inputFilesCmbbox_SelectionChanged"
-                      />
-
-            <!--<Grid Grid.Row="1" Name="lap_datas_grid"/>
-
-            <GridSplitter HorizontalAlignment="Stretch" Grid.Row="2"></GridSplitter>-->
-            
-            <ScrollViewer Grid.Row="1">
-                <StackPanel Name="laps_stackpanel"/>
-            </ScrollViewer>
-
+         
             <GridSplitter HorizontalAlignment="Stretch" Grid.Row="2"></GridSplitter>
 
             <Viewbox Grid.Row="3">
-                <Path x:Name="avg_lap_svg"
+                <Path x:Name="TrackSVG"
                         Stroke="White"
                         StrokeThickness="1.5"
                         Margin="5"
@@ -71,7 +65,7 @@
                 <ComboBox Grid.Column="1"
                           Name="metric_cmbbox"
                           Margin="5"
-                          SelectionChanged="metricCmbbox_SelectionChanged"
+                          SelectionChanged="MetricCmbbox_SelectionChanged"
                           >
                     <ComboBoxItem Content="Distance" IsSelected="True"/>
                     <ComboBoxItem Content="Time"/>
@@ -92,7 +86,7 @@
                 <ComboBox Grid.Column="1"
                           Name="filter_cmbbox"
                           Margin="5"
-                          SelectionChanged="filterCmbbox_SelectionChanged"
+                          SelectionChanged="FilterCmbbox_SelectionChanged"
                           >
                     <ComboBoxItem Content="Kalman" IsSelected="True"/>
                     <ComboBoxItem Content="Nothing"/>
@@ -103,7 +97,7 @@
             <Grid Grid.Row="6">
                 <Button Content="Reset zoom"
                         Click="resetZoom_Click"
-                        Margin="5"
+                        Margin="2.5 5 5 5"
                         />
             </Grid>
         </Grid>

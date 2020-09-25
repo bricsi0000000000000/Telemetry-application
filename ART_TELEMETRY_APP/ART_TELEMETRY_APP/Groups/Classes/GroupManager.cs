@@ -28,11 +28,19 @@ namespace ART_TELEMETRY_APP.Groups.Classes
             while (!reader.EndOfStream)
             {
                 string[] row = reader.ReadLine().Split(';');
-                Group group = new Group(row[0]);
-                string[] attributes = row[1].Split(',');
-                foreach (string attribute in attributes)
+                var group = new Group(row[0]);
+
+                if (row[1].Equals("*"))
                 {
-                    group.AddAttribute(attribute);
+                    group.Customizable = false;
+                }
+                else
+                {
+                    string[] attributes = row[1].Split(',');
+                    foreach (string attribute in attributes)
+                    {
+                        group.AddAttribute(attribute);
+                    }
                 }
                 AddGroup(group);
             }

@@ -71,7 +71,6 @@ namespace ART_TELEMETRY_APP
         public static void SaveTracks()
         {
             using var writer = new StreamWriter(TextManager.TracksFileName);
-            writer.WriteLine("map_name;start_point_x;start_point_y;year");
             foreach (Track track in Tracks)
             {
                 writer.WriteLine("{0};{1};{2};{3}", track.Name, track.StarPoint.X, track.StarPoint.Y, track.Description);

@@ -114,6 +114,13 @@
     <Compile Include="Charts\Usercontrols\Chart.xaml.cs">
       <DependentUpon>Chart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Datas\Classes\ChartsSelectedData.cs" />
+    <Compile Include="Datas\UserControls\SelectedChannel.xaml.cs">
+      <DependentUpon>SelectedChannel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Drivers\UserControls\DriverItem.xaml.cs">
+      <DependentUpon>DriverItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="InputFiles\Classes\InputFileManager.cs" />
     <Compile Include="Groups\Classes\Group.cs" />
     <Compile Include="Groups\Classes\GroupManager.cs" />
@@ -132,16 +139,13 @@
     <Compile Include="Groups\UserControls\GroupsMenuContent.xaml.cs">
       <DependentUpon>GroupsMenuContent.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Laps\UserControls\AllLapChannels.xaml.cs">
-      <DependentUpon>AllLapChannels.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Laps\UserControls\AllLapListElement.xaml.cs">
-      <DependentUpon>AllLapListElement.xaml</DependentUpon>
+    <Compile Include="InputFiles\UserControls\InputFileItem.xaml.cs">
+      <DependentUpon>InputFileItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Charts\Classes\ChartBuilder.cs" />
     <Compile Include="Charts\Classes\ColorManager.cs" />
-    <Compile Include="Datas\UserControls\DiagramsMenu.xaml.cs">
-      <DependentUpon>DiagramsMenu.xaml</DependentUpon>
+    <Compile Include="Datas\UserControls\Diagrams.xaml.cs">
+      <DependentUpon>Diagrams.xaml</DependentUpon>
     </Compile>
     <Compile Include="GGDiagram_UC.xaml.cs">
       <DependentUpon>GGDiagram_UC.xaml</DependentUpon>
@@ -149,21 +153,22 @@
     <Compile Include="Datas\Classes\Channel.cs" />
     <Compile Include="Datas\Classes\LineSerieOptions.cs" />
     <Compile Include="Laps\Classes\Filter.cs" />
-    <Compile Include="Laps\UserControls\LapChannels.xaml.cs">
-      <DependentUpon>LapChannels.xaml</DependentUpon>
+    <Compile Include="Laps\Classes\LapState.cs" />
+    <Compile Include="Laps\UserControls\LapElement.xaml.cs">
+      <DependentUpon>LapElement.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Laps\UserControls\LapListElement.xaml.cs">
-      <DependentUpon>LapListElement.xaml</DependentUpon>
+    <Compile Include="Laps\UserControls\LapElementData.xaml.cs">
+      <DependentUpon>LapElementData.xaml</DependentUpon>
     </Compile>
     <Compile Include="Laps\UserControls\LapReportContent.xaml.cs">
       <DependentUpon>LapReportContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Laps\Classes\Lap.cs" />
-    <Compile Include="Laps\UserControls\OnlyLapListElement.xaml.cs">
-      <DependentUpon>OnlyLapListElement.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Settings\UserControls\GeneralSettings.xaml.cs">
       <DependentUpon>GeneralSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\UserControls\SelectDriversAndInputFiles.xaml.cs">
+      <DependentUpon>SelectDriversAndInputFiles.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tracks\Classes\Track.cs" />
     <Compile Include="Tracks\Classes\TrackManager.cs" />
@@ -175,9 +180,6 @@
     </Compile>
     <Compile Include="Tracks\UserControls\TrackSettingsItem.xaml.cs">
       <DependentUpon>TrackSettingsItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Drivers\UserControls\DriverContentTab.xaml.cs">
-      <DependentUpon>DriverContentTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="InputFiles\UserControls\InputFileListElement.xaml.cs">
       <DependentUpon>InputFileListElement.xaml</DependentUpon>
@@ -210,6 +212,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Datas\UserControls\SelectedChannel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Drivers\UserControls\DriverItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Groups\UserControls\GroupContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -230,11 +240,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Laps\UserControls\AllLapChannels.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Laps\UserControls\AllLapListElement.xaml">
+    <Page Include="InputFiles\UserControls\InputFileItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -246,7 +252,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Datas\UserControls\DiagramsMenu.xaml">
+    <Page Include="Datas\UserControls\Diagrams.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -254,19 +260,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Laps\UserControls\LapChannels.xaml">
+    <Page Include="Laps\UserControls\LapElement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Laps\UserControls\LapListElement.xaml">
+    <Page Include="Laps\UserControls\LapElementData.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Laps\UserControls\LapReportContent.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Laps\UserControls\OnlyLapListElement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -288,6 +290,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Settings\UserControls\SelectDriversAndInputFiles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Tracks\UserControls\TrackEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -297,10 +303,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Tracks\UserControls\TrackSettingsItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Drivers\UserControls\DriverContentTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

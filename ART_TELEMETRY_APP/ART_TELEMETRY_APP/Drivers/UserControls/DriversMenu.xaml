@@ -6,7 +6,7 @@
              mc:Ignorable="d" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="#FF232323"
+             Background="#FF383838"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <materialDesign:DialogHost HorizontalAlignment="Stretch"

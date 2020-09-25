@@ -23,16 +23,18 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
         {
             FileName = fileName;
             DriverName = driverName;
-            this.channels = channels;
+            this.Channels = channels;
 
             GetImportantChannelNames(ref errorSnackbar, feedback);
 
             TrackPoints = new List<Point>();
             Laps = new List<Lap>();
             CalculateAllLapsSVG();
+
+            IsSelected = false;
         }
 
-        private readonly List<Channel> channels = new List<Channel>();
+        public List<Channel> Channels { get; } = new List<Channel>();
 
 
         public delegate void Feedback(bool foundAll);
@@ -79,7 +81,7 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
 
         private bool CanFindChannelName(string defaultChannelName)
         {
-            return channels.Find(x => x.ChannelName.Equals(defaultChannelName)) != null;
+            return Channels.Find(x => x.ChannelName.Equals(defaultChannelName)) != null;
         }
 
         private string latitudeChannelName;
@@ -87,16 +89,17 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
         private string timeChannelName;
         private string speedChannelName;
 
-        private int ChannelDataCount => channels.First().ChannelData.Count;
+        public bool IsSelected { get; set; }
+        private int ChannelDataCount => Channels.First().ChannelData.Count;
         public string FileName { get; private set; }
         public string DriverName { get; private set; }
         public Track ActiveTrack { get; set; }
         public string AllLapsSVG { get; private set; }
-        public List<float> Latitude => channels.Find(x => x.ChannelName.Equals(TextManager.DefaultLatitudeChannelName)).ChannelData.ToList();
-        public List<float> Longitude => channels.Find(x => x.ChannelName.Equals(TextManager.DefaultLongitudeChannelName)).ChannelData.ToList();
-        public List<float> Times => channels.Find(x => x.ChannelName.Equals(TextManager.DefaultTimeChannelName)).ChannelData;
-        public List<float> Speeds => channels.Find(x => x.ChannelName.Equals(TextManager.DefaultSpeedChannelName)).ChannelData;
-        public Channel GetChannel(string name) => channels.Find(x => x.ChannelName.Equals(name));
+        public List<float> Latitude => Channels.Find(x => x.ChannelName.Equals(TextManager.DefaultLatitudeChannelName)).ChannelData.ToList();
+        public List<float> Longitude => Channels.Find(x => x.ChannelName.Equals(TextManager.DefaultLongitudeChannelName)).ChannelData.ToList();
+        public List<float> Times => Channels.Find(x => x.ChannelName.Equals(TextManager.DefaultTimeChannelName)).ChannelData;
+        public List<float> Speeds => Channels.Find(x => x.ChannelName.Equals(TextManager.DefaultSpeedChannelName)).ChannelData;
+        public Channel GetChannel(string name) => Channels.Find(x => x.ChannelName.Equals(name));
         public List<Point> TrackPoints { get; set; }
         public List<Lap> Laps { get; private set; }
         public float AverageLapLength => Distances.Average(x => x.DistanceSum);

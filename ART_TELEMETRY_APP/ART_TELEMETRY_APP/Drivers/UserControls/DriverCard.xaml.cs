@@ -80,7 +80,7 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
             DriverManager.RemoveDriver(Driver.Name);
             ((DriversMenu)MenuManager.GetTab(TextManager.DriversMenuName).Content).DeleteDriver(Driver.Name);
             ((DriversMenu)MenuManager.GetTab(TextManager.DriversMenuName).Content).InitDriverCards();
-            //((DiagramsMenu)MenuManager.GetTab(TextManager.DiagramCustomTabName).Content).InitDriversTabs();
+            ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
         }
 
         private void AddInputFile_Click(object sender, RoutedEventArgs e)

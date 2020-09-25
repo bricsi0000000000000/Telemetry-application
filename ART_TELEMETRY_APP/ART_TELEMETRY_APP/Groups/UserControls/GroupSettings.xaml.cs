@@ -1,5 +1,6 @@
 ﻿using ART_TELEMETRY_APP.Errors.Classes;
 using ART_TELEMETRY_APP.Groups.Classes;
+using ART_TELEMETRY_APP.Settings.Classes;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -36,10 +37,13 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
 
             foreach (var group in GroupManager.Groups)
             {
-                var groupSettingsItem = new GroupSettingsItem(group.Name);
-                groupSettingsItem.ChangeColorMode(group.Name.Equals(ActiveGroupName));
-                GroupsStackPanel.Children.Add(groupSettingsItem);
-                groupSettingsItems.Add(groupSettingsItem);
+                if (group.Customizable)
+                {
+                    var groupSettingsItem = new GroupSettingsItem(group.Name);
+                    groupSettingsItem.ChangeColorMode(group.Name.Equals(ActiveGroupName));
+                    GroupsStackPanel.Children.Add(groupSettingsItem);
+                    groupSettingsItems.Add(groupSettingsItem);
+                }
             }
 
             if (GroupManager.GetGroup(ActiveGroupName).Attributes.Count > 0)
@@ -82,6 +86,8 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
             InitGroups();
 
             GroupManager.SaveGroups();
+
+            ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
         }
 
         private void AddAttribute_Click(object sender, RoutedEventArgs e)
@@ -89,6 +95,12 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
             if (AddAttributeTxtBox.Text.Equals(string.Empty))
             {
                 ShowError.ShowErrorMessage(ref ErrorSnackbar, "Attribute name is empty!");
+                return;
+            }
+
+            if (AddAttributeTxtBox.Text.Equals("*"))
+            {
+                ShowError.ShowErrorMessage(ref ErrorSnackbar, "Attribute name can't be an asterisk!");
                 return;
             }
 
