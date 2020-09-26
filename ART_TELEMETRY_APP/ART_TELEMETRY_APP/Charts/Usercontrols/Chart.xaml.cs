@@ -11,6 +11,7 @@ namespace ART_TELEMETRY_APP.Charts.Usercontrols
     /// </summary>
     public partial class Chart : UserControl
     {
+        public string Name { get; set; }
         private const ushort chart_minimum_height = 100;
         private const ushort chart_height = 350;
         private int max_step_x
@@ -23,14 +24,14 @@ namespace ART_TELEMETRY_APP.Charts.Usercontrols
         private const int step_size = 1;
         private int chart_step_size = 0;
 
-        public Chart()
+        public Chart(string name)
         {
             InitializeComponent();
-
+            Name = name;
             chart.DataTooltip = null;
             chart.DisableAnimations = true;
             chart.Hoverable = false;
-            chart.MinHeight = chart_minimum_height;
+           // chart.MinHeight = chart_minimum_height;
             chart.Height = chart_height;
             chart.Zoom = ZoomingOptions.Xy;
 

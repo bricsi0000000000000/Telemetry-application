@@ -1,8 +1,11 @@
 ﻿using ART_TELEMETRY_APP.Datas.Classes;
+using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.Settings.Classes;
 using ART_TELEMETRY_APP.Settings.UserControls;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -18,27 +21,33 @@ namespace ART_TELEMETRY_APP.Laps.UserControls
         bool isSelected = false;
         private readonly BrushConverter converter = new BrushConverter();
 
-        public LapElement(int lapIndex, LapState lapState, bool disabled, List<string> fileNames, List<string> driverNames, List<TimeSpan> lapTimes)
+        public LapElement(List<InputFile> inputFiles, int lapIndex, LapType lapType, bool disabled, List<TimeSpan> lapTimes)
         {
             InitializeComponent();
 
-            switch (lapState)
+            switch (lapType)
             {
-                case LapState.InLap:
+                case LapType.InLap:
                     LapIndexLbl.Content = "In lap";
+                    LapElementCard.Background = (Brush)converter.ConvertFromString("#FF383838");
                     break;
-                case LapState.CenterLap:
+                case LapType.CenterLap:
                     LapIndexLbl.Content = $"{lapIndex}. lap";
                     break;
-                case LapState.OutLap:
+                case LapType.OutLap:
                     LapIndexLbl.Content = "Out lap";
+                    LapElementCard.Background = (Brush)converter.ConvertFromString("#FF383838");
+                    break;
+                case LapType.AllLap:
+                    LapIndexLbl.Content = "All lap";
+                    LapElementCard.Background = (Brush)converter.ConvertFromString("#FF383838");
                     break;
             }
             this.lapIndex = lapIndex;
 
             LapElementCard.IsEnabled = disabled;
 
-            InitLapData(ref fileNames, ref driverNames, ref lapTimes);
+            InitLapData(ref inputFiles, ref lapTimes, lapType == LapType.AllLap);
             ChangeState();
             /*  Console.Write(lapIndex + "\t");
               foreach (var item in fileNames)
@@ -58,28 +67,57 @@ namespace ART_TELEMETRY_APP.Laps.UserControls
               Console.WriteLine();*/
         }
 
-        private void InitLapData(ref List<string> fileNames, ref List<string> driverNames, ref List<TimeSpan> lapTimes)
+        private void InitLapData(ref List<InputFile> inputFiles, ref List<TimeSpan> lapTimes, bool allLap)
         {
             InputFilesStackPanel.Children.Clear();
 
-            if (fileNames.Count != driverNames.Count)
+            if (inputFiles.Count != lapTimes.Count)
             {
                 return;
             }
 
-            for (int i = 0; i < fileNames.Count; i++)
+            if (allLap)
             {
-                var lapElementData = new LapElementData(fileNames[i], driverNames[i], lapTimes[i]);
+                var allInputFiles = inputFiles.ToHashSet();
+                foreach (var item in allInputFiles)
+                {
+
+                }
+                long allLapTimesTicks = 0;
+                foreach (var lapTime in lapTimes)
+                {
+                    allLapTimesTicks += lapTime.Ticks;
+                }
+                var allLapTimes = TimeSpan.FromTicks(allLapTimesTicks);
+
+                var lapElementData = new LapElementData("", "", allLapTimes, LapState.None);
                 InputFilesStackPanel.Children.Add(lapElementData);
+            }
+            else
+            {
+                for (int i = 0; i < inputFiles.Count; i++)
+                {
+                    LapState lapState = LapState.None;
+                    if (inputFiles[i].BestLapTime == lapTimes[i])
+                    {
+                        lapState = LapState.Best;
+                    }
+                    else if (inputFiles[i].WorstLapTime == lapTimes[i])
+                    {
+                        lapState = LapState.Worst;
+                    }
+
+                    var lapElementData = new LapElementData(inputFiles[i].FileName, inputFiles[i].DriverName, lapTimes[i], lapState);
+                    InputFilesStackPanel.Children.Add(lapElementData);
+                }
             }
         }
 
         private void ChangeState()
         {
-            SelectLapIcon.Kind = isSelected ? MaterialDesignThemes.Wpf.PackIconKind.CheckboxMarked : MaterialDesignThemes.Wpf.PackIconKind.CheckboxBlankOutline;
+            SelectLapIcon.Kind = isSelected ? PackIconKind.CheckboxMarked : PackIconKind.CheckboxBlankOutline;
             SelectLapIcon.Foreground = isSelected ? (Brush)converter.ConvertFromString("#FFE21B1B") : Brushes.White;
         }
-
 
         private void SelectLap_Click(object sender, RoutedEventArgs e)
         {

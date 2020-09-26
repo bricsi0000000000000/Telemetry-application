@@ -20,12 +20,24 @@ namespace ART_TELEMETRY_APP.Laps.UserControls
     /// </summary>
     public partial class LapElementData : UserControl
     {
-        public LapElementData(string fileName, string driverName, TimeSpan lapTime)
+        private readonly BrushConverter converter = new BrushConverter();
+
+        public LapElementData(string fileName, string driverName, TimeSpan lapTime, LapState lapState)
         {
             InitializeComponent();
 
             NameLbl.Content = $"{driverName} - {fileName}";
             TimeLbl.Content = $"{lapTime.Minutes:00}:{lapTime.Seconds:00}:{lapTime.Milliseconds:00}";
+
+            switch (lapState)
+            {
+                case LapState.Best:
+                    BackgroundCard.Background = (Brush)converter.ConvertFromString("#14b719");
+                    break;
+                case LapState.Worst:
+                    BackgroundCard.Background = (Brush)converter.ConvertFromString("#b51f17");
+                    break;
+            }
         }
     }
 }

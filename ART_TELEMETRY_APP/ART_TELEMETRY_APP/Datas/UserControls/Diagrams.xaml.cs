@@ -13,7 +13,7 @@ namespace ART_TELEMETRY_APP
     /// </summary>
     public partial class Diagrams : UserControl
     {
-        public static List<TabItem> Tabs { get; } = new List<TabItem>();
+        public List<TabItem> Tabs { get; } = new List<TabItem>();
 
         public Diagrams()
         {

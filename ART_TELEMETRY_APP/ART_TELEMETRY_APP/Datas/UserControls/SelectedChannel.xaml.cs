@@ -1,18 +1,8 @@
 ﻿using ART_TELEMETRY_APP.Datas.Classes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MaterialDesignThemes.Wpf;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ART_TELEMETRY_APP.Datas.UserControls
 {
@@ -37,10 +27,9 @@ namespace ART_TELEMETRY_APP.Datas.UserControls
 
         private void ChangeState()
         {
-            SelectChannelIcon.Kind = isSelected ? MaterialDesignThemes.Wpf.PackIconKind.CheckboxMarked : MaterialDesignThemes.Wpf.PackIconKind.CheckboxBlankOutline;
+            SelectChannelIcon.Kind = isSelected ? PackIconKind.CheckboxMarked : PackIconKind.CheckboxBlankOutline;
             SelectChannelIcon.Foreground = isSelected ? (Brush)converter.ConvertFromString("#FFE21B1B") : Brushes.White;
         }
-
 
         private void SelectChannel_Click(object sender, RoutedEventArgs e)
         {
@@ -57,12 +46,6 @@ namespace ART_TELEMETRY_APP.Datas.UserControls
                     ChartsSelectedData.SelectedChannels.Remove(channelName);
                 }
             }
-
-            foreach (var item in ChartsSelectedData.SelectedChannels)
-            {
-                Console.Write(item + "," );
-            }
-            Console.WriteLine();
         }
     }
 }

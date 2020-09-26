@@ -23,7 +23,7 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
         {
             FileName = fileName;
             DriverName = driverName;
-            this.Channels = channels;
+            Channels = channels;
 
             GetImportantChannelNames(ref errorSnackbar, feedback);
 
@@ -116,7 +116,36 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
                 return new TimeSpan(Convert.ToInt64(times.Average(x => x.Ticks)));
             }
         }
-
+        public TimeSpan BestLapTime
+        {
+            get
+            {
+                var bestTime = Laps[1].Time;
+                for (int i = 2; i < Laps.Count - 1; i++)
+                {
+                    if (Laps[i].Time < bestTime)
+                    {
+                        bestTime = Laps[i].Time;
+                    }
+                }
+                return bestTime;
+            }
+        }
+        public TimeSpan WorstLapTime
+        {
+            get
+            {
+                var worstTime = Laps[1].Time;
+                for (int i = 2; i < Laps.Count - 1; i++)
+                {
+                    if (Laps[i].Time > worstTime)
+                    {
+                        worstTime = Laps[i].Time;
+                    }
+                }
+                return worstTime;
+            }
+        }
 
         /// <summary>
         /// Distances for all laps
@@ -216,21 +245,21 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
 
             CalculateDistances();
         }
-
         private float Distance(float time1, float time2, float speed) => speed * (time2 - time1);
-
         public void CalculateDistances()
         {
             Distances.Clear();
             for (int index = 0; index < Laps.Count; index++)
             {
-                var distance = new OneLapDistance();
-                int fromIndex = ChannelDataCount * Laps[index].FromIndex / PointsSum;
-                int toIndex = ChannelDataCount * Laps[index].ToIndex / PointsSum;
+                var distance = new OneLapDistance
+                {
+                    FromIndex = ChannelDataCount * Laps[index].FromIndex / PointsSum,
+                    ToIndex = ChannelDataCount * Laps[index].ToIndex / PointsSum
+                };
 
                 distance.DistanceValues.Clear();
 
-                for (int i = fromIndex; i < toIndex; i++)
+                for (int i = distance.FromIndex; i < distance.ToIndex; i++)
                 {
                     distance.DistanceValues.Add(AllDistances[i]);
                 }
@@ -256,7 +285,6 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
                 writer.WriteLine(item.DistanceSum);
             }
         }
-
         public void CalculateLapTimes()
         {
             var times = Times;
@@ -268,7 +296,11 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
                 lap.Time = TimeSpan.FromSeconds(times[toIndex] - times[fromIndex]);
             }
         }
-
+        /// <summary>
+        /// Item1 is the Lap
+        /// Item2 is is the lap is disabled
+        /// </summary>
+        public List<Tuple<Lap, bool>> SelectedLaps { get; set; } = new List<Tuple<Lap, bool>>();
         /* public InputFile(string input_data_name, List<Data> datas, string driver_name)
          {
              FileName = input_data_name;
@@ -512,23 +544,23 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
           sw.WriteLine(item.DistanceSum);
       }
       sw.Close();
-  }
+    }
 
-  private double distance(double time1, double time2, double speed) => speed * (time2 - time1);
+    private double distance(double time1, double time2, double speed) => speed * (time2 - time1);
 
-  public ChartValues<double> Times => AllData.Find(n => n.Attribute.Equals("Time")).AllData;
+    public ChartValues<double> Times => AllData.Find(n => n.Attribute.Equals("Time")).AllData;
 
-  public List<double> Latitude => AllData.Find(n => n.Attribute.Equals("Latitude")).AllData.ToList();
+    public List<double> Latitude => AllData.Find(n => n.Attribute.Equals("Latitude")).AllData.ToList();
 
-  public List<double> Longitude => AllData.Find(n => n.Attribute.Equals("Longitude")).AllData.ToList();
+    public List<double> Longitude => AllData.Find(n => n.Attribute.Equals("Longitude")).AllData.ToList();
 
-  public Data GetData(string name) => AllData.Find(n => n.Attribute.Equals(name));
-
-
+    public Data GetData(string name) => AllData.Find(n => n.Attribute.Equals(name));
 
 
-  public string AvgLapSVG
-  {
+
+
+    public string AvgLapSVG
+    {
       get
       {
           int radius = 10;
@@ -543,11 +575,11 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
           svg_path += " Z";
           return svg_path;
       }
-  }
+    }
 
 
 
-  /*  public ChartValues<ObservablePoint> GetChartValues(string attribute, int lap = 0)
+    /*  public ChartValues<ObservablePoint> GetChartValues(string attribute, int lap = 0)
     {
         return convertToObservablePoints(filteredData(GetLapValues(datas.Find(attr => attr.Attribute == attribute).Datas, lap)));
     }

@@ -20,17 +20,27 @@ namespace ART_TELEMETRY_APP.Laps.UserControls
     /// </summary>
     public partial class LapsContent : UserControl
     {
-        private readonly Group group;
+        public Group Group { get; set; }
         public List<DriverItem> DriverItems { get; } = new List<DriverItem>();
+
+        public List<Chart> Charts { get; } = new List<Chart>();
 
         public LapsContent(Group group)
         {
             InitializeComponent();
 
-            this.group = group;
+            Group = group;
         }
 
+        public void AddChart(ref Chart chart)
+        {
+            Charts.Add(chart);
+        }
 
+        public Chart GetChart(string name)
+        {
+            return Charts.Find(x => x.Name.Equals(name));
+        }
 
         public void ChangeAllLapsActive(bool active)
         {
@@ -184,50 +194,50 @@ namespace ART_TELEMETRY_APP.Laps.UserControls
 
         private void MetricCmbbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-          /*  if (active_input_file != null)
-            {
-                distance_as_time = !distance_as_time;
-                BuildCharts();
-            }*/
+            /*  if (active_input_file != null)
+              {
+                  distance_as_time = !distance_as_time;
+                  BuildCharts();
+              }*/
         }
 
         private void FilterCmbbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-           /* if (active_input_file != null)
-            {
-                foreach (var item in ((ComboBox)sender).Items)
-                {
-                    if (((ComboBoxItem)item).IsSelected)
-                    {
-                        if (((ComboBoxItem)item).Content.Equals("Kalman"))
-                        {
-                            filter = Filter.kalman;
-                        }
-                        else if (((ComboBoxItem)item).Content.Equals("Both"))
-                        {
-                            filter = Filter.both;
-                        }
-                        else
-                        {
-                            filter = Filter.nothing;
-                        }
-                    }
-                }
-                BuildCharts();
-            }*/
+            /* if (active_input_file != null)
+             {
+                 foreach (var item in ((ComboBox)sender).Items)
+                 {
+                     if (((ComboBoxItem)item).IsSelected)
+                     {
+                         if (((ComboBoxItem)item).Content.Equals("Kalman"))
+                         {
+                             filter = Filter.kalman;
+                         }
+                         else if (((ComboBoxItem)item).Content.Equals("Both"))
+                         {
+                             filter = Filter.both;
+                         }
+                         else
+                         {
+                             filter = Filter.nothing;
+                         }
+                     }
+                 }
+                 BuildCharts();
+             }*/
         }
 
-   //     public LapListElement GetLapListElement(int lap_index) => lap_list_elements[lap_index];
+        //     public LapListElement GetLapListElement(int lap_index) => lap_list_elements[lap_index];
 
         private void resetZoom_Click(object sender, RoutedEventArgs e)
         {
-           /* foreach (var child in ChartsGrid.Children)
-            {
-                if (child is Chart)
-                {
-                    ((Chart)child).ResetZoom();
-                }
-            }*/
+             foreach (var child in ChartsGrid.Children)
+             {
+                 if (child is Chart)
+                 {
+                     ((Chart)child).ResetZoom();
+                 }
+             }
         }
     }
 }

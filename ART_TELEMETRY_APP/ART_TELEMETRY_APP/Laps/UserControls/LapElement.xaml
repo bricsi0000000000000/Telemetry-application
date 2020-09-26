@@ -10,14 +10,14 @@
              Background="{DynamicResource MaterialDesignPaper}"
              d:DesignHeight="450" d:DesignWidth="800">
     <materialDesign:Card Margin="5"
-                         Background="#FF232323"
-                         Name="LapElementCard">
+                         Background="#FF232323">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <materialDesign:Card Background="#FF232323">
+            <materialDesign:Card Background="#FF232323"
+                                 Name="LapElementCard">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1.5*"/>
