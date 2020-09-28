@@ -34,6 +34,8 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
             IsSelected = false;
         }
 
+        public Tuple<double[], double[]> PlotTrackPoints => new Tuple<double[], double[]>(Latitude.ToArray(), Longitude.ToArray());
+
         public List<Channel> Channels { get; } = new List<Channel>();
 
 
@@ -95,14 +97,15 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
         public string DriverName { get; private set; }
         public Track ActiveTrack { get; set; }
         public string AllLapsSVG { get; private set; }
-        public List<float> Latitude => Channels.Find(x => x.ChannelName.Equals(TextManager.DefaultLatitudeChannelName)).ChannelData.ToList();
-        public List<float> Longitude => Channels.Find(x => x.ChannelName.Equals(TextManager.DefaultLongitudeChannelName)).ChannelData.ToList();
-        public List<float> Times => Channels.Find(x => x.ChannelName.Equals(TextManager.DefaultTimeChannelName)).ChannelData;
-        public List<float> Speeds => Channels.Find(x => x.ChannelName.Equals(TextManager.DefaultSpeedChannelName)).ChannelData;
+        public string AllLapSVGWithStartPoint { get; private set; }
+        public List<double> Latitude => Channels.Find(x => x.ChannelName.Equals(TextManager.DefaultLatitudeChannelName)).ChannelData.ToList();
+        public List<double> Longitude => Channels.Find(x => x.ChannelName.Equals(TextManager.DefaultLongitudeChannelName)).ChannelData.ToList();
+        public List<double> Times => Channels.Find(x => x.ChannelName.Equals(TextManager.DefaultTimeChannelName)).ChannelData;
+        public List<double> Speeds => Channels.Find(x => x.ChannelName.Equals(TextManager.DefaultSpeedChannelName)).ChannelData;
         public Channel GetChannel(string name) => Channels.Find(x => x.ChannelName.Equals(name));
         public List<Point> TrackPoints { get; set; }
         public List<Lap> Laps { get; private set; }
-        public float AverageLapLength => Distances.Average(x => x.DistanceSum);
+        public double AverageLapLength => Distances.Average(x => x.DistanceSum);
         public int PointsSum { get; set; }
         public TimeSpan OneLapAverageTime
         {
@@ -151,23 +154,23 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
         /// Distances for all laps
         /// </summary>
         public List<OneLapDistance> Distances { get; private set; } = new List<OneLapDistance>();
-        public List<float> AllDistances { get; private set; } = new List<float>();
-        public float OneLapAverageDistance
+        public List<double> AllDistances { get; private set; } = new List<double>();
+        public double OneLapAverageDistance
         {
             get
             {
-                float distance = 0;
+                double distance = 0;
                 for (int i = 1; i < Distances.Count - 1; i++)
                 {
                     distance += Distances[i].DistanceSum;
                 }
-                return distance / (float)(Distances.Count - 2);
+                return distance / (double)(Distances.Count - 2);
             }
         }
         private void CalculateAllLapsSVG()
         {
-            List<float> latitude = Latitude;
-            List<float> longitude = Longitude;
+            List<double> latitude = Latitude;
+            List<double> longitude = Longitude;
 
             if (latitude.Count > 0 && longitude.Count > 0)
             {
@@ -235,8 +238,8 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
         public void CalculateAllDistances()
         {
             AllDistances.Clear();
-            List<float> speed = Speeds;
-            List<float> time = Times;
+            List<double> speed = Speeds;
+            List<double> time = Times;
             AllDistances.Add(0);
             for (int i = 1; i < time.Count; i++)
             {
@@ -245,7 +248,7 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
 
             CalculateDistances();
         }
-        private float Distance(float time1, float time2, float speed) => speed * (time2 - time1);
+        private double Distance(double time1, double time2, double speed) => speed * (time2 - time1);
         public void CalculateDistances()
         {
             Distances.Clear();
@@ -271,29 +274,60 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
                 Distances.Add(distance);
             }
 
-            for (int index = 0; index < Distances.Count; index++)
+            for (int index = 1; index < Distances.Count - 1; index++)
             {
                 for (int i = 0; i < Distances[index].DistanceValues.Count; i++)
                 {
-                    Distances[index].DistanceValues[i] -= index * Distances[index].DistanceSum;
+                    Distances[index].DistanceValues[i] = Math.Abs(Distances[index].DistanceValues[i] - index * Distances[index].DistanceSum);
                 }
             }
 
-            using var writer = new StreamWriter("distances.txt");
-            foreach (var item in Distances)
+
+           /* for (int index = 0; index < Distances.Count; index++)
             {
-                writer.WriteLine(item.DistanceSum);
-            }
+                using var writer = new StreamWriter(string.Format("distance{0}.txt", index));
+
+                for (int i = 0; i < Distances[index].DistanceValues.Count; i++)
+                {
+                    writer.WriteLine(Distances[index].DistanceValues[i]);
+                }
+            }*/
+
+            /* using var writer = new StreamWriter("times.txt");
+             foreach (var item in Times)
+             {
+                 writer.WriteLine(item);
+             }*/
+
+            /*  using var writer = new StreamWriter("alldistances.txt");
+              foreach (var item in AllDistances)
+              {
+                  writer.WriteLine(item);
+              }*/
+
+            /*   using var writer = new StreamWriter("distances.txt");
+               foreach (var item in Distances)
+               {
+                   writer.WriteLine(item.DistanceSum);
+               }*/
         }
         public void CalculateLapTimes()
         {
             var times = Times;
+            // int index = 0;
             foreach (Lap lap in Laps)
             {
                 int fromIndex = ChannelDataCount * lap.FromIndex / PointsSum;
                 int toIndex = ChannelDataCount * lap.ToIndex / PointsSum;
 
                 lap.Time = TimeSpan.FromSeconds(times[toIndex] - times[fromIndex]);
+
+                /* using var writer = new StreamWriter(string.Format("time{0}.txt", index++));
+
+                 for (int i = fromIndex; i < toIndex; i++)
+                 {
+                     writer.WriteLine(times[i]);
+                 }*/
             }
         }
         /// <summary>

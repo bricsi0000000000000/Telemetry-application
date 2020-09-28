@@ -15,46 +15,44 @@ namespace ART_TELEMETRY_APP
         {
             InitializeComponent();
 
-            TrackManager.LoadTracks(ref ErrorSnackbar);
-            GroupManager.InitGroups(ref ErrorSnackbar);
-            MenuManager.InitMainMenuTabs(MainMenuTabControl);
+             TrackManager.LoadTracks(ref ErrorSnackbar);
+             GroupManager.InitGroups(ref ErrorSnackbar);
+             MenuManager.InitMainMenuTabs(MainMenuTabControl);
 
+            /*  PathFigure myPathFigure = new PathFigure
+              {
+                  StartPoint = new Point(10, 50)
+              };
 
+              LineSegment myLineSegment = new LineSegment();
+              myLineSegment.Point = new Point(200, 70);
+              LineSegment myLineSegment2 = new LineSegment();
+              myLineSegment2.Point = new Point(50, 100);
 
-          /*  PathFigure myPathFigure = new PathFigure
-            {
-                StartPoint = new Point(10, 50)
-            };
+              PathSegmentCollection myPathSegmentCollection = new PathSegmentCollection();
+              myPathSegmentCollection.Add(myLineSegment);
+              myPathSegmentCollection.Add(myLineSegment2);
 
-            LineSegment myLineSegment = new LineSegment();
-            myLineSegment.Point = new Point(200, 70);
-            LineSegment myLineSegment2 = new LineSegment();
-            myLineSegment2.Point = new Point(50, 100);
+              myPathFigure.Segments = myPathSegmentCollection;
 
-            PathSegmentCollection myPathSegmentCollection = new PathSegmentCollection();
-            myPathSegmentCollection.Add(myLineSegment);
-            myPathSegmentCollection.Add(myLineSegment2);
+              PathFigureCollection myPathFigureCollection = new PathFigureCollection
+              {
+                  myPathFigure
+              };
 
-            myPathFigure.Segments = myPathSegmentCollection;
+              PathGeometry myPathGeometry = new PathGeometry
+              {
+                  Figures = myPathFigureCollection
+              };
 
-            PathFigureCollection myPathFigureCollection = new PathFigureCollection
-            {
-                myPathFigure
-            };
+              Path myPath = new Path
+              {
+                  Stroke = Brushes.Black,
+                  StrokeThickness = 1,
+                  Data = myPathGeometry
+              };
 
-            PathGeometry myPathGeometry = new PathGeometry
-            {
-                Figures = myPathFigureCollection
-            };
-
-            Path myPath = new Path
-            {
-                Stroke = Brushes.Black,
-                StrokeThickness = 1,
-                Data = myPathGeometry
-            };
-
-            canvas.Children.Add(myPath);*/
+              canvas.Children.Add(myPath);*/
 
 
 

@@ -12,10 +12,10 @@ namespace ART_TELEMETRY_APP.Datas.Classes
         public Channel(string channelName)
         {
             ChannelName = channelName;
-            ChannelData = new List<float>();
+            ChannelData = new List<double>();
         }
         public string ChannelName { get; private set; }
-        public List<float> ChannelData { get; private set; }
+        public List<double> ChannelData { get; private set; }
 
         public void AddChannelData(float data) => ChannelData.Add(data);
 

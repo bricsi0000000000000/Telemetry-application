@@ -20,6 +20,8 @@ using ART_TELEMETRY_APP.Datas.Classes;
 using ART_TELEMETRY_APP.Drivers.Classes;
 using System;
 using ART_TELEMETRY_APP.Groups.Classes;
+using ScottPlot;
+using ScottPlot.Drawing;
 
 namespace ART_TELEMETRY_APP
 {
@@ -32,6 +34,63 @@ namespace ART_TELEMETRY_APP
         private static OrderBy orderBy;
 
         public static void Build(Filter filter)
+        {
+            InitCharts();
+
+            foreach (var lapsContent in ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).Tabs)
+            {
+                if (!(lapsContent.Content is LapsContent))
+                    continue;
+
+                var selectedChannels = ((LapsContent)lapsContent.Content).Group.Attributes;
+
+                for (int i = 0; i < InputFileManager.InputFiles.Count; i++)
+                {
+                    if (!InputFileManager.InputFiles[i].IsSelected)
+                        continue;
+
+                    var selectedLaps = new List<Lap>();
+
+                    foreach (var lap in InputFileManager.InputFiles[i].Laps)
+                    {
+                        if (ChartsSelectedData.SelectedLaps.Contains(lap.Index))
+                        {
+                            selectedLaps.Add(lap);
+                        }
+                    }
+
+                    foreach (var channel in InputFileManager.InputFiles[i].Channels)
+                    {
+                        if (selectedChannels.Contains(channel.ChannelName))
+                        {
+                            var chart = ((LapsContent)lapsContent.Content).GetChart(((LapsContent)lapsContent.Content).Group.Name + channel.ChannelName);
+                            ((LapsContent)lapsContent.Content).TrackSVG.Data = Geometry.Parse(InputFileManager.InputFiles[i].AllLapsSVG);
+                            for (ushort lapIndex = 0; lapIndex < selectedLaps.Count; lapIndex++)
+                            {
+                                var data = CalculateSerieValues(true, channel, ref selectedLaps, lapIndex, InputFileManager.InputFiles[i]);
+                                chart.InitPlot(data.Item1, data.Item2, channel.ChannelName, selectedLaps[lapIndex].Index, InputFileManager.InputFiles[i].DriverName, InputFileManager.InputFiles[i].FileName);
+
+                                /* switch (filter)
+                                 {
+                                     case Filter.kalman:
+                                         chart.chart.plt.PlotScatter();
+                                         break;
+                                     case Filter.nothing:
+                                         chart.AddSerie(CalculateSerieValues(false, channel, ref selectedLaps, lapIndex, InputFileManager.InputFiles[i], ref chart));
+                                         break;
+                                     case Filter.both:
+                                         chart.AddSerie(CalculateSerieValues(true, channel, ref selectedLaps, lapIndex, InputFileManager.InputFiles[i], ref chart));
+                                         chart.AddSerie(CalculateSerieValues(false, channel, ref selectedLaps, lapIndex, InputFileManager.InputFiles[i], ref chart));
+                                         break;
+                                 }*/
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void InitCharts()
         {
             foreach (var lapsContent in ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).Tabs)
             {
@@ -47,14 +106,10 @@ namespace ART_TELEMETRY_APP
                 ushort gridRowIndex = 0;
                 foreach (var attribute in ((LapsContent)lapsContent.Content).Group.Attributes)
                 {
-                    var chart = new Chart(((LapsContent)lapsContent.Content).Group.Name + attribute);
+                    var chart = new Chart(((LapsContent)lapsContent.Content).Group.Name + attribute, attribute);
 
-                    chart.UpdateAxisValues();
-
-                    chart.AddAxisY(YAxis(attribute, ref chart));
-                    chart.AddAxisX(XAxis(true));
-
-                    chart.AxisX.Separator = XAxisSeparator;
+                    ChartManager.CursorChannelNames.Add(attribute);
+                    ChartManager.CursorChannelData.Add(0);
 
                     Grid.SetRow(chart, gridRowIndex++);
                     ((LapsContent)lapsContent.Content).ChartsGrid.Children.Add(chart);
@@ -62,7 +117,7 @@ namespace ART_TELEMETRY_APP
                     GridSplitter gridSplitter = new GridSplitter
                     {
                         ResizeDirection = GridResizeDirection.Rows,
-                        HorizontalAlignment = HorizontalAlignment.Stretch
+                        HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch
                     };
 
                     Grid.SetRow(gridSplitter, gridRowIndex++);
@@ -76,205 +131,133 @@ namespace ART_TELEMETRY_APP
 
                     ((LapsContent)lapsContent.Content).ChartsGrid.RowDefinitions.Add(chartRow);
                     ((LapsContent)lapsContent.Content).ChartsGrid.RowDefinitions.Add(gridSplitterRow);
-
-                    ((LapsContent)lapsContent.Content).AddChart(ref chart);
+                    ((LapsContent)lapsContent.Content).AddChart(ref chart, ((LapsContent)lapsContent.Content).Group.Name + attribute);
                 }
             }
 
-            foreach (var lapsContent in ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).Tabs)
-            {
-                if (!(lapsContent.Content is LapsContent))
-                {
-                    continue;
-                }
-
-                var selectedChannels = ((LapsContent)lapsContent.Content).Group.Attributes;
-
-                for (int i = 0; i < InputFileManager.InputFiles.Count; i++)
-                {
-                    if (!InputFileManager.InputFiles[i].IsSelected)
-                    {
-                        continue;
-                    }
-
-                    var selectedLaps = new List<Lap>();
-
-                    foreach (var lap in InputFileManager.InputFiles[i].Laps)
-                    {
-                        if (ChartsSelectedData.SelectedLaps.Contains(lap.Index))
-                        {
-                            selectedLaps.Add(lap);
-                        }
-                    }
-
-                    longestLap = CalculateLongestLap(InputFileManager.InputFiles[i]);
-                    foreach (var channel in InputFileManager.InputFiles[i].Channels)
-                    {
-                        if (selectedChannels.Contains(channel.ChannelName))
-                        {
-                            var chart = ((LapsContent)lapsContent.Content).GetChart(((LapsContent)lapsContent.Content).Group.Name + channel.ChannelName);
-                            var labels = new List<string>();
-                            foreach (var item in channel.ChannelData)
-                            {
-                                Console.Write(item + "\t");
-                                labels.Add(item.ToString());
-                            }
-                            chart.AxisX.Labels = labels;
-                           
-                            Console.WriteLine();
-                            for (ushort lapIndex = 0; lapIndex < selectedLaps.Count; lapIndex++)
-                            {
-                                switch (filter)
-                                {
-                                    case Filter.kalman:
-                                        chart.AddSerie(CalculateSerieValues(true, channel, ref selectedLaps, lapIndex, InputFileManager.InputFiles[i], ref chart));
-                                        break;
-                                    case Filter.nothing:
-                                        chart.AddSerie(CalculateSerieValues(false, channel, ref selectedLaps, lapIndex, InputFileManager.InputFiles[i], ref chart));
-                                        break;
-                                    case Filter.both:
-                                        chart.AddSerie(CalculateSerieValues(true, channel, ref selectedLaps, lapIndex, InputFileManager.InputFiles[i], ref chart));
-                                        chart.AddSerie(CalculateSerieValues(false, channel, ref selectedLaps, lapIndex, InputFileManager.InputFiles[i], ref chart));
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
+        /*  private static LiveCharts.Wpf.Separator XAxisSeparator => new LiveCharts.Wpf.Separator
+          {
+              Step = 10,
+              IsEnabled = false
+          };*/
 
-        private static LiveCharts.Wpf.Separator XAxisSeparator => new LiveCharts.Wpf.Separator
-        {
-            Step = 10,
-            IsEnabled = false
-        };
+        /*private static Axis XAxis(bool time) => new Axis
+         {
+             Title = time ? "Time (s)" : "Distance (m)"
+         };*/
 
-        private static Axis XAxis(bool time) => new Axis
-        {
-            Title = time ? "Time (s)" : "Distance (m)"
-        };
+        /*  private static Axis YAxis(string channelName, ref Chart chart)
+          {
+              Axis axis = new Axis
+              {
+                  Title = channelName,
+                  Labels = YAxisLabels(ref chart)
+              };
 
-        private static Axis YAxis(string channelName, ref Chart chart)
-        {
-            Axis axis = new Axis
-            {
-                Title = channelName,
-                Labels = YAxisLabels(ref chart)
-            };
+              return axis;
+          }*/
 
-            return axis;
-        }
+        //private static List<string> XAxisLabels => (from point in Enumerable.Range(0, longestLap.Points.Count) select point.ToString()).ToList();
+        //   private static List<string> YAxisLabels(ref Chart chart) => (from i in Enumerable.Range(chart.MinValueX, chart.MaxValueX) select i.ToString()).ToList();
 
-        private static List<string> XAxisLabels => (from point in Enumerable.Range(0, longestLap.Points.Count) select point.ToString()).ToList();
-        private static List<string> YAxisLabels(ref Chart chart) => (from i in Enumerable.Range(chart.MinValueX, chart.MaxValueX) select i.ToString()).ToList();
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static LineSeries CalculateSerieValues(bool useFilter,
+        //   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Tuple<double[], double[]> CalculateSerieValues(bool useFilter,
                                                        Channel channel,
                                                        ref List<Lap> activeLaps,
                                                        int lapIndex,
-                                                       InputFile inputFile,
-                                                       ref Chart chart)
+                                                       InputFile inputFile)
         {
-            ChartValues<ObservablePoint> serieValues = useFilter ?
-                                          ConvertLapToObservablePoints(FilteredData(ConvertLap(channel, activeLaps[lapIndex], inputFile), .4f), activeLaps[lapIndex], channel, inputFile) :
-                                          ConvertLapToObservablePoints(ConvertLap(channel, activeLaps[lapIndex], inputFile), activeLaps[lapIndex], channel, inputFile);
 
-            ChartValues<double> lapValues = ConvertLap(channel, activeLaps[lapIndex], inputFile);
+            return ConvertLapToObservablePoints(ConvertLap(channel, activeLaps[lapIndex], inputFile), activeLaps[lapIndex], channel, inputFile);
 
-            CalculateChartMinimumYValue(ref chart, ref serieValues);
-            CalculateChartMaximumYValue(ref chart, ref serieValues);
-            CalculateChartMinimumXValue(ref chart, ref lapValues);
-            CalculateChartMaximumXValue(ref chart, ref lapValues);
+            //  ChartValues<double> lapValues = ConvertLap(channel, activeLaps[lapIndex], inputFile);
 
+            /*   CalculateChartMinimumYValue(ref chart, ref serieValues);
+               CalculateChartMaximumYValue(ref chart, ref serieValues);
+               CalculateChartMinimumXValue(ref chart, ref lapValues);
+               CalculateChartMaximumXValue(ref chart, ref lapValues);*/
 
-            return new LineSeries
+            //   return seri
+
+            /*return new LineSeries
             {
                 Title = channel.ChannelName,
-                Values = serieValues/*.WithQuality(Quality.High)*/,
+                Values = serieValues.WithQuality(Quality.High),
                 PointGeometry = null,
                 StrokeThickness = .8f,
                 Fill = Brushes.Transparent
-            };
+            };*/
         }
 
-        private static void CalculateChartMinimumYValue(ref Chart chart, ref ChartValues<ObservablePoint> serieValues)
-        {
-            for (short index = (short)(serieValues.Count - 1); index >= 0 && !double.IsNaN(serieValues[index].X); index--)
-            {
-                if (!double.IsNaN(serieValues[index].X))
-                {
-                    chart.MinValueY = (short)serieValues[index].X;
-                }
-            }
-        }
+        /*   private static void CalculateChartMinimumYValue(ref Chart chart, ref ChartValues<ObservablePoint> serieValues)
+           {
+               for (short index = (short)(serieValues.Count - 1); index >= 0 && !double.IsNaN(serieValues[index].X); index--)
+               {
+                   if (!double.IsNaN(serieValues[index].X))
+                   {
+                       chart.MinValueY = (short)serieValues[index].X;
+                   }
+               }
+           }
 
-        private static void CalculateChartMaximumYValue(ref Chart chart, ref ChartValues<ObservablePoint> serieValues)
-        {
-            for (ushort index = 0; index < serieValues.Count && !double.IsNaN(serieValues[index].X); index++)
-            {
-                if (!double.IsNaN(serieValues[index].X))
-                {
-                    chart.MaxValueY = (short)serieValues[index].X;
-                }
-            }
-        }
+           private static void CalculateChartMaximumYValue(ref Chart chart, ref ChartValues<ObservablePoint> serieValues)
+           {
+               for (ushort index = 0; index < serieValues.Count && !double.IsNaN(serieValues[index].X); index++)
+               {
+                   if (!double.IsNaN(serieValues[index].X))
+                   {
+                       chart.MaxValueY = (short)serieValues[index].X;
+                   }
+               }
+           }
 
-        private static void CalculateChartMaximumXValue(ref Chart chart, ref ChartValues<double> lapValues)
-        {
-            for (ushort index = 0; index < lapValues.Count; index++)
-            {
-                if (!double.IsNaN(lapValues[index]))
-                {
-                    if (lapValues[index] > chart.MaxValueX)
-                    {
-                        chart.MaxValueX = (short)lapValues[index];
-                    }
-                }
-            }
-        }
+           private static void CalculateChartMaximumXValue(ref Chart chart, ref ChartValues<double> lapValues)
+           {
+               for (ushort index = 0; index < lapValues.Count; index++)
+               {
+                   if (!double.IsNaN(lapValues[index]))
+                   {
+                       if (lapValues[index] > chart.MaxValueX)
+                       {
+                           chart.MaxValueX = (short)lapValues[index];
+                       }
+                   }
+               }
+           }
 
-        private static void CalculateChartMinimumXValue(ref Chart chart, ref ChartValues<double> lapValues)
-        {
-            for (ushort index = 0; index < lapValues.Count; index++)
-            {
-                if (!double.IsNaN(lapValues[index]))
-                {
-                    if (lapValues[index] < chart.MinValueX)
-                    {
-                        chart.MinValueX = (short)lapValues[index];
-                    }
-                }
-            }
-        }
+           private static void CalculateChartMinimumXValue(ref Chart chart, ref ChartValues<double> lapValues)
+           {
+               for (ushort index = 0; index < lapValues.Count; index++)
+               {
+                   if (!double.IsNaN(lapValues[index]))
+                   {
+                       if (lapValues[index] < chart.MinValueX)
+                       {
+                           chart.MinValueX = (short)lapValues[index];
+                       }
+                   }
+               }
+           }
 
-        private static Lap CalculateLongestLap(InputFile inputFile)
-        {
-            ushort longestLapLength = (ushort)inputFile.Laps.First().Points.Count;
-            var lap = inputFile.Laps.First();
-            for (ushort index = 2; index < inputFile.Laps.Count - 1; index++)
-            {
-                if (inputFile.Laps[index].Points.Count > longestLapLength)
-                {
-                    longestLapLength = (ushort)inputFile.Laps[index].Points.Count;
-                    lap = inputFile.Laps[index];
-                }
-            }
+           private static Lap CalculateLongestLap(InputFile inputFile)
+           {
+               ushort longestLapLength = (ushort)inputFile.Laps.First().Points.Count;
+               var lap = inputFile.Laps.First();
+               for (ushort index = 2; index < inputFile.Laps.Count - 1; index++)
+               {
+                   if (inputFile.Laps[index].Points.Count > longestLapLength)
+                   {
+                       longestLapLength = (ushort)inputFile.Laps[index].Points.Count;
+                       lap = inputFile.Laps[index];
+                   }
+               }
 
-            return lap;
-        }
+               return lap;
+           }*/
 
 
-        /// <summary>
-        /// Gets one lap from all the laps.
-        /// </summary>
-        /// <param name="channelData"></param>
-        /// <param name="lap">One of the active laps.</param>
-        /// <param name="inputFile"></param>
-        /// <param name="time">If this is set to true, the X axis will be order by time, otherwise by distance.</param>
-        /// <returns>One lap</returns>
-        private static ChartValues<double> ConvertLap(Channel channelData, Lap lap, InputFile inputFile)
+        private static double[] ConvertLap(Channel channelData, Lap lap, InputFile inputFile)
         {
             /*  xAxisOrderByData = time ?
                           DriverManager.GetDriver(data.DriverName).GetInputFile(data.InputFileName).Times :
@@ -285,7 +268,7 @@ namespace ART_TELEMETRY_APP
             //ushort longestLapFromIndex = (ushort)(data.AllData.Count * longestLap.FromIndex / inputFile.Laps.Sum(x => x.Points.Count));
             // ushort longestLapToIndex = (ushort)(data.AllData.Count * longestLap.ToIndex / inputFile.Laps.Sum(x => x.Points.Count));
 
-            var convertedLapValues = new ChartValues<double>();
+            var convertedLapValues = new List<double>();
             for (int i = inputFile.Distances[lap.Index].FromIndex; i < inputFile.Distances[lap.Index].ToIndex; i++)
             {
                 convertedLapValues.Add(channelData.ChannelData[i]);
@@ -300,7 +283,7 @@ namespace ART_TELEMETRY_APP
                  converted_lap_values.Add(double.NaN);
              }*/
 
-            return convertedLapValues;
+            return convertedLapValues.ToArray();
         }
 
         /// <summary>
@@ -308,20 +291,32 @@ namespace ART_TELEMETRY_APP
         /// </summary>
         /// <param name="lapData"></param>
         /// <returns></returns>
-        private static ChartValues<ObservablePoint> ConvertLapToObservablePoints(ChartValues<double> lapData, Lap lap, Channel channelData, InputFile inputFile)
+        private static Tuple<double[], double[]> ConvertLapToObservablePoints(double[] lapData, Lap lap, Channel channelData, InputFile inputFile)
         {
+            var orderByData = new List<double>();
+            for (int i = 0; i < inputFile.Distances[lap.Index].DistanceSum; i++)
+            {
+                orderByData.Add(i);
+            }
             orderBy.Data = inputFile.Distances[lap.Index].DistanceValues;
 
-            var returnData = new ChartValues<ObservablePoint>();
+            List<double> x = new List<double>();
+            List<double> y = new List<double>();
 
-            for (ushort i = 0; i < lapData.Count; i++)
+            for (ushort i = 0; i < lapData.Length; i++)
             {
-                returnData.Add(new ObservablePoint
-                {
-                    X = orderBy.Data[i],
-                    Y = lapData[i]
-                });
+                x.Add(orderBy.Data[i]);
+                y.Add(lapData[i]);
             }
+
+            /* for (ushort i = 0; i < lapData.Length; i++)
+             {
+                 returnData.Add(new ObservablePoint
+                 {
+                     X = orderBy.Data[i],
+                     Y = lapData[i]
+                 });
+             }*/
 
             /*  StreamWriter sw = new StreamWriter(string.Format("actdist{0}.txt", lap.Index));
               foreach (var item in orderBy.Data)
@@ -331,7 +326,7 @@ namespace ART_TELEMETRY_APP
               sw.WriteLine(orderBy.Data.Sum());
               sw.Close();*/
 
-            return returnData;
+            return new Tuple<double[], double[]>(x.ToArray(), y.ToArray());
         }
 
         /// <summary>

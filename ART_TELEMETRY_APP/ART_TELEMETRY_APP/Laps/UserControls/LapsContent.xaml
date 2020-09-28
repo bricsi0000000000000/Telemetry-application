@@ -16,7 +16,7 @@
         </Grid.ColumnDefinitions>
 
         <ScrollViewer>
-            <Grid x:Name="ChartsGrid"/>
+            <Grid x:Name="ChartsGrid" MouseMove="ChartsGrid_MouseMove"/>
         </ScrollViewer>
 
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
@@ -32,7 +32,8 @@
                 <RowDefinition Height="45"/>
             </Grid.RowDefinitions>
 
-         
+            <Label Name="CursorDataLbl" Grid.Row="1"/>
+
             <GridSplitter HorizontalAlignment="Stretch" Grid.Row="2"></GridSplitter>
 
             <Viewbox Grid.Row="3">

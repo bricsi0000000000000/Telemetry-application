@@ -24,5 +24,6 @@
                                  />
         <!--<wpf:CartesianChart Name="chart"/>-->
         <!--<Canvas x:Name="canvas"/>-->
+        <!--<WpfPlot Name="chart"/>-->
     </Grid>
 </Window>

@@ -7,8 +7,8 @@ namespace ART_TELEMETRY_APP.Charts.Classes
 {
     public class OneLapDistance
     {
-        public List<float> DistanceValues { get; set; } = new List<float>();
-        public float DistanceSum { get; set; }
+        public List<double> DistanceValues { get; set; } = new List<double>();
+        public double DistanceSum { get; set; }
         public int FromIndex{ get; set; }
         public int ToIndex{ get; set; }
     }

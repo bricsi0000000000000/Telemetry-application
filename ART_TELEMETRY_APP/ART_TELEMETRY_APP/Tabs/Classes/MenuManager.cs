@@ -51,6 +51,16 @@ namespace ART_TELEMETRY_APP
 
             menuItems.Add(menuTab);
             tabControl.Items.Add(menuTab);
+
+            menuTab = new TabItem
+            {
+                Header = "test",
+                Content = new Experimental(),
+                Name = "test"
+            };
+
+            menuItems.Add(menuTab);
+            tabControl.Items.Add(menuTab);
         }
 
         public static TabItem GetTab(string name) => menuItems.Find(x => x.Header.Equals(name));
