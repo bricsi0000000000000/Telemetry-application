@@ -1,4 +1,5 @@
 ﻿using ART_TELEMETRY_APP.InputFiles;
+using ART_TELEMETRY_APP.InputFiles.Classes;
 using LiveCharts;
 using LiveCharts.Defaults;
 using LiveCharts.Wpf;
@@ -35,7 +36,7 @@ namespace ART_TELEMETRY_APP
 
         public void InitScatterPlot(InputFile input_file)
         {
-            if (!Init)
+          /*  if (!Init)
             {
                 Data accx_data = input_file.GetData("AccX");
                 Data accy_data = input_file.GetData("AccY");
@@ -65,7 +66,7 @@ namespace ART_TELEMETRY_APP
                 gg_chart.AxisY.Add(axis);
 
                 Init = true;
-            }
+            }*/
         }
 
         ChartValues<double> filteredData(ChartValues<double> datas)

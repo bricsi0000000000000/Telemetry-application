@@ -1,5 +1,6 @@
 ﻿using ART_TELEMETRY_APP.Groups.Classes;
 using ART_TELEMETRY_APP.Settings;
+using ART_TELEMETRY_APP.Settings.Classes;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,42 +16,37 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
     {
         public string Attribute { get; set; }
 
-        private readonly string group_name;
+        private readonly string groupName;
 
-        public GroupSettingsAttribute(string attribute, string group_name)
+        public GroupSettingsAttribute(string attribute, string groupName)
         {
             InitializeComponent();
 
             Attribute = attribute;
-            this.group_name = group_name;
-            attribute_lbl.Content = attribute;
+            this.groupName = groupName;
+            AttributeLbl.Content = attribute;
         }
 
-        private void deleteAttribute_Click(object sender, RoutedEventArgs e)
+        private void DeleteAttribute_Click(object sender, RoutedEventArgs e)
         {
-            GroupManager.GetGroup(group_name).RemoveAttribute(Attribute);
-            ((GroupSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Groups").Content).ActiveAttribute = GroupManager.Groups.First().Attributes.First();
-            ((GroupSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Groups").Content).InitGroups();
+            GroupManager.GetGroup(groupName).RemoveAttribute(Attribute);
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ActiveAttribute = GroupManager.Groups.First().Attributes.First();
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
         }
 
         private void Grid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            ((GroupSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Groups").Content).ActiveAttribute = Attribute;
-            ((GroupSettings)((SettingsMenuContent)TabManager.GetTab("Settings").Content).GetTab("Groups").Content).InitAttributes();
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ActiveAttribute = Attribute;
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitAttributes();
         }
 
         public void ChangeColorMode(bool change)
         {
-            if (change)
-            {
-                colorZone.Mode = MaterialDesignThemes.Wpf.ColorZoneMode.Inverted;
-                attribute_lbl.Foreground = Brushes.Black;
-            }
-            else
-            {
-                colorZone.Mode = MaterialDesignThemes.Wpf.ColorZoneMode.Dark;
-                attribute_lbl.Foreground = Brushes.White;
-            }
+            ColorZone.Mode = change ?
+                             MaterialDesignThemes.Wpf.ColorZoneMode.Inverted :
+                             MaterialDesignThemes.Wpf.ColorZoneMode.Dark;
+
+            AttributeLbl.Foreground = change ? Brushes.Black : Brushes.White;
         }
     }
 }

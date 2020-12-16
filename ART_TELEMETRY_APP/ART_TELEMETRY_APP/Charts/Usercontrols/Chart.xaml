@@ -11,44 +11,7 @@
              xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
              xmlns:Wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="55"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="55"/>
-            </Grid.ColumnDefinitions>
-
-            <Button Click="pushLeft_Click"
-                    VerticalAlignment="Stretch"
-                    Height="Auto"
-                    Margin="5"
-                    Background="#FF232323"
-                    BorderBrush="#FF232323"
-                    >
-                <materialDesign:PackIcon Kind="ArrowLeftBold"/>
-            </Button>
-
-            <Wpf:CartesianChart Grid.Column="1"
-                                Name="chart"
-                                />
-
-            <Button Grid.Column="2"
-                    Click="pushRight_Click"
-                    VerticalAlignment="Stretch"
-                    Height="Auto"
-                    Margin="5"
-                    Background="#FF232323"
-                    BorderBrush="#FF232323"
-                    >
-                <materialDesign:PackIcon Kind="ArrowRightBold"/>
-            </Button>
-        </Grid>
-        
-      
+    <Grid MouseMove="Grid_MouseMove">
+        <WpfPlot Name="ScottPlotChart"/>
     </Grid>
 </UserControl>

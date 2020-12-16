@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="ART_TELEMETRY_APP.Tracks.UserControls.TrackSettingsItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             d:DesignHeight="100" d:DesignWidth="800">
+    <materialDesign:ColorZone CornerRadius="5"
+                              Margin="5 2.5"
+                              Mode="Dark"
+                              Name="colorZone"
+                         >
+        <Grid PreviewMouseLeftButtonUp="Grid_PreviewMouseLeftButtonUp"
+              Margin="5"
+              >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="65"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Label Name="TrackNameLbl"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Center"
+                   />
+            
+            <Label Grid.Row="1"
+                   Name="TrackDescriptionLbl"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Center"
+                   FontWeight="Light"
+                   FontStyle="Italic"
+                   />
+            
+            <Button Grid.Column="1"
+                    Grid.RowSpan="2"
+                    Click="DeleteTrack_Click"
+                    Margin="5"
+                    Name="DeleteTrackBtn"
+                    >
+                    <materialDesign:PackIcon Kind="Delete"
+                                             />
+            </Button>
+        </Grid>
+    </materialDesign:ColorZone>
+</UserControl>

@@ -3,12 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ART_TELEMETRY_APP.Groups.UserControls"
              mc:Ignorable="d" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              Background="{DynamicResource MaterialDesignPaper}"
-             xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -26,7 +24,7 @@
                     <StackPanel Margin="16">
                         <TextBlock Text="Add new group"/>
                         <TextBox Margin="0 8 0 0"
-                                 Name="addGroup_txtbox"
+                                 Name="AddGroupTxtBox"
                                  HorizontalAlignment="Stretch"
                                  />
                         <StackPanel Orientation="Horizontal"
@@ -37,7 +35,7 @@
                                     Margin="0 8 8 0"
                                     Command="materialDesign:DialogHost.CloseDialogCommand"
                                     Content="Add"
-                                    Click="addGroup_Click"
+                                    Click="AddGroup_Click"
                                     >
                             </Button>
                             <Button Style="{StaticResource MaterialDesignFlatButton}"
@@ -58,13 +56,13 @@
                     </Grid.RowDefinitions>
 
                     <ScrollViewer Margin="2.5 5">
-                        <StackPanel x:Name="groups_stackpanel"
+                        <StackPanel x:Name="GroupsStackPanel"
                                     />
                     </ScrollViewer>
                     
                     <Button Grid.Row="1"
                             Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
-                            Name="addGroup_btn"
+                            Name="AddGroupBtn"
                             Margin="10 5"
                             Content="Add group"
                             >
@@ -82,7 +80,7 @@
                     <StackPanel Margin="16">
                         <TextBlock Text="Add attribute"/>
                         <TextBox Margin="0 8 0 0"
-                                 Name="addAttribute_txtbox"
+                                 Name="AddAttributeTxtBox"
                                  HorizontalAlignment="Stretch"
                                  />
                         <StackPanel Orientation="Horizontal"
@@ -93,7 +91,7 @@
                                     Margin="0 8 8 0"
                                     Command="materialDesign:DialogHost.CloseDialogCommand"
                                     Content="Add"
-                                    Click="addAttribute_Click"
+                                    Click="AddAttribute_Click"
                                     >
                             </Button>
                             <Button Style="{StaticResource MaterialDesignFlatButton}"
@@ -115,13 +113,13 @@
 
                     <ScrollViewer Margin="2.5 5"
                                   > 
-                        <StackPanel x:Name="attributes_stackpanel"
+                        <StackPanel x:Name="AttributesStackPanel"
                                     />
                     </ScrollViewer>
 
                     <Button Grid.Row="1"
                             Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
-                            Name="addAttribute_btn"
+                            Name="AddAttributeBtn"
                             Margin="10 5"
                             Content="Add attribute"
                             >
@@ -132,7 +130,7 @@
 
         <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
                                  Grid.ColumnSpan="3"
-                                 x:Name="error_snack_bar"
+                                 x:Name="ErrorSnackbar"
                                  Foreground="White"
                                  />
     </Grid>
