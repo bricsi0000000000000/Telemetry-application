@@ -1,8 +1,10 @@
 ﻿using ART_TELEMETRY_APP.Errors.Classes;
 using MaterialDesignThemes.Wpf;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
-using System.Xml;
 
 namespace ART_TELEMETRY_APP.Tracks.Classes
 {
@@ -23,7 +25,7 @@ namespace ART_TELEMETRY_APP.Tracks.Classes
         /// <param name="errorSnackbar"><see cref="Snackbar"/> that shows erro message.</param>
         public static void LoadTracks(ref Snackbar errorSnackbar)
         {
-            AddTrack(LoadTrack("straight_track.xml", ref errorSnackbar), ref errorSnackbar);
+            AddTrack(LoadTrack("straight_track.json", ref errorSnackbar), ref errorSnackbar);
         }
 
         /// <summary>
@@ -46,84 +48,69 @@ namespace ART_TELEMETRY_APP.Tracks.Classes
         /// <summary>
         /// Load a <see cref="DriverlessTrack"/> from file.
         /// </summary>
-        /// <param name="fileName">The xml file name that contains the track data.</param>
+        /// <param name="fileName">The JSON file name that contains the track data.</param>
         /// <param name="errorSnackbar"><see cref="Snackbar"/> that shows erro message.</param>
         /// <returns>Readed <see cref="DriverlessTrack"/>.</returns>
         private static DriverlessTrack LoadTrack(string fileName, ref Snackbar errorSnackbar)
         {
             DriverlessTrack track = new DriverlessTrack();
 
-            using var reader = XmlReader.Create(fileName);
-
-            bool parsingError = false;
-
-            while (reader.Read() && !parsingError)
+            if (File.Exists(fileName))
             {
-                if (reader.IsStartElement())
+                using var reader = new StreamReader(fileName);
+
+                dynamic trackJSON = JsonConvert.DeserializeObject(reader.ReadToEnd());
+
+                bool parsingError = false;
+
+                if (!trackJSON.track.name.Equals(string.Empty))
                 {
-                    switch (reader.Name)
-                    {
-                        case "name":
-                            string inputName = reader.ReadElementContentAsString();
-                            if (!inputName.Equals(string.Empty))
-                            {
-                                track.Name = inputName;
-                            }
-                            else
-                            {
-                                parsingError = true;
-                                ShowError.ShowErrorMessage(ref errorSnackbar, $"Track name is empty", time: 6);
-                            }
-                            break;
-                        case "width":
-                            float width;
-                            string inputWidth = reader.ReadElementContentAsString();
-                            if (float.TryParse(inputWidth, out width))
-                            {
-                                track.Width = width;
-                            }
-                            else
-                            {
-                                parsingError = true;
-                                ShowError.ShowErrorMessage(ref errorSnackbar, $"In track \"{track.Name}\" couldn't convert \"{inputWidth}\" to a number.", time: 6);
-                            }
-                            break;
-                        case "length":
-                            float length;
-                            string inputLength = reader.ReadElementContentAsString();
-                            if (float.TryParse(inputLength, out length))
-                            {
-                                track.Length = length;
-                            }
-                            else
-                            {
-                                parsingError = true;
-                                ShowError.ShowErrorMessage(ref errorSnackbar, $"In track \"{track.Name}\" couldn't convert \"{inputLength}\" to a number.", time: 6);
-                            }
-                            break;
-                        case "leftSide":
-                            XmlReader leftSideReader = reader.ReadSubtree();
-                            while (leftSideReader.Read())
-                            {
-                                track.LeftSide.Add(ParsePoint(leftSideReader.Value.Split(';'), ref parsingError, ref track, ref errorSnackbar));
-                            }
-                            break;
-                        case "rightSide":
-                            XmlReader rightSideReader = reader.ReadSubtree();
-                            while (rightSideReader.Read())
-                            {
-                                track.RightSide.Add(ParsePoint(rightSideReader.Value.Split(';'), ref parsingError, ref track, ref errorSnackbar));
-                            }
-                            break;
-                        case "center":
-                            XmlReader centerSideReader = reader.ReadSubtree();
-                            while (centerSideReader.Read())
-                            {
-                                track.Center.Add(ParsePoint(centerSideReader.Value.Split(';'), ref parsingError, ref track, ref errorSnackbar));
-                            }
-                            break;
-                    }
+                    track.Name = trackJSON.track.name;
                 }
+                else
+                {
+                    parsingError = true;
+                    ShowError.ShowErrorMessage(ref errorSnackbar, $"Track name is empty", time: 6);
+                }
+
+                if (float.TryParse(trackJSON.track.width.ToString(), out float width))
+                {
+                    track.Width = width;
+                }
+                else
+                {
+                    parsingError = true;
+                    ShowError.ShowErrorMessage(ref errorSnackbar, $"In track \"{track.Name}\" couldn't convert \"{trackJSON.track.width}\" to a number.", time: 6);
+                }
+
+                if (float.TryParse(trackJSON.track.length.ToString(), out float length))
+                {
+                    track.Length = length;
+                }
+                else
+                {
+                    parsingError = true;
+                    ShowError.ShowErrorMessage(ref errorSnackbar, $"In track \"{track.Name}\" couldn't convert \"{trackJSON.track.length}\" to a number.", time: 6);
+                }
+
+                for (int i = 0; i < trackJSON.track.rightSide.Count; i++)
+                {
+                    track.RightSide.Add(ParsePoint(trackJSON.track.rightSide[i].x.ToString(), trackJSON.track.rightSide[i].y.ToString(), ref parsingError, ref track, ref errorSnackbar));
+                }
+
+                for (int i = 0; i < trackJSON.track.leftSide.Count; i++)
+                {
+                    track.LeftSide.Add(ParsePoint(trackJSON.track.leftSide[i].x.ToString(), trackJSON.track.leftSide[i].y.ToString(), ref parsingError, ref track, ref errorSnackbar));
+                }
+
+                for (int i = 0; i < trackJSON.track.centerSide.Count; i++)
+                {
+                    track.Center.Add(ParsePoint(trackJSON.track.centerSide[i].x.ToString(), trackJSON.track.centerSide[i].y.ToString(), ref parsingError, ref track, ref errorSnackbar));
+                }
+            }
+            else
+            {
+                ShowError.ShowErrorMessage(ref errorSnackbar, $"Can't find '{fileName}'", time: 6);
             }
 
             return track;
@@ -145,38 +132,35 @@ namespace ART_TELEMETRY_APP.Tracks.Classes
         }
 
         /// <summary>
-        /// Parses a <see cref="Point"/> from the readed point row <i><point>0;1</point></i>
+        /// Parses a <see cref="Point"/> from the readed <b>x</b> and <b>y</b> coordinate.
         /// </summary>
-        /// <param name="row"></param>
+        /// <param name="coordinateX">Readed <b>x</b> coordinate in string</param>
+        /// <param name="coordinateY">Readed <b>y</b> coordinate in string</param>
         /// <param name="parsingError"></param>
         /// <param name="track"></param>
         /// <param name="errorSnackbar"></param>
-        /// <returns></returns>
-        private static Point ParsePoint(string[] row, ref bool parsingError, ref DriverlessTrack track, ref Snackbar errorSnackbar)
+        /// <returns>A <see cref="Point"/>.</returns>
+        private static Point ParsePoint(string coordinateX, string coordinateY, ref bool parsingError, ref DriverlessTrack track, ref Snackbar errorSnackbar)
         {
             Point point = new Point();
-            if (row.Length >= 2)
+            if (double.TryParse(coordinateX, out double x))
             {
-                if (double.TryParse(row[0], out double x))
-                {
-                    point.X = x;
-                }
-                else
-                {
-                    ShowError.ShowErrorMessage(ref errorSnackbar, $"In track \"{track.Name}\" couldn't convert x coordinate \"{row[0]}\" to a number.", time: 6);
-                    parsingError = true;
-                }
+                point.X = x;
+            }
+            else
+            {
+                ShowError.ShowErrorMessage(ref errorSnackbar, $"In track \"{track.Name}\" couldn't convert x coordinate \"{coordinateX}\" to a number.", time: 6);
+                parsingError = true;
+            }
 
-                double y;
-                if (double.TryParse(row[1], out y))
-                {
-                    point.Y = y;
-                }
-                else
-                {
-                    ShowError.ShowErrorMessage(ref errorSnackbar, $"In track \"{track.Name}\" couldn't convert y coordinate \"{row[1]}\" to a number.", time: 6);
-                    parsingError = true;
-                }
+            if (double.TryParse(coordinateY, out double y))
+            {
+                point.Y = y;
+            }
+            else
+            {
+                ShowError.ShowErrorMessage(ref errorSnackbar, $"In track \"{track.Name}\" couldn't convert y coordinate \"{coordinateY}\" to a number.", time: 6);
+                parsingError = true;
             }
 
             return point;
