@@ -1,5 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
+using System.Windows;
 
 namespace ART_TELEMETRY_APP.Errors.Classes
 {

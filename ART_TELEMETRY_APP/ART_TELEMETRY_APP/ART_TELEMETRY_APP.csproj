@@ -184,6 +184,8 @@
     <Compile Include="Settings\UserControls\SelectDriversAndInputFiles.xaml.cs">
       <DependentUpon>SelectDriversAndInputFiles.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tracks\Classes\DriverlessTrack.cs" />
+    <Compile Include="Tracks\Classes\DriverlessTrackManager.cs" />
     <Compile Include="Tracks\Classes\Track.cs" />
     <Compile Include="Tracks\Classes\TrackManager.cs" />
     <Compile Include="Tracks\UserControls\TrackEditor.xaml.cs">

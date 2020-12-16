@@ -211,7 +211,7 @@ namespace ART_TELEMETRY_APP.Datas.Classes
             progressBar.IsIndeterminate = true;
 
             ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).AddChannels(addChannels);
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateTrack();
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).CreateTrack();
         }
     }
 }

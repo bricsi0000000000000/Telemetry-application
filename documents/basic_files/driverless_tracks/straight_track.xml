@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<track>
+  <name>Straight</name>
+  <width>4</width>
+  <length>15</length>
+  <leftSide>
+    <point>0;0</point>
+    <point>0;1</point>
+  </leftSide>
+  <rightSide>
+    <point>1;0</point>
+    <point>1;1</point>
+  </rightSide>
+  <center>
+    <point>-1;-4</point>
+    <point>-1;-1</point>
+  </center>
+</track>

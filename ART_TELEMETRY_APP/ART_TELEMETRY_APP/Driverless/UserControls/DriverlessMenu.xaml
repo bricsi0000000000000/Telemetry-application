@@ -34,6 +34,7 @@
             </ScrollViewer>
 
             <Button Grid.Row="2"
+                    Name="UncheckAllBtn"
                     Content="Uncheck all"
                     Click="UncheckAllChannels_Click"
                     Background="#FF232323"
@@ -61,7 +62,30 @@
         </Grid>
 
         <Grid Grid.Column="2">
-            <StackPanel x:Name="TrackStackPanel"/>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <materialDesign:Card Margin="5">
+                <StackPanel x:Name="TrackStackPanel"/>
+            </materialDesign:Card>
+
+            <Label Grid.Row="1"
+                   Content="Track layouts"
+                   VerticalContentAlignment="Center"
+                   Margin="5,0"
+                   FontSize="20"
+                   />
+
+            <StackPanel Grid.Row="2"
+                        Margin="5,0">
+                <RadioButton x:Name="TrackStraightRadioButton"
+                             Content="Straight"
+                             IsChecked="True"
+                             />
+            </StackPanel>
         </Grid>
 
         <Grid Name="ReadFileProgressBarGrid"
