@@ -4,6 +4,7 @@ using ScottPlot;
 using ScottPlot.Drawing;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -42,22 +43,37 @@ namespace ART_TELEMETRY_APP.Charts.Usercontrols
             ScottPlotChart.Render();
         }
 
-        private void Grid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        public void InitPlot(double xValue, double yValue, double[] xs, double[] ys, string yAxisLabel)
         {
-            double mouseXPosition = ScottPlotChart.GetMouseCoordinates().x;
-            RenderPlot(mouseXPosition);
+            plottableScatterHighlight = ScottPlotChart.plt.PlotScatterHighlight(xs, ys, markerShape: MarkerShape.none, label: $"{yAxisLabel}: {yValue:f3}");
+            plottableVLine = ScottPlotChart.plt.PlotVLine(xValue, lineStyle: LineStyle.Dash);
+            ScottPlotChart.plt.PlotPoint(xValue, yValue, color: Color.Red, markerSize: 10);
 
-            Console.WriteLine(plottableScatterHighlight.GetPointNearestX(mouseXPosition));
+            ScottPlotChart.plt.Style(ScottPlot.Style.Gray1);
+            ScottPlotChart.plt.Colorset(Colorset.OneHalfDark);
+            ScottPlotChart.plt.YLabel(yAxisLabel);
+            ScottPlotChart.plt.XLabel("x");
+            ScottPlotChart.plt.Legend();
+            ScottPlotChart.Render();
         }
 
-        public void RenderPlot(double mouseXPosition)
+        private void Grid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            /*double mouseXPosition = ScottPlotChart.GetMouseCoordinates().x;
+            RenderPlot(mouseXPosition);
+
+            Console.WriteLine(plottableScatterHighlight.GetPointNearestX(mouseXPosition));*/
+        }
+
+        public void RenderPlot(double xValue, double yValue)
         {
             plottableScatterHighlight.HighlightClear();
             ScottPlotChart.plt.Clear(plottableVLine);
 
-            plottableScatterHighlight.HighlightPointNearestX(mouseXPosition);
+            //  ScottPlotChart.plt.PlotPoint(xValue, yValue);
 
-            plottableVLine = ScottPlotChart.plt.PlotVLine(mouseXPosition, lineStyle: LineStyle.Dash);
+            plottableVLine = ScottPlotChart.plt.PlotVLine(xValue, lineStyle: LineStyle.Dash);
+            plottableScatterHighlight.HighlightPointNearest(xValue, yValue);
 
             ScottPlotChart.Render();
         }

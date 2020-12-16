@@ -1,13 +1,9 @@
-﻿using ART_TELEMETRY_APP.Drivers.Classes;
-using ART_TELEMETRY_APP.Drivers.UserControls;
-using ART_TELEMETRY_APP.Errors.Classes;
+﻿using ART_TELEMETRY_APP.Driverless.UserControls;
+using ART_TELEMETRY_APP.Drivers.Classes;
 using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.InputFiles.UserControls;
-using ART_TELEMETRY_APP.Laps.Classes;
-using ART_TELEMETRY_APP.Laps.UserControls;
 using ART_TELEMETRY_APP.Settings.Classes;
 using ART_TELEMETRY_APP.Settings.UserControls;
-using LiveCharts;
 using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
@@ -18,7 +14,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using static ART_TELEMETRY_APP.InputFiles.Classes.InputFile;
 
 namespace ART_TELEMETRY_APP.Datas.Classes
 {
@@ -55,8 +50,7 @@ namespace ART_TELEMETRY_APP.Datas.Classes
                              Grid progressBarGrid,
                              ProgressBar progressBar,
                              Snackbar errorSnackbar,
-                             ref InputFileListElement inputFileListElement
-                             )
+                             ref InputFileListElement inputFileListElement)
         {
             this.driver = driver;
             this.fileName = fileName;
@@ -74,6 +68,32 @@ namespace ART_TELEMETRY_APP.Datas.Classes
             StartWorker();
         }
 
+        /// <summary>
+        /// Data Reader for driverlessdata
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="progressBarGrid"></param>
+        /// <param name="progressBar"></param>
+        /// <param name="errorSnackbar"></param>
+        public void ReadData(string fileName,
+                             Grid progressBarGrid,
+                             ProgressBar progressBar,
+                             Snackbar errorSnackbar)
+        {
+            this.fileName = fileName;
+            this.progressBarGrid = progressBarGrid;
+            this.progressBar = progressBar;
+            this.errorSnackbar = errorSnackbar;
+
+            progressBarGrid.Visibility = Visibility.Visible;
+            this.progressBar.IsIndeterminate = false;
+            this.progressBar.Value = 0;
+
+            fileLength = File.ReadLines(fileName).Count();
+
+            StartDriverlessWorker();
+        }
+
         private void StartWorker()
         {
             worker = new BackgroundWorker
@@ -83,6 +103,18 @@ namespace ART_TELEMETRY_APP.Datas.Classes
             worker.DoWork += WorkerDoWork;
             worker.ProgressChanged += WorkerProgressChanged;
             worker.RunWorkerCompleted += WorkerCompleted;
+            worker.RunWorkerAsync();
+        }
+
+        private void StartDriverlessWorker()
+        {
+            worker = new BackgroundWorker
+            {
+                WorkerReportsProgress = true
+            };
+            worker.DoWork += WorkerDoWork;
+            worker.ProgressChanged += WorkerProgressChanged;
+            worker.RunWorkerCompleted += DriverlessWorkerCompleted;
             worker.RunWorkerAsync();
         }
 
@@ -171,6 +203,15 @@ namespace ART_TELEMETRY_APP.Datas.Classes
               {
                   ((DriversMenu)MenuManager.GetTab(TextManager.DriversMenuName).Content).ShowError("No longitude or latitude data found!");
               }*/
+        }
+
+        private void DriverlessWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            progressBarGrid.Visibility = Visibility.Hidden;
+            progressBar.IsIndeterminate = true;
+
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).AddChannels(addChannels);
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateTrack();
         }
     }
 }
