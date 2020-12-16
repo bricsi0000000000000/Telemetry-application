@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         x:Class="ART_TELEMETRY_APP.MainWindow"
         mc:Ignorable="d"
-        Title="ART telemetry v_2.0"
+        Title="ART telemetry 2.1"
         Height="700"
         Width="1300"
         WindowStartupLocation="CenterScreen"

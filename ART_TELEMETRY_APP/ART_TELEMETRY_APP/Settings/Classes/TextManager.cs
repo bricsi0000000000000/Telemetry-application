@@ -5,6 +5,7 @@
         #region menu names
 
         #region main menu
+        public static string DriverlessMenuName { get; private set; } = "Driverless";
         public static string SettingsMenuName { get; private set; } = "Settings";
         public static string DiagramsMenuName { get; private set; } = "Diagrams";
         public static string DiagramsSettingsMenuName { get; private set; } = "Diagrams settings";

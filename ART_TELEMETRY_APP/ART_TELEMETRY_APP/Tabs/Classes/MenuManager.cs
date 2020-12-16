@@ -1,4 +1,5 @@
-﻿using ART_TELEMETRY_APP.Drivers.UserControls;
+﻿using ART_TELEMETRY_APP.Driverless.UserControls;
+using ART_TELEMETRY_APP.Drivers.UserControls;
 using ART_TELEMETRY_APP.Settings;
 using ART_TELEMETRY_APP.Settings.Classes;
 using ART_TELEMETRY_APP.Settings.UserControls;
@@ -13,54 +14,25 @@ namespace ART_TELEMETRY_APP
 
         public static void InitMainMenuTabs(TabControl tabControl)
         {
-            TabItem menuTab = new TabItem
-            {
-                Header = TextManager.SettingsMenuName,
-                Content = new SettingsMenu(),
-                Name = "settingsMenuTab"
-            };
-            menuItems.Add(menuTab);
-            tabControl.Items.Add(menuTab);
+            AddTab(TextManager.DriverlessMenuName, new DriverlessMenu(), "driverlessMenuTab", tabControl);
+            AddTab(TextManager.SettingsMenuName, new SettingsMenu(), "settingsMenuTab", tabControl);
+            AddTab(TextManager.DriversMenuName, new DriversMenu(), "driversMenuTab", tabControl);
+            AddTab(TextManager.DiagramsMenuName, new Diagrams(), "diagramsMenuTab", tabControl);
+            AddTab(TextManager.DiagramsSettingsMenuName, new SelectDriversAndInputFiles(), "diagramsSettingsMenuTab", tabControl);
+            //AddTab("test", new Experimental(), "test", tabControl);
+        }
 
-            menuTab = new TabItem
+        private static void AddTab(string header, object content, string name, TabControl tabControl)
+        {
+            TabItem tab = new TabItem
             {
-                Header = TextManager.DriversMenuName,
-                Content = new DriversMenu(),
-                Name = "driversMenuTab",
-                IsSelected = true
-            };
-            menuItems.Add(menuTab);
-            tabControl.Items.Add(menuTab);
-
-            menuTab = new TabItem
-            {
-                Header = TextManager.DiagramsMenuName,
-                Content = new Diagrams(),
-                Name = "diagramsMenuTab"
-            };
-          
-            menuItems.Add(menuTab);
-            tabControl.Items.Add(menuTab);
-
-            menuTab = new TabItem
-            {
-                Header = TextManager.DiagramsSettingsMenuName,
-                Content = new SelectDriversAndInputFiles(),
-                Name = "diagramsSettingsMenuTab"
+                Header = header,
+                Content = content,
+                Name = name
             };
 
-            menuItems.Add(menuTab);
-            tabControl.Items.Add(menuTab);
-
-            menuTab = new TabItem
-            {
-                Header = "test",
-                Content = new Experimental(),
-                Name = "test"
-            };
-
-            menuItems.Add(menuTab);
-            tabControl.Items.Add(menuTab);
+            menuItems.Add(tab);
+            tabControl.Items.Add(tab);
         }
 
         public static TabItem GetTab(string name) => menuItems.Find(x => x.Header.Equals(name));

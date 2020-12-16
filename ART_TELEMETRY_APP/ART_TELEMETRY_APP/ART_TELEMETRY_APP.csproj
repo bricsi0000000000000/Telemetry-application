@@ -126,6 +126,9 @@
     <Compile Include="Datas\UserControls\SelectedChannel.xaml.cs">
       <DependentUpon>SelectedChannel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Driverless\UserControls\DriverlessMenu.xaml.cs">
+      <DependentUpon>DriverlessMenu.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Drivers\UserControls\DriverItem.xaml.cs">
       <DependentUpon>DriverItem.xaml</DependentUpon>
     </Compile>
@@ -224,6 +227,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Datas\UserControls\SelectedChannel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Driverless\UserControls\DriverlessMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -384,6 +391,7 @@
     <Resource Include="Icons\art_logo_jBd_icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Driverless\Classes\" />
     <Folder Include="Images\" />
     <Folder Include="Sectors\Classes\" />
     <Folder Include="Tabs\UserControls\" />

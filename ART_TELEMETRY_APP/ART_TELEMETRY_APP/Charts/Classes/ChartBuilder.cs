@@ -1,27 +1,17 @@
 ﻿using ART_TELEMETRY_APP.Charts.Classes;
 using ART_TELEMETRY_APP.Charts.Usercontrols;
-using ART_TELEMETRY_APP.InputFiles;
 using ART_TELEMETRY_APP.InputFiles.Classes;
-using ART_TELEMETRY_APP.Laps;
 using ART_TELEMETRY_APP.Laps.Classes;
 using ART_TELEMETRY_APP.Settings.Classes;
 using LiveCharts;
-using LiveCharts.Defaults;
-using LiveCharts.Wpf;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using ART_TELEMETRY_APP.Laps.UserControls;
 using ART_TELEMETRY_APP.Datas.Classes;
-using ART_TELEMETRY_APP.Drivers.Classes;
 using System;
-using ART_TELEMETRY_APP.Groups.Classes;
-using ScottPlot;
-using ScottPlot.Drawing;
 
 namespace ART_TELEMETRY_APP
 {

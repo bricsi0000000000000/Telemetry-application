@@ -16,6 +16,7 @@ namespace ART_TELEMETRY_APP.Datas.Classes
         }
         public string ChannelName { get; private set; }
         public List<double> ChannelData { get; private set; }
+        public bool ChannelIsActive { get; set; } = false;
 
         public void AddChannelData(float data) => ChannelData.Add(data);
 
