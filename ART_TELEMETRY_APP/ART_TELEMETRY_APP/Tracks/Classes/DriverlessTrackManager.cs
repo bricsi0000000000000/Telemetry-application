@@ -18,9 +18,9 @@ namespace ART_TELEMETRY_APP.Tracks.Classes
         /// </summary>
         public static List<DriverlessTrack> DriverlessTracks { get; private set; } = new List<DriverlessTrack>();
 
-
         /// <summary>
-        /// Loads all tracks from files
+        /// Loads all tracks from files.
+        /// Should be called in <see cref="MainWindow"/>.
         /// </summary>
         /// <param name="errorSnackbar"><see cref="Snackbar"/> that shows erro message.</param>
         public static void LoadTracks(ref Snackbar errorSnackbar)
@@ -165,5 +165,12 @@ namespace ART_TELEMETRY_APP.Tracks.Classes
 
             return point;
         }
+
+        /// <summary>
+        /// Finds a <see cref="DriverlessTrack"/> in <see cref="DriverlessTracks"/> based on <paramref name="trackName"/>.
+        /// </summary>
+        /// <param name="trackName">The name of the track to be found.</param>
+        /// <returns>A <see cref="DriverlessTrack"/>.</returns>
+        public static DriverlessTrack GetTrack(string trackName) => DriverlessTracks.Find(x => x.Name.Equals(trackName));
     }
 }

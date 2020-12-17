@@ -4,7 +4,6 @@ using ART_TELEMETRY_APP.Errors.Classes;
 using ART_TELEMETRY_APP.Laps;
 using ART_TELEMETRY_APP.Laps.Classes;
 using ART_TELEMETRY_APP.Settings.Classes;
-using LiveCharts;
 using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,4 @@
 ﻿using ART_TELEMETRY_APP.InputFiles;
-using LiveCharts;
 using System.Collections.Generic;
 
 namespace ART_TELEMETRY_APP.Datas.Classes

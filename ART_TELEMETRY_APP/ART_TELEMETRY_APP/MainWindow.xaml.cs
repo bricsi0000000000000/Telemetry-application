@@ -1,7 +1,5 @@
 ﻿using ART_TELEMETRY_APP.Groups.Classes;
 using ART_TELEMETRY_APP.Tracks.Classes;
-using LiveCharts;
-using LiveCharts.Wpf;
 using System;
 using System.Linq;
 using System.Windows;

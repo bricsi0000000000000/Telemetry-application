@@ -1,11 +1,16 @@
 ﻿using ART_TELEMETRY_APP.Charts.Usercontrols;
 using ART_TELEMETRY_APP.Datas.Classes;
+using ART_TELEMETRY_APP.Errors.Classes;
+using ART_TELEMETRY_APP.Groups.Classes;
+using ART_TELEMETRY_APP.Tracks.Classes;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Point = System.Windows.Point;
 
 namespace ART_TELEMETRY_APP.Driverless.UserControls
 {
@@ -17,7 +22,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// <summary>
         /// A list of the channels from the input file.
         /// </summary>
-        private List<Channel> channels = new List<Channel>();
+        public List<Channel> Channels { get; private set; } = new List<Channel>();
 
         /// <summary>
         /// Constructor of the <see cref="DriverlessMenu"/> class.
@@ -28,16 +33,48 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         }
 
         /// <summary>
-        /// Initialize the channels based on <see cref="channels"/>.
+        /// Initialize the channels based on <see cref="Channels"/>.
         /// </summary>
         private void InitChannels()
         {
             ChannelsStackPanel.Children.Clear();
 
-            foreach (var channel in channels)
+            foreach (var channel in Channels)
             {
                 AddChannelCheckBox(channel);
             }
+        }
+
+        /// <summary>
+        /// Initialize the groups based on <see cref="GroupManager.Groups"/>.
+        /// </summary>
+        private void InitGroups()
+        {
+            foreach (var group in GroupManager.Groups)
+            {
+                if (group.Driverless)
+                {
+                    var checkBox = new CheckBox()
+                    {
+                        Content = group.Name
+                    };
+                    checkBox.Click += GroupCheckBox_Click;
+
+                    GroupsStackPanel.Children.Add(checkBox);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Updates groups after the <see cref="CheckBox"/>-es state is changed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GroupCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            var checkBox = (CheckBox)sender;
+
+            
         }
 
         /// <summary>
@@ -58,7 +95,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         }
 
         /// <summary>
-        /// Updates the Charts after a <see cref="CheckBox"/>-es state is changed.
+        /// Updates charts after the <see cref="CheckBox"/>-es state is changed.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -69,6 +106,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
             GetChannel(checkBox.Content.ToString()).ChannelIsActive = (bool)checkBox.IsChecked;
 
             UpdateCharts();
+            UpdateTrack();
         }
 
         /// <summary>
@@ -77,7 +115,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         private void UpdateCharts()
         {
             ChartsStackPanel.Children.Clear();
-            foreach (var channel in channels)
+            foreach (var channel in Channels)
             {
                 if (channel.ChannelIsActive)
                 {
@@ -94,52 +132,154 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         private Chart BuildChart(Channel channel)
         {
             var chart = new Chart(channel.ChannelName, channel.ChannelName);
-            var data = ConvertChannelDataToPlotData(channel.ChannelData.ToArray());
+            var data = ConvertChannelDataToPlotData(channel.ChannelData.ToArray(), HorizontalAxisData.ChannelData);
             int dataIndex = (int)DataSlider.Value;
 
             if (dataIndex < HorizontalAxisData.ChannelData.Count)
             {
-                chart.InitPlot(HorizontalAxisData.ChannelData[dataIndex],
-                               channel.ChannelData[dataIndex],
-                               data.Item1,
-                               data.Item2,
-                               channel.ChannelName);
+                chart.InitPlot(xValue: HorizontalAxisData.ChannelData[dataIndex],
+                               yValue: channel.ChannelData[dataIndex],
+                               xAxisValues: data.Item1,
+                               yAxisValues: data.Item2,
+                               vLineColor: Color.LightGreen,
+                               yAxisLabel: channel.ChannelName);
             }
             else
             {
-                chart.InitPlot(HorizontalAxisData.ChannelData.Last(),
-                               channel.ChannelData.Last(),
-                               data.Item1,
-                               data.Item2,
-                               channel.ChannelName);
+                chart.InitPlot(xValue: HorizontalAxisData.ChannelData.Last(),
+                               yValue: channel.ChannelData.Last(),
+                               xAxisValues: data.Item1,
+                               yAxisValues: data.Item2,
+                               vLineColor: Color.LightGreen,
+                               yAxisLabel: channel.ChannelName);
             }
-
-            return chart;
-        }
-
-        private Chart BuildTrack()
-        {
-            var chart = new Chart("TrackChart", "track");
-            
 
             return chart;
         }
 
         /// <summary>
-        /// Converts all the data from a <see cref="Channel"/> to plot data.
+        /// Builds the track.
+        /// </summary>
+        /// <returns>The <see cref="Chart"/> that contains the selected track width the cars path.</returns>
+        private Chart BuildTrack()
+        {
+            var chart = new Chart("TrackChart", "track");
+
+            if ((bool)TrackStraightRadioButton.IsChecked)
+            {
+                var track = DriverlessTrackManager.GetTrack("Straight");
+                if (track != null)
+                {
+                    var data = ConvertChannelDataToPlotData(track.LeftSide);
+
+                    chart.InitPlot(xAxisValues: data.Item1,
+                                   yAxisValues: data.Item2,
+                                   color: Color.Black);
+
+                    data = ConvertChannelDataToPlotData(track.RightSide);
+                    chart.InitPlot(xAxisValues: data.Item1,
+                                   yAxisValues: data.Item2,
+                                   color: Color.Black);
+
+                    data = ConvertChannelDataToPlotData(track.Center);
+                    chart.InitPlot(xAxisValues: data.Item1,
+                                   yAxisValues: data.Item2,
+                                   color: Color.Black,
+                                   lineStyle: ScottPlot.LineStyle.Dash);
+
+                    var channelData = CreateOffset(GetChannel("y").ChannelData, (float)GetChannel("c0ref").ChannelData.First());
+                    data = ConvertChannelDataToPlotData(HorizontalAxisData.ChannelData.ToArray(), channelData);
+                    int dataIndex = (int)DataSlider.Value;
+                    double xValue = 0;
+                    double yValue = 0;
+                    if (dataIndex < HorizontalAxisData.ChannelData.Count)
+                    {
+                        xValue = channelData[dataIndex];
+                        yValue = HorizontalAxisData.ChannelData[dataIndex];
+                    }
+                    else
+                    {
+                        xValue = channelData.Last();
+                        yValue = HorizontalAxisData.ChannelData.Last();
+                    }
+
+                    chart.InitPlot(xValue: xValue,
+                                   yValue: yValue,
+                                   xAxisValues: data.Item1,
+                                   yAxisValues: data.Item2,
+                                   vLineColor: Color.LightGreen,
+                                   yAxisLabel: "y",
+                                   plotVLine: false,
+                                   plotHighlightPoint: false,
+                                   labelEnabled: true);
+
+                    chart.SetAxisLimitsToAuto();
+                    chart.SetFrameBorder(left: false, bottom: false, top: false, right: false);
+                    var yawChannelData = GetChannel("yawangle").ChannelData;
+                    if (yawChannelData.Count < dataIndex)
+                    {
+                        chart.PlotImage(xValue, yValue, yawChannelData[dataIndex]);
+                    }
+                    else
+                    {
+                        chart.PlotImage(xValue, yValue, yawChannelData.Last());
+                    }
+                }
+                else
+                {
+                    ShowError.ShowErrorMessage(ref ErrorSnackbar, "Straight track can't be found!");
+                }
+            }
+
+            return chart;
+        }
+
+        private List<double> CreateOffset(List<double> list, float offset)
+        {
+            var newList = new List<double>();
+            foreach (var number in list)
+            {
+                newList.Add(number - offset);
+            }
+
+            return newList;
+        }
+
+        /// <summary>
+        /// Converts all data from a <see cref="Channel"/> to plot data.
         /// The horizontal <i>(x)</i> axis is based on <see cref="HorizontalAxisData"/>.
         /// </summary>
         /// <param name="lapData">Data from a single <see cref="Channel"/> converted to a double array.</param>
+        /// <param name="horizontalAxisData">Horizontal axis data.</param>
         /// <returns>Horizontal and vertical axes data.</returns>
-        private Tuple<double[], double[]> ConvertChannelDataToPlotData(double[] lapData)
+        private Tuple<double[], double[]> ConvertChannelDataToPlotData(double[] lapData, List<double> horizontalAxisData)
         {
-            List<double> x = new List<double>();
-            List<double> y = new List<double>();
+            var x = new List<double>();
+            var y = new List<double>();
 
             for (ushort i = 0; i < lapData.Length; i++)
             {
-                x.Add(HorizontalAxisData.ChannelData[i]);
+                x.Add(horizontalAxisData[i]);
                 y.Add(lapData[i]);
+            }
+
+            return new Tuple<double[], double[]>(x.ToArray(), y.ToArray());
+        }
+
+        /// <summary>
+        /// Converts a <see cref="DriverlessTrack"/>-s side points to plot data.
+        /// </summary>
+        /// <param name="points">Convertable list of <see cref="Point"/>-s.</param>
+        /// <returns>Converted plot data.</returns>
+        private Tuple<double[], double[]> ConvertChannelDataToPlotData(List<Point> points)
+        {
+            var x = new List<double>();
+            var y = new List<double>();
+
+            for (ushort i = 0; i < points.Count; i++)
+            {
+                x.Add(points[i].X);
+                y.Add(points[i].Y);
             }
 
             return new Tuple<double[], double[]>(x.ToArray(), y.ToArray());
@@ -157,7 +297,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// <returns>A single <see cref="Channel"/></returns>
         private Channel GetChannel(string channelName)
         {
-            return channels.Find(x => x.ChannelName.Equals(channelName));
+            return Channels.Find(x => x.ChannelName.Equals(channelName));
         }
 
         /// <summary>
@@ -191,7 +331,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// The <i>x</i> axis is the <see cref="HorizontalAxisData"/>.
         /// The <i>y</i> axis is the <b>y</b> Channels <see cref="Channel.ChannelData"/>.
         /// </summary>
-        public void CreateTrack()
+        public void UpdateTrack()
         {
             TrackStackPanel.Children.Clear();
             TrackStackPanel.Children.Add(BuildTrack());
@@ -214,8 +354,9 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// <param name="channels">New channels.</param>
         public void AddChannels(List<Channel> channels)
         {
-            this.channels = channels;
+            Channels = channels;
             InitChannels();
+            InitGroups();
             SetUpDataSlider();
 
             // TODO: ha nem kell a highlight karika, akkor a kikommentelt sor kell, az UpdateCharts(); pedig nem
@@ -224,11 +365,11 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         }
 
         /// <summary>
-        /// Sets the <see cref="DataSlider"/>s maximum value based on the <see cref="channels"/> first <see cref="Channel.ChannelData"/>-s count.
+        /// Sets the <see cref="DataSlider"/>s maximum value based on the <see cref="Channels"/> first <see cref="Channel.ChannelData"/>-s count.
         /// </summary>
         private void SetUpDataSlider()
         {
-            DataSlider.Maximum = channels.First().ChannelData.Count;
+            DataSlider.Maximum = Channels.First().ChannelData.Count;
         }
 
         /// <summary>
@@ -239,21 +380,25 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         private void DataSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             // TODO: ha nem kell a highlight karika, akkor a kikommentelt sor kell, az UpdateCharts(); pedig nem
-            UpdateCharts();
-            //ChangeChartHighlight((int)((Slider)sender).Value);
+            //  UpdateCharts();
+            UpdateTrack();
+            ChangeChartHighlight((int)((Slider)sender).Value);
         }
 
-       /* private void ChangeChartHighlight(int dataIndex)
+        private void ChangeChartHighlight(int dataIndex)
         {
             foreach (Chart chart in ChartsStackPanel.Children)
             {
-                if (dataIndex <= HorizontalAxisData.ChannelData.Count)
+                if (dataIndex < HorizontalAxisData.ChannelData.Count)
                 {
-                    chart.RenderPlot(HorizontalAxisData.ChannelData[dataIndex],
-                                     GetChannel(chart.ChartName).ChannelData[dataIndex]);
+                    var channel = GetChannel(chart.ChartName);
+                    chart.RenderPlot(xValue: HorizontalAxisData.ChannelData[dataIndex],
+                                     yValue: channel.ChannelData[dataIndex],
+                                     yAxisLabel: chart.ChartName,
+                                     vLineColor: Color.LightGreen);
                 }
             }
-        }*/
+        }
 
         /// <summary>
         /// Unchecks all the checked Checkboxes inside the <see cref="ChannelsStackPanel"/>.
@@ -262,7 +407,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// <param name="e"></param>
         private void UncheckAllChannels_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var channel in channels)
+            foreach (var channel in Channels)
             {
                 channel.ChannelIsActive = false;
             }

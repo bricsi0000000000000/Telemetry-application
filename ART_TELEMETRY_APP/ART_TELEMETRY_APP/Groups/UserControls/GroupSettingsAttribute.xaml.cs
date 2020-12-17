@@ -30,8 +30,12 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         private void DeleteAttribute_Click(object sender, RoutedEventArgs e)
         {
             GroupManager.GetGroup(groupName).RemoveAttribute(Attribute);
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ActiveAttribute = GroupManager.Groups.First().Attributes.First();
+            if (GroupManager.Groups.Count > 0)
+            {
+                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ActiveAttribute = GroupManager.Groups.First().Attributes.First();
+            }
             ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitActiveChannelSelectableAttributes();
         }
 
         private void Grid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)

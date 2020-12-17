@@ -1,7 +1,9 @@
 ﻿using ART_TELEMETRY_APP.Driverless.UserControls;
 using ART_TELEMETRY_APP.Drivers.Classes;
+using ART_TELEMETRY_APP.Groups.UserControls;
 using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.InputFiles.UserControls;
+using ART_TELEMETRY_APP.Settings;
 using ART_TELEMETRY_APP.Settings.Classes;
 using ART_TELEMETRY_APP.Settings.UserControls;
 using MaterialDesignThemes.Wpf;
@@ -17,6 +19,10 @@ using System.Windows.Controls;
 
 namespace ART_TELEMETRY_APP.Datas.Classes
 {
+    /// <summary>
+    /// Reads a files content.
+    /// This class follows the singleton design pattern.
+    /// </summary>
     class DataReader
     {
         #region instance
@@ -211,7 +217,8 @@ namespace ART_TELEMETRY_APP.Datas.Classes
             progressBar.IsIndeterminate = true;
 
             ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).AddChannels(addChannels);
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).CreateTrack();
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateTrack();
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
         }
     }
 }

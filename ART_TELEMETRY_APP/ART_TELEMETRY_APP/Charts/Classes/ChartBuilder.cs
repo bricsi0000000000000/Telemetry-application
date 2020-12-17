@@ -3,7 +3,6 @@ using ART_TELEMETRY_APP.Charts.Usercontrols;
 using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.Laps.Classes;
 using ART_TELEMETRY_APP.Settings.Classes;
-using LiveCharts;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -58,7 +57,7 @@ namespace ART_TELEMETRY_APP
                             for (ushort lapIndex = 0; lapIndex < selectedLaps.Count; lapIndex++)
                             {
                                 var data = CalculateSerieValues(true, channel, ref selectedLaps, lapIndex, InputFileManager.InputFiles[i]);
-                                chart.InitPlot(data.Item1, data.Item2, channel.ChannelName, selectedLaps[lapIndex].Index, InputFileManager.InputFiles[i].DriverName, InputFileManager.InputFiles[i].FileName);
+                                chart.InitPlot(data.Item1, data.Item2, selectedLaps[lapIndex].Index, InputFileManager.InputFiles[i].DriverName, InputFileManager.InputFiles[i].FileName, channel.ChannelName);
 
                                 /* switch (filter)
                                  {
@@ -325,7 +324,7 @@ namespace ART_TELEMETRY_APP
         /// <param name="data"></param>
         /// <param name="Q">Sensitivity of the filter. The smaller this value is, more "smoother" will be the data.</param>
         /// <returns></returns>
-        private static ChartValues<double> FilteredData(ChartValues<double> data, double Q)
+      /*  private static ChartValues<double> FilteredData(ChartValues<double> data, double Q)
         {
             var filteredData = new ChartValues<double>();
             var filter = new KalmanFilter(1, 1, Q, 1, 0.1, data[0]);
@@ -335,7 +334,7 @@ namespace ART_TELEMETRY_APP
             }
 
             return filteredData;
-        }
+        }*/
 
         /* private static float GetKalmanSensitivity(int lapIndex, string driverName, string groupName)
                      => ((LapsContent)((DriverContentTab)((DiagramsMenu)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(driverName).Content).GetTab(groupName).Content).GetLapListElement(lapIndex + 1).KalmanSensitivity;

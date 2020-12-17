@@ -29,9 +29,44 @@
                     Click="ReadFileBtn_Click"
                     Margin="5"/>
 
-            <ScrollViewer Grid.Row="1">
-                <StackPanel Name="ChannelsStackPanel"/>
-            </ScrollViewer>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="34"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="34"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <materialDesign:Card Margin="5,2.5" Background="#FF232323">
+                    <Label Content="Channels"
+                           VerticalContentAlignment="Center"
+                           HorizontalContentAlignment="Center"
+                           Padding="0,0,0,3"/>
+                </materialDesign:Card>
+
+                <materialDesign:Card Grid.Row="1"
+                                     Margin="5,2.5">
+                    <ScrollViewer Margin="5">
+                        <StackPanel Name="ChannelsStackPanel"/>
+                    </ScrollViewer>
+                </materialDesign:Card>
+
+                <materialDesign:Card Grid.Row="2"
+                                     Margin="5,2.5"
+                                     Background="#FF232323">
+                    <Label Content="Groups"
+                           VerticalContentAlignment="Center"
+                           HorizontalContentAlignment="Center"
+                           Padding="0,0,0,3"/>
+                </materialDesign:Card>
+
+                <materialDesign:Card Grid.Row="3"
+                                     Margin="5,2.5">
+                    <ScrollViewer Margin="5">
+                        <StackPanel Name="GroupsStackPanel"/>
+                    </ScrollViewer>
+                </materialDesign:Card>
+            </Grid>
 
             <Button Grid.Row="2"
                     Name="UncheckAllBtn"
@@ -82,9 +117,12 @@
             <StackPanel Grid.Row="2"
                         Margin="5,0">
                 <RadioButton x:Name="TrackStraightRadioButton"
-                             Content="Straight"
+                             GroupName="Tracks"
                              IsChecked="True"
-                             />
+                             VerticalContentAlignment="Center"
+                             >
+                    <Label Content="Straight" Margin="0,0,0,4"/>
+                </RadioButton>
             </StackPanel>
         </Grid>
 
