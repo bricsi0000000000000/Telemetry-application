@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ART_TELEMETRY_APP.Datas.Classes
 {
@@ -145,7 +146,7 @@ namespace ART_TELEMETRY_APP.Datas.Classes
                  };*/
                 //channel.InputFileName = fileNameWithoutPath;
                 //channel.DriverName = driver.Name;
-                addChannels.Add(new Channel(channelName));
+                addChannels.Add(new Channel(channelName, ((SolidColorBrush)ColorManager.GetChartColor).Color));
             }
 
             uint progressIndex = 0;

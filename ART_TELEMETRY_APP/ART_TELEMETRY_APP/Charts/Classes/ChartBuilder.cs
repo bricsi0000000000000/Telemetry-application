@@ -50,14 +50,14 @@ namespace ART_TELEMETRY_APP
 
                     foreach (var channel in InputFileManager.InputFiles[i].Channels)
                     {
-                        if (selectedChannels.Contains(channel.ChannelName))
+                        if (selectedChannels.Contains(channel.Name))
                         {
-                            var chart = ((LapsContent)lapsContent.Content).GetChart(((LapsContent)lapsContent.Content).Group.Name + channel.ChannelName);
+                            var chart = ((LapsContent)lapsContent.Content).GetChart(((LapsContent)lapsContent.Content).Group.Name + channel.Name);
                             ((LapsContent)lapsContent.Content).TrackSVG.Data = Geometry.Parse(InputFileManager.InputFiles[i].AllLapsSVG);
                             for (ushort lapIndex = 0; lapIndex < selectedLaps.Count; lapIndex++)
                             {
                                 var data = CalculateSerieValues(true, channel, ref selectedLaps, lapIndex, InputFileManager.InputFiles[i]);
-                                chart.InitPlot(data.Item1, data.Item2, selectedLaps[lapIndex].Index, InputFileManager.InputFiles[i].DriverName, InputFileManager.InputFiles[i].FileName, channel.ChannelName);
+                                chart.InitPlot(data.Item1, data.Item2, selectedLaps[lapIndex].Index, InputFileManager.InputFiles[i].DriverName, InputFileManager.InputFiles[i].FileName, channel.Name);
 
                                 /* switch (filter)
                                  {
@@ -95,7 +95,8 @@ namespace ART_TELEMETRY_APP
                 ushort gridRowIndex = 0;
                 foreach (var attribute in ((LapsContent)lapsContent.Content).Group.Attributes)
                 {
-                    var chart = new Chart(((LapsContent)lapsContent.Content).Group.Name + attribute, attribute);
+                    var chart = new Chart(((LapsContent)lapsContent.Content).Group.Name + attribute);
+                    chart.AddChannelName(attribute);
 
                     ChartManager.CursorChannelNames.Add(attribute);
                     ChartManager.CursorChannelData.Add(0);
@@ -252,15 +253,15 @@ namespace ART_TELEMETRY_APP
                           DriverManager.GetDriver(data.DriverName).GetInputFile(data.InputFileName).Times :
                           DriverManager.GetDriver(data.DriverName).GetInputFile(data.InputFileName).Distances;*/
 
-            orderBy.FromIndex = channelData.ChannelData.Count * lap.FromIndex / inputFile.Laps.Sum(x => x.Points.Count);
-            orderBy.ToIndex = channelData.ChannelData.Count * lap.ToIndex / inputFile.Laps.Sum(x => x.Points.Count);
+            orderBy.FromIndex = channelData.Data.Count * lap.FromIndex / inputFile.Laps.Sum(x => x.Points.Count);
+            orderBy.ToIndex = channelData.Data.Count * lap.ToIndex / inputFile.Laps.Sum(x => x.Points.Count);
             //ushort longestLapFromIndex = (ushort)(data.AllData.Count * longestLap.FromIndex / inputFile.Laps.Sum(x => x.Points.Count));
             // ushort longestLapToIndex = (ushort)(data.AllData.Count * longestLap.ToIndex / inputFile.Laps.Sum(x => x.Points.Count));
 
             var convertedLapValues = new List<double>();
             for (int i = inputFile.Distances[lap.Index].FromIndex; i < inputFile.Distances[lap.Index].ToIndex; i++)
             {
-                convertedLapValues.Add(channelData.ChannelData[i]);
+                convertedLapValues.Add(channelData.Data[i]);
                 //orderBy.Data.Add(allDistances[i]);
             }
 

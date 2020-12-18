@@ -42,7 +42,7 @@ namespace ART_TELEMETRY_APP
 
                     foreach (var channel in InputFileManager.InputFiles[i].Channels)
                     {
-                        if (selectedChannels.Contains(channel.ChannelName))
+                        if (selectedChannels.Contains(channel.Name))
                         {
                             //var chart = ((LapsContent)lapsContent.Content).GetChart(((LapsContent)lapsContent.Content).Group.Name + channel.ChannelName);
                             ((LapsContent)lapsContent.Content).UpdateCursorData();

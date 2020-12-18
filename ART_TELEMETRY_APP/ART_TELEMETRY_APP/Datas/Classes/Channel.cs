@@ -1,5 +1,6 @@
 ﻿using ART_TELEMETRY_APP.InputFiles;
 using System.Collections.Generic;
+using System.Windows.Media;
 
 namespace ART_TELEMETRY_APP.Datas.Classes
 {
@@ -8,16 +9,18 @@ namespace ART_TELEMETRY_APP.Datas.Classes
     /// </summary>
     public class Channel
     {
-        public Channel(string channelName)
+        public Channel(string channelName, Color color)
         {
-            ChannelName = channelName;
-            ChannelData = new List<double>();
+            Name = channelName;
+            Data = new List<double>();
+            Color = color;
         }
-        public string ChannelName { get; private set; }
-        public List<double> ChannelData { get; private set; }
-        public bool ChannelIsActive { get; set; } = false;
+        public string Name { get; private set; }
+        public List<double> Data { get; private set; }
+        public bool IsActive { get; set; } = false;
+        public Color Color { get; private set; }
 
-        public void AddChannelData(float data) => ChannelData.Add(data);
+        public void AddChannelData(float data) => Data.Add(data);
 
 
        // public LineSerieOptions Option { get; set; }

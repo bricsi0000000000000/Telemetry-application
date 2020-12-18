@@ -1,11 +1,13 @@
 ﻿using ART_TELEMETRY_APP.Groups.Classes;
 using ART_TELEMETRY_APP.Settings;
 using ART_TELEMETRY_APP.Settings.Classes;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace ART_TELEMETRY_APP.Groups.UserControls
 {
@@ -31,7 +33,21 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
             GroupName = groupName;
             GroupLbl.Content = groupName;
 
-            GroupIcon.Kind = driverless ? MaterialDesignThemes.Wpf.PackIconKind.Robot : MaterialDesignThemes.Wpf.PackIconKind.RacingHelmet;
+            var logo = new BitmapImage();
+            logo.BeginInit();
+
+            if (driverless)
+            {
+                logo.UriSource = new Uri("pack://application:,,,/ART_TELEMETRY_APP;component/Images/daisy.png");
+            }
+            else
+            {
+                logo.UriSource = new Uri("pack://application:,,,/ART_TELEMETRY_APP;component/Images/art_banner.png");
+            }
+
+            logo.EndInit();
+
+            GroupTypeImage.Source = logo;
         }
 
         /// <summary>
@@ -57,16 +73,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         /// <param name="e"></param>
         private void Grid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ActiveGroupName = GroupName;
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
-            if (GroupManager.GetGroup(GroupName).Driverless)
-            {
-                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitActiveChannelSelectableAttributes();
-            }
-            else
-            {
-                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).DestroyAllActiveChannelSelectableAttributes();
-            }
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).GroupSettingsItemClicked(GroupName);
         }
 
         /// <summary>

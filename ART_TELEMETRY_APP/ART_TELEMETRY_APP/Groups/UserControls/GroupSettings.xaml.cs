@@ -75,8 +75,8 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
                 {
                     var checkBox = new CheckBox()
                     {
-                        Content = channel.ChannelName,
-                        IsChecked = GetGroupSettingsAttribute(channel.ChannelName) != null
+                        Content = channel.Name,
+                        IsChecked = GetGroupSettingsAttribute(channel.Name) != null
                     };
                     checkBox.Click += ChannelCheckBox_Click;
                     GroupChannelsStackPanel.Children.Add(checkBox);
@@ -171,7 +171,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         /// </summary>
         /// <param name="name">Name of the <see cref="GroupSettingsItem"/> you want to find.</param>
         /// <returns>A <see cref="GroupSettingsItem"/>.</returns>
-        public GroupSettingsItem GetGroupSettingsContent(string name) => groupSettingsItems.Find(n => n.Name.Equals(name));
+        public GroupSettingsItem GetGroupSettingsContent(string name) => groupSettingsItems.Find(n => n.GroupName.Equals(name));
 
         /// <summary>
         /// Finds a <see cref="GroupSettingsAttribute"/> based on <paramref name="name"/>.
@@ -229,6 +229,24 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
             InitGroups();
 
             GroupManager.SaveGroups();
+        }
+
+        /// <summary>
+        /// Updates the groups in the settings menu, when one of the <see cref="GroupSettingsItem"/> is clicked.
+        /// </summary>
+        /// <param name="groupName">Clicked <see cref="GroupSettingsItem"/>s group name.</param>
+        public void GroupSettingsItemClicked(string groupName)
+        {
+            ActiveGroupName = groupName;
+            InitGroups();
+            if (GroupManager.GetGroup(groupName).Driverless)
+            {
+                InitActiveChannelSelectableAttributes();
+            }
+            else
+            {
+                DestroyAllActiveChannelSelectableAttributes();
+            }
         }
     }
 }
