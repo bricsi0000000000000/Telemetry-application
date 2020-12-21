@@ -34,7 +34,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         /// Active attribute name.
         /// Default is empty string.
         /// </summary>
-        public string ActiveAttribute { get; set; } = string.Empty;
+        public Attribute ActiveAttribute { get; set; }
 
         /// <summary>
         /// Constructor for <see cref="GroupSettings"/>.
@@ -157,9 +157,9 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         {
             AttributesStackPanel.Children.Clear();
             groupSettingsAttributes.Clear();
-            foreach (string attribute in GroupManager.GetGroup(ActiveGroupName).Attributes)
+            foreach (var attribute in GroupManager.GetGroup(ActiveGroupName).Attributes)
             {
-                var groupSettingsAttribute = new GroupSettingsAttribute(attribute, ActiveGroupName);
+                var groupSettingsAttribute = new GroupSettingsAttribute(attribute.Name, ActiveGroupName, attribute.Color);
                 groupSettingsAttribute.ChangeColorMode(attribute.Equals(ActiveAttribute));
                 AttributesStackPanel.Children.Add(groupSettingsAttribute);
                 groupSettingsAttributes.Add(groupSettingsAttribute);
@@ -178,7 +178,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         /// </summary>
         /// <param name="name">Name of the <see cref="GroupSettingsAttribute"/> you want to find.</param>
         /// <returns>A <see cref="GroupSettingsAttribute"/>.</returns>
-        public GroupSettingsAttribute GetGroupSettingsAttribute(string name) => groupSettingsAttributes.Find(n => n.Attribute.Equals(name));
+        public GroupSettingsAttribute GetGroupSettingsAttribute(string name) => groupSettingsAttributes.Find(n => n.AttributeName.Equals(name));
 
         /// <summary>
         /// Adds a group based on <see cref="AddGroupTxtBox"/>es content.
@@ -224,7 +224,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
             }
 
             GroupManager.GetGroup(ActiveGroupName).AddAttribute(AddAttributeTxtBox.Text);
-            ActiveAttribute = AddAttributeTxtBox.Text;
+            ActiveAttribute = GroupManager.GetGroup(ActiveGroupName).GetAttribute(AddAttributeTxtBox.Text);
             AddAttributeTxtBox.Text = string.Empty;
             InitGroups();
 

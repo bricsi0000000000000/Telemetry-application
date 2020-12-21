@@ -16,22 +16,17 @@ namespace ART_TELEMETRY_APP
 
         public static void LoadTracks(ref Snackbar errorSnackbar)
         {
-            ReadTracks(ref errorSnackbar);
-        }
-
-        private static void ReadTracks(ref Snackbar errorSnackbar)
-        {
             if (File.Exists(TextManager.TracksFileName))
             {
-                TrackReader();
+                ReadTracks();
             }
             else
             {
-                ShowError.ShowErrorMessage(ref errorSnackbar, string.Format("Couldn't load tracks, because '{0}' file not found!", TextManager.TracksFileName), 3);
+                ShowError.ShowErrorMessage(ref errorSnackbar, $"Couldn't load tracks, because '{TextManager.TracksFileName}' file not found!", 3);
             }
         }
 
-        private static void TrackReader()
+        private static void ReadTracks()
         {
             Tracks.Clear();
 

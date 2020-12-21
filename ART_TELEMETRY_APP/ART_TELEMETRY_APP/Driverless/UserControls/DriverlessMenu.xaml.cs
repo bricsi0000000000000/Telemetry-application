@@ -3,13 +3,16 @@ using ART_TELEMETRY_APP.Datas.Classes;
 using ART_TELEMETRY_APP.Errors.Classes;
 using ART_TELEMETRY_APP.Groups.Classes;
 using ART_TELEMETRY_APP.Groups.UserControls;
+using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.Settings;
 using ART_TELEMETRY_APP.Settings.Classes;
 using ART_TELEMETRY_APP.Tracks.Classes;
+using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,12 +28,23 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// <summary>
         /// A list of the channels from the input file.
         /// </summary>
-        public List<Channel> Channels { get; private set; } = new List<Channel>();
+        public List<Channel> Channels { get; } = InputFileManager.FirstDriverlessInputFile.Channels;
 
         /// <summary>
         /// List of selected groups.
         /// </summary>
-        private List<string> selectedGroups = new List<string>();
+        private readonly List<string> selectedGroups = new List<string>();
+
+        /// <summary>
+        /// Yaw rate integrate.
+        /// </summary>
+        private readonly List<double> integratedYawangle = new List<double>();
+
+        /// <summary>
+        /// Delta time for <see cref="integratedYawangle"/>.
+        /// 50 ms -> 0.05 sec
+        /// </summary>
+        private readonly float dt = .05f;
 
         /// <summary>
         /// Constructor of the <see cref="DriverlessMenu"/> class.
@@ -43,7 +57,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// <summary>
         /// Initialize the channels based on <see cref="Channels"/>.
         /// </summary>
-        private void InitChannels()
+        private void InitChannelCheckBoxes()
         {
             ChannelsStackPanel.Children.Clear();
 
@@ -128,7 +142,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// <summary>
         /// Clears all the children of <see cref="ChannelsStackPanel"/> and fill it with the newly created Charts.
         /// </summary>
-        private void UpdateCharts()
+        public void UpdateCharts()
         {
             ChartsStackPanel.Children.Clear();
             foreach (var channel in Channels)
@@ -166,30 +180,20 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
             var data = ConvertChannelDataToPlotData(channel.Data.ToArray(), HorizontalAxisData.Data);
             int dataIndex = (int)DataSlider.Value;
 
-            if (dataIndex < HorizontalAxisData.Data.Count)
-            {
-                chart.InitPlot(xValue: HorizontalAxisData.Data[dataIndex],
-                               yValue: channel.Data[dataIndex],
-                               xAxisValues: data.Item1,
-                               yAxisValues: data.Item2,
-                               vLineColor: Color.White,
-                               lineColor: Color.FromArgb(channel.Color.A, channel.Color.R, channel.Color.G, channel.Color.B),
-                               channels: Channels,
-                               dataIndex: dataIndex,
-                               yAxisLabel: channel.Name);
-            }
-            else
-            {
-                chart.InitPlot(xValue: HorizontalAxisData.Data.Last(),
-                               yValue: channel.Data.Last(),
-                               xAxisValues: data.Item1,
-                               yAxisValues: data.Item2,
-                               vLineColor: Color.White,
-                               lineColor: Color.FromArgb(channel.Color.A, channel.Color.R, channel.Color.G, channel.Color.B),
-                               channels: Channels,
-                               dataIndex: dataIndex,
-                               yAxisLabel: channel.Name);
-            }
+            var color = ColorManager.GetChartColor;
+            channel.Color = color;
+            double xValue = dataIndex < HorizontalAxisData.Data.Count ? HorizontalAxisData.Data[dataIndex] : HorizontalAxisData.Data.Last();
+            double yValue = dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last();
+
+            chart.InitPlot(xValue: xValue,
+                           yValue: yValue,
+                           xAxisValues: data.Item1,
+                           yAxisValues: data.Item2,
+                           vLineColor: Color.White,
+                           lineColor: Color.FromArgb(channel.Color.A, channel.Color.R, channel.Color.G, channel.Color.B),
+                           channels: Channels,
+                           dataIndex: dataIndex,
+                           yAxisLabel: channel.Name);
 
             return chart;
         }
@@ -227,6 +231,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
 
                     var channelData = CreateOffset(GetChannel("y").Data, (float)GetChannel("c0ref").Data.First());
                     data = ConvertChannelDataToPlotData(HorizontalAxisData.Data.ToArray(), channelData);
+
                     double xValue = 0;
                     double yValue = 0;
                     if (dataIndex < HorizontalAxisData.Data.Count)
@@ -253,14 +258,13 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
                     chart.SetAxisLimitsToAuto();
                     chart.SetFrameBorder(left: false, bottom: false, top: false, right: false);
 
-                    var yawChannelData = GetChannel("yawangle").Data;
-                    if (yawChannelData.Count < dataIndex)
+                    if (dataIndex < integratedYawangle.Count)
                     {
-                        chart.PlotImage(xValue, yValue, yawChannelData[dataIndex]);
+                        chart.PlotImage(xValue, yValue, CreateOffset(integratedYawangle, (float)GetChannel("c0ref").Data.First())[dataIndex]);
                     }
                     else
                     {
-                        chart.PlotImage(xValue, yValue, yawChannelData.Last());
+                        chart.PlotImage(xValue, yValue, CreateOffset(integratedYawangle, (float)GetChannel("c0ref").Data.First()).Last());
                     }
                 }
                 else
@@ -272,14 +276,20 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
             return chart;
         }
 
+        /// <summary>
+        /// Builds one <see cref="Chart"/> with the <paramref name="group"/>s values.
+        /// </summary>
+        /// <param name="group"><see cref="Group"/> that will shown on the <see cref="Chart"/></param>
+        /// <returns>A <see cref="Chart"/> with the <paramref name="group"/>s values.</returns>
         private Chart BuildGroupChart(Group group)
         {
             var chart = new Chart(group.Name);
             foreach (var channel in Channels)
             {
-                if (group.Attributes.Contains(channel.Name))
+                if (group.GetAttribute(channel.Name) != null)
                 {
                     chart.AddChannelName(channel.Name);
+                    channel.Color = group.GetAttribute(channel.Name).Color;
                 }
             }
 
@@ -291,7 +301,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
                     int dataIndex = (int)DataSlider.Value;
                     double xValue = dataIndex < HorizontalAxisData.Data.Count ? HorizontalAxisData.Data[dataIndex] : HorizontalAxisData.Data.Last();
                     double yValue = dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last();
-
+                   
                     chart.InitPlot(xValue: xValue,
                                     yValue: yValue,
                                     xAxisValues: data.Item1,
@@ -312,6 +322,12 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
             return chart;
         }
 
+        /// <summary>
+        /// Pushes the <paramref name="list"/> with <paramref name="offset"/>.
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
         private List<double> CreateOffset(List<double> list, float offset)
         {
             var newList = new List<double>();
@@ -373,7 +389,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// </summary>
         /// <param name="channelName">The name of the <see cref="Channel"/> to find.</param>
         /// <returns>A single <see cref="Channel"/></returns>
-        private Channel GetChannel(string channelName)
+        public Channel GetChannel(string channelName)
         {
             return Channels.Find(x => x.Name.Equals(channelName));
         }
@@ -405,6 +421,35 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         }
 
         /// <summary>
+        /// Initializes <see cref="integratedYawangle"/> list based on <c>yawangle</c> and <c>yawrate</c>.
+        /// Formula: <c>yawangle(x) = yawangle(x - 1) + dt * yawrate</c>,
+        /// where <c>x</c> is the loop variable and <c>dt</c> ist the timestep in <b>ms</b>.
+        /// </summary>
+        public void InitIntegratedYawangle()
+        {
+            integratedYawangle.Clear();
+
+            var yawrate = GetChannel(TextManager.DefaultYawrateChannelName);
+            if (yawrate == null)
+            {
+                ShowError.ShowErrorMessage(ref ErrorSnackbar, $"Can't find '{TextManager.DefaultYawrateChannelName}' channel");
+                return;
+            }
+
+            integratedYawangle.Add(0);
+            for (int i = 1; i < yawrate.Data.Count; i++)
+            {
+                integratedYawangle.Add(integratedYawangle[i - 1] + dt * yawrate.Data[i]);
+            }
+
+            for (int i = 0; i < integratedYawangle.Count; i++)
+            {
+                integratedYawangle[i] *= 180 / Math.PI;
+
+            }
+        }
+
+        /// <summary>
         /// Creates the track.
         /// The <i>x</i> axis is the <see cref="HorizontalAxisData"/>.
         /// The <i>y</i> axis is the <b>y</b> Channels <see cref="Channel.Data"/>.
@@ -419,7 +464,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// Changes the newly readed channels, than updates everything:
         /// <list type="bullet">
         /// <item>
-        /// <description><see cref="InitChannels()"/></description>
+        /// <description><see cref="InitChannelCheckBoxes()"/></description>
         /// </item>
         /// <item>
         /// <description><see cref="SetUpDataSlider()"/></description>
@@ -430,16 +475,16 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// </list>
         /// </summary>
         /// <param name="channels">New channels.</param>
-        public void AddChannels(List<Channel> channels)
+        public void UpdateAfterReadFile()
         {
-            Channels = channels;
-            InitChannels();
+            InitChannelCheckBoxes();
             InitGroups();
             SetUpDataSlider();
-
+            InitIntegratedYawangle();
             // TODO: ha nem kell a highlight karika, akkor a kikommentelt sor kell, az UpdateCharts(); pedig nem
             UpdateCharts();
             //ChangeChartHighlight((int)DataSlider.Value);
+            UpdateTrack();
         }
 
         /// <summary>

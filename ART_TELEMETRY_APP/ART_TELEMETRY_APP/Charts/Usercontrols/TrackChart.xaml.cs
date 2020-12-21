@@ -49,33 +49,43 @@ namespace ART_TELEMETRY_APP.Charts.Usercontrols
                              LineStyle lineStyle = LineStyle.Solid,
                              bool enableLabel = false)
         {
+            // Flips the value, because Gergő said
+            // that the horizontal axis must be positive
+            // to the left side and negativ to the right side.
+            for (int i = 0; i < xAxisValues.Length; i++)
+            {
+                xAxisValues[i] *= -1;
+            }
+
             if (enableLabel)
             {
                 plottableScatterHighlight = ScottPlotChart.plt.PlotScatterHighlight(xAxisValues,
-                                                                                yAxisValues,
-                                                                                markerShape: MarkerShape.none,
-                                                                                color: color,
-                                                                                lineWidth: lineWidth,
-                                                                                lineStyle: lineStyle,
-                                                                                label: $"{xAxisLabel}: {xValue:f3}\n{yAxisLabel}: {yValue:f3}");
+                                                                                    yAxisValues,
+                                                                                    markerShape: MarkerShape.none,
+                                                                                    color: color,
+                                                                                    lineWidth: lineWidth,
+                                                                                    lineStyle: lineStyle,
+                                                                                    label: $"{xAxisLabel}: {xValue:f3}\n{yAxisLabel}: {yValue:f3}");
             }
             else
             {
                 plottableScatterHighlight = ScottPlotChart.plt.PlotScatterHighlight(xAxisValues,
-                                                                                yAxisValues,
-                                                                                markerShape: MarkerShape.none,
-                                                                                color: color,
-                                                                                lineWidth: lineWidth,
-                                                                                lineStyle: lineStyle);
+                                                                                    yAxisValues,
+                                                                                    markerShape: MarkerShape.none,
+                                                                                    color: color,
+                                                                                    lineWidth: lineWidth,
+                                                                                    lineStyle: lineStyle);
             }
-            
+
 
             ScottPlotChart.plt.Frame(false);
             ScottPlotChart.plt.Style(ScottPlot.Style.Gray1);
             ScottPlotChart.plt.Colorset(Colorset.OneHalfDark);
-            ScottPlotChart.plt.YLabel(yAxisLabel);
+            /*ScottPlotChart.plt.YLabel(yAxisLabel);
             ScottPlotChart.plt.XLabel(xAxisLabel);
-            ScottPlotChart.plt.Legend();
+            ScottPlotChart.plt.Legend();*/
+            ScottPlotChart.plt.Grid(enable: false);
+            ScottPlotChart.plt.Ticks(displayTicksX: false, displayTicksY: false);
             ScottPlotChart.Render();
         }
 
@@ -83,12 +93,12 @@ namespace ART_TELEMETRY_APP.Charts.Usercontrols
         /// <summary>
         /// Plot a car image and rotates based on the <paramref name="rotation"/>.
         /// </summary>
-        /// <param name="xValue">Images <b>x</b> value.</param>
-        /// <param name="yValue">Images <b>y</b> value.</param>
-        /// <param name="rotation">Images rotation.</param>
+        /// <param name="xValue">Image <b>x</b> value.</param>
+        /// <param name="yValue">Image <b>y</b> value.</param>
+        /// <param name="rotation">Image rotation.</param>
         public void PlotImage(double xValue, double yValue, double rotation)
         {
-            ScottPlotChart.plt.PlotBitmap(carImage, xValue - .21f, yValue + 1.5f, rotation: rotation);
+            ScottPlotChart.plt.PlotBitmap(carImage, xValue * -1 - .28f, yValue + 1.2f, rotation: rotation * -1);
         }
 
         /// <summary>

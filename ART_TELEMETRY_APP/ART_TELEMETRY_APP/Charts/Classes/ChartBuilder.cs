@@ -50,7 +50,7 @@ namespace ART_TELEMETRY_APP
 
                     foreach (var channel in InputFileManager.InputFiles[i].Channels)
                     {
-                        if (selectedChannels.Contains(channel.Name))
+                       /* if (selectedChannels.Contains(channel.Name))
                         {
                             var chart = ((LapsContent)lapsContent.Content).GetChart(((LapsContent)lapsContent.Content).Group.Name + channel.Name);
                             ((LapsContent)lapsContent.Content).TrackSVG.Data = Geometry.Parse(InputFileManager.InputFiles[i].AllLapsSVG);
@@ -72,8 +72,8 @@ namespace ART_TELEMETRY_APP
                                          chart.AddSerie(CalculateSerieValues(false, channel, ref selectedLaps, lapIndex, InputFileManager.InputFiles[i], ref chart));
                                          break;
                                  }*/
-                            }
-                        }
+                           /* }
+                        }*/
                     }
                 }
             }
@@ -96,9 +96,9 @@ namespace ART_TELEMETRY_APP
                 foreach (var attribute in ((LapsContent)lapsContent.Content).Group.Attributes)
                 {
                     var chart = new Chart(((LapsContent)lapsContent.Content).Group.Name + attribute);
-                    chart.AddChannelName(attribute);
+                    chart.AddChannelName(attribute.Name);
 
-                    ChartManager.CursorChannelNames.Add(attribute);
+                    ChartManager.CursorChannelNames.Add(attribute.Name);
                     ChartManager.CursorChannelData.Add(0);
 
                     Grid.SetRow(chart, gridRowIndex++);

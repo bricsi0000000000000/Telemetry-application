@@ -80,7 +80,7 @@ namespace ART_TELEMETRY_APP.Tracks.Classes
                 else
                 {
                     parsingError = true;
-                    ShowError.ShowErrorMessage(ref errorSnackbar, $"In track \"{track.Name}\" couldn't convert \"{trackJSON.track.width}\" to a number.", time: 6);
+                    ShowError.ShowErrorMessage(ref errorSnackbar, $"In track '{track.Name}' couldn't convert '{trackJSON.track.width}' to a number.", time: 6);
                 }
 
                 if (float.TryParse(trackJSON.track.length.ToString(), out float length))
@@ -90,7 +90,7 @@ namespace ART_TELEMETRY_APP.Tracks.Classes
                 else
                 {
                     parsingError = true;
-                    ShowError.ShowErrorMessage(ref errorSnackbar, $"In track \"{track.Name}\" couldn't convert \"{trackJSON.track.length}\" to a number.", time: 6);
+                    ShowError.ShowErrorMessage(ref errorSnackbar, $"In track '{track.Name}' couldn't convert '{trackJSON.track.length}' to a number.", time: 6);
                 }
 
                 for (int i = 0; i < trackJSON.track.rightSide.Count; i++)

@@ -4,6 +4,7 @@ using MaterialDesignThemes.Wpf;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Media;
 
 namespace ART_TELEMETRY_APP.Groups.Classes
 {
@@ -57,7 +58,7 @@ namespace ART_TELEMETRY_APP.Groups.Classes
 
                         for (int j = 0; j < groupsJSON[i].Attributes.Count; j++)
                         {
-                            group.AddAttribute(groupsJSON[i].Attributes[j].ToString());
+                            group.AddAttribute(groupsJSON[i].Attributes[j].Name.ToString(), (Color)ColorConverter.ConvertFromString(groupsJSON[i].Attributes[j].Color.ToString()));
                         }
                         AddGroup(group);
                     }

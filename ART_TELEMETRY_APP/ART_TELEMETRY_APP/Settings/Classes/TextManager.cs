@@ -27,7 +27,6 @@
         public static string LapReportTabName { get; private set; } = "Lap report";
         #endregion
 
-
         #region input file names
         public static string DriversFileName { get; private set; } = "drivers.csv";
         public static string TracksFileName { get; private set; } = "tracks.csv";
@@ -39,6 +38,8 @@
         public static string DefaultTimeChannelName { get; private set; } = "Time";
         public static string DefaultLongitudeChannelName { get; private set; } = "Longitude";
         public static string DefaultLatitudeChannelName { get; private set; } = "Latitude";
+        public static string DefaultYawangleChannelName { get; private set; } = "yawangle";
+        public static string DefaultYawrateChannelName { get; private set; } = "yawrate";
         #endregion
     }
 }

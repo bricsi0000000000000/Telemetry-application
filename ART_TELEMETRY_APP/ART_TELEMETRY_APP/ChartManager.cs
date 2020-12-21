@@ -40,7 +40,7 @@ namespace ART_TELEMETRY_APP
                         }
                     }
 
-                    foreach (var channel in InputFileManager.InputFiles[i].Channels)
+                    /*foreach (var channel in InputFileManager.InputFiles[i].Channels)
                     {
                         if (selectedChannels.Contains(channel.Name))
                         {
@@ -48,7 +48,7 @@ namespace ART_TELEMETRY_APP
                             ((LapsContent)lapsContent.Content).UpdateCursorData();
                             //  chart.RenderPlot(chart.MouseX);
                         }
-                    }
+                    }*/
                 }
             }
         }

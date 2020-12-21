@@ -9,17 +9,16 @@ namespace ART_TELEMETRY_APP.Datas.Classes
     /// </summary>
     public class Channel
     {
-        public Channel(string channelName, Color color)
+        public Channel(string channelName)
         {
             Name = channelName;
             Data = new List<double>();
-            Color = color;
+            Color = ColorManager.GetChartColor;
         }
         public string Name { get; private set; }
         public List<double> Data { get; private set; }
         public bool IsActive { get; set; } = false;
-        public Color Color { get; private set; }
-
+        public Color Color { get; set; }
         public void AddChannelData(float data) => Data.Add(data);
 
 

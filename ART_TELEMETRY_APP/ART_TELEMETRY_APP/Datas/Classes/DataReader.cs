@@ -76,7 +76,7 @@ namespace ART_TELEMETRY_APP.Datas.Classes
         }
 
         /// <summary>
-        /// Data Reader for driverlessdata
+        /// Data Reader for driverless data
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="progressBarGrid"></param>
@@ -146,7 +146,7 @@ namespace ART_TELEMETRY_APP.Datas.Classes
                  };*/
                 //channel.InputFileName = fileNameWithoutPath;
                 //channel.DriverName = driver.Name;
-                addChannels.Add(new Channel(channelName, ((SolidColorBrush)ColorManager.GetChartColor).Color));
+                addChannels.Add(new Channel(channelName));
             }
 
             uint progressIndex = 0;
@@ -188,10 +188,10 @@ namespace ART_TELEMETRY_APP.Datas.Classes
             progressBar.IsIndeterminate = true;
 
 
-            InputFileManager.AddInputFile(new InputFile(FileNameWithoutPath, driver.Name, addChannels, ref errorSnackbar, (bool found) =>
+           /* InputFileManager.AddInputFile(new InputFile(FileNameWithoutPath, driver.Name, addChannels, ref errorSnackbar, (bool found) =>
             {
                 inputFileListElement.ChangeBackground(found);
-            }));
+            }));*/
 
             ((SelectDriversAndInputFiles)MenuManager.GetTab(TextManager.DiagramsSettingsMenuName).Content).InitDriversItems();
             ((SelectDriversAndInputFiles)MenuManager.GetTab(TextManager.DiagramsSettingsMenuName).Content).InitLapItems();
@@ -217,8 +217,9 @@ namespace ART_TELEMETRY_APP.Datas.Classes
             progressBarGrid.Visibility = Visibility.Hidden;
             progressBar.IsIndeterminate = true;
 
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).AddChannels(addChannels);
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateTrack();
+            InputFileManager.AddInputFile(new DriverlessInputFile(FileNameWithoutPath, addChannels));
+
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
             ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
         }
     }

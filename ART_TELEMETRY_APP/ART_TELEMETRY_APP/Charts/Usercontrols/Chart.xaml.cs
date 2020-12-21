@@ -1,4 +1,5 @@
 ﻿using ART_TELEMETRY_APP.Datas.Classes;
+using ART_TELEMETRY_APP.Groups.Classes;
 using ScottPlot;
 using ScottPlot.Drawing;
 using System;

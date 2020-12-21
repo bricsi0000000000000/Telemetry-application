@@ -32,7 +32,7 @@
                     Name="ChangeGroupItemType"
                     Click="ChangeGroupItemType_Click"
                     Background="White"
-                    BorderBrush="White">
+                    BorderThickness="0">
                 <Image x:Name="GroupTypeImage"
                        Source="daisy.png" RenderTransformOrigin="0.5,0.5">
                     <Image.RenderTransform>
