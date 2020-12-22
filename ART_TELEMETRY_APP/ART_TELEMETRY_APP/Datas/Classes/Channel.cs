@@ -15,6 +15,7 @@ namespace ART_TELEMETRY_APP.Datas.Classes
             Data = new List<double>();
             Color = ColorManager.GetChartColor;
         }
+
         public string Name { get; private set; }
         public List<double> Data { get; private set; }
         public bool IsActive { get; set; } = false;

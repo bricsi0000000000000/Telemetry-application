@@ -3,11 +3,13 @@ using ART_TELEMETRY_APP.Groups.Classes;
 using ART_TELEMETRY_APP.Groups.Windows;
 using ART_TELEMETRY_APP.Settings;
 using ART_TELEMETRY_APP.Settings.Classes;
+using ART_TELEMETRY_APP.InputFiles.Classes;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using ART_TELEMETRY_APP.Settings.UserControls;
 
 namespace ART_TELEMETRY_APP.Groups.UserControls
 {
@@ -39,22 +41,8 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
             }
             ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
             ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitActiveChannelSelectableAttributes();
-        }
-
-        private void Grid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ActiveAttribute =
-                 GroupManager.GetGroup(groupName).GetAttribute(AttributeName);
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitAttributes();
-        }
-
-        public void ChangeColorMode(bool change)
-        {
-            ColorZone.Mode = change ?
-                             MaterialDesignThemes.Wpf.ColorZoneMode.Inverted :
-                             MaterialDesignThemes.Wpf.ColorZoneMode.Dark;
-
-            AttributeLbl.Foreground = change ? Brushes.Black : Brushes.White;
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
+            GroupManager.SaveGroups();
         }
 
         private void ChangeColorBtn_Click(object sender, RoutedEventArgs e)
@@ -62,10 +50,32 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
             PickColor pickColor = new PickColor();
             if (pickColor.ShowDialog() == true)
             {
-                GroupManager.GetGroup(groupName).GetAttribute(AttributeName).Color = pickColor.ColorPicker.Color;
+                var pickedColor = pickColor.ColorPicker.Color;
+                GroupManager.GetGroup(groupName).GetAttribute(AttributeName).Color = pickedColor;
+
+                //TODO standarddal is
+                foreach (var inputFile in DriverlessInputFileManager.Instance.InputFiles)
+                {
+                    var channel = inputFile.GetChannel(AttributeName);
+                    if (channel != null)
+                    {
+                        channel.Color = pickedColor;
+                    }
+                }
+
+                foreach (var group in GroupManager.Groups)
+                {
+                    var channel = group.GetAttribute(AttributeName);
+                    if (channel != null)
+                    {
+                        channel.Color = pickedColor;
+                    }
+                }
+
                 GroupManager.SaveGroups();
                 ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitAttributes();
                 ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
+                ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).InitInputFileSettingsItems();
             }
         }
     }

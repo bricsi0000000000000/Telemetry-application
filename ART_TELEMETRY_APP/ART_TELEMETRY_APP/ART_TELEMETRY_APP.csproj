@@ -128,6 +128,7 @@
     <Compile Include="Charts\Usercontrols\TrackChart.xaml.cs">
       <DependentUpon>TrackChart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Datas\Classes\ImportantChannels.cs" />
     <Compile Include="Datas\Classes\ChartsSelectedData.cs" />
     <Compile Include="Datas\UserControls\SelectedChannel.xaml.cs">
       <DependentUpon>SelectedChannel.xaml</DependentUpon>
@@ -167,6 +168,9 @@
       <DependentUpon>GroupsMenuContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="InputFiles\Classes\StandardInputFile.cs" />
+    <Compile Include="InputFiles\UserControls\InputFileChannelSettingsItem.xaml.cs">
+      <DependentUpon>InputFileChannelSettingsItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="InputFiles\UserControls\InputFileItem.xaml.cs">
       <DependentUpon>InputFileItem.xaml</DependentUpon>
     </Compile>
@@ -180,6 +184,9 @@
     </Compile>
     <Compile Include="Datas\Classes\Channel.cs" />
     <Compile Include="Datas\Classes\LineSerieOptions.cs" />
+    <Compile Include="InputFiles\UserControls\InputFileSettingsItem.xaml.cs">
+      <DependentUpon>InputFileSettingsItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Laps\Classes\Filter.cs" />
     <Compile Include="Laps\Classes\States.cs" />
     <Compile Include="Laps\UserControls\LapElement.xaml.cs">
@@ -194,6 +201,9 @@
     <Compile Include="Laps\Classes\Lap.cs" />
     <Compile Include="Settings\UserControls\GeneralSettings.xaml.cs">
       <DependentUpon>GeneralSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\UserControls\InputFilesSettings.xaml.cs">
+      <DependentUpon>InputFilesSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\UserControls\SelectDriversAndInputFiles.xaml.cs">
       <DependentUpon>SelectDriversAndInputFiles.xaml</DependentUpon>
@@ -290,6 +300,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="InputFiles\UserControls\InputFileChannelSettingsItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="InputFiles\UserControls\InputFileItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -307,6 +321,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="GGDiagram_UC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InputFiles\UserControls\InputFileSettingsItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -337,6 +355,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Settings\UserControls\GeneralSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Settings\UserControls\InputFilesSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

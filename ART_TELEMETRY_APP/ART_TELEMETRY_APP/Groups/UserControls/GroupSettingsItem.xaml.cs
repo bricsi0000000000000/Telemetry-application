@@ -82,11 +82,8 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         /// <param name="change"></param>
         public void ChangeColorMode(bool change)
         {
-            ColorZone.Mode = change ?
-                            MaterialDesignThemes.Wpf.ColorZoneMode.Inverted :
-                            MaterialDesignThemes.Wpf.ColorZoneMode.Dark;
-
-            GroupLbl.Foreground = change ? Brushes.Black : Brushes.White;
+            var converter = new BrushConverter();
+            ColorZone.BorderBrush = change ? Brushes.White : (Brush)converter.ConvertFromString("#FF303030");
         }
 
         /// <summary>

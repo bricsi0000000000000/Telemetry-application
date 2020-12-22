@@ -25,7 +25,8 @@ namespace ART_TELEMETRY_APP.Settings
         {
             settingsTabControl.Items.Clear();
 
-            AddSettingsTab(TextManager.GroupsSettingsName, new GroupSettings(), selected: true);
+            AddSettingsTab(TextManager.FilesSettingsName, new InputFilesSettings(), selected: true);
+            AddSettingsTab(TextManager.GroupsSettingsName, new GroupSettings());
             AddSettingsTab(TextManager.TracksSettingsName, new TrackSettings());
 
             /*  AddSettingsTab(new TabItem

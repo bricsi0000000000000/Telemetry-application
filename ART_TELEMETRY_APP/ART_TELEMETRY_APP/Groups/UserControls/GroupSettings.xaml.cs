@@ -129,6 +129,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
 
             InitGroups();
             GroupManager.SaveGroups();
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
         }
 
         /// <summary>
@@ -167,7 +168,6 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
             foreach (var attribute in GroupManager.GetGroup(ActiveGroupName).Attributes)
             {
                 var groupSettingsAttribute = new GroupSettingsAttribute(attribute.Name, ActiveGroupName, attribute.Color);
-                groupSettingsAttribute.ChangeColorMode(attribute.Equals(ActiveAttribute));
                 AttributesStackPanel.Children.Add(groupSettingsAttribute);
                 groupSettingsAttributes.Add(groupSettingsAttribute);
             }

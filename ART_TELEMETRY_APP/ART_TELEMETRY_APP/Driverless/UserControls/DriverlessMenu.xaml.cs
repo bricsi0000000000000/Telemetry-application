@@ -54,6 +54,25 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
             InitializeComponent();
         }
 
+        public void InitChooseInputFileComboBox()
+        {
+            //TODO az éppen beolvasott legyen a selected
+            ChooseInputFileCombobox.Items.Clear();
+
+            foreach (var inputFile in DriverlessInputFileManager.Instance.InputFiles)
+            {
+                var comboBoxItem = new ComboBoxItem()
+                {
+                    Content = inputFile.Name,
+                    IsSelected = true
+                };
+                comboBoxItem.PreviewMouseLeftButtonDown += ChooseInputFileCombobox_PreviewMouseRightButtonUp;
+
+                ChooseInputFileCombobox.Items.Add(comboBoxItem);
+            }
+        }
+
+
         /// <summary>
         /// Initialize the channels based on <see cref="Channels"/>.
         /// </summary>
@@ -185,8 +204,6 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
             var data = ConvertChannelDataToPlotData(channel.Data.ToArray(), HorizontalAxisData.Data);
             int dataIndex = (int)DataSlider.Value;
 
-            var color = ColorManager.GetChartColor;
-            channel.Color = color;
             double xValue = dataIndex < HorizontalAxisData.Data.Count ? HorizontalAxisData.Data[dataIndex] : HorizontalAxisData.Data.Last();
             double yValue = dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last();
 
@@ -294,7 +311,6 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
                 if (group.GetAttribute(channel.Name) != null)
                 {
                     chart.AddChannelName(channel.Name);
-                    channel.Color = group.GetAttribute(channel.Name).Color;
                 }
             }
 
@@ -400,33 +416,6 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         }
 
         /// <summary>
-        /// Reads a selected file from the computer.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ReadFileBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var openFileDialog = new OpenFileDialog
-            {
-                Title = "Read file",
-                DefaultExt = ".csv",
-                Multiselect = false,
-                Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*"
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                string fileName = openFileDialog.FileName.Split('\\').Last();
-                ReadFileProgressBarLbl.Content = $"Reading \"{fileName}\"";
-                var dataReader = new DataReader();
-                dataReader.ReadData(openFileDialog.FileName,
-                                    ReadFileProgressBarGrid,
-                                    ReadFileProgressBar,
-                                    fileType: FileType.Driverless);
-            }
-        }
-
-        /// <summary>
         /// Initializes <see cref="integratedYawangle"/> list based on <c>yawangle</c> and <c>yawrate</c>.
         /// Formula: <c>yawangle(x) = yawangle(x - 1) + dt * yawrate</c>,
         /// where <c>x</c> is the loop variable and <c>dt</c> ist the timestep in <b>ms</b>.
@@ -492,6 +481,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
             UpdateCharts();
             //ChangeChartHighlight((int)DataSlider.Value);
             UpdateTrack();
+            InitChooseInputFileComboBox();
         }
 
         /// <summary>
@@ -549,6 +539,11 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
             }
 
             UpdateCharts();
+        }
+
+        private void ChooseInputFileCombobox_PreviewMouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+
         }
     }
 }

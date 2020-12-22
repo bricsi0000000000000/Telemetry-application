@@ -15,6 +15,7 @@
         #region settings menu
         public static string TracksSettingsName { get; private set; } = "Tracks";
         public static string GroupsSettingsName { get; private set; } = "Groups";
+        public static string FilesSettingsName { get; private set; } = "Files";
         public static string SectorsSettingsName { get; private set; } = "Sectors";
         public static string GeneralSettingsName { get; private set; } = "General";
         #endregion

@@ -1,5 +1,6 @@
 ﻿using ART_TELEMETRY_APP.Driverless.UserControls;
 using ART_TELEMETRY_APP.Drivers.Classes;
+using ART_TELEMETRY_APP.Groups.Classes;
 using ART_TELEMETRY_APP.Groups.UserControls;
 using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.InputFiles.UserControls;
@@ -81,7 +82,20 @@ namespace ART_TELEMETRY_APP.Datas.Classes
             string[] channelNames = reader.ReadLine().Split(';');
             foreach (var channelName in channelNames)
             {
-                channels.Add(new Channel(channelName));
+                var channel = new Channel(channelName);
+
+                foreach (var group in GroupManager.Groups)
+                {
+                    foreach (var attribute in group.Attributes)
+                    {
+                        if (attribute.Name.Equals(channel.Name))
+                        {
+                            channel.Color = attribute.Color;
+                        }
+                    }
+                }
+
+                channels.Add(channel);
             }
 
             uint progressIndex = 0;
@@ -122,17 +136,21 @@ namespace ART_TELEMETRY_APP.Datas.Classes
             progressBarGrid.Visibility = Visibility.Hidden;
             progressBar.IsIndeterminate = true;
 
-            switch (fileType)
-            {
-                case FileType.Standard:
-                    break;
-                case FileType.Driverless:
-                    DriverlessInputFileManager.Instance.AddInputFile(new DriverlessInputFile(FileNameWithoutPath, channels));
+            //alapból dv-be rakja
+            DriverlessInputFileManager.Instance.AddInputFile(new DriverlessInputFile(FileNameWithoutPath, channels));
+            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).InitInputFileSettingsItems();
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
+            /* switch (fileType)
+             {
+                 case FileType.Standard:
+                     break;
+                 case FileType.Driverless:
+                     DriverlessInputFileManager.Instance.AddInputFile(new DriverlessInputFile(FileNameWithoutPath, channels));
 
-                    ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
-                    ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
-                    break;
-            }
+                     ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
+                     ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
+                     break;
+             }*/
         }
     }
 }
