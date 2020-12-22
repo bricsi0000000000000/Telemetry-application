@@ -25,36 +25,34 @@ namespace ART_TELEMETRY_APP.Settings
         {
             settingsTabControl.Items.Clear();
 
-            AddSettingsTab(new TabItem
-            {
-                Header = TextManager.TracksSettingsName,
-                Content = new TrackSettings(),
-                IsSelected = true
-            });
+            AddSettingsTab(TextManager.GroupsSettingsName, new GroupSettings(), selected: true);
+            AddSettingsTab(TextManager.TracksSettingsName, new TrackSettings());
 
-            AddSettingsTab(new TabItem
-            {
-                Header = TextManager.SectorsSettingsName,
-                // Content = new SectorsSettings()
-            });
+            /*  AddSettingsTab(new TabItem
+              {
+                  Header = TextManager.SectorsSettingsName,
+                  // Content = new SectorsSettings()
+              });*/
 
-            AddSettingsTab(new TabItem
-            {
-                Header = TextManager.GroupsSettingsName,
-                Content = new GroupSettings()
-            });
-
-            AddSettingsTab(new TabItem
-            {
-                Header = TextManager.GeneralSettingsName,
-                Content = new GeneralSettings()
-            });
+            /*  AddSettingsTab(new TabItem
+              {
+                  Header = TextManager.GeneralSettingsName,
+                  Content = new GeneralSettings()
+              });*/
         }
 
-        private void AddSettingsTab(TabItem tabItem)
+        private void AddSettingsTab(string header, object content, bool selected = false)
         {
-            settingsTabs.Add(tabItem);
-            settingsTabControl.Items.Add(tabItem);
+            var tab = new TabItem
+            {
+                Header = header,
+                Content = content,
+                Name = $"{header.Replace(" ", "")}Tab",
+                IsSelected = selected
+            };
+
+            settingsTabs.Add(tab);
+            settingsTabControl.Items.Add(tab);
         }
 
         public TabItem GetTab(string name) => settingsTabs.Find(x => x.Header.Equals(name));

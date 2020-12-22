@@ -1,6 +1,7 @@
 ﻿using ART_TELEMETRY_APP.Driverless.UserControls;
 using ART_TELEMETRY_APP.Errors.Classes;
 using ART_TELEMETRY_APP.Groups.Classes;
+using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.Settings.Classes;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,6 +70,11 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
             if (GroupManager.GetGroup(ActiveGroupName).Driverless)
             {
                 var channels = ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).Channels;
+                if(channels == null)
+                {
+                    return;
+                }
+
                 GroupChannelsStackPanel.Children.Clear();
 
                 foreach (var channel in channels)
@@ -106,10 +112,11 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         private void ChannelCheckBox_Click(object sender, RoutedEventArgs e)
         {
             var checkBox = (CheckBox)sender;
+            string attributeName = checkBox.Content.ToString();
 
             if ((bool)checkBox.IsChecked)
             {
-                GroupManager.GetGroup(ActiveGroupName).AddAttribute(checkBox.Content.ToString());
+                GroupManager.GetGroup(ActiveGroupName).AddAttribute(DriverlessInputFileManager.Instance.InputFiles.First().GetChannel(attributeName));
             }
             else
             {
@@ -211,20 +218,21 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         /// <param name="e"></param>
         private void AddAttribute_Click(object sender, RoutedEventArgs e)
         {
-            if (AddAttributeTxtBox.Text.Equals(string.Empty))
+            string addAttributeText = AddAttributeTxtBox.Text;
+            if (addAttributeText.Equals(string.Empty))
             {
                 ShowError.ShowErrorMessage(ref ErrorSnackbar, "Attribute name is empty!");
                 return;
             }
 
-            if (AddAttributeTxtBox.Text.Equals("*"))
+            if (addAttributeText.Equals("*"))
             {
                 ShowError.ShowErrorMessage(ref ErrorSnackbar, "Attribute name can't be an asterisk!");
                 return;
             }
 
-            GroupManager.GetGroup(ActiveGroupName).AddAttribute(AddAttributeTxtBox.Text);
-            ActiveAttribute = GroupManager.GetGroup(ActiveGroupName).GetAttribute(AddAttributeTxtBox.Text);
+            GroupManager.GetGroup(ActiveGroupName).AddAttribute(DriverlessInputFileManager.Instance.InputFiles.First().GetChannel(addAttributeText));
+            ActiveAttribute = GroupManager.GetGroup(ActiveGroupName).GetAttribute(addAttributeText);
             AddAttributeTxtBox.Text = string.Empty;
             InitGroups();
 

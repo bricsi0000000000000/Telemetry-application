@@ -31,20 +31,20 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
         {
             InitializeComponent();
 
-            InputFileNameLbl.Content = inputFile.FileName;
+            //InputFileNameLbl.Content = inputFile.FileName;
             this.inputFile = inputFile;
             ChangeState();
         }
 
         private void ChangeState()
         {
-            SelectInputFileIcon.Kind = inputFile.IsSelected ? MaterialDesignThemes.Wpf.PackIconKind.CheckboxMarked : MaterialDesignThemes.Wpf.PackIconKind.CheckboxBlankOutline;
-            SelectInputFileIcon.Foreground = inputFile.IsSelected ? (Brush)converter.ConvertFromString("#FFE21B1B") : Brushes.White;
+           // SelectInputFileIcon.Kind = inputFile.IsSelected ? MaterialDesignThemes.Wpf.PackIconKind.CheckboxMarked : MaterialDesignThemes.Wpf.PackIconKind.CheckboxBlankOutline;
+            //SelectInputFileIcon.Foreground = inputFile.IsSelected ? (Brush)converter.ConvertFromString("#FFE21B1B") : Brushes.White;
         }
 
         private void SelectInputFileBtn_Click(object sender, RoutedEventArgs e)
         {
-            inputFile.IsSelected = !inputFile.IsSelected;
+           /* inputFile.IsSelected = !inputFile.IsSelected;
             ChangeState();
 
             if (inputFile.IsSelected)
@@ -59,7 +59,7 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
             }
 
             ((SelectDriversAndInputFiles)MenuManager.GetTab(TextManager.DiagramsSettingsMenuName).Content).InitLapItems();
-            ((SelectDriversAndInputFiles)MenuManager.GetTab(TextManager.DiagramsSettingsMenuName).Content).InitSelectedChannels();
+            ((SelectDriversAndInputFiles)MenuManager.GetTab(TextManager.DiagramsSettingsMenuName).Content).InitSelectedChannels();*/
         }
     }
 }

@@ -10,7 +10,7 @@ using System.Windows;
 
 namespace ART_TELEMETRY_APP
 {
-    static public class TrackManager
+    public static class TrackManager
     {
         public static List<Track> Tracks { get; } = new List<Track>();
 
@@ -88,10 +88,10 @@ namespace ART_TELEMETRY_APP
               Tracks.Find(x => x.Name.Equals(trackName) &&
                           x.Description.Equals(description));
 
-        public static Track GetTrack(string trackName, string description, string fileName, string driverName) => 
+       /* public static Track GetTrack(string trackName, string description, string fileName, string driverName) => 
                Tracks.Find(x => x.Name.Equals(trackName) && 
                            x.Description.Equals(description) &&
-                           x.InputFileFileName.Equals(InputFileManager.GetInputFile(fileName, driverName)));
+                           x.InputFileFileName.Equals(IInputFileManager.GetInputFile(fileName, driverName)));*/
 
         public static Track GetTrack(Track track) => 
                Tracks.Find(x => x.Name.Equals(track.Name) && 

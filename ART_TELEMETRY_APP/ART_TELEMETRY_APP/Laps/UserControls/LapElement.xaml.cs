@@ -97,7 +97,7 @@ namespace ART_TELEMETRY_APP.Laps.UserControls
             {
                 for (int i = 0; i < inputFiles.Count; i++)
                 {
-                    LapState lapState = LapState.None;
+                   /* LapState lapState = LapState.None;
                     if (inputFiles[i].BestLapTime == lapTimes[i])
                     {
                         lapState = LapState.Best;
@@ -107,8 +107,8 @@ namespace ART_TELEMETRY_APP.Laps.UserControls
                         lapState = LapState.Worst;
                     }
 
-                    var lapElementData = new LapElementData(inputFiles[i].FileName, inputFiles[i].DriverName, lapTimes[i], lapState);
-                    InputFilesStackPanel.Children.Add(lapElementData);
+                    var lapElementData = new LapElementData(inputFiles[i].FileName, inputFiles[i].DriverName, lapTimes[i], lapState);*/
+                    //InputFilesStackPanel.Children.Add(lapElementData);
                 }
             }
         }

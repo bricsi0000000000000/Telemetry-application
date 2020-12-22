@@ -55,7 +55,7 @@ namespace ART_TELEMETRY_APP.Settings.UserControls
             ///List<InputFile> and List<TimeSpan> have the same length
             var selectedLaps = new List<Tuple<List<InputFile>, int, int, List<TimeSpan>, bool>>(); //inputFiles, lapIndex, lapCount, times, outLap
 
-            foreach (var inputFile in InputFileManager.InputFiles)
+        /*    foreach (var inputFile in IInputFileManager.InputFiles)
             {
                 if (inputFile.IsSelected)
                 {
@@ -88,7 +88,7 @@ namespace ART_TELEMETRY_APP.Settings.UserControls
                         }
                     }
                 }
-            }
+            }*/
 
             /* foreach (var lap in laps)
              {

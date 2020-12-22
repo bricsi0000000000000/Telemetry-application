@@ -141,12 +141,14 @@
     <Compile Include="Experimental.xaml.cs">
       <DependentUpon>Experimental.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FileType.cs" />
     <Compile Include="Groups\Classes\Attribute.cs" />
     <Compile Include="Groups\Windows\PickColor.xaml.cs">
       <DependentUpon>PickColor.xaml</DependentUpon>
     </Compile>
     <Compile Include="InputFiles\Classes\DriverlessInputFile.cs" />
-    <Compile Include="InputFiles\Classes\InputFileManager.cs" />
+    <Compile Include="InputFiles\Classes\DriverlessInputFileManager.cs" />
+    <Compile Include="InputFiles\Classes\IInputFileManager.cs" />
     <Compile Include="Groups\Classes\Group.cs" />
     <Compile Include="Groups\Classes\GroupManager.cs" />
     <Compile Include="Groups\UserControls\GroupContent.xaml.cs">

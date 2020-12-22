@@ -24,23 +24,23 @@ namespace ART_TELEMETRY_APP
 
         public static void Build(Filter filter)
         {
-            InitCharts();
+            //InitCharts();
 
-            foreach (var lapsContent in ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).Tabs)
+            /*foreach (var lapsContent in ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).Tabs)
             {
                 if (!(lapsContent.Content is LapsContent))
                     continue;
 
                 var selectedChannels = ((LapsContent)lapsContent.Content).Group.Attributes;
 
-                for (int i = 0; i < InputFileManager.InputFiles.Count; i++)
+                for (int i = 0; i < IInputFileManager.InputFiles.Count; i++)
                 {
-                    if (!InputFileManager.InputFiles[i].IsSelected)
+                    if (!IInputFileManager.InputFiles[i].IsSelected)
                         continue;
 
                     var selectedLaps = new List<Lap>();
 
-                    foreach (var lap in InputFileManager.InputFiles[i].Laps)
+                    foreach (var lap in IInputFileManager.InputFiles[i].Laps)
                     {
                         if (ChartsSelectedData.SelectedLaps.Contains(lap.Index))
                         {
@@ -48,7 +48,7 @@ namespace ART_TELEMETRY_APP
                         }
                     }
 
-                    foreach (var channel in InputFileManager.InputFiles[i].Channels)
+                    foreach (var channel in IInputFileManager.InputFiles[i].Channels)
                     {
                        /* if (selectedChannels.Contains(channel.Name))
                         {
@@ -74,9 +74,9 @@ namespace ART_TELEMETRY_APP
                                  }*/
                            /* }
                         }*/
-                    }
+                    /*}
                 }
-            }
+            }*/
         }
 
         private static void InitCharts()
@@ -253,17 +253,17 @@ namespace ART_TELEMETRY_APP
                           DriverManager.GetDriver(data.DriverName).GetInputFile(data.InputFileName).Times :
                           DriverManager.GetDriver(data.DriverName).GetInputFile(data.InputFileName).Distances;*/
 
-            orderBy.FromIndex = channelData.Data.Count * lap.FromIndex / inputFile.Laps.Sum(x => x.Points.Count);
+           /* orderBy.FromIndex = channelData.Data.Count * lap.FromIndex / inputFile.Laps.Sum(x => x.Points.Count);
             orderBy.ToIndex = channelData.Data.Count * lap.ToIndex / inputFile.Laps.Sum(x => x.Points.Count);
             //ushort longestLapFromIndex = (ushort)(data.AllData.Count * longestLap.FromIndex / inputFile.Laps.Sum(x => x.Points.Count));
             // ushort longestLapToIndex = (ushort)(data.AllData.Count * longestLap.ToIndex / inputFile.Laps.Sum(x => x.Points.Count));
-
-            var convertedLapValues = new List<double>();
+           */
+            var convertedLapValues = new List<double>();/*
             for (int i = inputFile.Distances[lap.Index].FromIndex; i < inputFile.Distances[lap.Index].ToIndex; i++)
             {
                 convertedLapValues.Add(channelData.Data[i]);
                 //orderBy.Data.Add(allDistances[i]);
-            }
+            }*/
 
             // System.Console.WriteLine(orderBy.Data.Last() + "\t" + orderBy.Data.Count);
 
@@ -284,11 +284,11 @@ namespace ART_TELEMETRY_APP
         private static Tuple<double[], double[]> ConvertLapToObservablePoints(double[] lapData, Lap lap, Channel channelData, InputFile inputFile)
         {
             var orderByData = new List<double>();
-            for (int i = 0; i < inputFile.Distances[lap.Index].DistanceSum; i++)
+            /*for (int i = 0; i < inputFile.Distances[lap.Index].DistanceSum; i++)
             {
                 orderByData.Add(i);
             }
-            orderBy.Data = inputFile.Distances[lap.Index].DistanceValues;
+            orderBy.Data = inputFile.Distances[lap.Index].DistanceValues;*/
 
             List<double> x = new List<double>();
             List<double> y = new List<double>();

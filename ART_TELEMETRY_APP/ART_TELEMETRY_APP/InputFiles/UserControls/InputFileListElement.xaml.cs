@@ -57,9 +57,9 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
 
         private void DeleteInputFile_Click(object sender, RoutedEventArgs e)
         {
-            InputFileManager.RemoveInputFile(fileName);
+           /* IInputFileManager.RemoveInputFile(fileName);
             ((DriversMenu)MenuManager.GetTab(TextManager.DriversMenuName).Content).InitDriverCards();
-            ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
+            ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();*/
         }
 
         /* private void settingsInputFile_Click(object sender, RoutedEventArgs e)
@@ -78,7 +78,7 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
             track.DriverName = driverName;
             track.InputFileFileName = fileName;
 
-            InputFileManager.GetInputFile(fileName, driverName).ActiveTrack = track;
+           // IInputFileManager.GetInputFile(fileName, driverName).ActiveTrack = track;
 
             ProgressBar.Visibility = Visibility.Visible;
             ProgressBar.IsIndeterminate = true;

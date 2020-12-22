@@ -53,13 +53,13 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
             {
                 inputFileListElements.Clear();
                 InputFilesStackPanel.Children.Clear();
-                foreach (InputFile inputFile in InputFileManager.InputFiles)
+               /* foreach (InputFile inputFile in IInputFileManager.InputFiles)
                 {
                     if (inputFile.DriverName.Equals(Driver.Name))
                     {
                         AddInputFileListElement(inputFile.FileName);
                     }
-                }
+                }*/
             }
         }
 
@@ -98,7 +98,7 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
             {
                 string fileName = openFileDialog.FileName.Split('\\').Last();
                 readFileProgressBarLbl.Content = $"Reading \"{fileName}\" for {Driver.Name}";
-                if (InputFileManager.GetInputFile(fileName, Driver.Name) == null)
+              /*  if (IInputFileManager.GetInputFile(fileName, Driver.Name) == null)
                 {
                     AddInputFileListElement(fileName);
 
@@ -113,7 +113,7 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
                 else
                 {
                     ShowError.ShowErrorMessage(errorSnackbar, string.Format("'{0}' has already been read!", fileName), 3);
-                }
+                }*/
             }
         }
     }

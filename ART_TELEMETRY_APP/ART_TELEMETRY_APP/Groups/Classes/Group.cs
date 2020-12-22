@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ART_TELEMETRY_APP.Datas.Classes;
+using System.Collections.Generic;
 using System.Windows.Media;
 
 namespace ART_TELEMETRY_APP.Groups.Classes
@@ -50,6 +51,11 @@ namespace ART_TELEMETRY_APP.Groups.Classes
                 return;
             }
             Attributes.Add(new Attribute(name, color));
+        }
+
+        public void AddAttribute(Channel channel)
+        {
+            Attributes.Add(new Attribute(channel.Name, channel.Color));
         }
 
         /// <summary>

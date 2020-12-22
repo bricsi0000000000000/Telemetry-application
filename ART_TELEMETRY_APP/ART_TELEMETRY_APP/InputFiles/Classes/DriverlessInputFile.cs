@@ -9,9 +9,6 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
 {
     public class DriverlessInputFile : InputFile
     {
-        public DriverlessInputFile(string name, List<Channel> channels) : base(name, channels)
-        {
-
-        }
+        public DriverlessInputFile(string name, List<Channel> channels) : base(name, channels) { }
     }
 }

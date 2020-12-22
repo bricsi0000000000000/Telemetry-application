@@ -11,7 +11,7 @@ namespace ART_TELEMETRY_APP.Groups.Classes
     /// <summary>
     /// Stores all <see cref="Group"/>s.
     /// </summary>
-    static class GroupManager
+    public static class GroupManager
     {
         /// <summary>
         /// List of <see cref="Group"/>s.

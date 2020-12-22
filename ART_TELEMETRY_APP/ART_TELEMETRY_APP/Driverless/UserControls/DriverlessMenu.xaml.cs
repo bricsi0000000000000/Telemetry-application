@@ -28,7 +28,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// <summary>
         /// A list of the channels from the input file.
         /// </summary>
-        public List<Channel> Channels { get; } = InputFileManager.FirstDriverlessInputFile.Channels;
+        public List<Channel> Channels { get; private set; }
 
         /// <summary>
         /// List of selected groups.
@@ -144,6 +144,11 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// </summary>
         public void UpdateCharts()
         {
+            if(Channels == null)
+            {
+                return;
+            }
+
             ChartsStackPanel.Children.Clear();
             foreach (var channel in Channels)
             {
@@ -413,10 +418,11 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
             {
                 string fileName = openFileDialog.FileName.Split('\\').Last();
                 ReadFileProgressBarLbl.Content = $"Reading \"{fileName}\"";
-                DataReader.Instance.ReadData(openFileDialog.FileName,
-                                             ReadFileProgressBarGrid,
-                                             ReadFileProgressBar,
-                                             ErrorSnackbar);
+                var dataReader = new DataReader();
+                dataReader.ReadData(openFileDialog.FileName,
+                                    ReadFileProgressBarGrid,
+                                    ReadFileProgressBar,
+                                    fileType: FileType.Driverless);
             }
         }
 
@@ -425,7 +431,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// Formula: <c>yawangle(x) = yawangle(x - 1) + dt * yawrate</c>,
         /// where <c>x</c> is the loop variable and <c>dt</c> ist the timestep in <b>ms</b>.
         /// </summary>
-        public void InitIntegratedYawangle()
+        public void CalculateYawangle()
         {
             integratedYawangle.Clear();
 
@@ -477,10 +483,11 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// <param name="channels">New channels.</param>
         public void UpdateAfterReadFile()
         {
+            Channels = DriverlessInputFileManager.Instance.InputFiles.First().Channels;
             InitChannelCheckBoxes();
             InitGroups();
             SetUpDataSlider();
-            InitIntegratedYawangle();
+            CalculateYawangle();
             // TODO: ha nem kell a highlight karika, akkor a kikommentelt sor kell, az UpdateCharts(); pedig nem
             UpdateCharts();
             //ChangeChartHighlight((int)DataSlider.Value);

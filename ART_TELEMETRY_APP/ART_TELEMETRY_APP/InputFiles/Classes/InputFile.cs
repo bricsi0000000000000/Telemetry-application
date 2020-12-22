@@ -33,5 +33,7 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
             Name = name;
             Channels = channels;
         }
+
+        public Channel GetChannel(string name) => Channels.Find(x => x.Name.Equals(name));
     }
 }

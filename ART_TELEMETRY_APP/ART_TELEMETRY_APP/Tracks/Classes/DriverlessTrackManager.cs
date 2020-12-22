@@ -53,7 +53,7 @@ namespace ART_TELEMETRY_APP.Tracks.Classes
         /// <returns>Readed <see cref="DriverlessTrack"/>.</returns>
         private static DriverlessTrack LoadTrack(string fileName, ref Snackbar errorSnackbar)
         {
-            DriverlessTrack track = new DriverlessTrack();
+            var track = new DriverlessTrack();
 
             if (File.Exists(fileName))
             {
