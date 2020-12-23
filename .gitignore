@@ -351,3 +351,5 @@ MigrationBackup/
 
 /DOCS
 doxconf
+.html
+.png
