@@ -11,7 +11,7 @@ using System.Windows.Controls;
 namespace ART_TELEMETRY_APP.Groups.UserControls
 {
     /// <summary>
-    /// Interaction logic for GroupSettings.xaml
+    /// Represents the content of the group settings in settings menu.
     /// </summary>
     public partial class GroupSettings : UserControl
     {
@@ -26,16 +26,21 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         private readonly List<GroupSettingsAttribute> groupSettingsAttributes = new List<GroupSettingsAttribute>();
 
         /// <summary>
-        /// Active <see cref="Group"/> name.
+        /// Active <see cref="Group"/>s name.
         /// Default is empty string.
         /// </summary>
         public string ActiveGroupName { get; set; } = string.Empty;
 
         /// <summary>
-        /// Active attribute name.
+        /// Active <see cref="Attribute"/>s name.
         /// Default is empty string.
         /// </summary>
         public Attribute ActiveAttribute { get; set; }
+
+        /// <summary>
+        /// Selected <see cref="InputFile"/>s name.
+        /// </summary>
+        public string SelectedInputFileName { get; set; }
 
         /// <summary>
         /// Constructor for <see cref="GroupSettings"/>.
@@ -56,10 +61,42 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
                     DestroyAllActiveChannelSelectableAttributes();
                 }
 
-                ChangeGroupSettingsItemTypeTitle();
                 InitActiveChannelSelectableAttributes();
                 InitGroups();
             }
+
+            InitInputFilesComboBox();
+        }
+
+        /// <summary>
+        /// Initializes the <see cref="InputFilesComboBox"/>es items.
+        /// </summary>
+        public void InitInputFilesComboBox()
+        {
+            InputFilesComboBox.Items.Clear();
+
+            foreach (var item in DriverlessInputFileManager.Instance.InputFiles)
+            {
+                AddInputFileComboBoxItem(item.Name);
+            }
+
+            foreach (var item in StandardInputFileManager.Instance.InputFiles)
+            {
+                AddInputFileComboBoxItem(item.Name);
+            }
+        }
+
+        /// <summary>
+        /// Adds a newly created <see cref="ComboBoxItem"/> to <see cref="InputFilesComboBox"/>.
+        /// </summary>
+        /// <param name="name"><see cref="ComboBoxItem"/>s name you want to add.</param>
+        private void AddInputFileComboBoxItem(string name)
+        {
+            InputFilesComboBox.Items.Add(new ComboBoxItem()
+            {
+                Content = name,
+                IsSelected = name.Equals(SelectedInputFileName)
+            });
         }
 
         /// <summary>
@@ -69,8 +106,8 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         {
             if (GroupManager.GetGroup(ActiveGroupName).Driverless)
             {
-                var channels = ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).Channels;
-                if(channels == null)
+                var channels = DriverlessInputFileManager.Instance.GetInputFile(SelectedInputFileName).Channels;
+                if (channels == null)
                 {
                     return;
                 }
@@ -90,18 +127,13 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
             }
         }
 
+        /// <summary>
+        /// Destroys all active channels selectable attributes in <see cref="GroupChannelsStackPanel"/>.
+        /// </summary>
         public void DestroyAllActiveChannelSelectableAttributes()
         {
             if (GroupChannelsStackPanel.Children.Count > 0)
                 GroupChannelsStackPanel.Children.Clear();
-        }
-
-        /// <summary>
-        /// Changes the <see cref="GroupSettingsItemTypeLbl"/> content to Driverless or Standard based on the active groups Driverless property.
-        /// </summary>
-        public void ChangeGroupSettingsItemTypeTitle()
-        {
-            GroupSettingsItemTypeLbl.Content = GroupManager.GetGroup(ActiveGroupName).Driverless ? "Driverless" : "Standard";
         }
 
         /// <summary>
@@ -116,7 +148,13 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
 
             if ((bool)checkBox.IsChecked)
             {
-                GroupManager.GetGroup(ActiveGroupName).AddAttribute(DriverlessInputFileManager.Instance.InputFiles.First().GetChannel(attributeName));
+                var inputFile = new InputFile();
+                inputFile = DriverlessInputFileManager.Instance.GetInputFile(SelectedInputFileName);
+                if (inputFile == null)
+                {
+                    inputFile = StandardInputFileManager.Instance.GetInputFile(SelectedInputFileName);
+                }
+                GroupManager.GetGroup(ActiveGroupName).AddAttribute(inputFile.GetChannel(attributeName));
             }
             else
             {
@@ -133,7 +171,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         }
 
         /// <summary>
-        /// Initializes <see cref="Group"/>s.
+        /// Initializes <see cref="GroupSettingsItem"/>s in to <see cref="GroupsStackPanel"/>.
         /// </summary>
         public void InitGroups()
         {
@@ -159,7 +197,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         }
 
         /// <summary>
-        /// Initializes attributes.
+        /// Initializes <see cref="GroupSettingsAttribute"/>s in to <see cref="AttributesStackPanel"/>.
         /// </summary>
         public void InitAttributes()
         {
@@ -188,7 +226,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         public GroupSettingsAttribute GetGroupSettingsAttribute(string name) => groupSettingsAttributes.Find(n => n.AttributeName.Equals(name));
 
         /// <summary>
-        /// Adds a group based on <see cref="AddGroupTxtBox"/>es content.
+        /// Adds a <see cref="Group"/> based on <see cref="AddGroupTxtBox"/>es text.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -208,11 +246,11 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
 
             GroupManager.SaveGroups();
 
-            ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
+            // ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
         }
 
         /// <summary>
-        /// Adds an attribute based on <see cref="AddAttributeTxtBox"/>es content.
+        /// Adds an <see cref="Attribute"/> based on <see cref="AddAttributeTxtBox"/>es text.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -240,9 +278,9 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         }
 
         /// <summary>
-        /// Updates the groups in the settings menu, when one of the <see cref="GroupSettingsItem"/> is clicked.
+        /// Updates the <see cref="Group"/>s in the settings menu, when one of the <see cref="GroupSettingsItem"/> is clicked.
         /// </summary>
-        /// <param name="groupName">Clicked <see cref="GroupSettingsItem"/>s group name.</param>
+        /// <param name="groupName">Clicked <see cref="Group"/>s name.</param>
         public void GroupSettingsItemClicked(string groupName)
         {
             ActiveGroupName = groupName;
@@ -254,6 +292,21 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
             else
             {
                 DestroyAllActiveChannelSelectableAttributes();
+            }
+        }
+
+        /// <summary>
+        /// Changes <see cref="SelectedInputFileName"/> every time when the <see cref="InputFilesComboBox"/>es selected item changes to the selected items content.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void InputFilesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedItem = ((ComboBoxItem)InputFilesComboBox.SelectedItem);
+            if (selectedItem != null)
+            {
+                SelectedInputFileName = selectedItem.Content.ToString();
+                InitActiveChannelSelectableAttributes();
             }
         }
     }

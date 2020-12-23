@@ -14,7 +14,7 @@ namespace ART_TELEMETRY_APP
         {
             InitializeComponent();
 
-            TrackManager.LoadTracks(ref ErrorSnackbar);
+           // TrackManager.LoadTracks(ref ErrorSnackbar);
             GroupManager.InitGroups(ref ErrorSnackbar);
             MenuManager.InitMainMenuTabs(MainMenuTabControl);
             DriverlessTrackManager.LoadTracks(ref ErrorSnackbar);

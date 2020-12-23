@@ -1,6 +1,4 @@
 ﻿using ART_TELEMETRY_APP.Groups.UserControls;
-using ART_TELEMETRY_APP.Tracks.UserControls;
-using ART_TELEMETRY_APP.Sectors.UserControls;
 using ART_TELEMETRY_APP.Settings.Classes;
 using System.Collections.Generic;
 using System.Windows.Controls;
@@ -9,25 +7,34 @@ using ART_TELEMETRY_APP.Settings.UserControls;
 namespace ART_TELEMETRY_APP.Settings
 {
     /// <summary>
-    /// Interaction logic for <seealso cref="SettingsMenu"/>.xaml
+    /// Represents the content of the main settings menu.
     /// </summary>
     public partial class SettingsMenu : UserControl
     {
+        /// <summary>
+        /// List of <see cref="TabItem"/>s in this settings.
+        /// </summary>
         private static readonly List<TabItem> settingsTabs = new List<TabItem>();
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public SettingsMenu()
         {
             InitializeComponent();
             InitSettingsTabs();
         }
 
+        /// <summary>
+        /// Initializes settings menu tabs.
+        /// </summary>
         public void InitSettingsTabs()
         {
             settingsTabControl.Items.Clear();
 
             AddSettingsTab(TextManager.FilesSettingsName, new InputFilesSettings(), selected: true);
             AddSettingsTab(TextManager.GroupsSettingsName, new GroupSettings());
-            AddSettingsTab(TextManager.TracksSettingsName, new TrackSettings());
+         //   AddSettingsTab(TextManager.TracksSettingsName, new TrackSettings());
 
             /*  AddSettingsTab(new TabItem
               {
@@ -42,6 +49,19 @@ namespace ART_TELEMETRY_APP.Settings
               });*/
         }
 
+        /// <summary>
+        /// Adds a newly created <see cref="TabItem"/> to <see cref="settingsTabControl"/>.
+        /// </summary>
+        /// <param name="header"><see cref="TabItem"/>s name.</param>
+        /// <param name="content">
+        /// <see cref="TabItem"/>s content.
+        /// It can be anything, I use it with a <see cref="UserControl"/>.
+        /// </param>
+        /// <param name="selected">
+        /// If true, the <see cref="TabItem"/> will be selected.
+        /// If false, the <see cref="TabItem"/> will not be selected.
+        /// Default is false.
+        /// </param>
         private void AddSettingsTab(string header, object content, bool selected = false)
         {
             var tab = new TabItem
@@ -56,6 +76,11 @@ namespace ART_TELEMETRY_APP.Settings
             settingsTabControl.Items.Add(tab);
         }
 
+        /// <summary>
+        /// Finds a <see cref="TabItem"/> in <see cref="settingsTabs"/>.
+        /// </summary>
+        /// <param name="name">Findable <see cref="TabItem"/>s name.</param>
+        /// <returns>A <see cref="TabItem"/> whose name is <paramref name="name"/>.</returns>
         public TabItem GetTab(string name) => settingsTabs.Find(x => x.Header.Equals(name));
     }
 }

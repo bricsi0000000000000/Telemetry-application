@@ -3,49 +3,116 @@ using ART_TELEMETRY_APP.Errors.Classes;
 using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.InputFiles.UserControls;
 using Microsoft.Win32;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ART_TELEMETRY_APP.Settings.UserControls
 {
     /// <summary>
-    /// Interaction logic for InputFilesSettings.xaml
+    /// Represents the <see cref="InputFile"/>s settigns in settings menu.
     /// </summary>
     public partial class InputFilesSettings : UserControl
     {
+        /// <summary>
+        /// List of <see cref="InputFileSettingsItem"/>s.
+        /// </summary>
         private readonly List<InputFileSettingsItem> inputFileSettingsItems = new List<InputFileSettingsItem>();
 
+        /// <summary>
+        /// List of <see cref="InputFileChannelSettingsItem"/>s.
+        /// </summary>
         private readonly List<InputFileChannelSettingsItem> inputFileChannelSettingsItems = new List<InputFileChannelSettingsItem>();
 
+        /// <summary>
+        /// Active <see cref="InputFile"/>s name.
+        /// </summary>
         public string ActiveInputFileName { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Active <see cref="Channel"/>.
+        /// </summary>
         public Channel ActiveChannel { get; set; }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public InputFilesSettings()
         {
             InitializeComponent();
         }
 
-        public void InitInputFileSettingsItems()
+        /// <summary>
+        /// Adds an <see cref="InputFile"/>, updates <see cref="ActiveInputFileName"/> ,initializes <see cref="Channel"/> items.
+        /// </summary>
+        /// <param name="inputFile">The <see cref="InputFile"/> you want to add.</param>
+        public void AddInputFileSettingsItem(InputFile inputFile)
         {
-            UpdateActiveInputFileName();
-            InitDriverlessInputFileSettingsItems();
-            //TODO standarddal is
+            InitActiveChannel();
+            ActiveInputFileName = inputFile.Name;
+
+            InitChannelItems();
+            ChangeAllInputFileSettingsItemColorMode();
+            AddSingleInputFileSettingsItem(inputFile);
+        }
+
+        /// <summary>
+        /// Changes the <see cref="ActiveInputFileName"/> to <paramref name="inputFileName"/> and updates channel items.
+        /// </summary>
+        /// <param name="inputFileName"><see cref="InputFile"/>s name that will be the <see cref="ActiveInputFileName"/>.</param>
+        public void ChangeActiveInputFileSettingsItem(string inputFileName)
+        {
+            ChangeAllInputFileSettingsItemColorMode();
+            ActiveInputFileName = inputFileName;
             InitChannelItems();
         }
 
+        /// <summary>
+        /// Changes all <see cref="InputFileSettingsItem"/>s color mode to unselected in <see cref="InputFileStackPanel"/>.
+        /// </summary>
+        private void ChangeAllInputFileSettingsItemColorMode()
+        {
+            foreach (InputFileSettingsItem item in InputFileStackPanel.Children)
+            {
+                item.ChangeColorMode(selected: false);
+            }
+        }
+
+        /// <summary>
+        /// Removes an <see cref="InputFileSettingsItem"/> from <see cref="InputFileStackPanel"/> based on <paramref name="inputFileName"/>.
+        /// </summary>
+        /// <param name="inputFileName"><see cref="InputFile"/>s name, you want to remove.</param>
+        public void RemoveSingleInputFileSettingsItem(string inputFileName)
+        {
+            int index = 0;
+            while (index < InputFileStackPanel.Children.Count &&
+                   !((InputFileSettingsItem)InputFileStackPanel.Children[index]).InputFileNameLbl.Content.Equals(inputFileName))
+            {
+                index++;
+            }
+
+            InputFileStackPanel.Children.RemoveAt(index);
+        }
+
+        /// <summary>
+        /// Initializes <see cref="InputFileSettingsItem"/>s.
+        /// </summary>
+        public void InitInputFileSettingsItems()
+        {
+            UpdateActiveInputFileName();
+
+            InputFileStackPanel.Children.Clear();
+            InitDriverlessInputFileSettingsItems();
+            InitStandardInputFileSettingsItems();
+
+            InitActiveChannel();
+            InitChannelItems();
+        }
+
+        /// <summary>
+        /// Sets <see cref="ActiveInputFileName"/> to <see cref="DriverlessInputFileManager"/>s or <see cref="StandardInputFileManager"/>s first <see cref="InputFile"/>s name if there is any <see cref="InputFile"/>.
+        /// </summary>
         private void UpdateActiveInputFileName()
         {
             if (ActiveInputFileName.Equals(string.Empty))
@@ -56,52 +123,125 @@ namespace ART_TELEMETRY_APP.Settings.UserControls
                 }
                 else
                 {
-                    ActiveInputFileName = string.Empty;
+                    if (StandardInputFileManager.Instance.InputFiles.Count > 0)
+                    {
+                        ActiveInputFileName = StandardInputFileManager.Instance.InputFiles.First().Name;
+                    }
+                    else
+                    {
+                        ActiveInputFileName = string.Empty;
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// Adds <see cref="InputFileSettingsItem"/> from <see cref="DriverlessInputFileManager.Instance.InputFiles"/>.
+        /// </summary>
         private void InitDriverlessInputFileSettingsItems()
         {
-            InputFileStackPanel.Children.Clear();
-
             foreach (var inputFile in DriverlessInputFileManager.Instance.InputFiles)
             {
-                var inputFileSettingsItem = new InputFileSettingsItem(inputFileName: inputFile.Name, driverless: true);
-                inputFileSettingsItem.ChangeColorMode(inputFile.Name.Equals(ActiveInputFileName));
-                InputFileStackPanel.Children.Add(inputFileSettingsItem);
-                inputFileSettingsItems.Add(inputFileSettingsItem);
+                AddSingleInputFileSettingsItem(inputFile);
             }
+        }
 
-            var activeInputFile = DriverlessInputFileManager.Instance.GetInputFile(ActiveInputFileName);
-            if (activeInputFile != null)
+        /// <summary>
+        /// Adds <see cref="InputFileSettingsItem"/> from <see cref="StandardInputFileManager.Instance.InputFiles"/>.
+        /// </summary>
+        private void InitStandardInputFileSettingsItems()
+        {
+            foreach (var inputFile in StandardInputFileManager.Instance.InputFiles)
             {
-                if (activeInputFile.Channels.Count > 0)
+                AddSingleInputFileSettingsItem(inputFile);
+            }
+        }
+
+        /// <summary>
+        /// Creates and adds an <see cref="InputFileSettingsItem"/> to <see cref="inputFileSettingsItems"/>.
+        /// </summary>
+        /// <param name="inputFile">The <see cref="InputFileSettingsItem"/> will be based on this <see cref="InputFile"/>.</param>
+        private void AddSingleInputFileSettingsItem(InputFile inputFile)
+        {
+            var inputFileSettingsItem = new InputFileSettingsItem(inputFileName: inputFile.Name, driverless: inputFile.Driverless);
+            inputFileSettingsItem.ChangeColorMode(inputFile.Name.Equals(ActiveInputFileName));
+            InputFileStackPanel.Children.Add(inputFileSettingsItem);
+            inputFileSettingsItems.Add(inputFileSettingsItem);
+        }
+
+        /// <summary>
+        /// Initializes <see cref="ActiveChannel"/>.
+        /// </summary>
+        private void InitActiveChannel()
+        {
+            var activeDriverlessInputFile = DriverlessInputFileManager.Instance.GetInputFile(ActiveInputFileName);
+            if (activeDriverlessInputFile != null)
+            {
+                if (activeDriverlessInputFile.Channels.Count > 0)
                 {
-                    ActiveChannel = activeInputFile.Channels.First();
+                    ActiveChannel = activeDriverlessInputFile.Channels.First();
+                }
+            }
+            else
+            {
+                var activestandardInputFile = StandardInputFileManager.Instance.GetInputFile(ActiveInputFileName);
+                if (activestandardInputFile != null)
+                {
+                    if (activestandardInputFile.Channels.Count > 0)
+                    {
+                        ActiveChannel = activestandardInputFile.Channels.First();
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// Initializes channel items.
+        /// </summary>
         public void InitChannelItems()
         {
             ChannelItemsStackPanel.Children.Clear();
             inputFileChannelSettingsItems.Clear();
 
-            //TODO standarddal is
-
-            var activeInputFile = DriverlessInputFileManager.Instance.GetInputFile(ActiveInputFileName);
-            if (activeInputFile != null)
+            var activeDriverlessInputFile = DriverlessInputFileManager.Instance.GetInputFile(ActiveInputFileName);
+            if (activeDriverlessInputFile != null)
             {
-                foreach (var channel in activeInputFile.Channels)
+                foreach (var channel in activeDriverlessInputFile.Channels)
                 {
-                    var inputFileChannelSettingsItem = new InputFileChannelSettingsItem(channel.Name, ActiveInputFileName, channel.Color);
-                    ChannelItemsStackPanel.Children.Add(inputFileChannelSettingsItem);
-                    inputFileChannelSettingsItems.Add(inputFileChannelSettingsItem);
+                    AddInputFileChannelSettingsItem(channel);
                 }
             }
+            else
+            {
+                var activeStandardInputFile = StandardInputFileManager.Instance.GetInputFile(ActiveInputFileName);
+                if (activeStandardInputFile != null)
+                {
+                    foreach (var channel in activeStandardInputFile.Channels)
+                    {
+                        AddInputFileChannelSettingsItem(channel);
+                    }
+                }
+            }
+
+            UpdateReuqiredChannels();
         }
 
+        /// <summary>
+        /// Creates and adds an <see cref="InputFileChannelSettingsItem"/> to <see cref="inputFileChannelSettingsItems"/>.
+        /// </summary>
+        /// <param name="channel"></param>
+        private void AddInputFileChannelSettingsItem(Channel channel)
+        {
+            var inputFileChannelSettingsItem = new InputFileChannelSettingsItem(channel.Name, ActiveInputFileName, channel.Color);
+            ChannelItemsStackPanel.Children.Add(inputFileChannelSettingsItem);
+            inputFileChannelSettingsItems.Add(inputFileChannelSettingsItem);
+        }
+
+        /// <summary>
+        /// Reads file.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ReadInputFileBtn_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog
@@ -116,7 +256,8 @@ namespace ART_TELEMETRY_APP.Settings.UserControls
             {
                 string fileName = openFileDialog.FileName.Split('\\').Last();
 
-                if (DriverlessInputFileManager.Instance.InputFiles.Find(x => x.Name.Equals(fileName)) == null /*|| TODO: standarddal is*/)
+                if (DriverlessInputFileManager.Instance.GetInputFile(fileName) == null &&
+                    StandardInputFileManager.Instance.GetInputFile(fileName) == null)
                 {
                     ReadFileProgressBarLbl.Content = $"Reading \"{fileName}\"";
                     var dataReader = new DataReader();
@@ -130,6 +271,64 @@ namespace ART_TELEMETRY_APP.Settings.UserControls
                     ShowError.ShowErrorMessage(ref ErrorSnackbar, $"File '{fileName}' already exists");
                 }
             }
+        }
+
+        /// <summary>
+        /// Updates required <see cref="Channel"/>s.
+        /// </summary>
+        public void UpdateReuqiredChannels()
+        {
+            RequiredChannelsStackPanel.Children.Clear();
+
+            InputFile activeInputFile = new InputFile();
+
+            var driverlessInputFile = DriverlessInputFileManager.Instance.GetInputFile(ActiveInputFileName);
+            if (driverlessInputFile != null)
+            {
+                activeInputFile = driverlessInputFile;
+            }
+            else
+            {
+                var stadnardInputFile = StandardInputFileManager.Instance.GetInputFile(ActiveInputFileName);
+                if (stadnardInputFile != null)
+                {
+                    activeInputFile = stadnardInputFile;
+                }
+            }
+
+            if (activeInputFile.Driverless)
+            {
+                foreach (var importantChannelName in ImportantChannels.DriverlessImportantChannelNames)
+                {
+                    AddImportantChannelNameCheckBox(importantChannelName, activeInputFile.IsRequiredChannelSatisfied(importantChannelName));
+                }
+            }
+            else
+            {
+                //TODO standarddal is
+                /*foreach (var importantChannelName in ImportantChannels.DriverlessImportantChannelNames)
+                {
+                    AddImportantChannelNameCheckBox(importantChannelName);
+                }*/
+            }
+        }
+
+        /// <summary>
+        /// Creates and adds a <see cref="CheckBox"/> based on <paramref name="name"/> and <paramref name="isChecked"/>.
+        /// </summary>
+        /// <param name="name">The newly created <see cref="CheckBox"/>s name.</param>
+        /// <param name="isChecked">
+        /// If true, the <see cref="CheckBox"/> will be checked.
+        /// If false, the <see cref="CheckBox"/> will not be checked.
+        /// </param>
+        private void AddImportantChannelNameCheckBox(string name, bool isChecked)
+        {
+            RequiredChannelsStackPanel.Children.Add(new CheckBox()
+            {
+                Content = name,
+                IsChecked = isChecked,
+                IsEnabled = false
+            });
         }
     }
 }

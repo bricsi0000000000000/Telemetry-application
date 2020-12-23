@@ -1,18 +1,15 @@
 ﻿using ART_TELEMETRY_APP.Datas.Classes;
-using ART_TELEMETRY_APP.Groups.Classes;
 using ScottPlot;
 using ScottPlot.Drawing;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace ART_TELEMETRY_APP.Charts.Usercontrols
 {
     /// <summary>
-    /// Represents a chart based on <see cref="ScottPlot"/>.
+    /// Represents a <see cref="Chart"/> based on <see cref="ScottPlot"/>.
     /// </summary>
     public partial class Chart : UserControl
     {
@@ -27,7 +24,7 @@ namespace ART_TELEMETRY_APP.Charts.Usercontrols
         /// <summary>
         /// List of channel names whose are in this <see cref="Chart"/>.
         /// </summary>
-        private List<string> channelNames = new List<string>();
+        private readonly List<string> channelNames = new List<string>();
 
         /// <summary>
         /// It decides that this chart has only one VLine.
@@ -92,6 +89,7 @@ namespace ART_TELEMETRY_APP.Charts.Usercontrols
         /// <param name="yAxisValues">Values on <b>vertical</b> axis.</param>
         /// <param name="vLineColor"><see cref="Color"/> of the VLine.</param>
         /// <param name="lineColor"><see cref="Color"/> of the line.</param>
+        /// <param name="channels"><see cref="Channel"/>s.</param>
         /// <param name="yAxisLabel">Label on <b>vertical</b> axis.</param>
         /// <param name="xAxisLabel">Label on <b>horizontal</b> axis. Default is <c>x</c></param>
         /// <param name="plotVLine">If true, a VLine will be plotted.</param>
@@ -166,9 +164,9 @@ namespace ART_TELEMETRY_APP.Charts.Usercontrols
         /// Updates the VLine(s) on the chart.
         /// </summary>
         /// <param name="xValue">VLines <b>x</b> coordinate.</param>
+        /// <param name="vLineColor"><see cref="Color"/> of the VLine.</param>
         /// <param name="channels"><b>All channels from the <see cref="Driverless.UserControls.DriverlessMenu"/>.</param>
         /// <param name="dataIndex"><b>Index of the channel data.</param>
-        /// <param name="vLineColor"><see cref="Color"/> of the VLine.</param>
         public void RenderPlot(double xValue, Color vLineColor, List<Channel> channels, int dataIndex)
         {
             plottableScatterHighlight.HighlightClear();
@@ -182,6 +180,11 @@ namespace ART_TELEMETRY_APP.Charts.Usercontrols
             UpdateSideValues(ref channels, ref dataIndex);
         }
 
+        /// <summary>
+        /// Update the <see cref="ChartValue"/>s next to the <see cref="Chart"/>.
+        /// </summary>
+        /// <param name="channels">List, where the <see cref="Channel"/>s are.</param>
+        /// <param name="dataIndex">Index where the actual data is.</param>
         private void UpdateSideValues(ref List<Channel> channels, ref int dataIndex)
         {
             if (ValuesStackPanel.Children.Count == 0)

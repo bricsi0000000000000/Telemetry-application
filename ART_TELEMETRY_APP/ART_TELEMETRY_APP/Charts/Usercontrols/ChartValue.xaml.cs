@@ -4,12 +4,12 @@ using System.Windows.Media;
 namespace ART_TELEMETRY_APP.Charts.Usercontrols
 {
     /// <summary>
-    /// Interaction logic for ChartValue.xaml
+    /// Represents the a single value next to a <see cref="Chart"/>.
     /// </summary>
     public partial class ChartValue : UserControl
     {
         /// <summary>
-        /// Represents a <see cref="Chart"/> value next to it.
+        /// Constructor
         /// </summary>
         /// <param name="color"><see cref="Color"/> of the channel.</param>
         /// <param name="channelName">Channel name.</param>
@@ -23,7 +23,14 @@ namespace ART_TELEMETRY_APP.Charts.Usercontrols
             SetChannelValue(channelValue);
         }
 
+        /// <summary>
+        /// <see cref="Channel"/>s name whose data is represented.
+        /// </summary>
         private string channelName;
+
+        /// <summary>
+        /// <see cref="Channel"/>s name whose data is represented.
+        /// </summary>
         public string ChannelName
         {
             get
@@ -37,11 +44,19 @@ namespace ART_TELEMETRY_APP.Charts.Usercontrols
             }
         }
 
+        /// <summary>
+        /// Sets the <see cref="ChannelNameLabel"/>s text to <paramref name="channelName"/>.
+        /// </summary>
+        /// <param name="channelName"><see cref="Channel"/>s name.</param>
         private void SetChannelName(string channelName)
         {
             ChannelNameLabel.Content = channelName;
         }
 
+        /// <summary>
+        /// Sets the <see cref="ChannelValueLabel"/>s text to <paramref name="channelValue"/>.
+        /// </summary>
+        /// <param name="channelValue"><see cref="Channel"/>s value.</param>
         public void SetChannelValue(double channelValue)
         {
             ChannelValueLabel.Content = $"{channelValue:f3}";

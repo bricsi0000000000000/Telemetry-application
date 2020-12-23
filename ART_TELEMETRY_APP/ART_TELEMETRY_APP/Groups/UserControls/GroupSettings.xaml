@@ -128,26 +128,21 @@
             </materialDesign:DialogHost>
         </Grid>
 
-        <materialDesign:Card Grid.Column="2"
-                             Margin="5"
-                             Padding="30,0,0,0">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-                <Label Name="GroupSettingsItemTypeLbl"
-                       FontSize="18"
-                       Margin="10,0,0,0"
-                       VerticalContentAlignment="Center"
-                       HorizontalContentAlignment="Left"/>
-                <StackPanel Grid.Row="1"
-                            Margin="5"
-                            Name="GroupChannelsStackPanel"/>
+            <ComboBox Name="InputFilesComboBox"
+                      Margin="5,0"
+                      SelectionChanged="InputFilesComboBox_SelectionChanged"/>
 
-            </Grid>
-        </materialDesign:Card>
+            <StackPanel Grid.Row="1"
+                        Margin="5"
+                        Name="GroupChannelsStackPanel"/>
+
+        </Grid>
 
         <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
                                  Grid.ColumnSpan="3"

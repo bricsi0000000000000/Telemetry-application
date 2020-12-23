@@ -9,12 +9,12 @@ using System.Windows;
 namespace ART_TELEMETRY_APP.Tracks.Classes
 {
     /// <summary>
-    /// Manages the driverless tracks
+    /// Manages driverless tracks.
     /// </summary>
     static class DriverlessTrackManager
     {
         /// <summary>
-        /// Stores the <see cref="DriverlessTrack"/>-s.
+        /// Stores <see cref="DriverlessTrack"/>s.
         /// </summary>
         public static List<DriverlessTrack> DriverlessTracks { get; private set; } = new List<DriverlessTrack>();
 
@@ -46,7 +46,7 @@ namespace ART_TELEMETRY_APP.Tracks.Classes
         }
 
         /// <summary>
-        /// Load a <see cref="DriverlessTrack"/> from file.
+        /// Loads a <see cref="DriverlessTrack"/> from file.
         /// </summary>
         /// <param name="fileName">The JSON file name that contains the track data.</param>
         /// <param name="errorSnackbar"><see cref="Snackbar"/> that shows erro message.</param>

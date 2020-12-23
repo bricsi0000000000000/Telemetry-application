@@ -14,7 +14,7 @@ namespace ART_TELEMETRY_APP.Groups.Classes
     public static class GroupManager
     {
         /// <summary>
-        /// List of <see cref="Group"/>s.
+        /// All <see cref="Group"/>s whose the user can use in the program.
         /// </summary>
         public static List<Group> Groups { get; } = new List<Group>();
 

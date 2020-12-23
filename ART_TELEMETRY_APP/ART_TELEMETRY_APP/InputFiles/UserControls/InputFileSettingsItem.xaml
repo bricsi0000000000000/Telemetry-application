@@ -28,7 +28,7 @@
 
             <Label Name="InputFileNameLbl"
                    VerticalContentAlignment="Center"
-                   HorizontalContentAlignment="Center"
+                   HorizontalContentAlignment="Left"
                    />
 
             <Button Grid.Column="1"

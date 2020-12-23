@@ -39,7 +39,8 @@
 
             <ComboBox Grid.Column="2"
                       x:Name="ImportantChannelsComboBox"
-                      Margin="5,0"/>
+                      Margin="5,0"
+                      Visibility="Hidden"/>
         </Grid>
     </materialDesign:ColorZone>
 </UserControl>

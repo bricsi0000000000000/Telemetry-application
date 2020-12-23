@@ -6,7 +6,7 @@ using System.Windows.Controls;
 namespace ART_TELEMETRY_APP.Charts.Usercontrols
 {
     /// <summary>
-    /// Interaction logic for TrackChart.xaml
+    /// Represents a driverless track.
     /// </summary>
     public partial class TrackChart : UserControl
     {
@@ -17,6 +17,10 @@ namespace ART_TELEMETRY_APP.Charts.Usercontrols
         /// </summary>
         private readonly Bitmap carImage;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="chartHeight"><see cref="TrackChart"/>s height.</param>
         public TrackChart(int chartHeight = 300)
         {
             InitializeComponent();

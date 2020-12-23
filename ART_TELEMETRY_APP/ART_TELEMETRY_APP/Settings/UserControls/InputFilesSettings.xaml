@@ -15,6 +15,7 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -45,8 +46,25 @@
             <StackPanel x:Name="ChannelItemsStackPanel"/>
         </ScrollViewer>
 
+        <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch"/>
+
+        <Grid Grid.Column="4" Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Label Content="Required channels"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Center"/>
+
+            <StackPanel Grid.Row="1"
+                        Name="RequiredChannelsStackPanel"
+                        Margin="15,0,0,5"/>
+        </Grid>
+        
         <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
-                                 Grid.ColumnSpan="3"
+                                 Grid.ColumnSpan="5"
                                  x:Name="ErrorSnackbar"
                                  Foreground="White"
                                  />

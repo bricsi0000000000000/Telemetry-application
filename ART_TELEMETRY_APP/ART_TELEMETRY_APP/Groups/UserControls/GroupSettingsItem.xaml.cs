@@ -12,27 +12,43 @@ using System.Windows.Media.Imaging;
 namespace ART_TELEMETRY_APP.Groups.UserControls
 {
     /// <summary>
-    /// Interaction logic for <seealso cref="GroupSettingsItem"/>.xaml
+    /// Represents a <see cref="Group"/> settings item in <see cref="GroupSettings"/>.
     /// </summary>
     public partial class GroupSettingsItem : UserControl
     {
         /// <summary>
-        /// The <see cref="Groups"/>s name that is represented in this <see cref="GroupSettingsItem"/>.
+        /// The <see cref="Group"/>s name that is represented in this <see cref="GroupSettingsItem"/>.
         /// </summary>
         public string GroupName { get; set; }
 
         /// <summary>
+        /// Decides that the <see cref="Group"/> is driverless or not.
+        /// </summary>
+        private bool driverless;
+
+        /// <summary>
         /// Constructor for <see cref="GroupSettingsItem"/>.
         /// </summary>
-        /// <param name="groupName"></param>
-        /// <param name="driverless">If true, this <see cref="GroupSettingsItem"/> is driverless.</param>
+        /// <param name="groupName"><see cref="Group"/>s name which is represented by this <see cref="GroupSettingsItem"/>.</param>
+        /// <param name="driverless">
+        /// If true, this <see cref="GroupSettingsItem"/> is driverless.
+        /// Otherwise it's not.
+        /// </param>
         public GroupSettingsItem(string groupName, bool driverless = false)
         {
             InitializeComponent();
 
             GroupName = groupName;
             GroupLbl.Content = groupName;
+            this.driverless = driverless;
+            ChangeTypeImage();
+        }
 
+        /// <summary>
+        /// Changes the <see cref="GroupTypeImage"/>es image based on <see cref="driverless"/>.
+        /// </summary>
+        private void ChangeTypeImage()
+        {
             var logo = new BitmapImage();
             logo.BeginInit();
 
@@ -51,7 +67,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         }
 
         /// <summary>
-        /// Deletes this <see cref="GroupSettingsItem"/>.
+        /// Deletes this <see cref="GroupSettingsItem"/> than updates ActiveGroupName and initializes groups in <see cref="GroupSettings"/>.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -63,7 +79,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
 
             GroupManager.SaveGroups();
 
-            ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
+           // ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
         }
 
         /// <summary>
@@ -95,7 +111,9 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         {
             var group = GroupManager.GetGroup(GroupName);
             group.Driverless = !group.Driverless;
+            driverless = group.Driverless;
             GroupManager.SaveGroups();
+           // ChangeTypeImage();
             ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
 
             if (group.Driverless)
@@ -107,7 +125,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
                 ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).DestroyAllActiveChannelSelectableAttributes();
             }
 
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ChangeGroupSettingsItemTypeTitle();
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitInputFilesComboBox();
         }
     }
 }

@@ -7,12 +7,9 @@ using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.Settings;
 using ART_TELEMETRY_APP.Settings.Classes;
 using ART_TELEMETRY_APP.Tracks.Classes;
-using MaterialDesignThemes.Wpf;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,22 +18,22 @@ using Point = System.Windows.Point;
 namespace ART_TELEMETRY_APP.Driverless.UserControls
 {
     /// <summary>
-    /// This class contains the **main menu** to the driverless section.
+    /// Represents the content of the driverless main menu.
     /// </summary>
     public partial class DriverlessMenu : UserControl
     {
         /// <summary>
-        /// A list of the channels from the input file.
+        /// A list of the <see cref="Channel"/>s from the input file.
         /// </summary>
         public List<Channel> Channels { get; private set; }
 
         /// <summary>
-        /// List of selected groups.
+        /// List of selected <see cref="Group"/>s.
         /// </summary>
         private readonly List<string> selectedGroups = new List<string>();
 
         /// <summary>
-        /// Yaw rate integrate.
+        /// List of yaw angle.
         /// </summary>
         private readonly List<double> integratedYawangle = new List<double>();
 
@@ -47,6 +44,11 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         private readonly float dt = .05f;
 
         /// <summary>
+        /// The horizontal axis will be based on the <i>x</i> <see cref="Channel"/>.
+        /// </summary>
+        private Channel HorizontalAxisData => GetChannel("x");
+
+        /// <summary>
         /// Constructor of the <see cref="DriverlessMenu"/> class.
         /// </summary>
         public DriverlessMenu()
@@ -54,6 +56,9 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Initializes <see cref="ChooseInputFileCombobox"/>es items.
+        /// </summary>
         public void InitChooseInputFileComboBox()
         {
             //TODO az éppen beolvasott legyen a selected
@@ -61,20 +66,19 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
 
             foreach (var inputFile in DriverlessInputFileManager.Instance.InputFiles)
             {
-                var comboBoxItem = new ComboBoxItem()
+                if (inputFile.Driverless)
                 {
-                    Content = inputFile.Name,
-                    IsSelected = true
-                };
-                comboBoxItem.PreviewMouseLeftButtonDown += ChooseInputFileCombobox_PreviewMouseRightButtonUp;
-
-                ChooseInputFileCombobox.Items.Add(comboBoxItem);
+                    ChooseInputFileCombobox.Items.Add(new ComboBoxItem()
+                    {
+                        Content = inputFile.Name,
+                        IsSelected = true
+                    });
+                }
             }
         }
 
-
         /// <summary>
-        /// Initialize the channels based on <see cref="Channels"/>.
+        /// Initializes <see cref="CheckBox"/>es based on <see cref="Channels"/>.
         /// </summary>
         private void InitChannelCheckBoxes()
         {
@@ -87,10 +91,11 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         }
 
         /// <summary>
-        /// Initialize the groups based on <see cref="GroupManager.Groups"/>.
+        /// Initializes <see cref="CheckBox"/>es based on <see cref="GroupManager.Groups"/>.
         /// </summary>
-        private void InitGroups()
+        private void InitGroupCheckBoxes()
         {
+            GroupsStackPanel.Children.Clear();
             foreach (var group in GroupManager.Groups)
             {
                 if (group.Driverless)
@@ -107,7 +112,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         }
 
         /// <summary>
-        /// Updates groups after the <see cref="CheckBox"/>-es state is changed.
+        /// Updates <see cref="Group"/>s after the <see cref="CheckBox"/>es state is changed.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -145,7 +150,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         }
 
         /// <summary>
-        /// Updates charts after the <see cref="CheckBox"/>-es state is changed.
+        /// Updates <see cref="Chart"/>s after the <see cref="CheckBox"/>es state is changed.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -159,11 +164,11 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         }
 
         /// <summary>
-        /// Clears all the children of <see cref="ChannelsStackPanel"/> and fill it with the newly created Charts.
+        /// Clears all the children of <see cref="ChannelsStackPanel"/> and fill it with the newly created <see cref="Chart"/>s.
         /// </summary>
         public void UpdateCharts()
         {
-            if(Channels == null)
+            if (Channels == null)
             {
                 return;
             }
@@ -322,7 +327,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
                     int dataIndex = (int)DataSlider.Value;
                     double xValue = dataIndex < HorizontalAxisData.Data.Count ? HorizontalAxisData.Data[dataIndex] : HorizontalAxisData.Data.Last();
                     double yValue = dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last();
-                   
+
                     chart.InitPlot(xValue: xValue,
                                     yValue: yValue,
                                     xAxisValues: data.Item1,
@@ -346,9 +351,9 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// <summary>
         /// Pushes the <paramref name="list"/> with <paramref name="offset"/>.
         /// </summary>
-        /// <param name="list"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
+        /// <param name="list">List to be shifted.</param>
+        /// <param name="offset">Value to be shifted.</param>
+        /// <returns>Shifted list based on <paramref name="offset"/>.</returns>
         private List<double> CreateOffset(List<double> list, float offset)
         {
             var newList = new List<double>();
@@ -401,11 +406,6 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         }
 
         /// <summary>
-        /// The horizontal axis will be based on the <i>x</i> <see cref="Channel"/>.
-        /// </summary>
-        private Channel HorizontalAxisData => GetChannel("x");
-
-        /// <summary>
         /// Finds a <see cref="Channel"/> based on <paramref name="channelName"/>.
         /// </summary>
         /// <param name="channelName">The name of the <see cref="Channel"/> to find.</param>
@@ -456,32 +456,49 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         }
 
         /// <summary>
-        /// Changes the newly readed channels, than updates everything:
+        /// Calls
         /// <list type="bullet">
         /// <item>
-        /// <description><see cref="InitChannelCheckBoxes()"/></description>
+        /// <description><see cref="UpdateAfterInputFileChoose()"/></description>
         /// </item>
         /// <item>
-        /// <description><see cref="SetUpDataSlider()"/></description>
-        /// </item>
-        /// <item>
-        /// <description><see cref="UpdateCharts()"/></description>
+        /// <description><see cref="InitChooseInputFileComboBox()"/></description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="channels">New channels.</param>
         public void UpdateAfterReadFile()
         {
-            Channels = DriverlessInputFileManager.Instance.InputFiles.First().Channels;
-            InitChannelCheckBoxes();
-            InitGroups();
-            SetUpDataSlider();
-            CalculateYawangle();
-            // TODO: ha nem kell a highlight karika, akkor a kikommentelt sor kell, az UpdateCharts(); pedig nem
-            UpdateCharts();
-            //ChangeChartHighlight((int)DataSlider.Value);
-            UpdateTrack();
+            UpdateAfterInputFileChoose();
             InitChooseInputFileComboBox();
+        }
+
+        /// <summary>
+        /// Updates everythin after an <see cref="InputFile"/> was chosen.
+        /// </summary>
+        private void UpdateAfterInputFileChoose()
+        {
+            UnselectAllChannel();
+            var activeInputFile = DriverlessInputFileManager.Instance.GetActiveInputFile;
+            if (activeInputFile != null)
+            {
+                Channels = activeInputFile.Channels;
+                InitChannelCheckBoxes();
+                InitGroupCheckBoxes();
+                SetUpDataSlider();
+                CalculateYawangle();
+                // TODO: ha nem kell a highlight karika, akkor a kikommentelt sor kell, az UpdateCharts(); pedig nem
+                selectedGroups.Clear();
+                UpdateCharts();
+                //ChangeChartHighlight((int)DataSlider.Value);
+                UpdateTrack();
+            }
+            else
+            {
+                ChannelsStackPanel.Children.Clear();
+                GroupsStackPanel.Children.Clear();
+                TrackStackPanel.Children.Clear();
+                ChartsStackPanel.Children.Clear();
+            }
         }
 
         /// <summary>
@@ -528,10 +545,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         /// <param name="e"></param>
         private void UncheckAllChannels_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var channel in Channels)
-            {
-                channel.IsActive = false;
-            }
+            UnselectAllChannel();
 
             foreach (CheckBox checkBox in ChannelsStackPanel.Children)
             {
@@ -541,9 +555,32 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
             UpdateCharts();
         }
 
-        private void ChooseInputFileCombobox_PreviewMouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        /// <summary>
+        /// Unselects all <see cref="Channel"/> in <see cref="Channels"/>.
+        /// </summary>
+        private void UnselectAllChannel()
         {
+            if (Channels != null)
+            {
+                foreach (var channel in Channels)
+                {
+                    channel.IsActive = false;
+                }
+            }
+        }
 
+        /// <summary>
+        /// Updates active <see cref="InputFile"/>s name in <see cref="DriverlessInputFileManager"/>.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ChooseInputFileCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ChooseInputFileCombobox.Items.Count > 0)
+            {
+                DriverlessInputFileManager.Instance.ActiveInputFileName = ((ComboBoxItem)ChooseInputFileCombobox.SelectedItem).Content.ToString();
+                UpdateAfterInputFileChoose();
+            }
         }
     }
 }

@@ -168,6 +168,7 @@
       <DependentUpon>GroupsMenuContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="InputFiles\Classes\StandardInputFile.cs" />
+    <Compile Include="InputFiles\Classes\StandardInputFileManager.cs" />
     <Compile Include="InputFiles\UserControls\InputFileChannelSettingsItem.xaml.cs">
       <DependentUpon>InputFileChannelSettingsItem.xaml</DependentUpon>
     </Compile>

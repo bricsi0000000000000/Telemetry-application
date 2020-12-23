@@ -40,8 +40,13 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
             ChannelName = channelName;
             this.inputFileName = inputFileName;
             AttributeLbl.Content = channelName;
+            ChangeColor(color);
+           // InitImportantChannelsComboBox();
+        }
+
+        private void ChangeColor(Color color)
+        {
             ChangeColorBtn.Background = new SolidColorBrush(color);
-            InitImportantChannelsComboBox();
         }
 
         private void ChangeColorBtn_Click(object sender, RoutedEventArgs e)
@@ -50,10 +55,22 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
             if (pickColor.ShowDialog() == true)
             {
                 var pickedColor = pickColor.ColorPicker.Color;
+                ChangeColor(pickedColor);
+                /* var driverlessInputFile = DriverlessInputFileManager.Instance.GetInputFile(inputFileName);
+                 if (driverlessInputFile != null)
+                 {
+                     driverlessInputFile.GetChannel(ChannelName).Color = pickedColor;
+                 }
+                 else
+                 {
+                     var standardInputFile = StandardInputFileManager.Instance.GetInputFile(inputFileName);
+                     if (standardInputFile != null)
+                     {
+                         standardInputFile.GetChannel(ChannelName).Color = pickedColor;
+                     }
+                 }*/
 
-                //TODO stadnarddal is
-                DriverlessInputFileManager.Instance.GetInputFile(inputFileName).GetChannel(ChannelName).Color = pickedColor;
-                ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).InitInputFileSettingsItems();
+                //((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).InitInputFileSettingsItems();
 
                 foreach (var group in GroupManager.Groups)
                 {
@@ -61,6 +78,28 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
                     if (channel != null)
                     {
                         channel.Color = pickedColor;
+                    }
+                }
+
+                foreach (var inputFile in DriverlessInputFileManager.Instance.InputFiles)
+                {
+                    foreach (var channel in inputFile.Channels)
+                    {
+                        if (channel.Name.Equals(ChannelName))
+                        {
+                            channel.Color = pickedColor;
+                        }
+                    }
+                }
+
+                foreach (var inputFile in StandardInputFileManager.Instance.InputFiles)
+                {
+                    foreach (var channel in inputFile.Channels)
+                    {
+                        if (channel.Name.Equals(ChannelName))
+                        {
+                            channel.Color = pickedColor;
+                        }
                     }
                 }
 
@@ -80,9 +119,20 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
             comboBoxItem.PreviewMouseLeftButtonDown += ChooseInputFileCombobox_PreviewMouseRightButtonUp;
             ImportantChannelsComboBox.Items.Add(comboBoxItem);
 
-            foreach (var item in ImportantChannels.DriverlessImportantChannels)
+            var inputFile = new InputFile();
+            inputFile = DriverlessInputFileManager.Instance.GetInputFile(inputFileName);
+            if (inputFile == null)
             {
-                comboBoxItem = new ComboBoxItem() { Content = item, IsSelected = item.Equals(ChannelName) };
+                inputFile = StandardInputFileManager.Instance.GetInputFile(inputFileName);
+            }
+
+            foreach (var item in ImportantChannels.DriverlessImportantChannelNames)
+            {
+                bool found = item.Equals(ChannelName);
+
+                inputFile.ChangeRequiredChannelSatisfaction(item, found);
+
+                comboBoxItem = new ComboBoxItem() { Content = item, IsSelected = found };
                 comboBoxItem.PreviewMouseLeftButtonDown += ChooseInputFileCombobox_PreviewMouseRightButtonUp;
                 ImportantChannelsComboBox.Items.Add(comboBoxItem);
             }

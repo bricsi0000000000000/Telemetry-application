@@ -1,4 +1,5 @@
-﻿using ART_TELEMETRY_APP.InputFiles.Classes;
+﻿using ART_TELEMETRY_APP.Driverless.UserControls;
+using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.Settings;
 using ART_TELEMETRY_APP.Settings.Classes;
 using ART_TELEMETRY_APP.Settings.UserControls;
@@ -26,7 +27,7 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
     {
         public string InputFileName { get; set; }
 
-        private readonly bool driverless;
+        private bool driverless;
 
         public InputFileSettingsItem(string inputFileName, bool driverless = false)
         {
@@ -37,6 +38,11 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
 
             InputFileNameLbl.Content = inputFileName;
 
+            ChangeTypeImage();
+        }
+
+        private void ChangeTypeImage()
+        {
             var logo = new BitmapImage();
             logo.BeginInit();
 
@@ -59,42 +65,53 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
             if (driverless)
             {
                 DriverlessInputFileManager.Instance.RemoveInputFile(InputFileName);
-                ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).InitInputFileSettingsItems();
             }
             else
             {
-
+                StandardInputFileManager.Instance.RemoveInputFile(InputFileName);
             }
+
+            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).RemoveSingleInputFileSettingsItem(InputFileName);
         }
 
-        public void ChangeColorMode(bool change)
+        public void ChangeColorMode(bool selected)
         {
             var converter = new BrushConverter();
-            ColorZone.BorderBrush = change ? Brushes.White : (Brush)converter.ConvertFromString("#FF303030");
+            ColorZone.BorderBrush = selected ? Brushes.White : (Brush)converter.ConvertFromString("#FF303030");
         }
 
         private void Grid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            // ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).GroupSettingsItemClicked(GroupName);
+            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeActiveInputFileSettingsItem(InputFileName);
+            ChangeColorMode(selected: true);
         }
 
         private void ChangeGroupItemType_Click(object sender, RoutedEventArgs e)
         {
-           /* var group = GroupManager.GetGroup(GroupName);
-            group.Driverless = !group.Driverless;
-            GroupManager.SaveGroups();
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
-
-            if (group.Driverless)
+            var driverlessInputFile = DriverlessInputFileManager.Instance.GetInputFile(InputFileName);
+            if (driverlessInputFile != null)
             {
-                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitActiveChannelSelectableAttributes();
+                DriverlessInputFileManager.Instance.RemoveInputFile(InputFileName);
+                StandardInputFileManager.Instance.AddInputFile(new StandardInputFile(driverlessInputFile)
+                {
+                    Driverless = false
+                });
+                driverless = false;
             }
             else
             {
-                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).DestroyAllActiveChannelSelectableAttributes();
+                var stadnardInputFile = StandardInputFileManager.Instance.GetInputFile(InputFileName);
+                StandardInputFileManager.Instance.RemoveInputFile(InputFileName);
+                DriverlessInputFileManager.Instance.AddInputFile(new DriverlessInputFile(stadnardInputFile)
+                {
+                    Driverless = true
+                });
+                driverless = true;
             }
 
-         ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ChangeGroupSettingsItemTypeTitle();*/
+            ChangeTypeImage();
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
+            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).UpdateReuqiredChannels();
         }
     }
 }

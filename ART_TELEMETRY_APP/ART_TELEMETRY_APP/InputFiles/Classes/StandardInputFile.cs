@@ -11,7 +11,25 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
     {
         public StandardInputFile(string name, List<Channel> channels) : base(name, channels)
         {
+            InitRequiredChannels();
+        }
+        public StandardInputFile(DriverlessInputFile driverlessInputFile) : base(driverlessInputFile)
+        {
+            InitRequiredChannels();
+        }
+        public StandardInputFile(InputFile inputFile) : base(inputFile)
+        {
+            InitRequiredChannels();
+        }
 
+        private void InitRequiredChannels()
+        {
+            RequiredChannels = new Dictionary<string, bool>();
+
+            foreach (var item in ImportantChannels.StandardImportantChannelNames)
+            {
+                RequiredChannels.Add(item, false);
+            }
         }
         /*public StandardInputFile(string fileName, string driverName, List<Channel> channels, ref Snackbar errorSnackbar, Feedback feedback)
         {

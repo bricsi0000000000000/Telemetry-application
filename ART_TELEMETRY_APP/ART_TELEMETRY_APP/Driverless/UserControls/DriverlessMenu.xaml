@@ -29,7 +29,8 @@
             </Grid.RowDefinitions>
 
             <ComboBox Margin="5,0"
-                      Name="ChooseInputFileCombobox"/>
+                      Name="ChooseInputFileCombobox"
+                      SelectionChanged="ChooseInputFileCombobox_SelectionChanged"/>
 
             <materialDesign:Card Grid.Row="1"
                                  Margin="5,5,5,2" 
