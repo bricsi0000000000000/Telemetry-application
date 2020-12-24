@@ -1,5 +1,4 @@
-﻿using LiveCharts;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ART_TELEMETRY_APP.Charts.Classes
 {

@@ -1,6 +1,5 @@
 ﻿using ART_TELEMETRY_APP.Groups.Classes;
-using LiveCharts;
-using LiveCharts.Wpf;
+using ART_TELEMETRY_APP.Tracks.Classes;
 using System;
 using System.Linq;
 using System.Windows;
@@ -15,9 +14,10 @@ namespace ART_TELEMETRY_APP
         {
             InitializeComponent();
 
-             TrackManager.LoadTracks(ref ErrorSnackbar);
-             GroupManager.InitGroups(ref ErrorSnackbar);
-             MenuManager.InitMainMenuTabs(MainMenuTabControl);
+           // TrackManager.LoadTracks(ref ErrorSnackbar);
+            GroupManager.InitGroups(ref ErrorSnackbar);
+            MenuManager.InitMainMenuTabs(MainMenuTabControl);
+            DriverlessTrackManager.LoadTracks(ref ErrorSnackbar);
         }
     }
 }

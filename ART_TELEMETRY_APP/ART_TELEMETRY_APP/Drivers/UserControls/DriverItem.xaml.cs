@@ -33,14 +33,14 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
         private void InitInputFileItems()
         {
             InputFilesStackPanel.Children.Clear();
-            foreach (var inputFile in InputFileManager.InputFiles)
+         /*   foreach (var inputFile in IInputFileManager.InputFiles)
             {
                 if (inputFile.DriverName.Equals(driver.Name))
                 {
                     InputFileItem inputFileItem = new InputFileItem(inputFile);
                     InputFilesStackPanel.Children.Add(inputFileItem);
                 }
-            }
+            }*/
         }
 
         private void ChangeState()
@@ -56,13 +56,13 @@ namespace ART_TELEMETRY_APP.Drivers.UserControls
 
             if (!driver.IsSelected)
             {
-                foreach (var inputFile in InputFileManager.InputFiles)
+               /* foreach (var inputFile in IInputFileManager.InputFiles)
                 {
                     if (inputFile.DriverName.Equals(driver.Name))
                     {
                         inputFile.IsSelected = false;
                     }
-                }
+                }*/
 
                 InitInputFileItems();
             }
