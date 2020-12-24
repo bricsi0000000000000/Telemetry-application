@@ -1,0 +1,89 @@
+[
+  {
+    "Name": "EngineMapping",
+    "Customizable": true,
+    "Driverless": false,
+    "Attributes":
+    [
+       "rev",
+       "ath",
+       "lam",
+       "ign_1",
+       "ti_1",
+       "gear",
+       "speed"
+    ]
+  },
+  {
+    "Name": "EngineBase",
+    "Customizable": true,
+    "Driverless": false,
+    "Attributes":
+    [
+       "rev",
+       "rev_b",
+       "gear",
+       "batt_u",
+       "OilPress",
+       "FuelPress",
+       "mappos"
+    ]
+  },
+  {
+    "Name": "Gearbox",
+    "Customizable": true,
+    "Driverless": false,
+    "Attributes":
+    [
+       "rev",
+       "gear",
+       "upInput",
+       "upRqe",
+       "upGoing",
+       "shiftCnt",
+       "neutral_In",
+       "clutchGoing"
+    ]
+  },
+  {
+    "Name": "Temperatures",
+    "Customizable": true,
+    "Driverless": false,
+    "Attributes":
+    [
+       "tmot",
+       "toil",
+       "tfuel",
+       "IAT",
+       "CoolerIn",
+       "CoolerOut"
+    ]
+  },
+  {
+    "Name": "Driver",
+    "Customizable": true,
+    "Driverless": false,
+    "Attributes":
+    [
+       "speed",
+       "gear",
+       "ath",
+       "Brake_F",
+       "Steering"
+    ]
+  },
+  {
+    "Name": "LaunchControl",
+    "Customizable": true,
+    "Driverless": false,
+    "Attributes":
+    [
+       "speed",
+       "gear",
+       "ath",
+       "AUS_STATE",
+       "neutral_In",
+       "ign_1"
+    ]
+  }
+]

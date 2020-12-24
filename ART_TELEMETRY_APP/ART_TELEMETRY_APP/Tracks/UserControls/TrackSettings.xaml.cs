@@ -74,7 +74,7 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
                 {
                     if (!found)
                     {
-                        foreach (InputFile inputFile in InputFileManager.InputFiles)
+                       /* foreach (InputFile inputFile in IInputFileManager.InputFiles)
                         {
                             if (inputFile.ActiveTrack != null)
                             {
@@ -85,7 +85,7 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
                                     break;
                                 }
                             }
-                        }
+                        }*/
                     }
                 }
 
@@ -172,7 +172,7 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
             {
                 if (!found)
                 {
-                    foreach (InputFile inputFile in InputFileManager.InputFiles)
+                   /* foreach (InputFile inputFile in IInputFileManager.InputFiles)
                     {
                         if (inputFile.Laps.Count > 0)
                         {
@@ -189,7 +189,7 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
                                 }
                             }
                         }
-                    }
+                    }*/
                 }
             }
         }

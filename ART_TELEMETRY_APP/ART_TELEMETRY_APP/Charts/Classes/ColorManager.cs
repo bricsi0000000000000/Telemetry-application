@@ -34,7 +34,7 @@ namespace ART_TELEMETRY_APP
             }
         }
 
-        public static Brush GetChartColor => ChartColors[ChartColorIndex++];
+        public static Color GetChartColor => ((SolidColorBrush)ChartColors[ChartColorIndex++]).Color;
         #endregion
 
         #region input file list element colors

@@ -1,6 +1,6 @@
 ﻿using ART_TELEMETRY_APP.InputFiles;
-using LiveCharts;
 using System.Collections.Generic;
+using System.Windows.Media;
 
 namespace ART_TELEMETRY_APP.Datas.Classes
 {
@@ -11,14 +11,16 @@ namespace ART_TELEMETRY_APP.Datas.Classes
     {
         public Channel(string channelName)
         {
-            ChannelName = channelName;
-            ChannelData = new List<double>();
+            Name = channelName;
+            Data = new List<double>();
+            Color = ColorManager.GetChartColor;
         }
-        public string ChannelName { get; private set; }
-        public List<double> ChannelData { get; private set; }
-        public bool ChannelIsActive { get; set; } = false;
 
-        public void AddChannelData(float data) => ChannelData.Add(data);
+        public string Name { get; private set; }
+        public List<double> Data { get; private set; }
+        public bool IsActive { get; set; } = false;
+        public Color Color { get; set; }
+        public void AddChannelData(float data) => Data.Add(data);
 
 
        // public LineSerieOptions Option { get; set; }

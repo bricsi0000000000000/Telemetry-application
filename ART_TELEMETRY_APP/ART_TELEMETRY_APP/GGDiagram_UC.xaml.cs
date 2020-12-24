@@ -1,8 +1,5 @@
 ﻿using ART_TELEMETRY_APP.InputFiles;
 using ART_TELEMETRY_APP.InputFiles.Classes;
-using LiveCharts;
-using LiveCharts.Defaults;
-using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,9 +26,9 @@ namespace ART_TELEMETRY_APP
         public GGDiagram_UC()
         {
             InitializeComponent();
-            gg_chart.DataTooltip = null;
+            /*gg_chart.DataTooltip = null;
             gg_chart.DisableAnimations = true;
-            gg_chart.Hoverable = false;
+            gg_chart.Hoverable = false;*/
         }
 
         public void InitScatterPlot(InputFile input_file)
@@ -69,7 +66,7 @@ namespace ART_TELEMETRY_APP
             }*/
         }
 
-        ChartValues<double> filteredData(ChartValues<double> datas)
+      /*  ChartValues<double> filteredData(ChartValues<double> datas)
         {
             ChartValues<double> input_datas = new ChartValues<double>(datas);
             int total = input_datas.Count;
@@ -86,6 +83,6 @@ namespace ART_TELEMETRY_APP
             }
 
             return input_datas;
-        }
+        }*/
     }
 }

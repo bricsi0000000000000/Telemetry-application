@@ -34,11 +34,11 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
             InitializeComponent();
 
             this.inputFile = inputFile;
-            track.InputFileFileName = inputFile.FileName;
+           // track.InputFileFileName = inputFile.FileName;
             this.track = TrackManager.GetTrack(track);
             this.driverProgressBarGrid = driverProgressBarGrid;
 
-            AllLapsSVG.Data = Geometry.Parse(inputFile.AllLapsSVG);
+           // AllLapsSVG.Data = Geometry.Parse(inputFile.AllLapsSVG);
 
             if (track.StarPoint != new Point(-1, -1))
             {
@@ -66,14 +66,14 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
             Point cursor = Mouse.GetPosition(AllLapsCanvas);
             double minDistance = double.MaxValue;
             Point minPoint = new Point();
-            foreach (Point point in inputFile.TrackPoints)
+            /*foreach (Point point in inputFile.TrackPoints)
             {
                 if (Distance(cursor, point) < minDistance)
                 {
                     minDistance = Distance(cursor, point);
                     minPoint = point;
                 }
-            }
+            }*/
 
             Canvas.SetLeft(StartLineEllipse, minPoint.X);
             Canvas.SetTop(StartLineEllipse, minPoint.Y);
@@ -94,8 +94,8 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
                 WorkerReportsProgress = true
             };
             worker.DoWork += WorkerDoWork;
-            worker.ProgressChanged += WorkerProgressChanged;
-            worker.RunWorkerCompleted += WorkerCompleted;
+         //   worker.ProgressChanged += WorkerProgressChanged;
+            //worker.RunWorkerCompleted += WorkerCompleted;
             worker.RunWorkerAsync();
         }
 
@@ -110,7 +110,7 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
 
         private void WorkerDoWork(object sender, DoWorkEventArgs e)
         {
-            inputFile.Laps.Clear();
+           /* inputFile.Laps.Clear();
 
             var nearestPoints = new List<Point>();
             short radius = 20;
@@ -122,8 +122,8 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
                     nearestPoints.Add(point);
                 }
             }
-
-            if (nearestPoints.Count >= 2)
+           */
+          /* if (nearestPoints.Count >= 2)
             {
                 var random = new Random();
                 Point randomPoint = nearestPoints[random.Next(0, nearestPoints.Count)];
@@ -177,7 +177,7 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
                 inputFile.Laps.Last().FromIndex = lastCircleIndex;
                 inputFile.Laps.Last().ToIndex = inputFile.TrackPoints.Count;
                 inputFile.Laps.Last().Index = newLapIndex;
-                inputFile.PointsSum = inputFile.Laps.Sum(x => x.Points.Count);
+                inputFile.PointsSum = inputFile.Laps.Sum(x => x.Points.Count);*/
 
                 /*inputFile.LapsSVGs.Clear();
                 for (int i = 0; i < input_file.Laps.Count; i++)
@@ -210,7 +210,7 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
                     //((PilotContentTab)((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).GetTab(input_file.PilotName).Content).InitTabs();
                     //((DatasMenuContent)TabManager.GetTab(TextManager.DiagramsMenuName).Content).InitPilotsTabs();
                 });
-            }
+            //}
         }
 
         private void WorkerProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -224,8 +224,8 @@ namespace ART_TELEMETRY_APP.Tracks.UserControls
                 driverProgressBarGrid.Visibility = Visibility.Hidden;
             }
             ProgressBarGrid.Visibility = Visibility.Hidden;
-            inputFile.CalculateLapTimes();
-            inputFile.CalculateAllDistances();
+          //  inputFile.CalculateLapTimes();
+           // inputFile.CalculateAllDistances();
 
             ((TrackSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.TracksSettingsName).Content)
                 .UpdateTrackData();

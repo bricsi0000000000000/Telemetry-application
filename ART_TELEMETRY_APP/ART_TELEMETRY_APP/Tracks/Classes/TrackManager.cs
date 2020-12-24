@@ -10,28 +10,23 @@ using System.Windows;
 
 namespace ART_TELEMETRY_APP
 {
-    static public class TrackManager
+    public static class TrackManager
     {
         public static List<Track> Tracks { get; } = new List<Track>();
 
         public static void LoadTracks(ref Snackbar errorSnackbar)
         {
-            ReadTracks(ref errorSnackbar);
-        }
-
-        private static void ReadTracks(ref Snackbar errorSnackbar)
-        {
             if (File.Exists(TextManager.TracksFileName))
             {
-                TrackReader();
+                ReadTracks();
             }
             else
             {
-                ShowError.ShowErrorMessage(ref errorSnackbar, string.Format("Couldn't load tracks, because '{0}' file not found!", TextManager.TracksFileName), 3);
+                ShowError.ShowErrorMessage(ref errorSnackbar, $"Couldn't load tracks, because '{TextManager.TracksFileName}' file not found!", 3);
             }
         }
 
-        private static void TrackReader()
+        private static void ReadTracks()
         {
             Tracks.Clear();
 
@@ -93,10 +88,10 @@ namespace ART_TELEMETRY_APP
               Tracks.Find(x => x.Name.Equals(trackName) &&
                           x.Description.Equals(description));
 
-        public static Track GetTrack(string trackName, string description, string fileName, string driverName) => 
+       /* public static Track GetTrack(string trackName, string description, string fileName, string driverName) => 
                Tracks.Find(x => x.Name.Equals(trackName) && 
                            x.Description.Equals(description) &&
-                           x.InputFileFileName.Equals(InputFileManager.GetInputFile(fileName, driverName)));
+                           x.InputFileFileName.Equals(IInputFileManager.GetInputFile(fileName, driverName)));*/
 
         public static Track GetTrack(Track track) => 
                Tracks.Find(x => x.Name.Equals(track.Name) && 

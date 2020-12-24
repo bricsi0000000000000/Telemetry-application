@@ -128,6 +128,22 @@
             </materialDesign:DialogHost>
         </Grid>
 
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <ComboBox Name="InputFilesComboBox"
+                      Margin="5,0"
+                      SelectionChanged="InputFilesComboBox_SelectionChanged"/>
+
+            <StackPanel Grid.Row="1"
+                        Margin="5"
+                        Name="GroupChannelsStackPanel"/>
+
+        </Grid>
+
         <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
                                  Grid.ColumnSpan="3"
                                  x:Name="ErrorSnackbar"
