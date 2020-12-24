@@ -64,7 +64,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
             //TODO az éppen beolvasott legyen a selected
             ChooseInputFileCombobox.Items.Clear();
 
-            foreach (var inputFile in DriverlessInputFileManager.Instance.InputFiles)
+            foreach (var inputFile in InputFileManager.InputFiles)
             {
                 if (inputFile.Driverless)
                 {
@@ -478,7 +478,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         private void UpdateAfterInputFileChoose()
         {
             UnselectAllChannel();
-            var activeInputFile = DriverlessInputFileManager.Instance.GetActiveInputFile;
+            var activeInputFile = InputFileManager.GetActiveInputFile;
             if (activeInputFile != null)
             {
                 Channels = activeInputFile.Channels;
@@ -578,7 +578,7 @@ namespace ART_TELEMETRY_APP.Driverless.UserControls
         {
             if (ChooseInputFileCombobox.Items.Count > 0)
             {
-                DriverlessInputFileManager.Instance.ActiveInputFileName = ((ComboBoxItem)ChooseInputFileCombobox.SelectedItem).Content.ToString();
+                InputFileManager.ActiveInputFileName = ((ComboBoxItem)ChooseInputFileCombobox.SelectedItem).Content.ToString();
                 UpdateAfterInputFileChoose();
             }
         }

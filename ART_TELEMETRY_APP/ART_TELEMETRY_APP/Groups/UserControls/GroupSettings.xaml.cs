@@ -75,12 +75,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         {
             InputFilesComboBox.Items.Clear();
 
-            foreach (var item in DriverlessInputFileManager.Instance.InputFiles)
-            {
-                AddInputFileComboBoxItem(item.Name);
-            }
-
-            foreach (var item in StandardInputFileManager.Instance.InputFiles)
+            foreach (var item in InputFileManager.InputFiles)
             {
                 AddInputFileComboBoxItem(item.Name);
             }
@@ -106,7 +101,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
         {
             if (GroupManager.GetGroup(ActiveGroupName).Driverless)
             {
-                var channels = DriverlessInputFileManager.Instance.GetInputFile(SelectedInputFileName).Channels;
+                var channels = InputFileManager.GetDriverlessInputFile(SelectedInputFileName).Channels;
                 if (channels == null)
                 {
                     return;
@@ -148,12 +143,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
 
             if ((bool)checkBox.IsChecked)
             {
-                var inputFile = new InputFile();
-                inputFile = DriverlessInputFileManager.Instance.GetInputFile(SelectedInputFileName);
-                if (inputFile == null)
-                {
-                    inputFile = StandardInputFileManager.Instance.GetInputFile(SelectedInputFileName);
-                }
+                var inputFile = InputFileManager.GetInputFile(SelectedInputFileName);
                 GroupManager.GetGroup(ActiveGroupName).AddAttribute(inputFile.GetChannel(attributeName));
             }
             else
@@ -188,9 +178,10 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
                 }
             }
 
-            if (GroupManager.GetGroup(ActiveGroupName).Attributes.Count > 0)
+            var activeGroup = GroupManager.GetGroup(ActiveGroupName);
+            if (activeGroup.Attributes.Count > 0)
             {
-                ActiveAttribute = GroupManager.GetGroup(ActiveGroupName).Attributes.First();
+                ActiveAttribute = activeGroup.Attributes.First();
             }
 
             InitAttributes();
@@ -269,7 +260,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
                 return;
             }
 
-            GroupManager.GetGroup(ActiveGroupName).AddAttribute(DriverlessInputFileManager.Instance.InputFiles.First().GetChannel(addAttributeText));
+            GroupManager.GetGroup(ActiveGroupName).AddAttribute(InputFileManager.InputFiles.First().GetChannel(addAttributeText));
             ActiveAttribute = GroupManager.GetGroup(ActiveGroupName).GetAttribute(addAttributeText);
             AddAttributeTxtBox.Text = string.Empty;
             InitGroups();

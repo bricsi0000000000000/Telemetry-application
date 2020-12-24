@@ -53,26 +53,6 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="driverlessInputFile">A <see cref="DriverlessInputFile"/> which will be created the <see cref="InputFile"/>.</param>
-        public InputFile(DriverlessInputFile driverlessInputFile)
-        {
-            Name = driverlessInputFile.Name;
-            Channels = driverlessInputFile.Channels;
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="driverlessInputFile">A <see cref="StandardInputFile"/> which will be created the <see cref="InputFile"/>.</param>
-        public InputFile(StandardInputFile standardInputFile)
-        {
-            Name = standardInputFile.Name;
-            Channels = standardInputFile.Channels;
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
         /// <param name="driverlessInputFile">An <see cref="InputFile"/> which will be created the <see cref="InputFile"/>.</param>
         public InputFile(InputFile inputFile)
         {
@@ -98,7 +78,17 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
         /// </summary>
         /// <param name="name">Name of the <see cref="Channel"/>.</param>
         /// <returns>True if the <see cref="Channel"/> is already satisfied and false if not.</returns>
-        public bool IsRequiredChannelSatisfied(string name) => RequiredChannels[name];
+        public bool IsRequiredChannelSatisfied(string name)
+        {
+            try
+            {
+                return RequiredChannels[name];
+            }
+            catch (KeyNotFoundException)
+            {
+                return false;
+            }
+        }
 
         /// <summary>
         /// Changes the value of the required channel based on <paramref name="satisfaction"/>.

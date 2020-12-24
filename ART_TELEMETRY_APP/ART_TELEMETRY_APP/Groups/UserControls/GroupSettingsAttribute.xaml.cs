@@ -75,16 +75,7 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
                 var pickedColor = pickColor.ColorPicker.Color;
                 GroupManager.GetGroup(groupName).GetAttribute(AttributeName).Color = pickedColor;
 
-                foreach (var inputFile in DriverlessInputFileManager.Instance.InputFiles)
-                {
-                    var channel = inputFile.GetChannel(AttributeName);
-                    if (channel != null)
-                    {
-                        channel.Color = pickedColor;
-                    }
-                }
-
-                foreach (var inputFile in StandardInputFileManager.Instance.InputFiles)
+                foreach (var inputFile in InputFileManager.InputFiles)
                 {
                     var channel = inputFile.GetChannel(AttributeName);
                     if (channel != null)

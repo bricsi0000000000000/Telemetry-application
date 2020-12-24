@@ -103,8 +103,7 @@ namespace ART_TELEMETRY_APP.Settings.UserControls
             UpdateActiveInputFileName();
 
             InputFileStackPanel.Children.Clear();
-            InitDriverlessInputFileSettingsItems();
-            InitStandardInputFileSettingsItems();
+            InitInputFileSettingsItemElements();
 
             InitActiveChannel();
             InitChannelItems();
@@ -117,41 +116,23 @@ namespace ART_TELEMETRY_APP.Settings.UserControls
         {
             if (ActiveInputFileName.Equals(string.Empty))
             {
-                if (DriverlessInputFileManager.Instance.InputFiles.Count > 0)
+                if (InputFileManager.InputFiles.Count > 0)
                 {
-                    ActiveInputFileName = DriverlessInputFileManager.Instance.InputFiles.First().Name;
+                    ActiveInputFileName = InputFileManager.InputFiles.First().Name;
                 }
                 else
                 {
-                    if (StandardInputFileManager.Instance.InputFiles.Count > 0)
-                    {
-                        ActiveInputFileName = StandardInputFileManager.Instance.InputFiles.First().Name;
-                    }
-                    else
-                    {
-                        ActiveInputFileName = string.Empty;
-                    }
+                    ActiveInputFileName = string.Empty;
                 }
             }
         }
 
         /// <summary>
-        /// Adds <see cref="InputFileSettingsItem"/> from <see cref="DriverlessInputFileManager.Instance.InputFiles"/>.
+        /// Adds <see cref="InputFileSettingsItem"/> from <see cref="InputFileManager.Instance.InputFiles"/>.
         /// </summary>
-        private void InitDriverlessInputFileSettingsItems()
+        private void InitInputFileSettingsItemElements()
         {
-            foreach (var inputFile in DriverlessInputFileManager.Instance.InputFiles)
-            {
-                AddSingleInputFileSettingsItem(inputFile);
-            }
-        }
-
-        /// <summary>
-        /// Adds <see cref="InputFileSettingsItem"/> from <see cref="StandardInputFileManager.Instance.InputFiles"/>.
-        /// </summary>
-        private void InitStandardInputFileSettingsItems()
-        {
-            foreach (var inputFile in StandardInputFileManager.Instance.InputFiles)
+            foreach (var inputFile in InputFileManager.InputFiles)
             {
                 AddSingleInputFileSettingsItem(inputFile);
             }
@@ -174,23 +155,12 @@ namespace ART_TELEMETRY_APP.Settings.UserControls
         /// </summary>
         private void InitActiveChannel()
         {
-            var activeDriverlessInputFile = DriverlessInputFileManager.Instance.GetInputFile(ActiveInputFileName);
-            if (activeDriverlessInputFile != null)
+            var activeInputFile = InputFileManager.GetInputFile(ActiveInputFileName);
+            if (activeInputFile != null)
             {
-                if (activeDriverlessInputFile.Channels.Count > 0)
+                if (activeInputFile.Channels.Count > 0)
                 {
-                    ActiveChannel = activeDriverlessInputFile.Channels.First();
-                }
-            }
-            else
-            {
-                var activestandardInputFile = StandardInputFileManager.Instance.GetInputFile(ActiveInputFileName);
-                if (activestandardInputFile != null)
-                {
-                    if (activestandardInputFile.Channels.Count > 0)
-                    {
-                        ActiveChannel = activestandardInputFile.Channels.First();
-                    }
+                    ActiveChannel = activeInputFile.Channels.First();
                 }
             }
         }
@@ -203,7 +173,7 @@ namespace ART_TELEMETRY_APP.Settings.UserControls
             ChannelItemsStackPanel.Children.Clear();
             inputFileChannelSettingsItems.Clear();
 
-            var activeDriverlessInputFile = DriverlessInputFileManager.Instance.GetInputFile(ActiveInputFileName);
+            var activeDriverlessInputFile = InputFileManager.GetInputFile(ActiveInputFileName);
             if (activeDriverlessInputFile != null)
             {
                 foreach (var channel in activeDriverlessInputFile.Channels)
@@ -213,7 +183,7 @@ namespace ART_TELEMETRY_APP.Settings.UserControls
             }
             else
             {
-                var activeStandardInputFile = StandardInputFileManager.Instance.GetInputFile(ActiveInputFileName);
+                var activeStandardInputFile = InputFileManager.GetInputFile(ActiveInputFileName);
                 if (activeStandardInputFile != null)
                 {
                     foreach (var channel in activeStandardInputFile.Channels)
@@ -256,8 +226,7 @@ namespace ART_TELEMETRY_APP.Settings.UserControls
             {
                 string fileName = openFileDialog.FileName.Split('\\').Last();
 
-                if (DriverlessInputFileManager.Instance.GetInputFile(fileName) == null &&
-                    StandardInputFileManager.Instance.GetInputFile(fileName) == null)
+                if (InputFileManager.GetInputFile(fileName) == null)
                 {
                     ReadFileProgressBarLbl.Content = $"Reading \"{fileName}\"";
                     var dataReader = new DataReader();
@@ -282,18 +251,10 @@ namespace ART_TELEMETRY_APP.Settings.UserControls
 
             InputFile activeInputFile = new InputFile();
 
-            var driverlessInputFile = DriverlessInputFileManager.Instance.GetInputFile(ActiveInputFileName);
-            if (driverlessInputFile != null)
+            var inputFile = InputFileManager.GetInputFile(ActiveInputFileName);
+            if (inputFile != null)
             {
-                activeInputFile = driverlessInputFile;
-            }
-            else
-            {
-                var stadnardInputFile = StandardInputFileManager.Instance.GetInputFile(ActiveInputFileName);
-                if (stadnardInputFile != null)
-                {
-                    activeInputFile = stadnardInputFile;
-                }
+                activeInputFile = inputFile;
             }
 
             if (activeInputFile.Driverless)

@@ -148,8 +148,7 @@
       <DependentUpon>PickColor.xaml</DependentUpon>
     </Compile>
     <Compile Include="InputFiles\Classes\DriverlessInputFile.cs" />
-    <Compile Include="InputFiles\Classes\DriverlessInputFileManager.cs" />
-    <Compile Include="InputFiles\Classes\IInputFileManager.cs" />
+    <Compile Include="InputFiles\Classes\InputFileManager.cs" />
     <Compile Include="Groups\Classes\Group.cs" />
     <Compile Include="Groups\Classes\GroupManager.cs" />
     <Compile Include="Groups\UserControls\GroupContent.xaml.cs">
@@ -168,7 +167,6 @@
       <DependentUpon>GroupsMenuContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="InputFiles\Classes\StandardInputFile.cs" />
-    <Compile Include="InputFiles\Classes\StandardInputFileManager.cs" />
     <Compile Include="InputFiles\UserControls\InputFileChannelSettingsItem.xaml.cs">
       <DependentUpon>InputFileChannelSettingsItem.xaml</DependentUpon>
     </Compile>

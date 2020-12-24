@@ -139,8 +139,8 @@ namespace ART_TELEMETRY_APP.Datas.Classes
             //alapból dv-be rakja
             var inputFile = new InputFile(FileNameWithoutPath, channels);
             inputFile.Driverless = true;
-            DriverlessInputFileManager.Instance.AddInputFile(new DriverlessInputFile(inputFile));
-            DriverlessInputFileManager.Instance.ActiveInputFileName = FileNameWithoutPath;
+            InputFileManager.AddInputFile(new DriverlessInputFile(inputFile));
+            InputFileManager.ActiveInputFileName = FileNameWithoutPath;
             ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).AddInputFileSettingsItem(inputFile);
             ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
             ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).SelectedInputFileName = FileNameWithoutPath;

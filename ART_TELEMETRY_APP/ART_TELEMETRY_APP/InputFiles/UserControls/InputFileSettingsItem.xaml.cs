@@ -62,14 +62,7 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
 
         private void DeleteInputFile_Click(object sender, RoutedEventArgs e)
         {
-            if (driverless)
-            {
-                DriverlessInputFileManager.Instance.RemoveInputFile(InputFileName);
-            }
-            else
-            {
-                StandardInputFileManager.Instance.RemoveInputFile(InputFileName);
-            }
+            InputFileManager.RemoveInputFile(InputFileName);
 
             ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).RemoveSingleInputFileSettingsItem(InputFileName);
         }
@@ -88,25 +81,27 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
 
         private void ChangeGroupItemType_Click(object sender, RoutedEventArgs e)
         {
-            var driverlessInputFile = DriverlessInputFileManager.Instance.GetInputFile(InputFileName);
-            if (driverlessInputFile != null)
+            var inputFile = InputFileManager.GetInputFile(InputFileName);
+            if (inputFile != null)
             {
-                DriverlessInputFileManager.Instance.RemoveInputFile(InputFileName);
-                StandardInputFileManager.Instance.AddInputFile(new StandardInputFile(driverlessInputFile)
+                if (inputFile is DriverlessInputFile)
                 {
-                    Driverless = false
-                });
-                driverless = false;
-            }
-            else
-            {
-                var stadnardInputFile = StandardInputFileManager.Instance.GetInputFile(InputFileName);
-                StandardInputFileManager.Instance.RemoveInputFile(InputFileName);
-                DriverlessInputFileManager.Instance.AddInputFile(new DriverlessInputFile(stadnardInputFile)
+                    InputFileManager.RemoveInputFile(InputFileName);
+                    InputFileManager.AddInputFile(new StandardInputFile(inputFile)
+                    {
+                        Driverless = false
+                    });
+                    driverless = false;
+                }
+                else
                 {
-                    Driverless = true
-                });
-                driverless = true;
+                    InputFileManager.RemoveInputFile(InputFileName);
+                    InputFileManager.AddInputFile(new StandardInputFile(inputFile)
+                    {
+                        Driverless = true
+                    });
+                    driverless = true;
+                }
             }
 
             ChangeTypeImage();

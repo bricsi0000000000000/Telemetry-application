@@ -13,10 +13,7 @@ namespace ART_TELEMETRY_APP.InputFiles.Classes
         {
             InitRequiredChannels();
         }
-        public StandardInputFile(DriverlessInputFile driverlessInputFile) : base(driverlessInputFile)
-        {
-            InitRequiredChannels();
-        }
+
         public StandardInputFile(InputFile inputFile) : base(inputFile)
         {
             InitRequiredChannels();

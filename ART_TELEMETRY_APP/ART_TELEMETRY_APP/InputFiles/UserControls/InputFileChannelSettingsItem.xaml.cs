@@ -81,18 +81,7 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
                     }
                 }
 
-                foreach (var inputFile in DriverlessInputFileManager.Instance.InputFiles)
-                {
-                    foreach (var channel in inputFile.Channels)
-                    {
-                        if (channel.Name.Equals(ChannelName))
-                        {
-                            channel.Color = pickedColor;
-                        }
-                    }
-                }
-
-                foreach (var inputFile in StandardInputFileManager.Instance.InputFiles)
+                foreach (var inputFile in InputFileManager.InputFiles)
                 {
                     foreach (var channel in inputFile.Channels)
                     {
@@ -119,12 +108,7 @@ namespace ART_TELEMETRY_APP.InputFiles.UserControls
             comboBoxItem.PreviewMouseLeftButtonDown += ChooseInputFileCombobox_PreviewMouseRightButtonUp;
             ImportantChannelsComboBox.Items.Add(comboBoxItem);
 
-            var inputFile = new InputFile();
-            inputFile = DriverlessInputFileManager.Instance.GetInputFile(inputFileName);
-            if (inputFile == null)
-            {
-                inputFile = StandardInputFileManager.Instance.GetInputFile(inputFileName);
-            }
+            var inputFile = InputFileManager.GetInputFile(inputFileName);
 
             foreach (var item in ImportantChannels.DriverlessImportantChannelNames)
             {

@@ -2,8 +2,10 @@
 
 ## Class diagram for driverless section
 
-![class diagram](class_diagram.svg)
+![class diagram](class_diagram/class_diagram.svg)
 
 ## Sequence diagram for driverless section
 
-![sequence diagram](sequence_diagram.svg)
+### Start program
+
+![sequence diagram](sequence_diagrams/program_start_sequence_diagram.svg)
