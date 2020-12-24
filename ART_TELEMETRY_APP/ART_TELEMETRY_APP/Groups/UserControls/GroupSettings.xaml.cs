@@ -300,5 +300,12 @@ namespace ART_TELEMETRY_APP.Groups.UserControls
                 InitActiveChannelSelectableAttributes();
             }
         }
+
+        public void UpdateAfterReadFile(string fileName)
+        {
+            SelectedInputFileName = fileName;
+            InitInputFilesComboBox();
+            InitActiveChannelSelectableAttributes();
+        }
     }
 }

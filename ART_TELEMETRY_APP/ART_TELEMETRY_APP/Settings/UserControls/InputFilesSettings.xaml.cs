@@ -173,23 +173,12 @@ namespace ART_TELEMETRY_APP.Settings.UserControls
             ChannelItemsStackPanel.Children.Clear();
             inputFileChannelSettingsItems.Clear();
 
-            var activeDriverlessInputFile = InputFileManager.GetInputFile(ActiveInputFileName);
-            if (activeDriverlessInputFile != null)
+            var activeInputFile = InputFileManager.GetInputFile(ActiveInputFileName);
+            if (activeInputFile != null)
             {
-                foreach (var channel in activeDriverlessInputFile.Channels)
+                foreach (var channel in activeInputFile.Channels)
                 {
                     AddInputFileChannelSettingsItem(channel);
-                }
-            }
-            else
-            {
-                var activeStandardInputFile = InputFileManager.GetInputFile(ActiveInputFileName);
-                if (activeStandardInputFile != null)
-                {
-                    foreach (var channel in activeStandardInputFile.Channels)
-                    {
-                        AddInputFileChannelSettingsItem(channel);
-                    }
                 }
             }
 
@@ -249,13 +238,7 @@ namespace ART_TELEMETRY_APP.Settings.UserControls
         {
             RequiredChannelsStackPanel.Children.Clear();
 
-            InputFile activeInputFile = new InputFile();
-
-            var inputFile = InputFileManager.GetInputFile(ActiveInputFileName);
-            if (inputFile != null)
-            {
-                activeInputFile = inputFile;
-            }
+            var activeInputFile = InputFileManager.GetInputFile(ActiveInputFileName);
 
             if (activeInputFile.Driverless)
             {

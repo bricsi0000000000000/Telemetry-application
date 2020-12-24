@@ -137,15 +137,15 @@ namespace ART_TELEMETRY_APP.Datas.Classes
             progressBar.IsIndeterminate = true;
 
             //alapból dv-be rakja
-            var inputFile = new InputFile(FileNameWithoutPath, channels);
-            inputFile.Driverless = true;
-            InputFileManager.AddInputFile(new DriverlessInputFile(inputFile));
+            var inputFile = new DriverlessInputFile(FileNameWithoutPath, channels)
+            {
+                Driverless = true
+            };
+            InputFileManager.AddInputFile(inputFile);
             InputFileManager.ActiveInputFileName = FileNameWithoutPath;
             ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).AddInputFileSettingsItem(inputFile);
             ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).SelectedInputFileName = FileNameWithoutPath;
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitInputFilesComboBox();
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitActiveChannelSelectableAttributes();
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).UpdateAfterReadFile(FileNameWithoutPath);
 
             /* switch (fileType)
              {

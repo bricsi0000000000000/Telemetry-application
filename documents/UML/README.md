@@ -8,4 +8,8 @@
 
 ### Start program
 
-![sequence diagram](sequence_diagrams/program_start_sequence_diagram.svg)
+![sequence diagram start program](sequence_diagrams/program_start_sequence_diagram.svg)
+
+### Read file
+
+![sequence diagram read file](sequence_diagrams/open_file_sequence_diagram.svg)
