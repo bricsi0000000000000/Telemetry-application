@@ -198,6 +198,9 @@
       <DependentUpon>LapReportContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Laps\Classes\Lap.cs" />
+    <Compile Include="Live\UserControls\LiveMenu.xaml.cs">
+      <DependentUpon>LiveMenu.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Settings\UserControls\GeneralSettings.xaml.cs">
       <DependentUpon>GeneralSettings.xaml</DependentUpon>
     </Compile>
@@ -339,6 +342,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Live\UserControls\LiveMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -441,6 +448,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Driverless\Classes\" />
+    <Folder Include="Live\Classes\" />
     <Folder Include="Sectors\Classes\" />
     <Folder Include="Tabs\UserControls\" />
   </ItemGroup>

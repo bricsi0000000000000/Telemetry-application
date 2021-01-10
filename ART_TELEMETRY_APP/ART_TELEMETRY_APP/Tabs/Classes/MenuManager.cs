@@ -27,7 +27,7 @@ namespace ART_TELEMETRY_APP
         {
             AddTab(TextManager.DriverlessMenuName, new DriverlessMenu(), "driverlessMenuTab", tabControl, selected: true);
             AddTab(TextManager.SettingsMenuName, new SettingsMenu(), "settingsMenuTab", tabControl);
-            AddTab("Live", new LiveMenu(), "liveMenuTab", tabControl);
+            AddTab("Live", new LiveMenu(), "liveMenuTab", tabControl, selected: true);
           //  AddTab(TextManager.DriversMenuName, new DriversMenu(), "driversMenuTab", tabControl, false);
            // AddTab(TextManager.DiagramsMenuName, new Diagrams(), "diagramsMenuTab", tabControl, false);
           //  AddTab(TextManager.DiagramsSettingsMenuName, new SelectDriversAndInputFiles(), "diagramsSettingsMenuTab", tabControl, false);

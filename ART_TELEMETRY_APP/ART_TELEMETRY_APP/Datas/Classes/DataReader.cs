@@ -4,6 +4,7 @@ using ART_TELEMETRY_APP.Groups.Classes;
 using ART_TELEMETRY_APP.Groups.UserControls;
 using ART_TELEMETRY_APP.InputFiles.Classes;
 using ART_TELEMETRY_APP.InputFiles.UserControls;
+using ART_TELEMETRY_APP.Live.UserControls;
 using ART_TELEMETRY_APP.Settings;
 using ART_TELEMETRY_APP.Settings.Classes;
 using ART_TELEMETRY_APP.Settings.UserControls;
@@ -146,6 +147,7 @@ namespace ART_TELEMETRY_APP.Datas.Classes
             ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).AddInputFileSettingsItem(inputFile);
             ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
             ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).UpdateAfterReadFile(FileNameWithoutPath);
+            //((LiveMenu)MenuManager.GetTab("Live").Content).InitChannels();
 
             /* switch (fileType)
              {
