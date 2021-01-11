@@ -1,0 +1,34 @@
+﻿<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+
+    <Color x:Key="Primary50">#434343</Color>
+    <Color x:Key="Primary50Foreground">#ffffff</Color>
+    <Color x:Key="Primary100">#434343</Color>
+    <Color x:Key="Primary100Foreground">#ffffff</Color>
+    <Color x:Key="Primary200">#434343</Color>
+    <Color x:Key="Primary200Foreground">#ffffff</Color>
+    <Color x:Key="Primary300">#434343</Color>
+    <Color x:Key="Primary300Foreground">#ffffff</Color>
+    <Color x:Key="Primary400">#434343</Color>
+    <Color x:Key="Primary400Foreground">#ffffff</Color>
+
+    <Color x:Key="Primary500">#e21b1b</Color>
+    <Color x:Key="Primary500Foreground">#ffffff</Color>
+
+    <Color x:Key="Primary600">#b52319</Color>
+    <Color x:Key="Primary600Foreground">#ffffff</Color>
+    <Color x:Key="Primary700">#434343</Color>
+    <Color x:Key="Primary700Foreground">#ffffff</Color>
+    <Color x:Key="Primary800">#ef6c00</Color>
+    <Color x:Key="Primary800Foreground">#FFFFFFFF</Color>
+    <Color x:Key="Primary900">#e65100</Color>
+    <Color x:Key="Primary900Foreground">#DDFFFFFF</Color>
+    <Color x:Key="Accent100">#ffd180</Color>
+    <Color x:Key="Accent100Foreground">#ffffff</Color>
+    <Color x:Key="Accent200">#b52319</Color>
+    <Color x:Key="Accent200Foreground">#ffffff</Color>
+    <Color x:Key="Accent400">#ff9100</Color>
+    <Color x:Key="Accent400Foreground">#ffffff</Color>
+    <Color x:Key="Accent700">#7c150d</Color>
+    <Color x:Key="Accent700Foreground">#ffffff</Color>
+</ResourceDictionary>
