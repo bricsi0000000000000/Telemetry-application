@@ -9,7 +9,5 @@
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              Background="{DynamicResource MaterialDesignPaper}"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <WpfPlot Name="ScottPlotChart"/>
-    </Grid>
+    <WpfPlot Name="ScottPlotChart"/>
 </UserControl>

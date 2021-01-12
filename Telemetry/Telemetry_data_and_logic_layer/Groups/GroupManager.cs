@@ -22,7 +22,7 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// <param name="fileName">File name from read groups.</param>
         public static void InitGroups(string fileName)
         {
-            if (!File.Exists(Path.Combine(Environment.CurrentDirectory, fileName)))
+            if (!File.Exists(fileName))
             {
                 throw new Exception($"Couldn't load groups, because file '{fileName}' not found!");
             }
@@ -116,7 +116,7 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// </summary>
         public static void SaveGroups()
         {
-            if (!File.Exists(Path.Combine(Environment.CurrentDirectory, TextManager.GroupsFileName)))
+            if (!File.Exists(TextManager.GroupsFileName))
             {
                 throw new Exception($"Can't save groups because {TextManager.GroupsFileName} not found!");
             }
@@ -124,7 +124,15 @@ namespace Telemetry_data_and_logic_layer.Groups
             using var writer = new StreamWriter(TextManager.GroupsFileName);
 
             var serializer = new JsonSerializer();
-            serializer.Serialize(writer, Groups);
+
+            try
+            {
+                serializer.Serialize(writer, Groups);
+            }
+            catch (Exception)
+            {
+                throw new Exception($"Can't save file!");
+            }
         }
 
         /// <summary>

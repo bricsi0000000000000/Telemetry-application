@@ -25,7 +25,7 @@ namespace Telemetry_presentation_layer.Charts
         {
             InitializeComponent();
 
-            ScottPlotChart.Height = chartHeight;
+            //ScottPlotChart.Height = chartHeight;
             carImage = new Bitmap("Images/car_top_game.png");
         }
 

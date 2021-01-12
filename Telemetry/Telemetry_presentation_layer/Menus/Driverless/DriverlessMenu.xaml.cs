@@ -447,8 +447,8 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         /// </summary>
         public void UpdateTrack()
         {
-            TrackStackPanel.Children.Clear();
-            TrackStackPanel.Children.Add(BuildTrack());
+            TrackGrid.Children.Clear();
+            TrackGrid.Children.Add(BuildTrack());
         }
 
         /// <summary>
@@ -492,7 +492,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             {
                 ChannelsStackPanel.Children.Clear();
                 GroupsStackPanel.Children.Clear();
-                TrackStackPanel.Children.Clear();
+                TrackGrid.Children.Clear();
                 ChartsStackPanel.Children.Clear();
             }
         }

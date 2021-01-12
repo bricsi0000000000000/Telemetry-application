@@ -117,6 +117,11 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         private void ChangeGroupItemType_Click(object sender, RoutedEventArgs e)
         {
             var group = GroupManager.GetGroup(GroupName);
+            if (group == null)
+            {
+                throw new Exception($"Group {GroupName} is empty!");
+            }
+
             group.Driverless = !group.Driverless;
             driverless = group.Driverless;
             GroupManager.SaveGroups();
