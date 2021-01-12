@@ -9,12 +9,6 @@ namespace Telemetry_unit_tests
     [TestFixture]
     public class GroupTests
     {
-        [SetUp]
-        public void Setup()
-        {
-            Assert.That(new FileInfo(TextManager.GroupsFileName), Does.Exist);
-        }
-
         [Test]
         [TestCase("proba_group", "proba_group")]
         [TestCase("proba group", "proba group")]
@@ -57,7 +51,7 @@ namespace Telemetry_unit_tests
         [Test]
         public void InitGroup_TestGood()
         {
-            GroupManager.InitGroups(TextManager.GroupsFileName);
+            GroupManager.InitGroups("../../../good_input_files/groups.json");
 
             Group group1 = new Group("EngineMapping");
             group1.AddAttribute("rev", "#FFF1B5B5");
@@ -80,7 +74,7 @@ namespace Telemetry_unit_tests
         [Test]
         public void InitGroup_TestBad()
         {
-            GroupManager.InitGroups(TextManager.GroupsFileName);
+            GroupManager.InitGroups("../../../good_input_files/groups.json");
 
             Group group1 = new Group("EngineMapoping");
             group1.AddAttribute("ver", "#FFF1B5B6");
@@ -106,7 +100,7 @@ namespace Telemetry_unit_tests
         [TestCase("Gearbox")]
         public void GetGroup_TestGood(string name)
         {
-            GroupManager.InitGroups(TextManager.GroupsFileName);
+            GroupManager.InitGroups("../../../good_input_files/groups.json");
 
             Assert.IsNotNull(GroupManager.GetGroup(name));
         }
@@ -137,17 +131,17 @@ namespace Telemetry_unit_tests
         }
 
         [Test]
-        [TestCase("groups.json")]
+        [TestCase("../../../good_input_files/groups.json")]
         public void DeserializeJson_AllGood(string fileName)
         {
             Assert.DoesNotThrow(() => GroupManager.InitGroups(fileName));
         }
 
         [Test]
-        [TestCase("groups.csv")]
+        [TestCase("../../../good_input_files/groups.csv")]
         public void DeserializeJson_FileNotFound(string fileName)
         {
-            Assert.Throws<FileNotFoundException>(() => GroupManager.InitGroups(fileName));
+            Assert.Throws<Exception>(() => GroupManager.InitGroups(fileName));
         }
 
         [Test]

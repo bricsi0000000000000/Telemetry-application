@@ -22,9 +22,9 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// <param name="fileName">File name from read groups.</param>
         public static void InitGroups(string fileName)
         {
-            if (!File.Exists(Path.Combine(Environment.CurrentDirectory, TextManager.GroupsFileName)))
+            if (!File.Exists(Path.Combine(Environment.CurrentDirectory, fileName)))
             {
-                throw new Exception($"Couldn't load groups, because file '{TextManager.GroupsFileName}' not found!");
+                throw new Exception($"Couldn't load groups, because file '{fileName}' not found!");
             }
 
             ReadGroups(fileName);

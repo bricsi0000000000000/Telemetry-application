@@ -1,4 +1,4 @@
-name: Tests
+name: Unit tests
 
 on: push
 
@@ -13,7 +13,7 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '3.1.x'
-      - name: Build
+      - name: Build Telemetry_unit_tests
         run: cd Telemetry && dotnet build Telemetry_unit_tests
-      - name: Test
+      - name: Test Telemetry_unit_tests
         run: cd Telemetry && dotnet test Telemetry_unit_tests 
