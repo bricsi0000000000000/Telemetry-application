@@ -16,4 +16,4 @@ jobs:
       - name: Build
         run: cd Telemetry && dotnet build Telemetry_unit_tests
       - name: Test
-        run: cd Telemetry && cd Telemetry_unit_tests && dotnet test Telemetry_unit_tests
+        run: cd Telemetry && dotnet test Telemetry_unit_tests
