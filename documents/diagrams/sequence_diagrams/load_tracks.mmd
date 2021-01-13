@@ -1,0 +1,266 @@
+sequenceDiagram
+  participant User
+  participant DriverlessTrackManager
+  participant DriverlessTrack
+
+  User ->> DriverlessTrackManager: Load tracks
+  activate User
+  deactivate User
+  activate DriverlessTrackManager
+    %% DriverlessTrackManager - row 26
+    DriverlessTrackManager ->> DriverlessTrackManager: Add track
+    activate DriverlessTrackManager
+      DriverlessTrackManager ->> DriverlessTrackManager: Load straight track
+      activate DriverlessTrackManager
+        %% DriverlessTrackManager - row 54
+        DriverlessTrackManager ->> DriverlessTrack: Create new
+        activate DriverlessTrack
+          DriverlessTrack -->> DriverlessTrackManager: Return new
+        deactivate DriverlessTrack
+
+        %% DriverlessTrackManager - row 56
+        alt if file exists
+          %% DriverlessTrackManager - row 58
+          opt file is empty
+            DriverlessTrackManager -->> User: "{fileName} is empty"
+            activate User
+            deactivate User
+          end
+
+          %% DriverlessTrackManager - row 67
+          alt can't deserialize file
+            DriverlessTrackManager -->> User: "Can't deserialize {fileName}"
+            activate User
+            deactivate User
+          else
+            Note over DriverlessTrackManager: deserialize file
+          end
+
+          %% DriverlessTrackManager - row 76
+          opt track is null
+            DriverlessTrackManager -->> User: "Track is null"
+            activate User
+            deactivate User
+          end
+
+          %% DriverlessTrackManager - row 81
+          opt track name is null
+            DriverlessTrackManager -->> User: "Track name is null"
+            activate User
+            deactivate User
+          end
+
+          %% DriverlessTrackManager - row 86
+          opt track width is null
+            DriverlessTrackManager -->> User: "Track width is null"
+            activate User
+            deactivate User
+          end
+
+          %% DriverlessTrackManager - row 91
+          opt track length is null
+            DriverlessTrackManager -->> User: "Track length is null"
+            activate User
+            deactivate User
+          end
+
+          %% DriverlessTrackManager - row 96
+          opt track left side is null
+            DriverlessTrackManager -->> User: "In track '{track.Name}' left side is empty!"
+            activate User
+            deactivate User
+          end
+
+          %% DriverlessTrackManager - row 101
+          opt track center is null
+            DriverlessTrackManager -->> User: "In track '{track.Name}' center is empty!"
+            activate User
+            deactivate User
+          end
+
+          %% DriverlessTrackManager - row 106
+          opt track right side is null
+            DriverlessTrackManager -->> User: "In track '{track.Name}' right side is empty!"
+            activate User
+            deactivate User
+          end
+
+          %% DriverlessTrackManager - row 111
+          opt track name is empty
+            DriverlessTrackManager -->> User: "Track name is empty"
+            activate User
+            deactivate User
+          end
+
+          %% DriverlessTrackManager - row 116
+          opt can't parse track width
+            DriverlessTrackManager -->> User: "In track '{track.Name}' couldn't convert '{trackJSON.track.width}' to a number"
+            activate User
+            deactivate User
+          end
+
+          %% DriverlessTrackManager - row 121
+          opt can't parse track length
+            DriverlessTrackManager -->> User: "In track '{track.Name}' couldn't convert '{trackJSON.track.length}' to a number"
+            activate User
+            deactivate User
+          end
+
+          %% DriverlessTrackManager - row 126
+          opt right side is empty
+            DriverlessTrackManager -->> User: "Track right side is empty"
+            activate User
+            deactivate User
+          end
+
+          %% DriverlessTrackManager - row 131
+          opt left side is empty
+            DriverlessTrackManager -->> User: "Track left side is empty"
+            activate User
+            deactivate User
+          end
+
+          %% DriverlessTrackManager - row 136
+          opt center is empty
+            DriverlessTrackManager -->> User: "Track center is empty"
+            activate User
+            deactivate User
+          end
+
+          Note over DriverlessTrackManager: Set track name, width and length.
+
+          %% DriverlessTrackManager - row 145
+          loop in track right side
+            %% DriverlessTrackManager - row 147
+            opt right side x value is null
+              DriverlessTrackManager -->> User: "Track right side x value is empty"
+              activate User
+              deactivate User
+            end
+
+            %% DriverlessTrackManager - row 152
+            opt right side x value is null
+              DriverlessTrackManager -->> User: "Track right side y value is empty"
+              activate User
+              deactivate User
+            end
+
+            %% DriverlessTrackManager - row 157
+            Note over DriverlessTrackManager: Add point to right side.
+
+            %% DriverlessTrackManager - row 157
+            DriverlessTrackManager ->> DriverlessTrackManager: Parse point
+            activate DriverlessTrackManager
+              %% DriverlessTrackManager - row 225
+              alt can parse x coordinate
+                Note over DriverlessTrackManager: Set point x value to x coordinate
+              else
+                DriverlessTrackManager -->> User: "In track \"{track.Name}\" couldn't convert x coordinate \"{coordinateX}\" to a number"
+                activate User
+                deactivate User
+              end
+
+              %% DriverlessTrackManager - row 234
+              alt can parse y coordinate
+                Note over DriverlessTrackManager: Set point y value to x coordinate
+              else
+                DriverlessTrackManager -->> User: "In track \"{track.Name}\" couldn't convert x coordinate \"{coordinateY}\" to a number"
+                activate User
+                deactivate User
+              end
+            deactivate DriverlessTrackManager
+          end
+
+          %% DriverlessTrackManager - row 160
+          loop in track left side
+            %% DriverlessTrackManager - row 160
+            opt left side x value is null
+              DriverlessTrackManager -->> User: "Track left side x value is empty"
+              activate User
+              deactivate User
+            end
+
+            %% DriverlessTrackManager - row 167
+            opt left side x value is null
+              DriverlessTrackManager -->> User: "Track left side y value is empty"
+              activate User
+              deactivate User
+            end
+
+             %% DriverlessTrackManager - row 157
+            Note over DriverlessTrackManager: Add point to right side.
+
+            %% DriverlessTrackManager - row 172
+            DriverlessTrackManager ->> DriverlessTrackManager: Parse point
+            activate DriverlessTrackManager
+              %% DriverlessTrackManager - row 225
+              alt can parse x coordinate
+                Note over DriverlessTrackManager: Set point x value to x coordinate
+              else
+                DriverlessTrackManager -->> User: "In track \"{track.Name}\" couldn't convert x coordinate \"{coordinateX}\" to a number"
+                activate User
+                deactivate User
+              end
+
+              %% DriverlessTrackManager - row 234
+              alt can parse y coordinate
+                Note over DriverlessTrackManager: Set point y value to x coordinate
+              else
+                DriverlessTrackManager -->> User: "In track \"{track.Name}\" couldn't convert x coordinate \"{coordinateY}\" to a number"
+                activate User
+                deactivate User
+              end
+            deactivate DriverlessTrackManager
+          end
+
+          %% DriverlessTrackManager - row 175
+          loop in track center
+            %% DriverlessTrackManager - row 177
+            opt center x value is null
+              DriverlessTrackManager -->> User: "Track center x value is empty"
+              activate User
+              deactivate User
+            end
+
+            %% DriverlessTrackManager - row 182
+            opt center x value is null
+              DriverlessTrackManager -->> User: "Track center y value is empty"
+              activate User
+              deactivate User
+            end
+
+             %% DriverlessTrackManager - row 157
+            Note over DriverlessTrackManager: Add point to right side.
+
+            %% DriverlessTrackManager - row 187
+            DriverlessTrackManager ->> DriverlessTrackManager: Parse point
+            activate DriverlessTrackManager
+              %% DriverlessTrackManager - row 225
+              alt can parse x coordinate
+                Note over DriverlessTrackManager: Set point x value to x coordinate
+              else
+                DriverlessTrackManager -->> User: "In track \"{track.Name}\" couldn't convert x coordinate \"{coordinateX}\" to a number"
+                activate User
+                deactivate User
+              end
+
+              %% DriverlessTrackManager - row 234
+              alt can parse y coordinate
+                Note over DriverlessTrackManager: Set point y value to x coordinate
+              else
+                DriverlessTrackManager -->> User: "In track \"{track.Name}\" couldn't convert x coordinate \"{coordinateY}\" to a number"
+                activate User
+                deactivate User
+              end
+            deactivate DriverlessTrackManager
+          end
+
+        else
+          DriverlessTrackManager -->> User: "Can't find '{fileName}'"
+          activate User
+          deactivate User
+        end
+        
+      deactivate DriverlessTrackManager
+    deactivate DriverlessTrackManager
+  deactivate DriverlessTrackManager

@@ -1,0 +1,40 @@
+sequenceDiagram
+  participant Program
+  participant GroupManager
+  participant TextManager
+  participant StreamWriter
+  participant JsonSerializer
+
+  Program ->> GroupManager: Save groups
+  activate Program
+  deactivate Program
+  activate GroupManager
+    GroupManager ->> TextManager: Get groups file name
+    activate TextManager
+      TextManager -->> GroupManager: Return groups file name
+    deactivate TextManager
+
+    alt if file doesn't exists
+      GroupManager -->> Program: "Can't save groups because {TextManager.GroupsFileName} not found!"
+      activate Program
+      deactivate Program
+    else
+      GroupManager ->> StreamWriter: Create new
+      activate StreamWriter
+        StreamWriter -->> GroupManager: Return new
+      deactivate StreamWriter
+
+      GroupManager ->> JsonSerializer: Create new
+      activate JsonSerializer
+        JsonSerializer -->> GroupManager: Return new
+      deactivate JsonSerializer
+
+      alt if can serialize groups
+        Note over GroupManager: Serialize and save groups to file
+      else
+        GroupManager -->> Program: "Can't save file!"
+        activate Program
+        deactivate Program
+      end
+    end
+  deactivate GroupManager

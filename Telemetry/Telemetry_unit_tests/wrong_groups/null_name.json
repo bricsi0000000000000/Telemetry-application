@@ -1,0 +1,72 @@
+[
+  {  
+    "Name": ,
+    "Customizable": true,
+    "Driverless": false,
+    "Attributes": [
+      {
+        "Name": "rev",
+        "Color": "#FFF1B5B5"
+      },
+      {
+        "Name": "ath",
+        "Color": "#FF5F1818"
+      },
+      {
+        "Name": "lam",
+        "Color": "#FFFCE705"
+      },
+      {
+        "Name": "ign_1",
+        "Color": "#FF80FC05"
+      },
+      {
+        "Name": "ti_1",
+        "Color": "#FFBA8A8A"
+      },
+      {
+        "Name": "gear",
+        "Color": "#FF8005FC"
+      },
+      {
+        "Name": "speed",
+        "Color": "#FFFC0505"
+      }
+    ]
+  },
+  {
+    "Name": "EngineBase",
+    "Customizable": true,
+    "Driverless": false,
+    "Attributes": [
+      {
+        "Name": "rev",
+        "Color": "#FFF1B5B5"
+      },
+      {
+        "Name": "rev_b",
+        "Color": "#FFFCE705"
+      },
+      {
+        "Name": "gear",
+        "Color": "#FF80FC05"
+      },
+      {
+        "Name": "batt_u",
+        "Color": "#FF05FCF4"
+      },
+      {
+        "Name": "OilPress",
+        "Color": "#FF8005FC"
+      },
+      {
+        "Name": "FuelPress",
+        "Color": "#FFFC0505"
+      },
+      {
+        "Name": "mappos",
+        "Color": "#FFFC7C05"
+      }
+    ]
+  }
+]

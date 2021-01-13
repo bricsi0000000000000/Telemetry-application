@@ -1,3 +1,3 @@
 # Arrabona Racing Team telemetry application
 
-Arrabona Racing Teams telemetry windows application.
+Arrabona Racing Team telemetry windows application.

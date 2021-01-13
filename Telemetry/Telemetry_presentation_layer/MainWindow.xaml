@@ -1,0 +1,26 @@
+﻿<Window x:Class="Telemetry_presentation_layer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Telemetry_presentation_layer"
+        mc:Ignorable="d"
+        Title="Telemetry 2.2"
+        Height="700"
+        Width="1300"
+        WindowStartupLocation="CenterScreen"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
+        FontFamily="{materialDesign:MaterialDesignFont}"
+        WindowStyle="ThreeDBorderWindow">
+
+    <Grid>
+        <dragablz:TabablzControl x:Name="MainMenuTabControl"/>
+        <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
+                                 x:Name="ErrorSnackbar"
+                                 Foreground="White"
+                                 />
+    </Grid>
+</Window>
