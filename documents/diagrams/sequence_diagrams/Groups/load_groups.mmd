@@ -1,0 +1,90 @@
+sequenceDiagram
+	participant User
+	participant MainWindow
+	participant GroupManager
+	participant Group
+
+	User->>MainWindow: start program
+	activate User
+	deactivate User
+
+	%% MainWindow - row 24
+	activate MainWindow
+	MainWindow ->> GroupManager: Initialize groups
+		activate GroupManager
+			%% GroupManager - row 26
+			alt if file doesn't exists
+				%% GroupManager - row 27
+				GroupManager -->> MainWindow: "Couldn't load groups, because file '{TextManager.GroupsFileName}' not found!"
+				activate MainWindow
+				deactivate MainWindow
+			else
+				%% GroupManager - row 31
+				GroupManager->>GroupManager: Read groups
+				activate GroupManager
+					%% GroupManager - row 40
+					alt if file is empty
+						GroupManager -->> MainWindow: "{fileName} is empty"
+						activate MainWindow
+						deactivate MainWindow
+					else
+						%% GroupManager - row 47		
+						alt if can't deserialize json file
+							GroupManager -->> MainWindow: "There was a problem reading {TextManager.GroupsFileName}"
+						else
+							%% GroupManager - row 51
+							loop
+								%% GroupManager - row 53
+								alt if group name is null
+									GroupManager -->> MainWindow: "Can't add group, because the name is null!"
+								%% GroupManager - row 58
+								else if group name is empty
+									GroupManager -->> MainWindow: "Can't add group, because the name is empty!"
+								%% GroupManager - row 63
+								else if group driverless is null
+									GroupManager -->> MainWindow: "Can't add group, because driverless is null!"
+								%% GroupManager - row 68
+								else if group customizable is null
+									GroupManager -->> MainWindow: "Can't add group, because customizable is null!"
+								%% GroupManager - row 73
+								else if group attributes are null
+									GroupManager -->> MainWindow: "Can't add group, because attributes are null!"
+								else
+									%% GroupManager - row 79
+									GroupManager ->> Group: Create new
+									activate Group
+										Group -->> GroupManager: Return new
+									deactivate Group
+
+									%% GroupManager - row 85
+									loop
+										%% GroupManager - row 90
+										alt if attribute name is null
+											GroupManager -->> MainWindow: "Can't add attribute, because name is null!"
+										%% GroupManager - row 95
+										else if attribute color is null
+											GroupManager -->> MainWindow: "Can't add attribute, because color is null!"
+										%% GroupManager - row 103
+										else if attribute name and color are not empty
+											%% GroupManager - row 106
+											GroupManager ->> Group: Add attribute
+												activate Group
+												deactivate Group
+										end
+									end
+									
+									%% GroupManager - row 110
+									GroupManager ->> GroupManager: Add group
+									activate GroupManager
+									deactivate GroupManager
+								end
+							end
+						end
+					end
+
+				deactivate GroupManager
+			end
+
+		deactivate GroupManager
+
+	deactivate MainWindow

@@ -1,0 +1,101 @@
+sequenceDiagram
+  participant Program
+  participant SettingsMenu
+  participant InputFileSettings
+  participant GroupSettings
+  participant GroupManager
+  participant InputFileManager
+  participant DriverlessInputFile
+
+  Program ->> SettingsMenu: Create new
+  activate SettingsMenu
+    SettingsMenu ->> SettingsMenu: Initialize settings tabs
+    activate SettingsMenu
+      SettingsMenu ->> SettingsMenu: Add input file settings tab
+      activate SettingsMenu
+        SettingsMenu ->> InputFileSettings: Create new
+        activate InputFileSettings
+          InputFileSettings -->> SettingsMenu: Return new
+        deactivate InputFileSettings
+      deactivate SettingsMenu
+
+      SettingsMenu ->> SettingsMenu: Add group settings tab
+      activate SettingsMenu
+        SettingsMenu ->> GroupSettings: Create new
+        activate GroupSettings
+          %% GroupSettings - row 51
+          GroupSettings ->> GroupManager: Get groups count
+          activate GroupManager
+            GroupManager -->> GroupSettings: Return groups count
+          deactivate GroupManager
+
+          %% GroupSettings - row 51
+          opt groups has items
+            %% GroupSettings - row 53
+            opt active group name is empty
+              GroupSettings ->> GroupManager: Get groups
+              activate GroupManager
+                GroupManager -->> GroupSettings: Return groups
+              deactivate GroupManager
+
+              Note over GroupSettings: Set active group name to first group name
+            end
+          
+            %% GroupSettings - row 58
+            GroupSettings ->> GroupManager: Get active group
+            activate GroupManager
+              GroupManager -->> GroupSettings: Return active group
+            deactivate GroupManager
+
+            %% GroupSettings - row 58
+            opt active group is driverless
+              %% GroupSettings - row 60
+              GroupSettings ->> GroupSettings: destroy all active channel selectable attributes
+              activate GroupSettings
+              deactivate GroupSettings
+            end 
+
+            %% GroupSettings - row 63
+            GroupSettings ->> GroupSettings: Initialize active channel selectable attributes
+            activate GroupSettings
+              %% GroupSettings - row 101
+              GroupSettings ->> GroupManager: Get active group
+              activate GroupManager
+                GroupManager -->> GroupSettings: Return active group
+              deactivate GroupManager
+
+              %% GroupSettings - row 101
+              opt active group is driverless
+                %% GroupSettings - row 103
+                GroupSettings ->> InputFileManager: Get selected driverless input file
+                activate InputFileManager
+                  InputFileManager -->> GroupSettings: Return selected driverless input file
+                deactivate InputFileManager
+
+                %% GroupSettings - row 104
+                opt selected driverless input file is not null
+                  %% GroupSettings - row 106
+                  GroupSettings ->> DriverlessInputFile: Get channels
+                  activate DriverlessInputFile
+                    DriverlessInputFile -->> GroupSettings: Return channels
+                  deactivate DriverlessInputFile
+
+                  %% GroupSettings - row 107
+                  opt channel is not null
+                    %% GroupSettings - row 114
+                    loop in channels
+                      Note over GroupSettings: Create check box
+                    end
+                  end
+                end
+              end
+            deactivate GroupSettings
+          end
+
+          GroupSettings -->> SettingsMenu: Return new
+        deactivate GroupSettings
+      deactivate SettingsMenu
+    deactivate SettingsMenu
+  deactivate SettingsMenu
+  activate Program
+  deactivate Program

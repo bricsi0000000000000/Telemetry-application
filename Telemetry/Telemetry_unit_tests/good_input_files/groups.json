@@ -1,0 +1,258 @@
+[
+  {
+    "Name": "EngineMapping",
+    "Customizable": true,
+    "Driverless": false,
+    "Attributes": [
+      {
+        "Name": "rev",
+        "Color": "#FFF1B5B5"
+      },
+      {
+        "Name": "ath",
+        "Color": "#FF5F1818"
+      },
+      {
+        "Name": "lam",
+        "Color": "#FFFCE705"
+      },
+      {
+        "Name": "ign_1",
+        "Color": "#FF80FC05"
+      },
+      {
+        "Name": "ti_1",
+        "Color": "#FFBA8A8A"
+      },
+      {
+        "Name": "gear",
+        "Color": "#FF8005FC"
+      },
+      {
+        "Name": "speed",
+        "Color": "#FFFC0505"
+      }
+    ]
+  },
+  {
+    "Name": "EngineBase",
+    "Customizable": true,
+    "Driverless": false,
+    "Attributes": [
+      {
+        "Name": "rev",
+        "Color": "#FFF1B5B5"
+      },
+      {
+        "Name": "rev_b",
+        "Color": "#FFFCE705"
+      },
+      {
+        "Name": "gear",
+        "Color": "#FF80FC05"
+      },
+      {
+        "Name": "batt_u",
+        "Color": "#FF05FCF4"
+      },
+      {
+        "Name": "OilPress",
+        "Color": "#FF8005FC"
+      },
+      {
+        "Name": "FuelPress",
+        "Color": "#FFFC0505"
+      },
+      {
+        "Name": "mappos",
+        "Color": "#FFFC7C05"
+      }
+    ]
+  },
+  {
+    "Name": "Gearbox",
+    "Customizable": true,
+    "Driverless": false,
+    "Attributes": [
+      {
+        "Name": "rev",
+        "Color": "#FFF1B5B5"
+      },
+      {
+        "Name": "gear",
+        "Color": "#FF80FC05"
+      },
+      {
+        "Name": "upInput",
+        "Color": "#FF05FCF4"
+      },
+      {
+        "Name": "upRqe",
+        "Color": "#FF8005FC"
+      },
+      {
+        "Name": "upGoing",
+        "Color": "#FFFC0505"
+      },
+      {
+        "Name": "shiftCnt",
+        "Color": "#FFFC7C05"
+      },
+      {
+        "Name": "neutral_In",
+        "Color": "#FFFCE705"
+      },
+      {
+        "Name": "clutchGoing",
+        "Color": "#FF80FC05"
+      }
+    ]
+  },
+  {
+    "Name": "Temperatures",
+    "Customizable": true,
+    "Driverless": false,
+    "Attributes": [
+      {
+        "Name": "tmot",
+        "Color": "#FF05FCF4"
+      },
+      {
+        "Name": "toil",
+        "Color": "#FF8005FC"
+      },
+      {
+        "Name": "tfuel",
+        "Color": "#FFFC0505"
+      },
+      {
+        "Name": "IAT",
+        "Color": "#FFFC7C05"
+      },
+      {
+        "Name": "CoolerIn",
+        "Color": "#FFFCE705"
+      },
+      {
+        "Name": "CoolerOut",
+        "Color": "#FF80FC05"
+      }
+    ]
+  },
+  {
+    "Name": "Driver",
+    "Customizable": true,
+    "Driverless": false,
+    "Attributes": [
+      {
+        "Name": "speed",
+        "Color": "#FF05FCF4"
+      },
+      {
+        "Name": "gear",
+        "Color": "#FF8005FC"
+      },
+      {
+        "Name": "ath",
+        "Color": "#FF5F1818"
+      },
+      {
+        "Name": "Brake_F",
+        "Color": "#FFFC7C05"
+      },
+      {
+        "Name": "Steering",
+        "Color": "#FFFCE705"
+      }
+    ]
+  },
+  {
+    "Name": "LaunchControl",
+    "Customizable": true,
+    "Driverless": false,
+    "Attributes": [
+      {
+        "Name": "speed",
+        "Color": "#FF80FC05"
+      },
+      {
+        "Name": "gear",
+        "Color": "#FF05FCF4"
+      },
+      {
+        "Name": "ath",
+        "Color": "#FF5F1818"
+      },
+      {
+        "Name": "AUS_STATE",
+        "Color": "#FFFC0505"
+      },
+      {
+        "Name": "neutral_In",
+        "Color": "#FFFC7C05"
+      },
+      {
+        "Name": "ign_1",
+        "Color": "#FFFCE705"
+      }
+    ]
+  },
+  {
+    "Name": "Driverless1",
+    "Customizable": true,
+    "Driverless": true,
+    "Attributes": [
+      {
+        "Name": "traj0",
+        "Color": "#FFFCE705"
+      },
+      {
+        "Name": "traj1",
+        "Color": "#FF8B51C6"
+      },
+      {
+        "Name": "yloc",
+        "Color": "#FF05FCF4"
+      },
+      {
+        "Name": "s_end",
+        "Color": "#FF8005FC"
+      },
+      {
+        "Name": "vx",
+        "Color": "#FF953838"
+      },
+      {
+        "Name": "c3ref",
+        "Color": "#FF05FCF4"
+      }
+    ]
+  },
+  {
+    "Name": "Driverless2",
+    "Customizable": true,
+    "Driverless": true,
+    "Attributes": [
+      {
+        "Name": "vx",
+        "Color": "#FF953838"
+      },
+      {
+        "Name": "vy",
+        "Color": "#FF9E2F2F"
+      },
+      {
+        "Name": "yawrate",
+        "Color": "#FFFC0505"
+      },
+      {
+        "Name": "xloc",
+        "Color": "#FFFC7C05"
+      },
+      {
+        "Name": "e_y",
+        "Color": "#FFB7A375"
+      }
+    ]
+  }
+]

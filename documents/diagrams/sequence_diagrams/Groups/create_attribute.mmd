@@ -1,0 +1,11 @@
+sequenceDiagram
+  participant Program
+  participant Attribute
+
+  Program ->> Attribute: Create new
+  activate Attribute
+    Note over Attribute: Set name with trim
+    Note over Attribute: Set color with trim
+  deactivate Attribute
+  activate Program
+  deactivate Program
