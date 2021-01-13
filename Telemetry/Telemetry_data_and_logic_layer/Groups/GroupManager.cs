@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Telemetry_data_and_logic_layer.Exceptions;
 using Telemetry_data_and_logic_layer.Texts;
 
 namespace Telemetry_data_and_logic_layer.Groups
@@ -24,7 +25,7 @@ namespace Telemetry_data_and_logic_layer.Groups
         {
             if (!File.Exists(fileName))
             {
-                throw new Exception($"Couldn't load groups, because file '{fileName}' not found!");
+                throw new ErrorException($"Couldn't load groups, because file '{fileName}' not found!");
             }
 
             ReadGroups(fileName);
@@ -36,6 +37,11 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// <param name="fileName">File name from read groups.</param>
         private static void ReadGroups(string fileName)
         {
+            if (new FileInfo(fileName).Length == 0)
+            {
+                throw new ErrorException($"{fileName} is empty");
+            }
+
             using var reader = new StreamReader(fileName);
 
             try
@@ -46,27 +52,27 @@ namespace Telemetry_data_and_logic_layer.Groups
                 {
                     if (groupsJSON[i].Name == null)
                     {
-                        throw new Exception("Can't add group, because the name is null!");
+                        throw new ErrorException("Can't add group, because the name is null!");
                     }
 
                     if (groupsJSON[i].Name.ToString().Equals(string.Empty))
                     {
-                        throw new Exception("Can't add group, because the name is empty!");
+                        throw new ErrorException("Can't add group, because the name is empty!");
                     }
 
                     if (groupsJSON[i].Driverless == null)
                     {
-                        throw new Exception("Can't add group, because driverless is null!");
+                        throw new ErrorException("Can't add group, because driverless is null!");
                     }
 
                     if (groupsJSON[i].Customizable == null)
                     {
-                        throw new Exception("Can't add group, because customizable is null!");
+                        throw new ErrorException("Can't add group, because customizable is null!");
                     }
 
                     if (groupsJSON[i].Attributes == null)
                     {
-                        throw new Exception("Can't add group, because attributes are null!");
+                        throw new ErrorException("Can't add group, because attributes are null!");
                     }
                     else
                     {
@@ -83,14 +89,15 @@ namespace Telemetry_data_and_logic_layer.Groups
 
                             if (groupsJSON[i].Attributes[j].Name == null)
                             {
-                                throw new Exception("Can't add attribute, because name is null!");
+                                throw new ErrorException("Can't add attribute, because name is null!");
                             }
-                            attributeName = groupsJSON[i].Attributes[j].Name.ToString();
 
                             if (groupsJSON[i].Attributes[j].Color == null)
                             {
-                                throw new Exception("Can't add attribute, because color is null!");
+                                throw new ErrorException("Can't add attribute, because color is null!");
                             }
+
+                            attributeName = groupsJSON[i].Attributes[j].Name.ToString();
                             attributeColor = groupsJSON[i].Attributes[j].Color.ToString();
 
                             if (!attributeName.Equals(string.Empty) &&
@@ -107,7 +114,7 @@ namespace Telemetry_data_and_logic_layer.Groups
             }
             catch (JsonReaderException)
             {
-                throw new Exception($"There was a problem reading {TextManager.GroupsFileName}");
+                throw new ErrorException($"There was a problem reading {TextManager.GroupsFileName}");
             }
         }
 
@@ -116,12 +123,13 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// </summary>
         public static void SaveGroups()
         {
-            if (!File.Exists(TextManager.GroupsFileName))
+            string groupsFileName = TextManager.GroupsFileName;
+            if (!File.Exists(groupsFileName))
             {
-                throw new Exception($"Can't save groups because {TextManager.GroupsFileName} not found!");
+                throw new ErrorException($"Can't save groups because {TextManager.GroupsFileName} not found!");
             }
 
-            using var writer = new StreamWriter(TextManager.GroupsFileName);
+            using var writer = new StreamWriter(groupsFileName);
 
             var serializer = new JsonSerializer();
 
@@ -131,7 +139,7 @@ namespace Telemetry_data_and_logic_layer.Groups
             }
             catch (Exception)
             {
-                throw new Exception($"Can't save file!");
+                throw new ErrorException($"Can't save file!");
             }
         }
 

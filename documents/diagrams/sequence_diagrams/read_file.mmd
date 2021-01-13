@@ -1,0 +1,679 @@
+sequenceDiagram
+  participant User
+  participant InputFileSettings
+  participant InputFileManager
+  participant DataReader
+  participant BackgroundWorker
+  participant Channel
+  participant GroupManager
+  participant DriverlessInputFile
+  participant SettingsMenu
+  participant MenuManager
+  participant TextManager
+  participant InputFileChannelSettingsItem
+  participant ImportantChannels
+  participant InputFile
+  participant DriverlessMenu
+  participant Chart
+  participant ChartValue
+  participant Group
+
+  %% InputFileSettings - row 204
+  User ->> InputFileSettings: Click read file button
+  activate User
+  deactivate User
+
+    activate InputFileSettings
+    %% InputFileSettings - row 214
+    opt if open file dialog returns true
+      %% InputFileSettings - row 218
+      InputFileSettings ->> InputFileManager: Get input file
+        activate InputFileManager
+          %% InputFileManager - row 28
+          InputFileManager -->> InputFileSettings: Return input file
+        deactivate InputFileManager
+
+      %% InputFileSettings - row 218
+      opt if file is new
+        %% InputFileSettings - row 221
+        InputFileSettings ->> DataReader: Create new
+        activate DataReader
+        DataReader -->> InputFileSettings: Return new
+        deactivate DataReader
+
+        activate DataReader
+          %% InputFileSettings - row 221
+          InputFileSettings ->> DataReader: Setup reader
+
+          activate DataReader
+            %% InputFileSettings - row 225
+            InputFileSettings ->> DataReader: Read file
+
+            %% DataReader - row 57
+            alt if file doesn't exists
+              DataReader -->> User: "{fileName} not found!"
+              activate User
+              deactivate User
+            else
+              %% DataReader - row 64
+              DataReader ->> DataReader: Start worker
+              activate DataReader
+                %% DataReader - row 144
+                DataReader ->> BackgroundWorker: Create new
+                activate BackgroundWorker
+                BackgroundWorker -->> DataReader: Return new
+                deactivate BackgroundWorker
+
+                %% DataReader - row 148
+                par worker do work
+                  activate BackgroundWorker
+                    %% DataReader - row 156
+                    DataReader -> BackgroundWorker: Worker do work
+                      %% DataReader - row 67
+                      DataReader ->> DataReader: Process file
+                      activate DataReader
+                        %% DataReader - row 69
+                        alt if file length is 0
+                          DataReader -->> User: "{fileName} is empty"
+                          activate User
+                          deactivate User
+                        else
+                          %% DataReader - row 83
+                          loop in first row of the file
+                            %% DataReader - row 85
+                            alt if channel name is empty
+                              DataReader -->> User: "Channels name is empty in {fileName}"
+                              activate User
+                              deactivate User
+                            else
+                              %% DataReader - row 90
+                              DataReader ->> Channel: Create new
+                              activate Channel
+                                Channel -->> DataReader: Return new
+                              deactivate Channel
+
+                              %% DataReader - row 92
+                              DataReader ->> GroupManager: Get groups
+                              activate GroupManager
+                                GroupManager -->> DataReader: Return groups
+                              deactivate GroupManager
+
+                              %% DataReader - row 92
+                              loop in groups
+                                %% DataReader - row 94
+                                loop in group attributes
+                                  %% DataReader - row 96
+                                  opt attribute name is equals to channels name
+                                    DataReader ->> Channel: set color to attribute color
+                                    activate Channel
+                                    deactivate Channel
+                                  end
+                                end
+                              end
+                            end
+                          end
+
+                          %% DataReader - row 108
+                          loop while not end of stream
+                            %% DataReader - row 111
+                            loop in channels
+                              %% DataReader - row 113
+                              alt if row[i] is not empty
+                                %% DataReader - row 119
+                                alt if can't parse row[i] to number
+                                  DataReader -->> User: "Can't convert {row[i]} into number in {fileName}"
+                                  activate User
+                                  deactivate User
+                                end
+                              end
+                            end
+
+                            %% DataReader - row 130
+                            DataReader ->> DataReader: Report progress to worker
+                            activate DataReader
+                              %% DataReader - row 134
+                              DataReader ->> BackgroundWorker: Report progress
+                              activate BackgroundWorker
+                              deactivate BackgroundWorker
+                            deactivate DataReader
+                          end
+
+                        end
+                      deactivate DataReader
+                  deactivate BackgroundWorker
+                and progress changed
+                  Note over DataReader: Updates progress bar value
+                and worker completed
+                  %% DataReader - row 185
+                  DataReader ->> InputFileManager: Add input file
+                  activate InputFileManager
+                  deactivate InputFileManager
+
+                  %% DataReader - row 186
+                  DataReader ->> InputFileManager: Set active input file to this
+                  activate InputFileManager
+                  deactivate InputFileManager
+
+                  %% DataReader - row 187
+                  DataReader ->> MenuManager: Get settings menu tab
+                  activate MenuManager
+                    MenuManager ->> TextManager: Get settings menu name
+                    activate TextManager
+                      TextManager -->> MenuManager: Return settings menu name
+                    deactivate TextManager
+
+                    MenuManager ->> SettingsMenu: Get files settings tab
+                    activate SettingsMenu
+                      SettingsMenu ->> TextManager: Get file settings tab name
+                      activate TextManager
+                        TextManager -->> SettingsMenu: Return file settings tab name
+                      deactivate TextManager
+
+                      SettingsMenu ->> InputFilesSettings: Add input file settings item
+                      activate InputFilesSettings
+                        %% InputFilesSettings - row 50
+                        InputFilesSettings ->> InputFilesSettings: Initialize active channel
+                        activate InputFilesSettings
+                          %% InputFilesSettings - row 158
+                          InputFilesSettings ->> InputFileManager: Get active input file
+                          activate InputFileManager
+                            InputFileManager -->> InputFilesSettings: Return active input file
+                          deactivate InputFileManager
+
+                          %% InputFilesSettings - row 159
+                          opt if active input file is not null
+                            %% InputFilesSettings - row 161
+                            opt if activate input files channels length is greater than 0
+                              Note over InputFilesSettings: Set active channel to activate input file first channel.
+                            end
+                          end
+                        deactivate InputFilesSettings
+
+                        %% InputFilesSettings - row 55
+                        InputFilesSettings ->> InputFilesSettings: Initialize channel items
+                        activate InputFilesSettings
+                          %% InputFilesSettings - row 176
+                          InputFilesSettings ->> InputFileManager: Get active input file
+                          activate InputFileManager
+                            InputFileManager -->> InputFilesSettings: Return active input file
+                          deactivate InputFileManager
+
+                          %% InputFilesSettings - row 177
+                          opt if activate input file is not null
+                            loop in activate input file channels
+                              %% InputFilesSettings - row 192
+                              InputFilesSettings ->> InputFilesSettings: Add input file channel settings item
+                              activate InputFilesSettings
+                                %% InputFilesSettings - row 194
+                                InputFilesSettings ->> InputFileChannelSettingsItem: Create new
+                                activate InputFileChannelSettingsItem
+                                  InputFileChannelSettingsItem -->> InputFilesSettings: Return new
+                                deactivate InputFileChannelSettingsItem
+                              deactivate InputFilesSettings
+                            end
+                          end
+
+                          %% InputFilesSettings - row 185
+                          InputFilesSettings ->> InputFilesSettings: Update required channels
+                          activate InputFilesSettings
+                            %% InputFilesSettings - row 241
+                            InputFilesSettings ->> InputFileManager: Get active input file
+                            activate InputFileManager
+                              InputFileManager -->> InputFilesSettings: Return active input file
+                            deactivate InputFileManager
+
+                            %% InputFilesSettings - row 243
+                            opt if active input file is not null
+                              alt if active input file is driverless
+                                %% InputFilesSettings - row 247
+                                InputFilesSettings ->> ImportantChannels: Get driverless important channels
+                                activate ImportantChannels
+                                  ImportantChannels -->> InputFilesSettings: Return driverless important channels
+                                deactivate ImportantChannels
+
+                                %% InputFilesSettings - row 247
+                                loop in important driverless channels
+                                  InputFilesSettings ->> InputFilesSettings: Add important channel name check box
+                                  activate InputFilesSettings
+                                  deactivate InputFilesSettings
+                                end
+                              else
+                                Note over InputFilesSettings: TODO standarddal is
+                              end
+                            end
+                          deactivate InputFilesSettings
+                        deactivate InputFilesSettings
+
+                        %% InputFilesSettings - row 56
+                        InputFilesSettings ->> InputFilesSettings: Change all input file settings item color mode
+                        activate InputFilesSettings
+                        deactivate InputFilesSettings
+
+                        %% InputFilesSettings - row 57
+                        InputFilesSettings ->> InputFilesSettings: Add single input file settings item
+                        activate InputFilesSettings
+                          %% InputFilesSettings - row 147
+                          InputFilesSettings ->> InputFileSettingsItem: Create new
+                          activate InputFileSettingsItem
+                            InputFileSettingsItem -->> InputFileSettings: Return new
+                            %% InputFileSettingsItem - row 35
+                            InputFileSettingsItem ->> InputFileSettingsItem: Change type image
+                            activate InputFileSettingsItem
+                            deactivate InputFileSettingsItem
+                          deactivate InputFileSettingsItem
+
+                          InputFileSettings ->> InputFileSettingsItem: Change color mode
+                          activate InputFileSettingsItem
+                          deactivate InputFileSettingsItem
+                        deactivate InputFilesSettings
+                      deactivate InputFilesSettings
+                    deactivate SettingsMenu
+                  deactivate MenuManager
+
+                  %% DataReader - row 188
+                  DataReader ->> MenuManager: Get driverless tab
+                  activate MenuManager
+                    MenuManager ->> TextManager: Get driverless menu name
+                    activate TextManager
+                      TextManager -->> MenuManager: Return driverless menu name
+                    deactivate TextManager
+
+                    %% DriverlessMenu - row 470
+                    MenuManager ->> DriverlessMenu: Update after read file
+                    activate DriverlessMenu
+                      %% DriverlessMenu - row 479
+                      DriverlessMenu ->> DriverlessMenu: Update after input file choose
+                      activate DriverlessMenu
+                        %% DriverlessMenu - row 481
+                        DriverlessMenu ->> DriverlessMenu: Unselect all channel
+                        activate DriverlessMenu
+                        deactivate DriverlessMenu
+
+                        %% DriverlessMenu - row 482
+                        DriverlessMenu ->> InputFileManager: Get active input file
+                        activate InputFileManager
+                          InputFileManager -->> DriverlessMenu: Return active input file
+                        deactivate InputFileManager
+
+                        %% DriverlessMenu - row 482
+                        alt if active input file is not null
+                          %% DriverlessMenu - row 486
+                          DriverlessMenu ->> DriverlessMenu: Initialize channel check boxes
+                          activate DriverlessMenu
+                            %% DriverlessMenu - row 84
+                            loop in channels
+                              DriverlessMenu ->> DriverlessMenu: Add channel check box
+                              activate DriverlessMenu
+                              deactivate DriverlessMenu
+                            end
+                          deactivate DriverlessMenu
+
+                          %% DriverlessMenu - row 487
+                          DriverlessMenu ->> DriverlessMenu: Initialize group check boxes
+                          activate DriverlessMenu
+                            %% DriverlessMenu - row 96
+                            DriverlessMenu ->> GroupManager: Get groups
+                            activate GroupManager
+                              GroupManager -->> DriverlessMenu: Return groups
+                            deactivate GroupManager
+
+                            loop in groups
+                              opt group is driverless
+                                Note over DriverlessMenu: Add check box
+                              end
+                            end
+                          deactivate DriverlessMenu
+
+                          %% DriverlessMenu - row 488
+                          DriverlessMenu ->> DriverlessMenu: Set up data slider
+                          activate DriverlessMenu
+                          deactivate DriverlessMenu
+
+                          %% DriverlessMenu - row 489
+                          DriverlessMenu ->> DriverlessMenu: Calculate yaw angle
+                          activate DriverlessMenu
+                            %% DriverlessMenu - row 424
+                            DriverlessMenu ->> DriverlessMenu: Get default yaw rate channel
+                            activate DriverlessMenu
+                              DriverlessMenu ->> TextManager: Get default yaw rate channel name
+                              activate TextManager
+                                TextManager -->> DriverlessMenu: Return default yaw rate channel name
+                              deactivate TextManager
+
+                            deactivate DriverlessMenu
+
+                            %% DriverlessMenu - row 425
+                            alt if way rate is null
+                              DriverlessMenu -->> User: "Can't find '{TextManager.DefaultYawrateChannelName}' channel"
+                              activate User
+                              deactivate User
+                            else
+                              Note over DriverlessMenu: Integrate yaw rate
+                            end
+                          deactivate DriverlessMenu
+
+                          %% DriverlessMenu - row 492
+                          DriverlessMenu ->> DriverlessMenu: Update charts
+                          activate DriverlessMenu
+                            %% DriverlessMenu - row 168
+                            opt channels is not null
+                              %% DriverlessMenu - row 174
+                              loop in channels
+                                %% DriverlessMenu - row 176
+                                opt channel is active
+                                  %% DriverlessMenu - row 178
+                                  DriverlessMenu ->> DriverlessMenu: Build chart
+                                  activate DriverlessMenu
+                                    %% DriverlessMenu - row 204
+                                    DriverlessMenu ->> Chart: Create new
+                                    activate Chart
+                                      Chart -->> DriverlessMenu: Return new
+                                    deactivate Chart
+
+                                    %% DriverlessMenu - row 205
+                                    DriverlessMenu ->> Chart: Add channel name
+                                    activate Chart
+                                    deactivate Chart
+
+                                    %% DriverlessMenu - row 207
+                                    DriverlessMenu ->> DriverlessMenu: Get horizontal axis data
+                                    activate DriverlessMenu
+                                      %% DriverlessMenu - row 410
+                                      DriverlessMenu ->> DriverlessMenu: Get horizontal axis channel
+                                    deactivate DriverlessMenu
+
+                                    %% DriverlessMenu - row 209
+                                    DriverlessMenu ->> DriverlessMenu: Convert channel data to plot data
+                                    activate DriverlessMenu
+                                    deactivate DriverlessMenu
+
+                                    %% DriverlessMenu - row 215
+                                    DriverlessMenu ->> Chart: Initialize plot
+                                    activate Chart
+                                      %% Chart - row 133
+                                      Chart ->> Chart: Update chart values
+                                      activate Chart
+                                        %% Chart - row 191
+                                        alt if values stack panel children length is 0
+                                          %% Chart - row 193
+                                          loop in channels
+                                            %% Chart - row 195
+                                            Chart ->> Chart: Has actual channel name
+                                            activate Chart
+                                            deactivate Chart
+                                            %% Chart - row 195
+                                            opt if chart has actual channel name
+                                              Chart ->> ChartValue: Create new
+                                              activate ChartValue
+                                                %% ChartValue - row 23
+                                                ChartValue ->> ChartValue: Set channel value
+                                                activate ChartValue
+                                                deactivate ChartValue
+
+                                                ChartValue -->> Chart: Return new
+                                              deactivate ChartValue
+
+                                              Note over Chart: Add this newly created ChartValue to values stack panel
+                                            end
+                                          end
+                                        else
+                                          %% Chart - row 203
+                                          loop in values stack panel children
+                                            %% Chart - row 207
+                                            Chart ->> ChartValue: Set channel value
+                                            activate ChartValue
+                                            deactivate ChartValue
+                                          end
+                                        end
+                                      deactivate Chart
+                                    deactivate Chart
+
+                                  deactivate DriverlessMenu
+
+                                  %% DriverlessMenu - row 182
+                                  DriverlessMenu ->> GroupManager: Get groups
+                                  activate GroupManager
+                                    GroupManager -->> DriverlessMenu: Return groups
+                                  deactivate GroupManager
+
+                                  %% DriverlessMenu - row 182
+                                  loop in groups
+                                    %% DriverlessMenu - row 184
+                                    opt selected groups contains actual group
+                                      %% DriverlessMenu - row 186
+                                      opt actual group is driverless
+                                        %% DriverlessMenu - row 188
+                                        DriverlessMenu ->> MenuManager: Get settings menu tab
+                                        activate MenuManager
+                                          MenuManager ->> TextManager: Get settings menu name
+                                          activate TextManager
+                                            TextManager -->> MenuManager: Return settings menu name
+                                          deactivate TextManager
+
+                                          MenuManager ->> SettingsMenu: Get group settings tab
+                                          activate SettingsMenu
+                                            SettingsMenu ->> TextManager: Get group settings tab name
+                                            activate TextManager
+                                              TextManager -->> SettingsMenu: Return group settings tab name
+                                            deactivate TextManager
+
+                                            SettingsMenu ->> GroupSettings: Get group settings content
+                                            activate GroupSettings
+                                              GroupSettings -->> SettingsMenu: Return group settings content
+                                            deactivate GroupSettings
+
+                                            SettingsMenu -->> MenuManager: Return group settings tab
+                                          deactivate SettingsMenu
+
+                                          MenuManager -->> DriverlessMenu: Return settings menu tab
+                                        deactivate MenuManager
+
+                                        %% DriverlessMenu - row 188
+                                        opt actual groups settings content is not null
+                                          %% DriverlessMenu - row 190
+                                          DriverlessMenu ->> DriverlessMenu: Build group chart
+                                          activate DriverlessMenu
+                                            %% DriverlessMenu - row 311
+                                            DriverlessMenu ->> Chart: Create new
+                                            activate Chart
+                                              Chart -->> DriverlessMenu: Return new
+                                            deactivate Chart
+
+                                            %% DriverlessMenu - row 314
+                                            loop in channels
+                                              %% DriverlessMenu - row 316
+                                              DriverlessMenu ->> Group: Get actual channel attribute
+                                              activate Group
+                                                Group -->> DriverlessMenu: Return actual channel attribute
+                                              deactivate Group
+
+                                              %% DriverlessMenu - row 316
+                                              opt if group attribute is not null at actual channel
+                                                DriverlessMenu ->> Chart: Add channel name
+                                                activate Chart
+                                                deactivate Chart
+                                              end
+                                            end
+
+                                            %% DriverlessMenu - row 322
+                                            DriverlessMenu ->> Chart: Has actual channel name
+                                            activate Chart
+                                              Chart -->> DriverlessMenu: Return has actual channel name
+                                            deactivate Chart
+
+                                            %% DriverlessMenu - row 324
+                                            loop in channels
+                                              %% DriverlessMenu - row 326
+                                              opt if chart has actual channel
+                                                %% DriverlessMenu - row 328
+                                                DriverlessMenu ->> DriverlessMenu: Convert channel data to plot data
+                                                activate DriverlessMenu
+                                                deactivate DriverlessMenu
+
+                                                %% DriverlessMenu - row 333
+                                                DriverlessMenu ->> Chart: Initialize plot
+                                                activate Chart
+                                                  %% Chart - row 133
+                                                  Chart ->> Chart: Update side values
+                                                  activate Chart
+                                                    %% Chart - row 191
+                                                    alt values stack panel children length is 0
+                                                      %% Chart - row 193
+                                                      loop in channels
+                                                        %% Chart - row 195
+                                                        Chart ->> Chart: Has actual channel name
+                                                        activate Chart
+                                                        deactivate Chart
+
+                                                        %% Chart - row 195
+                                                        opt chart has actual channel name
+                                                          %% Chart - row 197
+                                                          Chart ->> ChartValue: Create new
+                                                          activate ChartValue
+                                                            %% ChartValue - row 23
+                                                            ChartValue ->> ChartValue: Set channel value
+                                                            activate ChartValue
+                                                            deactivate ChartValue
+
+                                                            ChartValue -->> Chart: Return new
+                                                          deactivate ChartValue
+                                                        end
+                                                      end
+                                                    else
+                                                      %% Chart - row 203
+                                                      loop in values stack panel children
+                                                        %% Chart - row 207
+                                                        Chart ->> ChartValue: Set channel value
+                                                        activate ChartValue
+                                                        deactivate ChartValue
+                                                      end
+                                                    end
+                                                  deactivate Chart
+                                                deactivate Chart
+
+                                              end
+                                            end
+
+                                            %% DriverlessMenu - row 348
+                                            DriverlessMenu ->> Chart: Set axis limits to auto
+                                            activate Chart
+                                            deactivate Chart
+
+                                          deactivate DriverlessMenu
+                                        end
+                                      end
+                                    end
+                                  end
+                                end
+                              end
+                            end
+                          deactivate DriverlessMenu
+
+                          %% DriverlessMenu - row 494
+                          DriverlessMenu ->> DriverlessMenu: Update track
+                          activate DriverlessMenu
+                          deactivate DriverlessMenu
+                        else
+                          Note over DriverlessMenu: Clear all UI elements
+                        end
+                      deactivate DriverlessMenu
+
+                      %% DriverlessMenu - row 468
+                      DriverlessMenu ->> DriverlessMenu: Initialize choose input file combo box
+                      activate DriverlessMenu
+
+                      deactivate DriverlessMenu
+
+                    deactivate DriverlessMenu
+                  deactivate MenuManager
+
+                  %% DataReader - row 189
+                  DataReader ->> MenuManager: Get settings menu tab
+                  activate MenuManager
+                    MenuManager ->> TextManager: Get settings menu tab name
+                    activate TextManager
+                      TextManager -->> MenuManager: Return settings menu tab name
+                    deactivate TextManager
+
+                    MenuManager ->> SettingsMenu: Get group settings tab
+                    activate SettingsMenu
+                      SettingsMenu ->> TextManager: Get group settings tab name
+                      activate TextManager
+                        TextManager -->> SettingsMenu: Return group settings tab name
+                      deactivate TextManager
+
+                      SettingsMenu ->> GroupSettings: Update After read file
+                      activate GroupSettings
+                        %% GroupSettings - row 307
+                        GroupSettings ->> GroupSettings: Initialize input files combo box
+                        activate GroupSettings
+                          %% GroupSettings - row 77
+                          GroupSettings ->> InputFileManager: Get input files
+                          activate InputFileManager
+                            InputFileManager -->> GroupSettings: Return input files
+                          deactivate InputFileManager
+
+                          %% GroupSettings - row 77
+                          loop in input files
+                            %% GroupSettings - row 79
+                            GroupSettings ->> GroupSettings: Add input file combo box item
+                            activate GroupSettings
+                            deactivate GroupSettings
+                          end
+                        deactivate GroupSettings
+
+                        %% GroupSettings - row 308
+                        GroupSettings ->> GroupSettings: Initialize active channel selectable attributes
+                        activate GroupSettings
+                          %% GroupSettings - row 101
+                          GroupSettings ->> GroupManager: Get active group
+                          activate GroupManager
+                            GroupManager -->> GroupSettings: Return active group
+                          deactivate GroupManager
+
+                          %% GroupSettings - row 101
+                          opt active group is driverless
+                            %% GroupSettings - row 103
+                            GroupSettings ->> InputFileManager: Get selected driverless input file
+                            activate InputFileManager
+                              InputFileManager -->> GroupSettings: Return selected driverless input file
+                            deactivate InputFileManager
+
+                            %% GroupSettings - row 104
+                            opt input file is not null
+                              %% GroupSettings - row 106
+                              GroupSettings ->> DriverlessInputFile: Get channels
+                              activate DriverlessInputFile
+                                DriverlessInputFile -->> GroupSettings: Return channels
+                              deactivate DriverlessInputFile
+
+                              %% GroupSettings - row 107
+                              opt channels are not null
+                                %% GroupSettings - row 114
+                                loop in channels
+                                  Note over GroupSettings: Add check box
+                                end
+                              end
+                            end
+                          end
+                        deactivate GroupSettings
+
+                        GroupSettings -->> SettingsMenu: Return
+                      deactivate GroupSettings
+
+                      SettingsMenu -->> MenuManager: Return
+                    deactivate SettingsMenu
+
+                    MenuManager -->> DataReader: Return
+                  deactivate MenuManager
+                end
+
+              deactivate DataReader
+            end
+
+          deactivate DataReader
+
+        deactivate DataReader
+      end
+    end
+    deactivate InputFileSettings

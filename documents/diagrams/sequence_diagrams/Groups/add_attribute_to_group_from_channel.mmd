@@ -1,0 +1,16 @@
+sequenceDiagram
+  participant Program
+  participant Group
+  participant Attribute
+
+  Program ->> Group: Add attribute
+  activate Group
+    Group ->> Attribute: Create new
+    activate Attribute
+      Attribute -->> Group: Return new
+    deactivate Attribute
+
+    Note over Group: add newly created attribute to attributes.
+  deactivate Group
+  activate Program
+  deactivate Program

@@ -203,10 +203,13 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         {
             var chart = new Chart(channel.Name);
             chart.AddChannelName(channel.Name);
-            var data = ConvertChannelDataToPlotData(channel.Data.ToArray(), HorizontalAxisData.Data);
+
+            var horizontalAxisData = HorizontalAxisData.Data;
+
+            var data = ConvertChannelDataToPlotData(channel.Data.ToArray(), horizontalAxisData);
             int dataIndex = (int)DataSlider.Value;
 
-            double xValue = dataIndex < HorizontalAxisData.Data.Count ? HorizontalAxisData.Data[dataIndex] : HorizontalAxisData.Data.Last();
+            double xValue = dataIndex < horizontalAxisData.Count ? horizontalAxisData[dataIndex] : horizontalAxisData.Last();
             double yValue = dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last();
 
             chart.InitPlot(xValue: xValue,
@@ -316,13 +319,15 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 }
             }
 
+            var horizontalAxisData = HorizontalAxisData.Data;
+
             foreach (var channel in Channels)
             {
                 if (chart.HasChannelName(channel.Name))
                 {
-                    var data = ConvertChannelDataToPlotData(channel.Data.ToArray(), HorizontalAxisData.Data);
+                    var data = ConvertChannelDataToPlotData(channel.Data.ToArray(), horizontalAxisData);
                     int dataIndex = (int)DataSlider.Value;
-                    double xValue = dataIndex < HorizontalAxisData.Data.Count ? HorizontalAxisData.Data[dataIndex] : HorizontalAxisData.Data.Last();
+                    double xValue = dataIndex < HorizontalAxisData.Data.Count ? horizontalAxisData[dataIndex] : horizontalAxisData.Last();
                     double yValue = dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last();
 
                     chart.InitPlot(xValue: xValue,

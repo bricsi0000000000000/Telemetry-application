@@ -1,0 +1,11 @@
+sequenceDiagram
+  participant Program
+  participant Group
+
+  Program ->> Group: Create new
+  activate Group
+    Note over Group: Set name with trim
+    Note over Group: Set customizable to true
+  deactivate Group
+  activate Program
+  deactivate Program

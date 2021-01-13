@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System;
 using System.IO;
+using Telemetry_data_and_logic_layer.Exceptions;
 using Telemetry_data_and_logic_layer.Groups;
 using Telemetry_data_and_logic_layer.Texts;
 
@@ -141,7 +142,7 @@ namespace Telemetry_unit_tests
         [TestCase("../../../good_input_files/groups.csv")]
         public void DeserializeJson_FileNotFound(string fileName)
         {
-            Assert.Throws<Exception>(() => GroupManager.InitGroups(fileName));
+            Assert.Throws<ErrorException>(() => GroupManager.InitGroups(fileName));
         }
 
         [Test]
@@ -152,9 +153,10 @@ namespace Telemetry_unit_tests
         [TestCase("../../../wrong_groups/null_driverless.json")]
         [TestCase("../../../wrong_groups/null_attribute_name.json")]
         [TestCase("../../../wrong_groups/null_attribute_color.json")]
+        [TestCase("../../../wrong_groups/empty.json")]
         public void DeserializeJson_MissingCurlyBrackets(string fileName)
         {
-            Assert.Throws<Exception>(() => GroupManager.InitGroups(fileName));
+            Assert.Throws<ErrorException>(() => GroupManager.InitGroups(fileName));
         }
     }
 }
