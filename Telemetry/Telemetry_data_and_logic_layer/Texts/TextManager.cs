@@ -143,13 +143,13 @@
         /// Default name of channel yaw angle.
         /// "yawangle"
         /// </summary>
-        public static string DefaultYawangleChannelName { get; private set; } = "yawangle";
+        public static string DefaultYawAngleChannelName { get; private set; } = "yawangle";
 
         /// <summary>
         /// Default name of channel yaw rate.
         /// "yawrate"
         /// </summary>
-        public static string DefaultYawrateChannelName { get; private set; } = "yawrate";
+        public static string DefaultYawRateChannelName { get; private set; } = "yawrate";
         #endregion
     }
 }

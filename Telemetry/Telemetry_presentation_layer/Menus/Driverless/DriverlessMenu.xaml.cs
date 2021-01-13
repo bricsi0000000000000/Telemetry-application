@@ -32,10 +32,10 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         /// <summary>
         /// List of yaw angle.
         /// </summary>
-        private readonly List<double> integratedYawangle = new List<double>();
+        private readonly List<double> integratedYawAngle = new List<double>();
 
         /// <summary>
-        /// Delta time for <see cref="integratedYawangle"/>.
+        /// Delta time for <see cref="integratedYawAngle"/>.
         /// 50 ms -> 0.05 sec
         /// </summary>
         private readonly float dt = .05f;
@@ -285,13 +285,13 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                     chart.SetAxisLimitsToAuto();
                     chart.SetFrameBorder(left: false, bottom: false, top: false, right: false);
 
-                    if (dataIndex < integratedYawangle.Count)
+                    if (dataIndex < integratedYawAngle.Count)
                     {
-                        chart.PlotImage(xValue, yValue, CreateOffset(integratedYawangle, (float)GetChannel("c0ref").Data.First())[dataIndex]);
+                        chart.PlotImage(xValue, yValue, CreateOffset(integratedYawAngle, (float)GetChannel("c0ref").Data.First())[dataIndex]);
                     }
                     else
                     {
-                        chart.PlotImage(xValue, yValue, CreateOffset(integratedYawangle, (float)GetChannel("c0ref").Data.First()).Last());
+                        chart.PlotImage(xValue, yValue, CreateOffset(integratedYawAngle, (float)GetChannel("c0ref").Data.First()).Last());
                     }
                 }
                 else
@@ -418,29 +418,29 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         }
 
         /// <summary>
-        /// Initializes <see cref="integratedYawangle"/> list based on <c>yawangle</c> and <c>yawrate</c>.
+        /// Initializes <see cref="integratedYawAngle"/> list based on <c>yawangle</c> and <c>yawrate</c>.
         /// Formula: <c>yawangle(x) = yawangle(x - 1) + dt * yawrate</c>,
         /// where <c>x</c> is the loop variable and <c>dt</c> ist the timestep in <b>ms</b>.
         /// </summary>
-        public void CalculateYawangle()
+        public void CalculateYawAngle()
         {
-            integratedYawangle.Clear();
+            integratedYawAngle.Clear();
 
-            var yawrate = GetChannel(TextManager.DefaultYawrateChannelName);
+            var yawrate = GetChannel(TextManager.DefaultYawRateChannelName);
             if (yawrate == null)
             {
-                throw new Exception($"Can't find '{TextManager.DefaultYawrateChannelName}' channel");
+                throw new Exception($"Can't find '{TextManager.DefaultYawRateChannelName}' channel");
             }
 
-            integratedYawangle.Add(0);
+            integratedYawAngle.Add(0);
             for (int i = 1; i < yawrate.Data.Count; i++)
             {
-                integratedYawangle.Add(integratedYawangle[i - 1] + dt * yawrate.Data[i]);
+                integratedYawAngle.Add(integratedYawAngle[i - 1] + dt * yawrate.Data[i]);
             }
 
-            for (int i = 0; i < integratedYawangle.Count; i++)
+            for (int i = 0; i < integratedYawAngle.Count; i++)
             {
-                integratedYawangle[i] *= 180 / Math.PI;
+                integratedYawAngle[i] *= 180 / Math.PI;
 
             }
         }
@@ -486,7 +486,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 InitChannelCheckBoxes();
                 InitGroupCheckBoxes();
                 SetUpDataSlider();
-                CalculateYawangle();
+                CalculateYawAngle();
                 // TODO: ha nem kell a highlight karika, akkor a kikommentelt sor kell, az UpdateCharts(); pedig nem
                 selectedGroups.Clear();
                 UpdateCharts();

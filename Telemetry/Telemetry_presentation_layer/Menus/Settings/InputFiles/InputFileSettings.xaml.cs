@@ -182,7 +182,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
                 }
             }
 
-            UpdateReuqiredChannels();
+            UpdateRequiredChannels();
         }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
         /// <summary>
         /// Updates required <see cref="Channel"/>s.
         /// </summary>
-        public void UpdateReuqiredChannels()
+        public void UpdateRequiredChannels()
         {
             RequiredChannelsStackPanel.Children.Clear();
 

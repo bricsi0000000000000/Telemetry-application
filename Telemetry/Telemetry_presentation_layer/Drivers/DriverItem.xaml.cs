@@ -20,7 +20,7 @@ namespace Telemetry_presentation_layer.Drivers
     public partial class DriverItem : UserControl
     {
         private readonly Driver driver;
-        readonly BrushConverter converter = new BrushConverter();
+        private readonly BrushConverter converter = new BrushConverter();
 
         public DriverItem(Driver driver)
         {

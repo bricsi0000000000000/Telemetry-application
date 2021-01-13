@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Telemetry_data_and_logic_layer.Drivers;
 using Telemetry_data_and_logic_layer.InputFiles;
 using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Drivers;
 using Telemetry_presentation_layer.Menus.Driverless;
 
 namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
@@ -103,12 +100,13 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
                         Driverless = true
                     });
                     driverless = true;
+                    //TODO Biztos jo ez igy? mert mindketto helyen standardet hoz letre
                 }
             }
 
             ChangeTypeImage();
             ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
-            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).UpdateReuqiredChannels();
+            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).UpdateRequiredChannels();
         }
     }
 }

@@ -18,10 +18,9 @@ namespace Telemetry_presentation_layer.Charts
         private readonly Bitmap carImage;
 
         /// <summary>
-        /// Constructor
+        /// Constructor for TrackChart
         /// </summary>
-        /// <param name="chartHeight"><see cref="TrackChart"/>s height.</param>
-        public TrackChart(int chartHeight = 300)
+        public TrackChart()
         {
             InitializeComponent();
 

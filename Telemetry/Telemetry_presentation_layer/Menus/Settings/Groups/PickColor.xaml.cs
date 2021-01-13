@@ -12,7 +12,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             InitializeComponent();
         }
 
-        private void ChooseButtn_Click(object sender, RoutedEventArgs e)
+        private void ChooseButton_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
         }

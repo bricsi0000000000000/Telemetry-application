@@ -16,10 +16,10 @@
         </Grid.RowDefinitions>
 
         <materialDesign:ColorPicker Name="ColorPicker"/>
-        <Button x:Name="ChooseButtn"
+        <Button x:Name="ChooseButton"
                 Grid.Row="1"
                 Content="Choose"
                 Margin="5,0"
-                Click="ChooseButtn_Click"/>
+                Click="ChooseButton_Click"/>
     </Grid>
 </Window>

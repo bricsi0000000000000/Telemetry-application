@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Telemetry_data_and_logic_layer.Groups;
 using Telemetry_data_and_logic_layer.InputFiles;
 using Telemetry_data_and_logic_layer.Texts;
@@ -99,7 +91,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
             ImportantChannelsComboBox.Items.Clear();
 
             var comboBoxItem = new ComboBoxItem() { Content = "", IsSelected = true };
-            comboBoxItem.PreviewMouseLeftButtonDown += ChooseInputFileCombobox_PreviewMouseRightButtonUp;
+            comboBoxItem.PreviewMouseLeftButtonDown += ChooseInputFileComboBox_PreviewMouseRightButtonUp;
             ImportantChannelsComboBox.Items.Add(comboBoxItem);
 
             var inputFile = InputFileManager.GetInputFile(inputFileName);
@@ -111,12 +103,12 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
                 inputFile.ChangeRequiredChannelSatisfaction(item, found);
 
                 comboBoxItem = new ComboBoxItem() { Content = item, IsSelected = found };
-                comboBoxItem.PreviewMouseLeftButtonDown += ChooseInputFileCombobox_PreviewMouseRightButtonUp;
+                comboBoxItem.PreviewMouseLeftButtonDown += ChooseInputFileComboBox_PreviewMouseRightButtonUp;
                 ImportantChannelsComboBox.Items.Add(comboBoxItem);
             }
         }
 
-        private void ChooseInputFileCombobox_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        private void ChooseInputFileComboBox_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
 
         }
