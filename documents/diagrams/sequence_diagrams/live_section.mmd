@@ -1,0 +1,31 @@
+sequenceDiagram
+  participant Telemetry_application
+  participant Web_API
+  participant Database
+
+  Telemetry_application ->> Web_API: Add new live section
+  activate Telemetry_application
+  deactivate Telemetry_application
+
+  activate Web_API
+    Web_API ->> Database: Save new section
+    activate Database
+      alt if changes were successfully
+        Database -->> Web_API: Saved successfully
+        activate Web_API
+          Web_API -->> Telemetry_application: New live section added successfully
+          activate Telemetry_application
+            Note over Telemetry_application: Live section can be started
+          deactivate Telemetry_application
+        deactivate Web_API
+      else if there was a problem saving the new section
+        Database -->> Web_API: There was a problem
+        activate Web_API
+          Web_API -->> Telemetry_application: There was a problem adding the new live section
+          activate Telemetry_application
+            Note over Telemetry_application: Live section can't be started
+          deactivate Telemetry_application
+        deactivate Web_API
+      end
+    deactivate Database
+  deactivate Web_API

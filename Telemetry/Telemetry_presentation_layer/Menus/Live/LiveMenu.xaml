@@ -5,9 +5,39 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Telemetry_presentation_layer.Menus.Live"
              mc:Ignorable="d"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="160"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="60"/>
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="NewLiveSectionButton"
+                    Content="New live section"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    Click="NewLiveSectionButton_Click"
+                    Margin="5,0"/>
+
+            <TextBox x:Name="NewLiveSectionNameTextBox"
+                     Grid.Column="1"
+                     Margin="5,0"/>
+
+            <materialDesign:PackIcon Name="ResultIcon"
+                                     Kind="Denied"
+                                     VerticalAlignment="Center"
+                                     HorizontalAlignment="Center"
+                                     Grid.Column="2"/>
+        </Grid>
     </Grid>
 </UserControl>
