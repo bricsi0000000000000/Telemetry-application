@@ -1,0 +1,19 @@
+name: Unit tests
+
+on: push
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2.1.0
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.x'
+      - name: Build Telemetry_unit_tests
+        run: cd Telemetry && dotnet build Telemetry_unit_tests
+      - name: Test Telemetry_unit_tests
+        run: cd Telemetry && dotnet test Telemetry_unit_tests 

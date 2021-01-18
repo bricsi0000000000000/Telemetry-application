@@ -1,0 +1,18 @@
+sequenceDiagram
+  participant Program
+  participant Group
+  participant Attribute
+
+  Program ->> Group: Add attribute
+  activate Group
+    opt name is not empty
+      Group ->> Attribute: Create new
+      activate Attribute
+        Attribute -->> Group: Return new
+      deactivate Attribute
+
+      Note over Group: add newly created attribute to attributes.
+    end
+  deactivate Group
+  activate Program
+  deactivate Program

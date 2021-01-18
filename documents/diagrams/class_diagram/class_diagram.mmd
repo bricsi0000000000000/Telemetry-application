@@ -1,0 +1,503 @@
+classDiagram
+
+  class ColorManager {
+    <<static>>
+    -ChartColors: string[]
+    -chartColorIndex: int
+    -<<property>> ChartColorIndex: int
+    +<<property>> InputFileListElementCasualColor: string
+    +<<property>> InputFileListElementBadColor: string
+    +GetChartColor()$ string
+  }
+
+  class Driver{
+    +Driver(string name)
+    +<<property>> Name: string
+    +<<property>> IsSelected: bool
+  }
+
+  class DriverManager{
+    <<static>>
+    +<<property>> Drivers: List<Driver>
+    +AddDriver(Driver driver)$ void
+    +GetDriver(string name)$ Driver
+    +RemoveDriver(string name)$ void
+    +SelectedDriversCount()$ ushort
+  }
+
+  class ErrorException{
+    +ErrorException(string message)
+  }
+
+  class Exception{
+  }
+
+  class Attribute{
+    +Attribute(string name, string color)
+    +<<property>> Name: string
+    +<<property>> Color: string
+  }
+
+  class Channel{
+    +Channel(string name)
+    +<<property>> Name: string
+    +<<property>> Data: List<double>
+    +<<property>> IsActive: bool
+    +<<property>> Color: string
+    +AddChannelData(float value) void
+  }
+
+  class Group{
+    +Group(string name)
+    +<<property>> Name: string
+    +<<property>> Customizable: bool
+    +<<property>> Driverless: bool
+    +<<property>> Attributes: List<Attribute>
+    +AddAttribute(string name, string color) void
+    +AddAttribute(Channel channel) void
+    +RemoveAttribute(string name) void
+    +GetAttribute(string name) Attribute
+  }
+
+  class GroupManager{
+    <<static>>
+    +<<property>> Groups: List<Group>
+    -ReadGroups(string fileName)$ void
+    +InitGroups(string fileName)$ void
+    +SaveGroups()$ void
+    +AddGroup(Group group)$ void
+    +GetGroup(string name)$ Group
+    +RemoveGroup(string name)$ void
+  }
+
+  class ImportantChannels{
+    <<static>>
+    +DriverlessImportantChannelNames: List<string>
+    +StandardImportantChannelNames: List<string>
+  }
+  
+  class InputFile{
+    +InputFile()
+    +InputFile(string name, List<Channel> channels)
+    +InputFile(InputFile inputFile)
+    +<<property>> Name: string
+    +<<property>> Driverless: bool
+    +<<property>> Channels: List<Channel>
+    +<<property>> RequiredChannels: Dictionary<string, bool>
+    +GetChannel(string name) Channel
+    +IsRequiredChannelSatisfied(string name) bool
+    +ChangeRequiredChannelSatisfaction(string name, bool satisfaction) void
+  }
+
+  class DriverlessInputFile{
+    +DriverlessInputFile(string name, List<Channel> channels)
+    +DriverlessInputFile(InputFile inputFile)
+    -InitRequiredChannels() void
+  }
+
+  class StandardInputFile{
+    +StandardInputFile(string name, List<Channel> channels)
+    +StandardInputFile(InputFile inputFile)
+    -InitRequiredChannels() void
+  }
+
+  class InputFileManager{
+    <<static>>
+    +<<property>> InputFiles: List<InputFile>
+    +<<property>> ActiveInputFileName: string
+    +AddInputFile(InputFile inputFile)$ void
+    +GetInputFile(string inputFileName)$ InputFile
+    +GetDriverlessInputFile(string inputFileName)$ InputFile
+    +GetStandardInputFile(string inputFileName)$ InputFile
+    +RemoveInputFile(string inputFileName)$ void
+    +GetActiveInputFile(string inputFileName)$ InputFile
+  }
+
+  class TextManager{
+    <<static>>
+    +<<property>> DriverlessMenuName: string
+    +<<property>> SettingsMenuName: string
+    +<<property>> DiagramsMenuName: string
+    +<<property>> DiagramsSettingsMenuName: string
+    +<<property>> DriversMenuName: string
+    +<<property>> TracksMenuName: string
+    +<<property>> GroupsSettingsName: string
+    +<<property>> FilesSettingsName: string
+    +<<property>> SectorsSettingsName: string
+    +<<property>> GeneralSettingsName: string
+    +<<property>> DiagramCustomTabName: string
+    +<<property>> TractionTabName: string
+    +<<property>> LapReportTabName: string
+    +<<property>> DriversFileName: string
+    +<<property>> TracksFileName: string
+    +<<property>> GroupsFileName: string
+    +<<property>> DefaultSpeedChannelName: string
+    +<<property>> DefaultTimeChannelName: string
+    +<<property>> DefaultLongitudeChannelName: string
+    +<<property>> DefaultLatitudeChannelName: string
+    +<<property>> DefaultYawAngleChannelName: string
+    +<<property>> DefaultYawRateChannelName: string
+  }
+
+  class DriverlessTrack{
+    +<<property>> Name: string
+    +<<property>> Width: float
+    +<<property>> Length: float
+    +<<property>> LeftSide: List<Point>
+    +<<property>> RightSide: List<Point>
+    +<<property>> CenterSide: List<Point>
+  }
+
+  class DriverlessTrackManager{
+    <<static>>
+    +<<property>> DriverlessTracks: List<DriverlessTrack>
+    -CheckTrack(ref DriverlessTrack track)$ bool
+    -ParsePoint(string coordinateX, string coordinateY, ref DriverlessTrack track)$ Point
+    +LoadTracks()$ void
+    +AddTrack(DriverlessTrack track)$ void
+    +LoadTrack(string fileName)$ DriverlessTrack
+    +GetTrack(string fileName)$ DriverlessTrack
+  }
+
+  class Point{
+    +X: double
+    +Y: double
+  }
+
+  class Chart{
+    <<UserControl>>
+    +Chart(string name, int chartHeight = 300)
+    -plottableScatterHighlight: PlottableScatterHighlight
+    -plottableVLine: PlottableVLine
+    -<<readonly>> <<property>> channelNames: List<string>
+    +<<property>> ChartName: string
+    +<<property>> HasVLine: bool
+    -Grid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e) void
+    -UpdateSideValues(ref List<Channel> channels, ref int dataIndex) void
+    +AddChannelName(string channelName) void
+    +HasChannelName(string channelName) bool
+    +InitPlot(double[] xAxisValues, double[] yAxisValues, int lapIndex, string driverName, string fileName, string yAxisLabel, string xAxisLabel = "Distance (m)") void
+    +InitPlot(double xValue, double yValue, double[] xAxisValues, double[] yAxisValues,Color vLineColor, Color lineColor, List<Channel> channels, int dataIndex, string yAxisLabel = "", string xAxisLabel = "x", bool plotVLine = true, bool plotHighlightPoint = false) void
+    +SetAxisLimitsToAuto() void
+    +SetFrameBorder(bool left = true, bool bottom = true, bool top = true, bool right = true) void
+    +RenderPlot(double xValue, Color vLineColor, List<Channel> channels, int dataIndex) void
+  }
+
+  class ChartValue{
+    <<UserControl>>
+    +ChartValue(string color, string channelName, double channelValue)
+    -channelName: string
+    +<<property>> ChannelName: string
+    -SetChannelName(string channelName) void
+    +SetChannelValue(double channelValue) void
+  }
+
+  class TrackChart{
+    <<UserControl>>
+    +TrackChart()
+    -plottableScatterHighlight: PlottableScatterHighlight
+    -<<readonly>> carImage: Bitmap
+    +InitPlot(double[] xAxisValues, double[] yAxisValues, Color color, double xValue = 0, double yValue = 0, string yAxisLabel = "", string xAxisLabel = "x", double lineWidth = 3, LineStyle lineStyle = LineStyle.Solid, bool enableLabel = false) void
+    +PlotImage(double xValue, double yValue, double rotation) void
+    +SetAxisLimitsToAuto() void
+    +SetFrameBorder(bool left = true, bool bottom = true, bool top = true, bool right = true) void
+  }
+
+  class DriverItem{
+    <<UserControl>>
+    +DriverItem(Driver driver)
+    -<<readonly>> driver: Driver
+    -<<readonly>> converter: BrushConverter
+    -InitInputFileItems() void
+    -ChangeState() void
+    -SelectDriverBtn_Click(object sender, RoutedEventArgs e) void
+  }
+
+  class ShowError{
+    <<static>>
+    +ShowErrorMessage(ref Snackbar snackbar, string message, double time = 3)$ void
+  }
+
+  class DriverlessMenu{
+    <<UserControl>>
+    +DriverlessMenu()
+    -<<readonly>> selectedGroups: List<string>
+    -<<readonly>> integratedYawAngle: List<double>
+    -<<readonly>>dt: float
+    +<<property>> Channels: List<Channel>
+    -HorizontalAxisData() Channel
+    -InitChannelCheckBoxes() void
+    -InitGroupCheckBoxes() void
+    -GroupCheckBox_Click(object sender, RoutedEventArgs e) void
+    -AddChannelCheckBox(Channel channel) void
+    -ChannelCheckBox_Click(object sender, RoutedEventArgs e) void
+    -BuildChart(Channel channel) Chart
+    -BuildTrack() TrackChart
+    -BuildGroupChart(Group group) Chart
+    -CreateOffset(List<double> list, float offset) List<double>
+    -ConvertChannelDataToPlotData(double[] lapData, List<double> horizontalAxisData) Tuple<double[], double[]>
+    -ConvertChannelDataToPlotData(List<Point> points) Tuple<double[], double[]>
+    -UpdateAfterInputFileChoose() void
+    -SetUpDataSlider() void
+    -DataSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) void
+    -ChangeChartHighlight(int dataIndex) void
+    -UncheckAllChannels_Click(object sender, RoutedEventArgs e) void
+    -UnselectAllChannel() void
+    -ChooseInputFileCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e) void
+    +InitChooseInputFileComboBox() void
+    +UpdateCharts() void
+    +GetChannel(string channelName) Channel
+    +CalculateYawAngle() void
+    +UpdateTrack() void
+    +UpdateAfterReadFile() void
+  }
+
+  class GroupSettings{
+    <<UserControl>>
+    +GroupSettings()
+    -<<readonly>> groupSettingsItems: List<GroupSettingsItem>
+    -<<readonly>> groupSettingsAttributes: List<GroupSettingsAttribute>
+    +<<property>> ActiveGroupName: string
+    +<<property>> ActiveAttribute: Attribute
+    +<<property>> SelectedInputFileName: string
+    -AddInputFileComboBoxItem(string name) void
+    -ChannelCheckBox_Click(object sender, RoutedEventArgs e) void
+    -AddGroup_Click(object sender, RoutedEventArgs e) void
+    -AddAttribute_Click(object sender, RoutedEventArgs e) void
+    -InputFilesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) void
+    +InitInputFilesComboBox() void
+    +InitActiveChannelSelectableAttributes() void
+    +DestroyAllActiveChannelSelectableAttributes() void
+    +InitGroups() void
+    +InitAttributes() void
+    +GetGroupSettingsContent(string name) GroupSettingsItem
+    +GetGroupSettingsAttribute(string name) GroupSettingsAttribute
+    +GroupSettingsItemClicked(string groupName) void
+    +UpdateAfterReadFile(string fileName) void
+  }
+
+  class GroupSettingsAttribute{
+    <<UserControl>>
+    +GroupSettingsAttribute(string channelName, string groupName, string color)
+    +<<property>> AttributeName: string
+    -<<readonly>> groupName: string
+    -DeleteAttribute_Click(object sender, RoutedEventArgs e) void
+    -ChangeColorBtn_Click(object sender, RoutedEventArgs e) void
+  }
+
+  class GroupSettingsItem{
+    <<UserControl>>
+    +GroupSettingsItem(string groupName, bool driverless = false)
+    -driverless: bool
+    +<<property>> GroupName: string
+    -ChangeTypeImage() void
+    -DeleteGroup_Click(object sender, RoutedEventArgs e) void
+    -Grid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e) void
+    -ChangeGroupItemType_Click(object sender, RoutedEventArgs e) void
+    +ChangeColorMode(bool change) void
+  }
+
+  class PickColor{
+    <<Window>>
+    +PickColor()
+    -ChooseButton_Click(object sender, RoutedEventArgs e) void
+  }
+
+  class InputFileChannelSettingsItem{
+    <<UserControl>>
+    +InputFileChannelSettingsItem(string channelName, string inputFileName, string color)
+    -<<readonly>> inputFileName: string
+    +<<property>> ChannelName: string
+    -ChangeColor(Color color) void
+    -ChangeColorBtn_Click(object sender, RoutedEventArgs e) void
+    -InitImportantChannelsComboBox() void
+    -void ChooseInputFileComboBox_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e) void
+  }
+
+  class InputFilesSettings{
+    <<UserControl>>
+    +InputFilesSettings()
+    -<<readonly>> inputFileSettingsItems: List<InputFileSettingsItem>
+    -<<readonly>> inputFileChannelSettingsItems: List<InputFileChannelSettingsItem>
+    +<<property>> ActiveInputFileName: string
+    +<<property>> ActiveChannel: Channel
+    -ChangeAllInputFileSettingsItemColorMode() void
+    -UpdateActiveInputFileName() void
+    -InitInputFileSettingsItemElements() void
+    -AddSingleInputFileSettingsItem(InputFile inputFile) void
+    -InitActiveChannel() void
+    -AddInputFileChannelSettingsItem(Channel channel) void
+    -ReadInputFileBtn_Click(object sender, RoutedEventArgs e) void
+    -AddImportantChannelNameCheckBox(string name, bool isChecked) void
+    +AddInputFileSettingsItem(InputFile inputFile) void
+    +ChangeActiveInputFileSettingsItem(string inputFileName) void
+    +RemoveSingleInputFileSettingsItem(string inputFileName) void
+    +InitInputFileSettingsItems() void
+    +InitChannelItems() void
+    +UpdateRequiredChannels() void
+  }
+
+  class InputFileSettingsItem{
+    <<UserControl>>
+    +InputFileSettingsItem(string inputFileName, bool driverless = false)
+    -driverless: bool
+    +<<property>> InputFileName: string
+    -ChangeTypeImage() void
+    -DeleteInputFile_Click(object sender, RoutedEventArgs e) void
+    -Grid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e) void
+    -void ChangeGroupItemType_Click(object sender, RoutedEventArgs e) void
+    +ChangeColorMode(bool selected) void
+  }
+
+  class SettingsMenu{
+    <<UserControl>>
+    +SettingsMenu()
+    -<<static>> <<readonly>> settingsTab: List<TabItem>
+    -AddSettingsTab(string header, object content, bool selected = false) void
+    +InitSettingsTabs() void
+    +GetTab(string name) TabItem
+  }
+
+  class MenuManager{
+    <<static>>
+    -<<readonly>> menuItems: List<TabItem>
+    +InitMainMenuTabs(TabControl tabControl)$ void
+    -AddTab(string header, object content, string name, TabControl tabControl, bool selected = false)$ void
+    +GetTab(string name)$ TabItem
+  }
+
+  class DataReader{
+    -fileName: string
+    -progressBarGrid: Grid
+    -progressBar: ProgressBar
+    -fileLength: long
+    -worker: BackgroundWorker
+    -channels: List<Channel>
+    -fileType: FileType
+    -ReportWorkerProgress(int progress) void
+    -StartWorker() void
+    -FileNameWithoutPath() string
+    -WorkerDoWork(object sender, DoWorkEventArgs e) void
+    -WorkerProgressChanged(object sender, ProgressChangedEventArgs e) void
+    -WorkerCompleted(object sender, RunWorkerCompletedEventArgs e) void
+    +SetupReader(Grid progressBarGrid, ProgressBar progressBar, FileType fileType) void
+    +ReadFile(string fileName) void
+    +ProcessFile(string fileName) void
+  }
+
+  DriverManager o-- Driver
+
+  Exception <|-- ErrorException
+
+  Channel -- ColorManager
+
+  Group *-- Attribute
+  Group -- Channel
+
+  GroupManager *-- Group
+  GroupManager -- TextManager
+  GroupManager -- ErrorException
+
+  InputFile <|-- DriverlessInputFile
+  InputFile <|-- StandardInputFile
+  InputFile -- Channel
+
+  DriverlessInputFile *-- Channel
+  DriverlessInputFile -- ImportantChannels
+
+  StandardInputFile *-- Channel
+  StandardInputFile -- ImportantChannels
+
+  InputFileManager *-- InputFile
+
+  DriverlessTrack *-- Point
+
+  DriverlessTrackManager *-- DriverlessTrack
+  DriverlessTrackManager -- Point
+  DriverlessTrackManager -- ErrorException
+
+  Chart -- Channel
+  Chart *-- ChartValue
+
+  DriverItem o-- Driver
+
+  DriverlessMenu -- InputFileManager
+  DriverlessMenu -- Channel
+  DriverlessMenu -- Chart
+  DriverlessMenu -- TextManager
+  DriverlessMenu -- DriverlessTrack
+  DriverlessMenu -- TrackChart
+  DriverlessMenu -- GroupManager
+  DriverlessMenu -- GroupSettings
+  DriverlessMenu -- SettingsMenu
+  DriverlessMenu -- MenuManager
+
+  GroupSettings *-- GroupSettingsItem
+  GroupSettings *-- GroupSettingsAttribute
+  GroupSettings -- Attribute
+  GroupSettings -- GroupManager
+  GroupSettings -- InputFileManager
+  GroupSettings -- DriverlessMenu
+  GroupSettings -- TextManager
+  GroupSettings o-- Group
+
+  GroupSettingsAttribute -- GroupManager
+  GroupSettingsAttribute -- SettingsMenu
+  GroupSettingsAttribute -- DriverlessMenu
+  GroupSettingsAttribute -- MenuManager
+  GroupSettingsAttribute -- TextManager
+  GroupSettingsAttribute *-- PickColor
+  GroupSettingsAttribute -- InputFileManager
+  GroupSettingsAttribute -- GroupSettings
+  GroupSettingsAttribute -- InputFileSettings
+
+  GroupSettingsItem -- GroupManager
+  GroupSettingsItem -- GroupSettings
+  GroupSettingsItem -- SettingsMenu
+  GroupSettingsItem -- MenuManager
+  GroupSettingsItem -- TextManager
+
+  InputFileChannelSettingsItem *-- PickColor
+  InputFileChannelSettingsItem -- GroupManager
+  InputFileChannelSettingsItem -- InputFileManager
+  InputFileChannelSettingsItem -- GroupSettings
+  InputFileChannelSettingsItem -- SettingsMenu
+  InputFileChannelSettingsItem -- MenuManager
+  InputFileChannelSettingsItem -- TextManager
+  InputFileChannelSettingsItem -- DriverlessMenu
+  InputFileChannelSettingsItem -- ImportantChannels
+
+  InputFilesSettings o-- Channel
+  InputFilesSettings -- InputFile
+  InputFilesSettings -- InputFileSettingsItem
+  InputFilesSettings -- InputFileManager
+  InputFilesSettings *-- InputFileChannelSettingsItem
+  InputFilesSettings *-- DataReader
+  InputFilesSettings -- ImportantChannels
+
+  InputFileSettingsItem -- InputFileManager
+  InputFileSettingsItem -- InputFileSettings
+  InputFileSettingsItem -- SettingsMenu
+  InputFileSettingsItem -- MenuManager
+  InputFileSettingsItem -- TextManager
+  InputFileSettingsItem -- StandardInputFile
+  InputFileSettingsItem -- DriverlessMenu
+
+  SettingsMenu *-- InputFilesSettings
+  SettingsMenu *-- GroupSettings
+  SettingsMenu -- TextManager
+
+  MenuManager *-- DriverlessMenu
+  MenuManager *-- SettingsMenu
+  MenuManager -- TextManager
+
+  DataReader -- Channel
+  DataReader -- GroupManager
+  DataReader o-- DriverlessInputFile
+  DataReader -- InputFileManager
+  DataReader -- InputFileSettings
+  DataReader -- SettingsMenu
+  DataReader -- DriverlessMenu
+  DataReader -- GroupSettings
+  DataReader -- TextManager
+  DataReader -- MenuManager

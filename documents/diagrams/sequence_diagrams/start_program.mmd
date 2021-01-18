@@ -1,0 +1,460 @@
+sequenceDiagram
+  participant MainWindow
+  participant GroupManager
+  participant Group
+  participant MenuManager
+  participant DriverlessMenu
+  participant SettingsMenu
+  participant InputFilesSettings
+  participant GroupSettings
+  participant InputFileManager
+  participant GroupSettingsItem
+  participant GroupSettingsAttribute
+
+  activate MainWindow
+    MainWindow ->> GroupManager: Initialize groups
+    activate GroupManager
+      %% GroupManager - row 26
+      alt if file doesn't exists
+        %% GroupManager - row 27
+        GroupManager -->> MainWindow: "Couldn't load groups, because file '{TextManager.GroupsFileName}' not found!"
+        activate MainWindow
+        deactivate MainWindow
+      else
+        %% GroupManager - row 31
+        GroupManager->>GroupManager: Read groups
+        activate GroupManager
+          %% GroupManager - row 40
+          alt if file is empty
+            GroupManager -->> MainWindow: "{fileName} is empty"
+            activate MainWindow
+            deactivate MainWindow
+          else
+            %% GroupManager - row 47		
+            alt if can't deserialize json file
+              GroupManager -->> MainWindow: "There was a problem reading {TextManager.GroupsFileName}"
+            else
+              %% GroupManager - row 51
+              loop
+                %% GroupManager - row 53
+                alt if group name is null
+                  GroupManager -->> MainWindow: "Can't add group, because the name is null!"
+                %% GroupManager - row 58
+                else if group name is empty
+                  GroupManager -->> MainWindow: "Can't add group, because the name is empty!"
+                %% GroupManager - row 63
+                else if group driverless is null
+                  GroupManager -->> MainWindow: "Can't add group, because driverless is null!"
+                %% GroupManager - row 68
+                else if group customizable is null
+                  GroupManager -->> MainWindow: "Can't add group, because customizable is null!"
+                %% GroupManager - row 73
+                else if group attributes are null
+                  GroupManager -->> MainWindow: "Can't add group, because attributes are null!"
+                else
+                  %% GroupManager - row 79
+                  GroupManager ->> Group: Create new
+                  activate Group
+                    Group -->> GroupManager: Return new
+                  deactivate Group
+
+                  %% GroupManager - row 85
+                  loop
+                    %% GroupManager - row 90
+                    alt if attribute name is null
+                      GroupManager -->> MainWindow: "Can't add attribute, because name is null!"
+                    %% GroupManager - row 95
+                    else if attribute color is null
+                      GroupManager -->> MainWindow: "Can't add attribute, because color is null!"
+                    %% GroupManager - row 103
+                    else if attribute name and color are not empty
+                      %% GroupManager - row 106
+                      GroupManager ->> Group: Add attribute
+                        activate Group
+                        deactivate Group
+                    end
+                  end
+                  
+                  %% GroupManager - row 110
+                  GroupManager ->> GroupManager: Add group
+                  activate GroupManager
+                  deactivate GroupManager
+                end
+              end
+            end
+          end
+
+        deactivate GroupManager
+      end
+    deactivate GroupManager
+
+    MainWindow ->> MenuManager: Initialize main menu tabs
+    activate MenuManager
+      MenuManager ->> MenuManager: add driverless tab
+      activate MenuManager
+        MenuManager ->> DriverlessMenu: Create new
+        activate DriverlessMenu
+          DriverlessMenu -->> MenuManager: Return new
+        deactivate DriverlessMenu
+      deactivate MenuManager
+
+      MenuManager ->> MenuManager: add settings tab
+      activate MenuManager
+        MenuManager ->> SettingsMenu: Create new
+          activate SettingsMenu
+            SettingsMenu ->> SettingsMenu: Initialize settings tabs
+            activate SettingsMenu
+              SettingsMenu ->> SettingsMenu: Add input file settings tab
+              activate SettingsMenu
+                SettingsMenu ->> InputFileSettings: Create new
+                activate InputFileSettings
+                  InputFileSettings -->> SettingsMenu: Return new
+                deactivate InputFileSettings
+              deactivate SettingsMenu
+
+              SettingsMenu ->> SettingsMenu: Add group settings tab
+              activate SettingsMenu
+                SettingsMenu ->> GroupSettings: Create new
+                activate GroupSettings
+                  %% GroupSettings - row 51
+                  GroupSettings ->> GroupManager: Get groups count
+                  activate GroupManager
+                    GroupManager -->> GroupSettings: Return groups count
+                  deactivate GroupManager
+
+                  %% GroupSettings - row 51
+                  opt groups has items
+                    %% GroupSettings - row 53
+                    opt active group name is empty
+                      GroupSettings ->> GroupManager: Get groups
+                      activate GroupManager
+                        GroupManager -->> GroupSettings: Return groups
+                      deactivate GroupManager
+
+                      Note over GroupSettings: Set active group name to first group name
+                    end
+                  
+                    %% GroupSettings - row 58
+                    GroupSettings ->> GroupManager: Get active group
+                    activate GroupManager
+                      GroupManager -->> GroupSettings: Return active group
+                    deactivate GroupManager
+
+                    %% GroupSettings - row 58
+                    opt active group is driverless
+                      %% GroupSettings - row 60
+                      GroupSettings ->> GroupSettings: destroy all active channel selectable attributes
+                      activate GroupSettings
+                      deactivate GroupSettings
+                    end 
+
+                    %% GroupSettings - row 63
+                    GroupSettings ->> GroupSettings: Initialize active channel selectable attributes
+                    activate GroupSettings
+                      %% GroupSettings - row 101
+                      GroupSettings ->> GroupManager: Get active group
+                      activate GroupManager
+                        GroupManager -->> GroupSettings: Return active group
+                      deactivate GroupManager
+
+                      %% GroupSettings - row 101
+                      opt active group is driverless
+                        %% GroupSettings - row 103
+                        GroupSettings ->> InputFileManager: Get selected driverless input file
+                        activate InputFileManager
+                          InputFileManager -->> GroupSettings: Return selected driverless input file
+                        deactivate InputFileManager
+
+                        %% GroupSettings - row 104
+                        opt selected driverless input file is not null
+                          %% GroupSettings - row 106
+                          GroupSettings ->> DriverlessInputFile: Get channels
+                          activate DriverlessInputFile
+                            DriverlessInputFile -->> GroupSettings: Return channels
+                          deactivate DriverlessInputFile
+
+                          %% GroupSettings - row 107
+                          opt channel is not null
+                            %% GroupSettings - row 114
+                            loop in channels
+                              Note over GroupSettings: Create check box
+                            end
+                          end
+                        end
+                      end
+                    deactivate GroupSettings
+                  end
+
+                  GroupSettings -->> SettingsMenu: Return new
+                deactivate GroupSettings
+              deactivate SettingsMenu
+            deactivate SettingsMenu
+
+            SettingsMenu -->> MenuManager: Return new
+          deactivate SettingsMenu
+      deactivate MenuManager
+    deactivate MenuManager
+
+    MainWindow ->> DriverlessTrackManager: Load tracks
+    activate DriverlessTrackManager
+      %% DriverlessTrackManager - row 26
+      DriverlessTrackManager ->> DriverlessTrackManager: Add track
+      activate DriverlessTrackManager
+        DriverlessTrackManager ->> DriverlessTrackManager: Load straight track
+        activate DriverlessTrackManager
+          %% DriverlessTrackManager - row 54
+          DriverlessTrackManager ->> DriverlessTrack: Create new
+          activate DriverlessTrack
+            DriverlessTrack -->> DriverlessTrackManager: Return new
+          deactivate DriverlessTrack
+
+          %% DriverlessTrackManager - row 56
+          alt if file exists
+            %% DriverlessTrackManager - row 58
+            opt file is empty
+              DriverlessTrackManager -->> MainWindow: "{fileName} is empty"
+              activate MainWindow
+              deactivate MainWindow
+            end
+
+            %% DriverlessTrackManager - row 67
+            alt can't deserialize file
+              DriverlessTrackManager -->> MainWindow: "Can't deserialize {fileName}"
+              activate MainWindow
+              deactivate MainWindow
+            else
+              Note over DriverlessTrackManager: deserialize file
+            end
+
+            %% DriverlessTrackManager - row 76
+            opt track is null
+              DriverlessTrackManager -->> MainWindow: "Track is null"
+              activate MainWindow
+              deactivate MainWindow
+            end
+
+            %% DriverlessTrackManager - row 81
+            opt track name is null
+              DriverlessTrackManager -->> MainWindow: "Track name is null"
+              activate MainWindow
+              deactivate MainWindow
+            end
+
+            %% DriverlessTrackManager - row 86
+            opt track width is null
+              DriverlessTrackManager -->> MainWindow: "Track width is null"
+              activate MainWindow
+              deactivate MainWindow
+            end
+
+            %% DriverlessTrackManager - row 91
+            opt track length is null
+              DriverlessTrackManager -->> MainWindow: "Track length is null"
+              activate MainWindow
+              deactivate MainWindow
+            end
+
+            %% DriverlessTrackManager - row 96
+            opt track left side is null
+              DriverlessTrackManager -->> MainWindow: "In track '{track.Name}' left side is empty!"
+              activate MainWindow
+              deactivate MainWindow
+            end
+
+            %% DriverlessTrackManager - row 101
+            opt track center is null
+              DriverlessTrackManager -->> MainWindow: "In track '{track.Name}' center is empty!"
+              activate MainWindow
+              deactivate MainWindow
+            end
+
+            %% DriverlessTrackManager - row 106
+            opt track right side is null
+              DriverlessTrackManager -->> MainWindow: "In track '{track.Name}' right side is empty!"
+              activate MainWindow
+              deactivate MainWindow
+            end
+
+            %% DriverlessTrackManager - row 111
+            opt track name is empty
+              DriverlessTrackManager -->> MainWindow: "Track name is empty"
+              activate MainWindow
+              deactivate MainWindow
+            end
+
+            %% DriverlessTrackManager - row 116
+            opt can't parse track width
+              DriverlessTrackManager -->> MainWindow: "In track '{track.Name}' couldn't convert '{trackJSON.track.width}' to a number"
+              activate MainWindow
+              deactivate MainWindow
+            end
+
+            %% DriverlessTrackManager - row 121
+            opt can't parse track length
+              DriverlessTrackManager -->> MainWindow: "In track '{track.Name}' couldn't convert '{trackJSON.track.length}' to a number"
+              activate MainWindow
+              deactivate MainWindow
+            end
+
+            %% DriverlessTrackManager - row 126
+            opt right side is empty
+              DriverlessTrackManager -->> MainWindow: "Track right side is empty"
+              activate MainWindow
+              deactivate MainWindow
+            end
+
+            %% DriverlessTrackManager - row 131
+            opt left side is empty
+              DriverlessTrackManager -->> MainWindow: "Track left side is empty"
+              activate MainWindow
+              deactivate MainWindow
+            end
+
+            %% DriverlessTrackManager - row 136
+            opt center is empty
+              DriverlessTrackManager -->> MainWindow: "Track center is empty"
+              activate MainWindow
+              deactivate MainWindow
+            end
+
+            Note over DriverlessTrackManager: Set track name, width and length.
+
+            %% DriverlessTrackManager - row 145
+            loop in track right side
+              %% DriverlessTrackManager - row 147
+              opt right side x value is null
+                DriverlessTrackManager -->> MainWindow: "Track right side x value is empty"
+                activate MainWindow
+                deactivate MainWindow
+              end
+
+              %% DriverlessTrackManager - row 152
+              opt right side x value is null
+                DriverlessTrackManager -->> MainWindow: "Track right side y value is empty"
+                activate MainWindow
+                deactivate MainWindow
+              end
+
+              %% DriverlessTrackManager - row 157
+              Note over DriverlessTrackManager: Add point to right side.
+
+              %% DriverlessTrackManager - row 157
+              DriverlessTrackManager ->> DriverlessTrackManager: Parse point
+              activate DriverlessTrackManager
+                %% DriverlessTrackManager - row 225
+                alt can parse x coordinate
+                  Note over DriverlessTrackManager: Set point x value to x coordinate
+                else
+                  DriverlessTrackManager -->> MainWindow: "In track \"{track.Name}\" couldn't convert x coordinate \"{coordinateX}\" to a number"
+                  activate MainWindow
+                  deactivate MainWindow
+                end
+
+                %% DriverlessTrackManager - row 234
+                alt can parse y coordinate
+                  Note over DriverlessTrackManager: Set point y value to x coordinate
+                else
+                  DriverlessTrackManager -->> MainWindow: "In track \"{track.Name}\" couldn't convert x coordinate \"{coordinateY}\" to a number"
+                  activate MainWindow
+                  deactivate MainWindow
+                end
+              deactivate DriverlessTrackManager
+            end
+
+            %% DriverlessTrackManager - row 160
+            loop in track left side
+              %% DriverlessTrackManager - row 160
+              opt left side x value is null
+                DriverlessTrackManager -->> MainWindow: "Track left side x value is empty"
+                activate MainWindow
+                deactivate MainWindow
+              end
+
+              %% DriverlessTrackManager - row 167
+              opt left side x value is null
+                DriverlessTrackManager -->> MainWindow: "Track left side y value is empty"
+                activate MainWindow
+                deactivate MainWindow
+              end
+
+              %% DriverlessTrackManager - row 157
+              Note over DriverlessTrackManager: Add point to right side.
+
+              %% DriverlessTrackManager - row 172
+              DriverlessTrackManager ->> DriverlessTrackManager: Parse point
+              activate DriverlessTrackManager
+                %% DriverlessTrackManager - row 225
+                alt can parse x coordinate
+                  Note over DriverlessTrackManager: Set point x value to x coordinate
+                else
+                  DriverlessTrackManager -->> MainWindow: "In track \"{track.Name}\" couldn't convert x coordinate \"{coordinateX}\" to a number"
+                  activate MainWindow
+                  deactivate MainWindow
+                end
+
+                %% DriverlessTrackManager - row 234
+                alt can parse y coordinate
+                  Note over DriverlessTrackManager: Set point y value to x coordinate
+                else
+                  DriverlessTrackManager -->> MainWindow: "In track \"{track.Name}\" couldn't convert x coordinate \"{coordinateY}\" to a number"
+                  activate MainWindow
+                  deactivate MainWindow
+                end
+              deactivate DriverlessTrackManager
+            end
+
+            %% DriverlessTrackManager - row 175
+            loop in track center
+              %% DriverlessTrackManager - row 177
+              opt center x value is null
+                DriverlessTrackManager -->> MainWindow: "Track center x value is empty"
+                activate MainWindow
+                deactivate MainWindow
+              end
+
+              %% DriverlessTrackManager - row 182
+              opt center x value is null
+                DriverlessTrackManager -->> MainWindow: "Track center y value is empty"
+                activate MainWindow
+                deactivate MainWindow
+              end
+
+              %% DriverlessTrackManager - row 157
+              Note over DriverlessTrackManager: Add point to right side.
+
+              %% DriverlessTrackManager - row 187
+              DriverlessTrackManager ->> DriverlessTrackManager: Parse point
+              activate DriverlessTrackManager
+                %% DriverlessTrackManager - row 225
+                alt can parse x coordinate
+                  Note over DriverlessTrackManager: Set point x value to x coordinate
+                else
+                  DriverlessTrackManager -->> MainWindow: "In track \"{track.Name}\" couldn't convert x coordinate \"{coordinateX}\" to a number"
+                  activate MainWindow
+                  deactivate MainWindow
+                end
+
+                %% DriverlessTrackManager - row 234
+                alt can parse y coordinate
+                  Note over DriverlessTrackManager: Set point y value to x coordinate
+                else
+                  DriverlessTrackManager -->> MainWindow: "In track \"{track.Name}\" couldn't convert x coordinate \"{coordinateY}\" to a number"
+                  activate MainWindow
+                  deactivate MainWindow
+                end
+              deactivate DriverlessTrackManager
+            end
+
+          else
+            DriverlessTrackManager -->> MainWindow: "Can't find '{fileName}'"
+            activate MainWindow
+            deactivate MainWindow
+          end
+          
+        deactivate DriverlessTrackManager
+      deactivate DriverlessTrackManager
+    deactivate DriverlessTrackManager
+
+  deactivate MainWindow
+
+  
