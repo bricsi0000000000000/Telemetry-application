@@ -1,19 +1,18 @@
-﻿using Newtonsoft.Json;
-using Nito.AsyncEx.Synchronous;
-using System;
-using System.Net;
+﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using Telemetry_data_and_logic_layer.Colors;
+using Telemetry_data_and_logic_layer.Exceptions;
 
 namespace Telemetry_presentation_layer.Menus.Live
 {
     public partial class LiveMenu : UserControl
     {
         private static HttpClient client = new HttpClient();
+        private readonly BrushConverter brushConverter = new BrushConverter();
 
         public LiveMenu()
         {
@@ -28,28 +27,58 @@ namespace Telemetry_presentation_layer.Menus.Live
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        private void NewLiveSectionButton_Click(object sender, RoutedEventArgs e)
+     /*   private void NewLiveSectionButton_Click(object sender, RoutedEventArgs e)
         {
-            PostNewSection(NewLiveSectionNameTextBox.Text);
+            PostNewSection();
         }
 
-        private async Task<Uri> PostNewSection(string sectionName)
+        private async void PostNewSection()
+        {
+            var response = await client.PostAsJsonAsync("/api/Section", NewLiveSectionNameTextBox.Text).ConfigureAwait(false);
+            var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            string resultString = result.GetAwaiter().GetResult();
+            if (resultString.Equals("200"))
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    ResultIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Approve;
+                    ResultIcon.Foreground = (Brush)brushConverter.ConvertFromString(ColorManager.ApprovedColor);
+                });
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    ResultIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Denied;
+                    ResultIcon.Foreground = (Brush)brushConverter.ConvertFromString(ColorManager.DeniedColor);
+                    throw new ErrorException("Couldn't create new live section");
+                });
+            }
+        }*/
+
+        /*private async Task<Uri> PostNewSectionAsync(string sectionName)
         {
             var response = await client.PostAsJsonAsync("/api/Section", sectionName).ConfigureAwait(false);
             if (response.IsSuccessStatusCode)
             {
-                var resultString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-               /* if (resultString.Equals("200"))
+                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                string resultString = result.GetAwaiter().GetResult();
+                if (resultString.Equals("200"))
                 {
                     ResultIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Approve;
                 }
                 else if (resultString.Equals("500"))
                 {
                     ResultIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Denied;
-                }*/
+                }
             }
 
             return response.Headers.Location;
+        }*/
+
+        private async void GetResult(HttpResponseMessage response)
+        {
+
         }
 
         /* private async Task<double[]> GetData(string name, int lastIndex)

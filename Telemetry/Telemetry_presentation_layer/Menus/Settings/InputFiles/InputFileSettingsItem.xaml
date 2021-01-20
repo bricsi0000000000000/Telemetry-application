@@ -5,17 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="{DynamicResource MaterialDesignPaper}"
              TextElement.FontWeight="Medium"
              TextElement.FontSize="14"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              d:DesignHeight="60" d:DesignWidth="800">
 
-    <materialDesign:ColorZone CornerRadius="5"
-                              Margin="5 2.5"
-                              Mode="Dark"
-                              Name="ColorZone"
-                              BorderThickness="2"
+    <materialDesign:Card UniformCornerRadius="5"
+                         Margin="5 2.5"
+                         Name="BackgroundCard"
+                         materialDesign:ShadowAssist.ShadowDepth="Depth1"
                          >
         <Grid PreviewMouseLeftButtonUp="Grid_PreviewMouseLeftButtonUp"
               Margin="5"
@@ -31,32 +29,35 @@
                    HorizontalContentAlignment="Left"
                    />
 
-            <Button Grid.Column="1"
-                    Name="ChangeGroupItemType"
-                    Click="ChangeGroupItemType_Click"
-                    Background="White"
-                    BorderThickness="0">
-                <Image x:Name="InputFileTypeImage"
-                       RenderTransformOrigin="0.5,0.5">
-                    <Image.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
-                            <SkewTransform/>
-                            <RotateTransform/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </Image.RenderTransform>
-                </Image>
-            </Button>
+            <materialDesign:Card Grid.Column="1"
+                                 Name="ChangeGroupItemType"
+                                 PreviewMouseDown="ChangeGroupItemType_Click"
+                                 Background="White"
+                                 UniformCornerRadius="5"
+                                 Margin="5"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                 BorderThickness="0">
+                <Image x:Name="InputFileTypeImage"/>
+            </materialDesign:Card>
 
-            <Button Grid.Column="2"
-                    Click="DeleteInputFile_Click"
-                    Margin="5"
-                    Name="DeleteGroupBtn"
+            <materialDesign:Card Grid.Column="2"
+                                 PreviewMouseDown="DeleteInputFile_Click"
+                                 Margin="5"
+                                 Name="DeleteGroupBtn"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                 BorderThickness="0"
+                                 UniformCornerRadius="5"
+                                 Background="{DynamicResource Delete}"
+                                 VerticalAlignment="Stretch"
+                                 HorizontalAlignment="Stretch"
                     >
                 <materialDesign:PackIcon Kind="Delete"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Center"
+                                         Foreground="White"
+                                         Margin="0,8"
                                          />
-            </Button>
+            </materialDesign:Card>
         </Grid>
-    </materialDesign:ColorZone>
+    </materialDesign:Card>
 </UserControl>

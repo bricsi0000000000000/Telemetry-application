@@ -9,45 +9,56 @@
              Background="{DynamicResource MaterialDesignPaper}"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="2*"/>
-        </Grid.ColumnDefinitions>
-
-        <Grid>
-            <materialDesign:DialogHost HorizontalAlignment="Stretch"
+        <materialDesign:DialogHost HorizontalAlignment="Stretch"
                                        VerticalAlignment="Stretch"
                                        CloseOnClickAway="True"
                                        >
-                <materialDesign:DialogHost.DialogContent>
-                    <StackPanel Margin="16">
-                        <TextBlock Text="Add new group"/>
-                        <TextBox Margin="0 8 0 0"
+            <materialDesign:DialogHost.DialogContent>
+                <StackPanel Margin="16">
+                    <TextBlock Text="Add new group"/>
+                    <TextBox Margin="0 8 0 0"
                                  Name="AddGroupTxtBox"
                                  HorizontalAlignment="Stretch"
                                  />
-                        <StackPanel Orientation="Horizontal"
+                    <StackPanel Orientation="Horizontal"
                                     HorizontalAlignment="Right"
                                     >
-                            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
                                     IsDefault="True"
                                     Margin="0 8 8 0"
                                     Command="materialDesign:DialogHost.CloseDialogCommand"
                                     Content="Add"
                                     Click="AddGroup_Click"
                                     >
-                            </Button>
-                            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        </Button>
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
                                     IsCancel="True"
                                     Margin="0 8 8 0"
                                     Command="materialDesign:DialogHost.CloseDialogCommand"
                                     Content="Cancel"
                                     >
-                            </Button>
-                        </StackPanel>
+                        </Button>
                     </StackPanel>
-                </materialDesign:DialogHost.DialogContent>
+                </StackPanel>
+            </materialDesign:DialogHost.DialogContent>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.ColumnSpan="3"
+                        Name="AddGroupBtn"
+                        Margin="10"
+                        Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+                        Style="{StaticResource MaterialDesignFloatingActionButton}"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Right"
+                        >
+                    <materialDesign:PackIcon Kind="GroupAdd"/>
+                </Button>
 
                 <Grid>
                     <Grid.RowDefinitions>
@@ -59,91 +70,84 @@
                         <StackPanel x:Name="GroupsStackPanel"
                                     />
                     </ScrollViewer>
-
-                    <Button Grid.Row="1"
-                            Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
-                            Name="AddGroupBtn"
-                            Margin="10 5"
-                            Content="Add group"
-                            >
-                    </Button>
                 </Grid>
-            </materialDesign:DialogHost>
-        </Grid>
 
-        <Grid Grid.Column="1">
-            <materialDesign:DialogHost HorizontalAlignment="Stretch"
-                                       VerticalAlignment="Stretch"
-                                       CloseOnClickAway="True"
-                                       >
-                <materialDesign:DialogHost.DialogContent>
-                    <StackPanel Margin="16">
-                        <TextBlock Text="Add attribute"/>
-                        <TextBox Margin="0 8 0 0"
-                                 Name="AddAttributeTxtBox"
-                                 HorizontalAlignment="Stretch"
-                                 />
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Right"
-                                    >
-                            <Button Style="{StaticResource MaterialDesignFlatButton}"
-                                    IsDefault="True"
-                                    Margin="0 8 8 0"
-                                    Command="materialDesign:DialogHost.CloseDialogCommand"
-                                    Content="Add"
-                                    Click="AddAttribute_Click"
-                                    >
-                            </Button>
-                            <Button Style="{StaticResource MaterialDesignFlatButton}"
-                                    IsCancel="True"
-                                    Margin="0 8 8 0"
-                                    Command="materialDesign:DialogHost.CloseDialogCommand"
-                                    Content="Cancel"
-                                    >
-                            </Button>
-                        </StackPanel>
-                    </StackPanel>
-                </materialDesign:DialogHost.DialogContent>
+                <Grid Grid.Column="1">
+                    <materialDesign:DialogHost HorizontalAlignment="Stretch"
+                                           VerticalAlignment="Stretch"
+                                           CloseOnClickAway="True"
+                                           >
+                        <materialDesign:DialogHost.DialogContent>
+                            <StackPanel Margin="16">
+                                <TextBlock Text="Add attribute"/>
+                                <TextBox Margin="0 8 0 0"
+                                     Name="AddAttributeTxtBox"
+                                     HorizontalAlignment="Stretch"
+                                     />
+                                <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Right"
+                                        >
+                                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                        IsDefault="True"
+                                        Margin="0 8 8 0"
+                                        Command="materialDesign:DialogHost.CloseDialogCommand"
+                                        Content="Add"
+                                        Click="AddAttribute_Click"
+                                        >
+                                    </Button>
+                                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                        IsCancel="True"
+                                        Margin="0 8 8 0"
+                                        Command="materialDesign:DialogHost.CloseDialogCommand"
+                                        Content="Cancel"
+                                        >
+                                    </Button>
+                                </StackPanel>
+                            </StackPanel>
+                        </materialDesign:DialogHost.DialogContent>
 
-                <Grid>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="50"/>
+                            </Grid.RowDefinitions>
+
+                            <ScrollViewer Margin="2.5 5"
+                                      >
+                                <StackPanel x:Name="AttributesStackPanel"
+                                        />
+                            </ScrollViewer>
+
+                            <Button Grid.Row="1"
+                                Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+                                Name="AddAttributeBtn"
+                                Margin="10 5"
+                                Content="Add attribute"
+                                Visibility="Hidden"
+                                >
+                            </Button>
+                        </Grid>
+                    </materialDesign:DialogHost>
+                </Grid>
+
+                <Grid Grid.Column="2">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="50"/>
                     </Grid.RowDefinitions>
 
-                    <ScrollViewer Margin="2.5 5"
-                                  >
-                        <StackPanel x:Name="AttributesStackPanel"
-                                    />
-                    </ScrollViewer>
+                    <ComboBox Name="InputFilesComboBox"
+                          Margin="5,0"
+                          SelectionChanged="InputFilesComboBox_SelectionChanged"/>
 
-                    <Button Grid.Row="1"
-                            Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
-                            Name="AddAttributeBtn"
-                            Margin="10 5"
-                            Content="Add attribute"
-                            Visibility="Hidden"
-                            >
-                    </Button>
+                    <StackPanel Grid.Row="1"
+                            Margin="5"
+                            Name="GroupChannelsStackPanel"/>
+
                 </Grid>
-            </materialDesign:DialogHost>
-        </Grid>
-
-        <Grid Grid.Column="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <ComboBox Name="InputFilesComboBox"
-                      Margin="5,0"
-                      SelectionChanged="InputFilesComboBox_SelectionChanged"/>
-
-            <StackPanel Grid.Row="1"
-                        Margin="5"
-                        Name="GroupChannelsStackPanel"/>
-
-        </Grid>
+            </Grid>
+        </materialDesign:DialogHost>
+       
 
         <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
                                  Grid.ColumnSpan="3"

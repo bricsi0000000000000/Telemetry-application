@@ -4,20 +4,49 @@
                     xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
                     >
 
+    <Color x:Key="Primary50">#434343</Color>
+    <Color x:Key="Primary50Foreground">#3c3c3c</Color>
+    <Color x:Key="Primary100">#434343</Color>
+    <Color x:Key="Primary100Foreground">#818181</Color>
+    <Color x:Key="Primary200">#434343</Color>
+    <Color x:Key="Primary200Foreground">#818181</Color>
+    <Color x:Key="Primary300">#434343</Color>
+    <Color x:Key="Primary300Foreground">#818181</Color>
+    <Color x:Key="Primary400">#434343</Color>
+    <Color x:Key="Primary400Foreground">#818181</Color>
 
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="ART_tabblz_design.xaml" />
-    </ResourceDictionary.MergedDictionaries>
+    <!--Tab control blz-->
+    <Color x:Key="Primary500">#3c3c3c</Color>
+    <Color x:Key="Primary500Foreground">#ffffff</Color>
+
+    <Color x:Key="Primary600">#da0000</Color>
+    <Color x:Key="Primary600Foreground">#ffffff</Color>
+
+    <Color x:Key="Primary700">#434343</Color>
+    <Color x:Key="Primary700Foreground">#ffffff</Color>
+    <Color x:Key="Primary800">#ef6c00</Color>
+    <Color x:Key="Primary800Foreground">#FFFFFFFF</Color>
+    <Color x:Key="Primary900">#e65100</Color>
+    <Color x:Key="Primary900Foreground">#DDFFFFFF</Color>
+    <Color x:Key="Accent100">#ffd180</Color>
+    <Color x:Key="Accent100Foreground">#ffffff</Color>
+    <Color x:Key="Accent200">#da0000</Color>
+    <Color x:Key="Accent200Foreground">#ffffff</Color>
+    <Color x:Key="Accent400">#ff9100</Color>
+    <Color x:Key="Accent400Foreground">#ffffff</Color>
+    <Color x:Key="Accent700">#da0000</Color>
+    <Color x:Key="Accent700Foreground">#ffffff</Color>
 
     <Color x:Key="ValidationErrorColor">#434343</Color>
+    
     <SolidColorBrush x:Key="ValidationErrorBrush" Color="{StaticResource ValidationErrorColor}" po:Freeze="True" />
 
-    <SolidColorBrush x:Key="MaterialDesignBackground" Color="#434343" po:Freeze="True" />
-    <SolidColorBrush x:Key="MaterialDesignPaper" Color="#383838" po:Freeze="True" />
-    <SolidColorBrush x:Key="MaterialDesignCardBackground" Color="#434343" po:Freeze="True" />
-    <SolidColorBrush x:Key="MaterialDesignBody" Color="#ffffff" po:Freeze="True" />
-    <SolidColorBrush x:Key="MaterialDesignBodyLight" Color="#89000000" po:Freeze="True" />
-    <SolidColorBrush x:Key="MaterialDesignColumnHeader" Color="#BC000000" po:Freeze="True" />
+    <SolidColorBrush x:Key="MaterialDesignBackground" Color="#ffffff" po:Freeze="True" />
+    <SolidColorBrush x:Key="MaterialDesignPaper" Color="#ffffff" po:Freeze="True" />
+    <SolidColorBrush x:Key="MaterialDesignCardBackground" Color="#ffffff" po:Freeze="True" />
+    <SolidColorBrush x:Key="MaterialDesignBody" Color="#3c3c3c" po:Freeze="True" />
+    <SolidColorBrush x:Key="MaterialDesignBodyLight" Color="#ffffff" po:Freeze="True" />
+    <SolidColorBrush x:Key="MaterialDesignColumnHeader" Color="#ffffff" po:Freeze="True" />
     <!-- 74% -->
 
     <SolidColorBrush x:Key="MaterialDesignCheckBoxOff" Color="#89000000" po:Freeze="True" />
@@ -33,8 +62,11 @@
 
     <SolidColorBrush x:Key="MaterialDesignToolTipBackground" Color="#757575" po:Freeze="True" />
     <SolidColorBrush x:Key="MaterialDesignChipBackground" Color="#12000000" po:Freeze="True" />
-    <SolidColorBrush x:Key="MaterialDesignSnackbarBackground" Color="#FF323232" po:Freeze="True" />
+    <SolidColorBrush x:Key="MaterialDesignSnackbarBackground" Color="#da0000" po:Freeze="True" />
     <SolidColorBrush x:Key="MaterialDesignSnackbarMouseOver" Color="#FF464642" po:Freeze="True" />
     <SolidColorBrush x:Key="MaterialDesignSnackbarRipple" Color="#FFB6B6B6" po:Freeze="True" />
 
+    <SolidColorBrush x:Key="Delete" Color="#da0000" po:Freeze="True" />
+    <SolidColorBrush x:Key="GridSplitter" Color="#fafafa" po:Freeze="True" />
+    
 </ResourceDictionary>

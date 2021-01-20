@@ -106,7 +106,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         public void ChangeColorMode(bool change)
         {
             var converter = new BrushConverter();
-            ColorZone.BorderBrush = change ? Brushes.White : (Brush)converter.ConvertFromString("#FF303030");
+            BackgroundColor.Background = change ? (Brush)converter.ConvertFromString("#3c3c3c") : Brushes.White;
+            GroupLbl.Foreground = !change ? (Brush)converter.ConvertFromString("#3c3c3c") : Brushes.White;
         }
 
         /// <summary>

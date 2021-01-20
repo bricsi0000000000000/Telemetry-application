@@ -57,5 +57,8 @@
         /// </summary>
         public static string InputFileListElementBadColor { get; private set; } = "#FFE21B1B";
         #endregion
+
+        public static string ApprovedColor { get; private set; } = "#52fc3f";
+        public static string DeniedColor { get; private set; } = "#fc3f3f";
     }
 }

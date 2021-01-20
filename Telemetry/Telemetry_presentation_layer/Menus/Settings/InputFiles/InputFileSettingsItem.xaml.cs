@@ -69,7 +69,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
         public void ChangeColorMode(bool selected)
         {
             var converter = new BrushConverter();
-            ColorZone.BorderBrush = selected ? Brushes.White : (Brush)converter.ConvertFromString("#FF303030");
+            BackgroundCard.Background =    selected ? (Brush)converter.ConvertFromString("#3c3c3c") : Brushes.White;
+            InputFileNameLbl.Foreground = !selected ? (Brush)converter.ConvertFromString("#3c3c3c") : Brushes.White;
         }
 
         private void Grid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
