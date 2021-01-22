@@ -19,34 +19,30 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="50"/>
-            </Grid.RowDefinitions>
+        <Button Grid.ColumnSpan="5"
+                Name="ReadInputFileBtn"
+                Click="ReadInputFileBtn_Click"
+                Margin="10"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Style="{StaticResource MaterialDesignFloatingActionButton}"
+                ToolTip="Import file"
+                materialDesign:ShadowAssist.ShadowDepth="Depth1">
+            <materialDesign:PackIcon Kind="File"/>
+        </Button>
 
-            <ScrollViewer Margin="2.5 5">
-                <StackPanel x:Name="InputFileStackPanel"
-                            />
-            </ScrollViewer>
+        <ScrollViewer Margin="2.5 5">
+            <StackPanel x:Name="InputFileStackPanel"/>
+        </ScrollViewer>
 
-            <Button Grid.Row="1"
-                    Click="ReadInputFileBtn_Click"
-                    Name="ReadInputFileBtn"
-                    Margin="10 5"
-                    Content="Read file"
-                    >
-            </Button>
-        </Grid>
-
-        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}"/>
 
         <ScrollViewer Grid.Column="2"
-                      Margin="2.5 5">
+                    Margin="2.5 5">
             <StackPanel x:Name="ChannelItemsStackPanel"/>
         </ScrollViewer>
 
-        <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch"/>
+        <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}"/>
 
         <Grid Grid.Column="4" Visibility="Hidden">
             <Grid.RowDefinitions>
@@ -55,21 +51,21 @@
             </Grid.RowDefinitions>
 
             <Label Content="Required channels"
-                   VerticalContentAlignment="Center"
-                   HorizontalContentAlignment="Center"/>
+                VerticalContentAlignment="Center"
+                HorizontalContentAlignment="Center"/>
 
             <StackPanel Grid.Row="1"
-                        Name="RequiredChannelsStackPanel"
-                        Margin="15,0,0,5"/>
+                    Name="RequiredChannelsStackPanel"
+                    Margin="15,0,0,5"/>
         </Grid>
 
         <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
-                                 Grid.ColumnSpan="5"
-                                 x:Name="ErrorSnackbar"
-                                 Foreground="White"
-                                 />
+                                Grid.ColumnSpan="5"
+                                x:Name="ErrorSnackbar"
+                                Foreground="White"
+                                />
         <Grid Name="ReadFileProgressBarGrid"
-              Background="#E5303030"
+              Background="{DynamicResource MaterialDesignBody}"
               Grid.ColumnSpan="5"
               Visibility="Hidden">
             <Grid.RowDefinitions>
@@ -77,19 +73,21 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Label Grid.Row="0"
-                           Name="ReadFileProgressBarLbl"
-                           Content="Reading file.."
-                           FontSize="20"
-                           VerticalContentAlignment="Bottom"
-                           HorizontalContentAlignment="Center"
-                           />
+                   Name="ReadFileProgressBarLbl"
+                   Content="Reading file.."
+                   FontSize="20"
+                   Foreground="#ffffff"
+                   VerticalContentAlignment="Bottom"
+                   HorizontalContentAlignment="Center"
+                   />
             <ProgressBar Grid.Row="1"
-                                 Name="ReadFileProgressBar"
-                                 VerticalAlignment="Top"
-                                 Style="{StaticResource MaterialDesignCircularProgressBar}" 
-                                 IsIndeterminate="False"
-                                 Value="50" RenderTransformOrigin="0.5,0.5"
-                                 >
+                         Name="ReadFileProgressBar"
+                         VerticalAlignment="Top"
+                         Style="{StaticResource MaterialDesignCircularProgressBar}" 
+                         IsIndeterminate="False"
+                         Value="50"
+                         RenderTransformOrigin="0.5,0.5"
+                         >
                 <ProgressBar.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="2" ScaleY="2"/>
@@ -100,6 +98,5 @@
                 </ProgressBar.RenderTransform>
             </ProgressBar>
         </Grid>
-
     </Grid>
 </UserControl>

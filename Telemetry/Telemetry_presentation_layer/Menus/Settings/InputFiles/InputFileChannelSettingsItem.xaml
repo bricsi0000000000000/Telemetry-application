@@ -7,15 +7,14 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="{DynamicResource MaterialDesignPaper}"
              TextElement.FontWeight="Medium"
              TextElement.FontSize="14"
              d:DesignHeight="60" d:DesignWidth="800">
 
-    <materialDesign:ColorZone CornerRadius="5"
-                              Margin="5 2.5"
-                              Mode="Dark"
-                              Name="ColorZone"
+    <materialDesign:Card Margin="5 2.5"
+                         UniformCornerRadius="5"
+                         Name="BackgroundCard"
+                         materialDesign:ShadowAssist.ShadowDepth="Depth1"
                          >
         <Grid Margin="5">
             <Grid.ColumnDefinitions>
@@ -24,12 +23,15 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0"
-                    Click="ChangeColorBtn_Click"
-                    Margin="5"
-                    Name="ChangeColorBtn"
-                    BorderThickness="0"
-                    />
+            <materialDesign:Card Grid.Column="0"
+                                 PreviewMouseDown="ChangeColorBtn_Click"
+                                 Margin="5"
+                                 MinHeight="30"
+                                 UniformCornerRadius="5"
+                                 Name="ChangeColorBtn"
+                                 BorderThickness="0"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                 />
 
             <Label Grid.Column="1"
                    Name="AttributeLbl"
@@ -43,5 +45,5 @@
                       Margin="5,0"
                       Visibility="Hidden"/>
         </Grid>
-    </materialDesign:ColorZone>
+    </materialDesign:Card>
 </UserControl>

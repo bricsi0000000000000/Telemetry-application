@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.Groups;
 using Telemetry_data_and_logic_layer.Texts;
 
@@ -80,13 +81,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         /// <param name="e"></param>
         private void DeleteGroup_Click(object sender, RoutedEventArgs e)
         {
-            GroupManager.RemoveGroup(GroupName);
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ActiveGroupName = GroupManager.Groups[0].Name;
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
-
-            GroupManager.SaveGroups();
-
-            // ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
+           
         }
 
         /// <summary>
@@ -106,7 +101,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         public void ChangeColorMode(bool change)
         {
             var converter = new BrushConverter();
-            ColorZone.BorderBrush = change ? Brushes.White : (Brush)converter.ConvertFromString("#FF303030");
+            BackgroundColor.Background = change ? (Brush)converter.ConvertFromString("#3c3c3c") : Brushes.White;
+            GroupLbl.Foreground = !change ? (Brush)converter.ConvertFromString("#3c3c3c") : Brushes.White;
         }
 
         /// <summary>
@@ -116,6 +112,56 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         /// <param name="e"></param>
         private void ChangeGroupItemType_Click(object sender, RoutedEventArgs e)
         {
+            
+        }
+
+        private void DeleteGroupBtn_MouseEnter(object sender, MouseEventArgs e)
+        {
+            DeleteGroupBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary500));
+        }
+
+        private void DeleteGroupBtn_MouseLeave(object sender, MouseEventArgs e)
+        {
+            DeleteGroupBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary900));
+        }
+
+        private void DeleteGroupBtn_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DeleteGroupBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary300));
+        }
+
+        private void DeleteGroupBtn_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            DeleteGroupBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary500));
+
+            GroupManager.RemoveGroup(GroupName);
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ActiveGroupName = GroupManager.Groups[0].Name;
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
+
+            GroupManager.SaveGroups();
+
+            // ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
+        }
+
+        private void ChangeGroupItemType_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ChangeGroupItemType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
+        }
+
+        private void ChangeGroupItemType_MouseLeave(object sender, MouseEventArgs e)
+        {
+            ChangeGroupItemType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+        }
+
+        private void ChangeGroupItemType_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ChangeGroupItemType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary400));
+        }
+
+        private void ChangeGroupItemType_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            ChangeGroupItemType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
+
             var group = GroupManager.GetGroup(GroupName);
             if (group == null)
             {

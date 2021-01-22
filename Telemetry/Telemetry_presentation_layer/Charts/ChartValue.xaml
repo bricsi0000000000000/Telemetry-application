@@ -7,8 +7,7 @@
              mc:Ignorable="d" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="{DynamicResource MaterialDesignPaper}"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="50" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30"/>
@@ -17,7 +16,9 @@
         </Grid.ColumnDefinitions>
 
         <materialDesign:Card Name="ValueColorCard"
-                             Margin="5"/>
+                             Margin="5"
+                             UniformCornerRadius="5"
+                             materialDesign:ShadowAssist.ShadowDepth="Depth0"/>
 
         <Label Grid.Column="1"
                Name="ChannelNameLabel"

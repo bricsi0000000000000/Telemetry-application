@@ -7,14 +7,13 @@
              mc:Ignorable="d" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="{DynamicResource MaterialDesignPaper}"
              d:DesignHeight="60" d:DesignWidth="800">
 
-    <materialDesign:ColorZone CornerRadius="5"
-                              Margin="5 2.5"
-                              Mode="Dark"
-                              Name="ColorZone"
-                              BorderThickness="2"
+    <materialDesign:Card UniformCornerRadius="5"
+                         Margin="5 2.5"
+                         Name="BackgroundColor"
+                         BorderThickness="0"
+                         materialDesign:ShadowAssist.ShadowDepth="Depth1"
                          >
         <Grid PreviewMouseLeftButtonUp="Grid_PreviewMouseLeftButtonUp"
               Margin="5"
@@ -30,32 +29,42 @@
                    HorizontalContentAlignment="Center"
                    />
 
-            <Button Grid.Column="1"
-                    Name="ChangeGroupItemType"
-                    Click="ChangeGroupItemType_Click"
-                    Background="White"
-                    BorderThickness="0">
-                <Image x:Name="GroupTypeImage"
-                       Source="daisy.png" RenderTransformOrigin="0.5,0.5">
-                    <Image.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
-                            <SkewTransform/>
-                            <RotateTransform/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </Image.RenderTransform>
-                </Image>
-            </Button>
+            <materialDesign:Card Grid.Column="1"
+                                 Name="ChangeGroupItemType"
+                                 Background="White"
+                                 UniformCornerRadius="5"
+                                 Margin="5"
+                                 MouseEnter="ChangeGroupItemType_MouseEnter"
+                                 MouseLeave="ChangeGroupItemType_MouseLeave"
+                                 PreviewMouseLeftButtonDown="ChangeGroupItemType_PreviewMouseLeftButtonDown"
+                                 PreviewMouseLeftButtonUp="ChangeGroupItemType_PreviewMouseLeftButtonUp"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                 BorderThickness="0">
+                <Image x:Name="GroupTypeImage"/>
+            </materialDesign:Card>
 
-            <Button Grid.Column="2"
-                    Click="DeleteGroup_Click"
-                    Margin="5"
-                    Name="DeleteGroupBtn"
+
+            <materialDesign:Card Grid.Column="2"
+                                 Margin="5"
+                                 Name="DeleteGroupBtn"
+                                 MouseEnter="DeleteGroupBtn_MouseEnter"
+                                 MouseLeave="DeleteGroupBtn_MouseLeave"
+                                 PreviewMouseLeftButtonDown="DeleteGroupBtn_PreviewMouseLeftButtonDown"
+                                 PreviewMouseLeftButtonUp="DeleteGroupBtn_PreviewMouseLeftButtonUp"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                 BorderThickness="0"
+                                 UniformCornerRadius="5"
+                                 Background="{DynamicResource Delete}"
+                                 VerticalAlignment="Stretch"
+                                 HorizontalAlignment="Stretch"
                     >
                 <materialDesign:PackIcon Kind="Delete"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Center"
+                                         Foreground="White"
+                                         Margin="0,8"
                                          />
-            </Button>
+            </materialDesign:Card>
         </Grid>
-    </materialDesign:ColorZone>
+    </materialDesign:Card>
 </UserControl>

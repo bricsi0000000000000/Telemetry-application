@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Telemetry_data_and_logic_layer;
+using Telemetry_data_and_logic_layer.Exceptions;
 using Telemetry_data_and_logic_layer.Groups;
 using Telemetry_data_and_logic_layer.InputFiles;
 
@@ -226,7 +227,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
                 }
                 else
                 {
-                    throw new Exception($"File '{fileName}' already exists");
+                    throw new ErrorException($"File '{fileName}' already exists");
                 }
             }
         }
