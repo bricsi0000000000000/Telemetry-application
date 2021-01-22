@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Telemetry_presentation_layer"
         mc:Ignorable="d"
-        Title="Telemetry 2.2"
+        Title="Telemetry 2.3"
         Height="700"
         Width="1300"
         WindowStartupLocation="CenterScreen"
@@ -14,13 +14,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
         FontFamily="{materialDesign:MaterialDesignFont}"
-        WindowStyle="ThreeDBorderWindow">
+        WindowStyle="SingleBorderWindow">
 
-    <Grid>
-        <dragablz:TabablzControl x:Name="MainMenuTabControl"/>
-        <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
-                                 x:Name="ErrorSnackbar"
-                                 Foreground="White"
-                                 />
-    </Grid>
+    <dragablz:TabablzControl x:Name="MainMenuTabControl"/>
 </Window>

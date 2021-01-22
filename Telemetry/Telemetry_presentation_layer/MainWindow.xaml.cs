@@ -23,9 +23,9 @@ namespace Telemetry_presentation_layer
                 MenuManager.InitMainMenuTabs(MainMenuTabControl);
                 DriverlessTrackManager.LoadTracks();
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                ShowError.ShowErrorMessage(ref ErrorSnackbar, e.Message, 4);
+                ShowError.ShowErrorMessage(exception.Message);
             }
         }
     }

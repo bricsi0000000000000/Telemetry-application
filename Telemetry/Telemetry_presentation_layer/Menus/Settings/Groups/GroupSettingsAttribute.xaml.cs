@@ -27,6 +27,11 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         private readonly string groupName;
 
         /// <summary>
+        /// Hex code of the channels color.
+        /// </summary>
+        private readonly string colorCode;
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="channelName"><see cref="Channel"/>s name.</param>
@@ -38,6 +43,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
 
             AttributeName = channelName;
             this.groupName = groupName;
+            colorCode = color;
             AttributeLbl.Content = channelName;
             ChangeColorBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
         }
@@ -49,7 +55,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         /// <param name="e"></param>
         private void ChangeColorBtn_Click(object sender, RoutedEventArgs e)
         {
-            PickColor pickColor = new PickColor();
+            PickColor pickColor = new PickColor(colorCode);
             if (pickColor.ShowDialog() == true)
             {
                 var pickedColor = pickColor.ColorPicker.Color;

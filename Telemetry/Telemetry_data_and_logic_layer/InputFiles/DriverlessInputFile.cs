@@ -10,6 +10,7 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         public DriverlessInputFile(string name, List<Channel> channels) : base(name, channels)
         {
             InitRequiredChannels();
+            Driverless = true;
         }
 
         public DriverlessInputFile(InputFile inputFile) : base(inputFile)

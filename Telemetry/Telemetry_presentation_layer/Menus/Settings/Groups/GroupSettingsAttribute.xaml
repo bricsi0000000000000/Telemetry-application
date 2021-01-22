@@ -26,7 +26,7 @@
                    />
 
             <materialDesign:Card Grid.Column="1"
-                                 PreviewMouseDown="ChangeColorBtn_Click"
+                                 PreviewMouseUp="ChangeColorBtn_Click"
                                  Margin="5"
                                  UniformCornerRadius="5"
                                  Name="ChangeColorBtn"

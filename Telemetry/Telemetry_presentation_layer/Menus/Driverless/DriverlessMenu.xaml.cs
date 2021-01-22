@@ -11,6 +11,7 @@ using Telemetry_presentation_layer.Charts;
 using Telemetry_presentation_layer.Menus.Settings;
 using Telemetry_presentation_layer.Menus.Settings.Groups;
 using Telemetry_data_and_logic_layer.Tracks;
+using Telemetry_presentation_layer.Errors;
 
 namespace Telemetry_presentation_layer.Menus.Driverless
 {
@@ -127,6 +128,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             }
 
             UpdateCharts();
+            ChangeChartHighlight((int)DataSlider.Value);
         }
 
         /// <summary>
@@ -216,7 +218,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                            yValue: yValue,
                            xAxisValues: data.Item1,
                            yAxisValues: data.Item2,
-                           vLineColor: Color.White,
+                           vLineColor: Color.Black,
                            lineColor: ColorTranslator.FromHtml(channel.Color),
                            channels: Channels,
                            dataIndex: dataIndex,
@@ -232,6 +234,18 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         private TrackChart BuildTrack()
         {
             var chart = new TrackChart();
+
+            var yChannel = GetChannel("y");
+            if (yChannel == null)
+            {
+                return chart;
+            }
+
+            var c0refChannel = GetChannel("c0ref");
+            if (c0refChannel == null)
+            {
+                return chart;
+            }
 
             if ((bool)TrackStraightRadioButton.IsChecked)
             {
@@ -256,7 +270,9 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                                    color: Color.Black,
                                    lineStyle: ScottPlot.LineStyle.Dash);
 
-                    var channelData = CreateOffset(GetChannel("y").Data, (float)GetChannel("c0ref").Data.First());
+                  
+
+                    var channelData = CreateOffset(yChannel.Data, (float)c0refChannel.Data.First());
                     data = ConvertChannelDataToPlotData(HorizontalAxisData.Data.ToArray(), channelData);
 
                     double xValue = 0;
@@ -287,11 +303,11 @@ namespace Telemetry_presentation_layer.Menus.Driverless
 
                     if (dataIndex < integratedYawAngle.Count)
                     {
-                        chart.PlotImage(xValue, yValue, CreateOffset(integratedYawAngle, (float)GetChannel("c0ref").Data.First())[dataIndex]);
+                        chart.PlotImage(xValue, yValue, CreateOffset(integratedYawAngle, (float)c0refChannel.Data.First())[dataIndex]);
                     }
                     else
                     {
-                        chart.PlotImage(xValue, yValue, CreateOffset(integratedYawAngle, (float)GetChannel("c0ref").Data.First()).Last());
+                        chart.PlotImage(xValue, yValue, CreateOffset(integratedYawAngle, (float)c0refChannel.Data.First()).Last());
                     }
                 }
                 else
@@ -334,7 +350,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                                     yValue: yValue,
                                     xAxisValues: data.Item1,
                                     yAxisValues: data.Item2,
-                                    vLineColor: Color.White,
+                                    vLineColor: Color.Black,
                                     lineColor: ColorTranslator.FromHtml(channel.Color),
                                     channels: Channels,
                                     dataIndex: dataIndex,
@@ -453,7 +469,14 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         public void UpdateTrack()
         {
             TrackGrid.Children.Clear();
-            TrackGrid.Children.Add(BuildTrack());
+            try
+            {
+                TrackGrid.Children.Add(BuildTrack());
+            }
+            catch (Exception e)
+            {
+                ShowError.ShowErrorMessage(e.Message);
+            }
         }
 
         /// <summary>
@@ -521,6 +544,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             //  UpdateCharts();
             UpdateTrack();
             ChangeChartHighlight((int)((Slider)sender).Value);
+
         }
 
         /// <summary>
@@ -533,27 +557,10 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             {
                 double value = dataIndex < HorizontalAxisData.Data.Count ? HorizontalAxisData.Data[dataIndex] : HorizontalAxisData.Data.Last();
                 chart.RenderPlot(xValue: value,
-                                 vLineColor: Color.White,
+                                 vLineColor: Color.Black,
                                  Channels,
                                  dataIndex);
             }
-        }
-
-        /// <summary>
-        /// Unchecks all the checked Checkboxes inside the <see cref="ChannelsStackPanel"/>.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void UncheckAllChannels_Click(object sender, RoutedEventArgs e)
-        {
-            UnselectAllChannel();
-
-            foreach (CheckBox checkBox in ChannelsStackPanel.Children)
-            {
-                checkBox.IsChecked = false;
-            }
-
-            UpdateCharts();
         }
 
         /// <summary>

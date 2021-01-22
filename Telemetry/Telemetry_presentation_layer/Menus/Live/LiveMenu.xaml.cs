@@ -10,7 +10,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_data_and_logic_layer.Exceptions;
 
 namespace Telemetry_presentation_layer.Menus.Live
 {
@@ -66,7 +65,9 @@ namespace Telemetry_presentation_layer.Menus.Live
         {
             RefreshSectionsButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800));
 
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             GetAllSectionsAsync();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
         private async Task<string> GetAllSectionsAsync()

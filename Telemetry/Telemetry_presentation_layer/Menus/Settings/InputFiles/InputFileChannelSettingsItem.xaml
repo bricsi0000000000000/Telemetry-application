@@ -24,7 +24,7 @@
             </Grid.ColumnDefinitions>
 
             <materialDesign:Card Grid.Column="0"
-                                 PreviewMouseDown="ChangeColorBtn_Click"
+                                 PreviewMouseUp="ChangeColorBtn_Click"
                                  Margin="5"
                                  MinHeight="30"
                                  UniformCornerRadius="5"

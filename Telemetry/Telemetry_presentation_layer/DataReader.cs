@@ -11,6 +11,7 @@ using Telemetry_data_and_logic_layer;
 using Telemetry_data_and_logic_layer.Groups;
 using Telemetry_data_and_logic_layer.InputFiles;
 using Telemetry_data_and_logic_layer.Texts;
+using Telemetry_presentation_layer.Errors;
 using Telemetry_presentation_layer.Menus;
 using Telemetry_presentation_layer.Menus.Driverless;
 using Telemetry_presentation_layer.Menus.Settings;
@@ -31,6 +32,7 @@ namespace Telemetry_presentation_layer
         private BackgroundWorker worker;
         private List<Channel> channels;
         private FileType fileType;
+        private bool processingError = false;
 
         public void SetupReader(Grid progressBarGrid,
                                 ProgressBar progressBar,
@@ -66,6 +68,11 @@ namespace Telemetry_presentation_layer
 
         public void ProcessFile(string fileName)
         {
+            if (processingError)
+            {
+                return;
+            }
+
             if (new FileInfo(fileName).Length == 0)
             {
                 throw new Exception($"{fileName} is empty");
@@ -155,7 +162,18 @@ namespace Telemetry_presentation_layer
 
         private void WorkerDoWork(object sender, DoWorkEventArgs e)
         {
-            ProcessFile(fileName);
+            try
+            {
+                ProcessFile(fileName);
+            }
+            catch (Exception exception)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    ShowError.ShowErrorMessage(exception.Message);
+                    processingError = true;
+                });
+            }
 
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -177,29 +195,29 @@ namespace Telemetry_presentation_layer
                 progressBar.IsIndeterminate = true;
             }
 
-            //alapból dv-be rakja
-            var inputFile = new DriverlessInputFile(FileNameWithoutPath, channels)
+            if (!processingError)
             {
-                Driverless = true
-            };
-            InputFileManager.AddInputFile(inputFile);
-            InputFileManager.ActiveInputFileName = FileNameWithoutPath;
-            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).AddInputFileSettingsItem(inputFile);
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).UpdateAfterReadFile(FileNameWithoutPath);
-            //((LiveMenu)MenuManager.GetTab("Live").Content).InitChannels();
+                var inputFile = new DriverlessInputFile(FileNameWithoutPath, channels);
 
-            /* switch (fileType)
-             {
-                 case FileType.Standard:
-                     break;
-                 case FileType.Driverless:
-                     DriverlessInputFileManager.Instance.AddInputFile(new DriverlessInputFile(FileNameWithoutPath, channels));
+                //TODO: ha lesz standard input file is, akkor azt még előbb kell eldönteni vagy utána rögtön válassza ki és utána nézzem meg hogy ezek benne vannak e.
+                var yChannel = inputFile.GetChannel("y");
+                if (yChannel == null)
+                {
+                    ShowError.ShowErrorMessage("Can't find 'y' channel, so the track will not shown");
+                }
 
-                     ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
-                     ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
-                     break;
-             }*/
+                var c0refChannel = inputFile.GetChannel("c0ref");
+                if (c0refChannel == null)
+                {
+                    ShowError.ShowErrorMessage("Can't find 'c0ref' channel, so the track will not shown");
+                }
+
+                InputFileManager.AddInputFile(inputFile);
+                InputFileManager.ActiveInputFileName = FileNameWithoutPath;
+                ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).AddInputFileSettingsItem(inputFile);
+                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
+                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).UpdateAfterReadFile(FileNameWithoutPath);
+            }
         }
     }
 }

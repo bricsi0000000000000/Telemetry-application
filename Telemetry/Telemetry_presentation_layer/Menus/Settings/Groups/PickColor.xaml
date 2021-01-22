@@ -6,20 +6,80 @@
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        Background="{DynamicResource MaterialDesignPaper}"
-        Title="Pick color" Height="450" Width="800"
-        WindowStartupLocation="CenterScreen">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="40"/>
-        </Grid.RowDefinitions>
+        Height="450"
+        Width="800"
+        WindowStartupLocation="CenterScreen"
+        ShowInTaskbar="False"
+        Topmost="True"
+        WindowStyle="None"
+        Background="Transparent"
+        AllowsTransparency="True"
+        >
+    <materialDesign:Card UniformCornerRadius="5"
+                         Margin="8"
+                         materialDesign:ShadowAssist.ShadowDepth="Depth2"
+                         >
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
 
-        <materialDesign:ColorPicker Name="ColorPicker"/>
-        <Button x:Name="ChooseButton"
-                Grid.Row="1"
-                Content="Choose"
-                Margin="5,0"
-                Click="ChooseButton_Click"/>
-    </Grid>
+            <materialDesign:ColorPicker Name="ColorPicker"
+                                        PreviewMouseLeftButtonDown="ColorPicker_PreviewMouseLeftButtonDown"/>
+
+            <TextBox x:Name="HexColorTextBox"
+                     Grid.Row="1"
+                     TextChanged="HexColorTextBox_TextChanged"
+                     Margin="5,0"
+                     materialDesign:HintAssist.IsFloating="True"
+                     materialDesign:HintAssist.Hint="Color in hex format"
+                     />
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <materialDesign:Card x:Name="ChooseButton"
+                                     Margin="5"
+                                     Background="{DynamicResource Secondary}"
+                                     UniformCornerRadius="5"
+                                     PreviewMouseLeftButtonDown="ChooseButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="ChooseButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="ChooseButton_MouseEnter"
+                                     MouseLeave="ChooseButton_MouseLeave"
+                                     >
+                    <Label Content="Choose"
+                           VerticalAlignment="Stretch"
+                           HorizontalAlignment="Stretch"
+                           VerticalContentAlignment="Center"
+                           HorizontalContentAlignment="Center"
+                           Foreground="#ffffff"
+                           />
+                </materialDesign:Card>
+
+                <materialDesign:Card x:Name="CancelButton"
+                                     Grid.Column="1"
+                                     Margin="5"
+                                     Background="{DynamicResource Delete}"
+                                     UniformCornerRadius="5"
+                                     PreviewMouseLeftButtonDown="CancelButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="CancelButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="CancelButton_MouseEnter"
+                                     MouseLeave="CancelButton_MouseLeave"
+                                     >
+                    <Label Content="Cancel"
+                           VerticalAlignment="Stretch"
+                           HorizontalAlignment="Stretch"
+                           VerticalContentAlignment="Center"
+                           HorizontalContentAlignment="Center"
+                           Foreground="#ffffff"
+                           />
+                </materialDesign:Card>
+            </Grid>
+        </Grid>
+    </materialDesign:Card>
 </Window>
