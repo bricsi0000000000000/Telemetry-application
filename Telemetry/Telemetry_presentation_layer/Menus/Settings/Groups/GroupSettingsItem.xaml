@@ -31,19 +31,26 @@
 
             <materialDesign:Card Grid.Column="1"
                                  Name="ChangeGroupItemType"
-                                 PreviewMouseDown="ChangeGroupItemType_Click"
                                  Background="White"
                                  UniformCornerRadius="5"
                                  Margin="5"
+                                 MouseEnter="ChangeGroupItemType_MouseEnter"
+                                 MouseLeave="ChangeGroupItemType_MouseLeave"
+                                 PreviewMouseLeftButtonDown="ChangeGroupItemType_PreviewMouseLeftButtonDown"
+                                 PreviewMouseLeftButtonUp="ChangeGroupItemType_PreviewMouseLeftButtonUp"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
                                  BorderThickness="0">
                 <Image x:Name="GroupTypeImage"/>
             </materialDesign:Card>
 
 
             <materialDesign:Card Grid.Column="2"
-                                 PreviewMouseDown="DeleteGroup_Click"
                                  Margin="5"
                                  Name="DeleteGroupBtn"
+                                 MouseEnter="DeleteGroupBtn_MouseEnter"
+                                 MouseLeave="DeleteGroupBtn_MouseLeave"
+                                 PreviewMouseLeftButtonDown="DeleteGroupBtn_PreviewMouseLeftButtonDown"
+                                 PreviewMouseLeftButtonUp="DeleteGroupBtn_PreviewMouseLeftButtonUp"
                                  materialDesign:ShadowAssist.ShadowDepth="Depth0"
                                  BorderThickness="0"
                                  UniformCornerRadius="5"

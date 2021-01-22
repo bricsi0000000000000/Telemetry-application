@@ -35,6 +35,8 @@
                                  Background="White"
                                  UniformCornerRadius="5"
                                  Margin="5"
+                                 MouseEnter="ChangeGroupItemType_MouseEnter"
+                                 MouseLeave="ChangeGroupItemType_MouseLeave"
                                  materialDesign:ShadowAssist.ShadowDepth="Depth0"
                                  BorderThickness="0">
                 <Image x:Name="InputFileTypeImage"/>
@@ -45,6 +47,8 @@
                                  Margin="5"
                                  Name="DeleteGroupBtn"
                                  materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                 MouseEnter="DeleteGroupBtn_MouseEnter"
+                                 MouseLeave="DeleteGroupBtn_MouseLeave"
                                  BorderThickness="0"
                                  UniformCornerRadius="5"
                                  Background="{DynamicResource Delete}"

@@ -35,9 +35,12 @@
                     />
 
             <materialDesign:Card Grid.Column="2"
-                                 PreviewMouseDown="DeleteAttribute_Click"
                                  Margin="5"
                                  Name="DeleteAttributeBtn"
+                                 MouseEnter="DeleteAttributeBtn_MouseEnter"
+                                 MouseLeave="DeleteAttributeBtn_MouseLeave"
+                                 PreviewMouseLeftButtonDown="DeleteAttributeBtn_PreviewMouseLeftButtonDown"
+                                 PreviewMouseLeftButtonUp="DeleteAttributeBtn_PreviewMouseLeftButtonUp"
                                  materialDesign:ShadowAssist.ShadowDepth="Depth0"
                                  BorderThickness="0"
                                  UniformCornerRadius="5"

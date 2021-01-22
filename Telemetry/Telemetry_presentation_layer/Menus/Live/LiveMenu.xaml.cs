@@ -1,6 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -9,6 +14,14 @@ using Telemetry_data_and_logic_layer.Exceptions;
 
 namespace Telemetry_presentation_layer.Menus.Live
 {
+    public class Section
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public DateTime Date { get; set; }
+        public bool IsLive { get; set; }
+    }
+
     public partial class LiveMenu : UserControl
     {
         private static HttpClient client = new HttpClient();
@@ -18,89 +31,54 @@ namespace Telemetry_presentation_layer.Menus.Live
         {
             InitializeComponent();
 
+            InitilaizeHttpClient();
+        }
+
+        private void InitilaizeHttpClient()
+        {
+            ServicePointManager.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
+
             client = new HttpClient
             {
                 Timeout = TimeSpan.FromMinutes(1),
-                BaseAddress = new Uri("https://localhost:44304/")
+                BaseAddress = new Uri("http://192.168.1.33:5000")
             };
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-     /*   private void NewLiveSectionButton_Click(object sender, RoutedEventArgs e)
+        private void RefreshSectionsButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            PostNewSection();
+            RefreshSectionsButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800));
         }
 
-        private async void PostNewSection()
+        private void RefreshSectionsButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            var response = await client.PostAsJsonAsync("/api/Section", NewLiveSectionNameTextBox.Text).ConfigureAwait(false);
-            var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            RefreshSectionsButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
+        }
+
+        private void RefreshSectionsButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            RefreshSectionsButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary700));
+        }
+
+        private void RefreshSectionsButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            RefreshSectionsButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800));
+
+            GetAllSectionsAsync();
+        }
+
+        private async Task<string> GetAllSectionsAsync()
+        {
+
+            var response = await client.GetAsync("/api/Section").ConfigureAwait(false);
+            var result = response.Content.ReadAsStringAsync();
             string resultString = result.GetAwaiter().GetResult();
-            if (resultString.Equals("200"))
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    ResultIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Approve;
-                    ResultIcon.Foreground = (Brush)brushConverter.ConvertFromString(ColorManager.ApprovedColor);
-                });
-            }
-            else
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    ResultIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Denied;
-                    ResultIcon.Foreground = (Brush)brushConverter.ConvertFromString(ColorManager.DeniedColor);
-                    throw new ErrorException("Couldn't create new live section");
-                });
-            }
-        }*/
+            var a = JsonConvert.DeserializeObject<Section>(resultString);
 
-        /*private async Task<Uri> PostNewSectionAsync(string sectionName)
-        {
-            var response = await client.PostAsJsonAsync("/api/Section", sectionName).ConfigureAwait(false);
-            if (response.IsSuccessStatusCode)
-            {
-                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                string resultString = result.GetAwaiter().GetResult();
-                if (resultString.Equals("200"))
-                {
-                    ResultIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Approve;
-                }
-                else if (resultString.Equals("500"))
-                {
-                    ResultIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Denied;
-                }
-            }
-
-            return response.Headers.Location;
-        }*/
-
-        private async void GetResult(HttpResponseMessage response)
-        {
-
+            return null;
         }
-
-        /* private async Task<double[]> GetData(string name, int lastIndex)
-         {
-             var result = new double[step];
-
-             var client = new HttpClient
-             {
-                 Timeout = TimeSpan.FromMinutes(1),
-                 BaseAddress = new Uri(url)
-             };
-             client.DefaultRequestHeaders.Accept.Clear();
-             client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-             var response = await client.GetAsync($"/api/Channels/?name={name}&lastIndex={lastIndex}&step={step}").ConfigureAwait(false);
-             if (response.IsSuccessStatusCode)
-             {
-                 var resultString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                 result = JsonConvert.DeserializeObject<double[]>(resultString);
-             }
-             client.Dispose();
-             return result;
-         }*/
 
         /* public void InitChannels()
          {
@@ -190,6 +168,62 @@ namespace Telemetry_presentation_layer.Menus.Live
              }*/
 
 
+
+
+
+
+
+
+
+
+        /*   private void NewLiveSectionButton_Click(object sender, RoutedEventArgs e)
+      {
+          PostNewSection();
+      }
+
+      private async void PostNewSection()
+      {
+          var response = await client.PostAsJsonAsync("/api/Section", NewLiveSectionNameTextBox.Text).ConfigureAwait(false);
+          var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+          string resultString = result.GetAwaiter().GetResult();
+          if (resultString.Equals("200"))
+          {
+              Application.Current.Dispatcher.Invoke(() =>
+              {
+                  ResultIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Approve;
+                  ResultIcon.Foreground = (Brush)brushConverter.ConvertFromString(ColorManager.ApprovedColor);
+              });
+          }
+          else
+          {
+              Application.Current.Dispatcher.Invoke(() =>
+              {
+                  ResultIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Denied;
+                  ResultIcon.Foreground = (Brush)brushConverter.ConvertFromString(ColorManager.DeniedColor);
+                  throw new ErrorException("Couldn't create new live section");
+              });
+          }
+      }*/
+
+        /*private async Task<Uri> PostNewSectionAsync(string sectionName)
+        {
+            var response = await client.PostAsJsonAsync("/api/Section", sectionName).ConfigureAwait(false);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                string resultString = result.GetAwaiter().GetResult();
+                if (resultString.Equals("200"))
+                {
+                    ResultIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Approve;
+                }
+                else if (resultString.Equals("500"))
+                {
+                    ResultIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Denied;
+                }
+            }
+
+            return response.Headers.Location;
+        }*/
     }
 
 }
