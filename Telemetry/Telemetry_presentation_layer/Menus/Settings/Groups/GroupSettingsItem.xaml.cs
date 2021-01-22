@@ -8,6 +8,8 @@ using System.Windows.Media.Imaging;
 using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.Groups;
 using Telemetry_data_and_logic_layer.Texts;
+using Telemetry_presentation_layer.Errors;
+using Telemetry_presentation_layer.Menus.Driverless;
 
 namespace Telemetry_presentation_layer.Menus.Settings.Groups
 {
@@ -75,16 +77,6 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         }
 
         /// <summary>
-        /// Deletes this <see cref="GroupSettingsItem"/> than updates ActiveGroupName and initializes groups in <see cref="GroupSettings"/>.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DeleteGroup_Click(object sender, RoutedEventArgs e)
-        {
-           
-        }
-
-        /// <summary>
         /// Changes the active <see cref="GroupSettingsItem"/> to the clicked one.
         /// </summary>
         /// <param name="sender"></param>
@@ -103,16 +95,6 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             var converter = new BrushConverter();
             BackgroundColor.Background = change ? (Brush)converter.ConvertFromString("#3c3c3c") : Brushes.White;
             GroupLbl.Foreground = !change ? (Brush)converter.ConvertFromString("#3c3c3c") : Brushes.White;
-        }
-
-        /// <summary>
-        /// Changes that this <see cref="GroupSettingsItem"/> is driverless or not.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ChangeGroupItemType_Click(object sender, RoutedEventArgs e)
-        {
-            
         }
 
         private void DeleteGroupBtn_MouseEnter(object sender, MouseEventArgs e)
@@ -165,7 +147,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             var group = GroupManager.GetGroup(GroupName);
             if (group == null)
             {
-                throw new Exception($"Group {GroupName} is empty!");
+                ShowError.ShowErrorMessage($"Group '{GroupName}' is empty!");
+                return;
             }
 
             group.Driverless = !group.Driverless;
@@ -184,6 +167,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             }
 
             ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitInputFilesComboBox();
+
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
         }
     }
 }
