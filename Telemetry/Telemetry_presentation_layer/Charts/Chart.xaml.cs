@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using Telemetry_data_and_logic_layer.Groups;
 using System.Linq;
+using Telemetry_presentation_layer.Errors;
 
 namespace Telemetry_presentation_layer.Charts
 {
@@ -171,7 +172,13 @@ namespace Telemetry_presentation_layer.Charts
         /// <param name="dataIndex"><b>Index of the channel data.</param>
         public void RenderPlot(double xValue, Color vLineColor, List<Channel> channels, int dataIndex)
         {
+            if (plottableScatterHighlight == null)
+            {
+                return;
+            }
+
             plottableScatterHighlight.HighlightClear();
+
             ScottPlotChart.plt.Clear(plottableVLine);
 
             plottableVLine = ScottPlotChart.plt.PlotVLine(xValue,

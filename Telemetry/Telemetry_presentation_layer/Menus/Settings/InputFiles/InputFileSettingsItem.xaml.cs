@@ -88,21 +88,14 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
                 if (inputFile is DriverlessInputFile)
                 {
                     InputFileManager.RemoveInputFile(InputFileName);
-                    InputFileManager.AddInputFile(new StandardInputFile(inputFile)
-                    {
-                        Driverless = false
-                    });
+                    InputFileManager.AddInputFile(new StandardInputFile(inputFile));
                     driverless = false;
                 }
                 else
                 {
                     InputFileManager.RemoveInputFile(InputFileName);
-                    InputFileManager.AddInputFile(new StandardInputFile(inputFile)
-                    {
-                        Driverless = true
-                    });
+                    InputFileManager.AddInputFile(new DriverlessInputFile(inputFile));
                     driverless = true;
-                    //TODO Biztos jo ez igy? mert mindketto helyen standardet hoz letre
                 }
             }
 

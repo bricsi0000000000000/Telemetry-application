@@ -19,12 +19,15 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
 
         private readonly string inputFileName;
 
+        private readonly string colorCode;
+
         public InputFileChannelSettingsItem(string channelName, string inputFileName, string color)
         {
             InitializeComponent();
 
             ChannelName = channelName;
             this.inputFileName = inputFileName;
+            colorCode = color;
             AttributeLbl.Content = channelName;
             ChangeColor((Color)ColorConverter.ConvertFromString(color));
             // InitImportantChannelsComboBox();
@@ -37,7 +40,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
 
         private void ChangeColorBtn_Click(object sender, RoutedEventArgs e)
         {
-            PickColor pickColor = new PickColor();
+            PickColor pickColor = new PickColor(colorCode);
             if (pickColor.ShowDialog() == true)
             {
                 var pickedColor = pickColor.ColorPicker.Color;
