@@ -12,15 +12,12 @@
     <PackageReference Include="Dragablz" Version="0.0.3.223" />
     <PackageReference Include="MaterialDesignColors" Version="1.2.7" />
     <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
     <PackageReference Include="ScottPlot.WPF" Version="4.0.48" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Telemetry_data_and_logic_layer\Telemetry_data_and_logic_layer.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Errors\" />
   </ItemGroup>
 
   <ItemGroup>

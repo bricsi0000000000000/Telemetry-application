@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using Telemetry_data_and_logic_layer;
 using Telemetry_data_and_logic_layer.Groups;
 using Telemetry_data_and_logic_layer.InputFiles;
+using Telemetry_presentation_layer.Errors;
 
 namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
 {
@@ -213,20 +214,27 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
 
             if (openFileDialog.ShowDialog() == true)
             {
-                string fileName = openFileDialog.FileName.Split('\\').Last();
+                try
+                {
+                    string fileName = openFileDialog.FileName.Split('\\').Last();
 
-                if (InputFileManager.GetInputFile(fileName) == null)
-                {
-                    ReadFileProgressBarLbl.Content = $"Reading \"{fileName}\"";
-                    var dataReader = new DataReader();
-                    dataReader.SetupReader(ReadFileProgressBarGrid,
-                                ReadFileProgressBar,
-                                FileType.Driverless);
-                    dataReader.ReadFile(openFileDialog.FileName);
+                    if (InputFileManager.GetInputFile(fileName) == null)
+                    {
+                        ReadFileProgressBarLbl.Content = $"Reading \"{fileName}\"";
+                        var dataReader = new DataReader();
+                        dataReader.SetupReader(ReadFileProgressBarGrid,
+                                               ReadFileProgressBar,
+                                               FileType.Driverless);
+                        dataReader.ReadFile(openFileDialog.FileName);
+                    }
+                    else
+                    {
+                        throw new Exception($"File '{fileName}' already exists");
+                    }
                 }
-                else
+                catch (Exception exception)
                 {
-                    throw new Exception($"File '{fileName}' already exists");
+                    ShowError.ShowErrorMessage(exception.Message);
                 }
             }
         }

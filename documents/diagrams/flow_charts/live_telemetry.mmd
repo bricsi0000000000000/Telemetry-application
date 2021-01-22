@@ -1,0 +1,33 @@
+graph TD;
+    subgraph Telemetry_application
+        Telemetry_application1[User presses 'start live' button]
+        Telemetry_application2[Start live section]
+    end
+
+    subgraph Server
+        subgraph Web_API
+            api1[Add new section to sections table]
+        end
+
+        subgraph Database
+            Database1[Save new section to sections table]
+        end
+    end
+
+    Telemetry_application1 --> api1;
+
+    api1 --> Database1;
+    Database1 -.-> api1;
+
+    api1 -.-> Database1;
+
+    style Telemetry_application fill:#c63b3b,stroke-width:0px,color:white
+    style Telemetry_application1 fill:#4d4d4d,stroke-width:0px,color:white
+
+    style Server fill:#3bc6b2,stroke-width:0px,color:white
+
+    style Database fill:#009ed3,stroke-width:0px,color: white
+    style Database1 fill:#04bcf9,stroke-width:0px,color:white
+
+    style Web_API fill:#fcd720,stroke-width:0px,color:#4d4d4d
+    style api1 fill:#fcc30a,stroke-width:0px,color:#4d4d4d

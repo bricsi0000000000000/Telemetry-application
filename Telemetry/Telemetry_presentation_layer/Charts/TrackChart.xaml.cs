@@ -82,7 +82,7 @@ namespace Telemetry_presentation_layer.Charts
 
 
             ScottPlotChart.plt.Frame(false);
-            ScottPlotChart.plt.Style(ScottPlot.Style.Gray1);
+            ScottPlotChart.plt.Style(ScottPlot.Style.Light1);
             ScottPlotChart.plt.Colorset(Colorset.OneHalfDark);
             /*ScottPlotChart.plt.YLabel(yAxisLabel);
             ScottPlotChart.plt.XLabel(xAxisLabel);

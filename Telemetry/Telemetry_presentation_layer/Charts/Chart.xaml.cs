@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using Telemetry_data_and_logic_layer.Groups;
 using System.Linq;
+using Telemetry_presentation_layer.Errors;
 
 namespace Telemetry_presentation_layer.Charts
 {
@@ -16,6 +17,7 @@ namespace Telemetry_presentation_layer.Charts
     {
         private PlottableScatterHighlight plottableScatterHighlight;
         private PlottableVLine plottableVLine;
+        private readonly ScottPlot.Style chartStyle = ScottPlot.Style.Light1;
 
         /// <summary>
         /// Name of the <see cref="Chart"/>.
@@ -73,8 +75,8 @@ namespace Telemetry_presentation_layer.Charts
             plottableScatterHighlight = ScottPlotChart.plt.PlotScatterHighlight(xAxisValues, yAxisValues, markerShape: MarkerShape.none, label: $"lap {lapIndex} - {driverName} - {fileName}");
             plottableVLine = ScottPlotChart.plt.PlotVLine(0, lineStyle: LineStyle.Dash);
 
-            ScottPlotChart.plt.Style(ScottPlot.Style.Gray1);
-            ScottPlotChart.plt.Colorset(Colorset.OneHalfDark);
+            ScottPlotChart.plt.Style(chartStyle);
+            ScottPlotChart.plt.Colorset(Colorset.Category10);
             ScottPlotChart.plt.YLabel(yAxisLabel);
             ScottPlotChart.plt.XLabel(xAxisLabel);
             ScottPlotChart.plt.Legend();
@@ -123,7 +125,7 @@ namespace Telemetry_presentation_layer.Charts
                 ScottPlotChart.plt.PlotPoint(xValue, yValue, color: Color.Red, markerSize: 10);
             }
 
-            ScottPlotChart.plt.Style(ScottPlot.Style.Gray1);
+            ScottPlotChart.plt.Style(chartStyle);
             ScottPlotChart.plt.Colorset(Colorset.OneHalfDark);
             ScottPlotChart.plt.YLabel(yAxisLabel);
             ScottPlotChart.plt.XLabel(xAxisLabel);
@@ -170,7 +172,13 @@ namespace Telemetry_presentation_layer.Charts
         /// <param name="dataIndex"><b>Index of the channel data.</param>
         public void RenderPlot(double xValue, Color vLineColor, List<Channel> channels, int dataIndex)
         {
+            if (plottableScatterHighlight == null)
+            {
+                return;
+            }
+
             plottableScatterHighlight.HighlightClear();
+
             ScottPlotChart.plt.Clear(plottableVLine);
 
             plottableVLine = ScottPlotChart.plt.PlotVLine(xValue,

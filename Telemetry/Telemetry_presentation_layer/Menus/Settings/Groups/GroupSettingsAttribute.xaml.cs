@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.Groups;
 using Telemetry_data_and_logic_layer.InputFiles;
 using Telemetry_data_and_logic_layer.Texts;
@@ -26,6 +27,11 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         private readonly string groupName;
 
         /// <summary>
+        /// Hex code of the channels color.
+        /// </summary>
+        private readonly string colorCode;
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="channelName"><see cref="Channel"/>s name.</param>
@@ -37,26 +43,9 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
 
             AttributeName = channelName;
             this.groupName = groupName;
+            colorCode = color;
             AttributeLbl.Content = channelName;
             ChangeColorBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
-        }
-
-        /// <summary>
-        /// Deletes an <see cref="Attribute"/> based on <see cref="AttributeName"/> from <see cref="Group"/> thats name is <see cref="groupName"/>.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DeleteAttribute_Click(object sender, RoutedEventArgs e)
-        {
-            GroupManager.GetGroup(groupName).RemoveAttribute(AttributeName);
-            if (GroupManager.Groups.Count > 0)
-            {
-                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ActiveAttribute = GroupManager.Groups.First().Attributes.First();
-            }
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitActiveChannelSelectableAttributes();
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
-            GroupManager.SaveGroups();
         }
 
         /// <summary>
@@ -66,7 +55,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         /// <param name="e"></param>
         private void ChangeColorBtn_Click(object sender, RoutedEventArgs e)
         {
-            PickColor pickColor = new PickColor();
+            PickColor pickColor = new PickColor(colorCode);
             if (pickColor.ShowDialog() == true)
             {
                 var pickedColor = pickColor.ColorPicker.Color;
@@ -95,6 +84,36 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
                 ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
                 ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).InitInputFileSettingsItems();
             }
+        }
+
+        private void DeleteAttributeBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            DeleteAttributeBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary500));
+        }
+
+        private void DeleteAttributeBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            DeleteAttributeBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary900));
+        }
+
+        private void DeleteAttributeBtn_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            DeleteAttributeBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary300));
+        }
+
+        private void DeleteAttributeBtn_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            DeleteAttributeBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary500));
+
+            GroupManager.GetGroup(groupName).RemoveAttribute(AttributeName);
+            if (GroupManager.Groups.Count > 0)
+            {
+                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ActiveAttribute = GroupManager.Groups.First().Attributes.First();
+            }
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitActiveChannelSelectableAttributes();
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
+            GroupManager.SaveGroups();
         }
     }
 }

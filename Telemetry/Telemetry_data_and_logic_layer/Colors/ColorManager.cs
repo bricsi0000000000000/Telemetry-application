@@ -57,5 +57,34 @@
         /// </summary>
         public static string InputFileListElementBadColor { get; private set; } = "#FFE21B1B";
         #endregion
+
+        public static string ApprovedColor { get; private set; } = "#52fc3f";
+        public static string DeniedColor { get; private set; } = "#fc3f3f";
+
+        #region Primary colors
+        public static string Primary50 { get; private set; } = "#ffe7e6";
+        public static string Primary100 { get; private set; } = "#ffc7b8";
+        public static string Primary200 { get; private set; } = "#ffa28a";
+        public static string Primary300 { get; private set; } = "#ff795b";
+        public static string Primary400 { get; private set; } = "#ff5436";
+        public static string Primary500 { get; private set; } = "#ff200c";
+        public static string Primary600 { get; private set; } = "#ff1507";
+        public static string Primary700 { get; private set; } = "#ff0000";
+        public static string Primary800 { get; private set; } = "#f10000";
+        public static string Primary900 { get; private set; } = "#da0000";
+        #endregion
+
+        #region Secondary colors
+        public static string Secondary50 { get; private set; } = "#ffffff";
+        public static string Secondary100 { get; private set; } = "#fafafa";
+        public static string Secondary200 { get; private set; } = "#f5f5f5";
+        public static string Secondary300 { get; private set; } = "#f0f0f0";
+        public static string Secondary400 { get; private set; } = "#dedede";
+        public static string Secondary500 { get; private set; } = "#c2c2c2";
+        public static string Secondary600 { get; private set; } = "#979797";
+        public static string Secondary700 { get; private set; } = "#818181";
+        public static string Secondary800 { get; private set; } = "#606060";
+        public static string Secondary900 { get; private set; } = "#3c3c3c";
+        #endregion
     }
 }
