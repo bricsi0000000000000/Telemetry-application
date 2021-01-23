@@ -10,50 +10,126 @@
              TextElement.FontSize="14"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="4*"/>
-        </Grid.ColumnDefinitions>
+
+    <materialDesign:DialogHost HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch"
+                               CloseOnClickAway="True"
+                               Name="SectionDialogHost"
+                               >
+        <materialDesign:DialogHost.DialogContent>
+            <StackPanel Margin="16">
+                <TextBlock Text="Add new live section"/>
+                <TextBox Margin="0 8 0 0"
+                         Name="AddLiveSectionNameTextBox"
+                         HorizontalAlignment="Stretch"
+                         materialDesign:HintAssist.Hint="Section name"
+                         materialDesign:HintAssist.IsFloating="True"
+                         />
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            >
+                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                            IsDefault="True"
+                            Margin="0 8 8 0"
+                            Command="materialDesign:DialogHost.CloseDialogCommand"
+                            Content="Add"
+                            Click="AddLiveSection_Click"
+                            >
+                    </Button>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                            IsCancel="True"
+                            Margin="0 8 8 0"
+                            Command="materialDesign:DialogHost.CloseDialogCommand"
+                            Content="Cancel"
+                            >
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </materialDesign:DialogHost.DialogContent>
 
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="4*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.ColumnSpan="3"
+                    Name="AddLiveSectionButton"
+                    Margin="10"
+                    Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+                    Style="{StaticResource MaterialDesignFloatingActionButton}"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Right"
+                    >
+                <materialDesign:PackIcon Kind="AddNetwork"/>
+            </Button>
 
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="50"/>
-                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-                <Label Content="Sections"
-                       VerticalContentAlignment="Center"
-                       HorizontalContentAlignment="Center"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
 
-                <materialDesign:Card Name="RefreshSectionsButton"
-                                     Grid.Column="1"
-                                     UniformCornerRadius="5"
-                                     Margin="5"
-                                     MouseEnter="RefreshSectionsButton_MouseEnter"
-                                     MouseLeave="RefreshSectionsButton_MouseLeave"
-                                     PreviewMouseLeftButtonDown="RefreshSectionsButton_PreviewMouseLeftButtonDown"
-                                     PreviewMouseLeftButtonUp="RefreshSectionsButton_PreviewMouseLeftButtonUp"
-                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                     Background="{DynamicResource Secondary}"
-                                     Foreground="White"
-                                     >
-                    <materialDesign:PackIcon Kind="Refresh"
-                                             VerticalAlignment="Center"
-                                             HorizontalAlignment="Center"
-                                             />
-                </materialDesign:Card>
+                    <Label Content="Sections"
+                           VerticalContentAlignment="Center"
+                           FontSize="16"
+                           HorizontalContentAlignment="Center"/>
+
+                    <materialDesign:Card Name="RefreshSectionsButton"
+                                         Grid.Column="1"
+                                         UniformCornerRadius="5"
+                                         Margin="5"
+                                         MouseEnter="RefreshSectionsButton_MouseEnter"
+                                         MouseLeave="RefreshSectionsButton_MouseLeave"
+                                         PreviewMouseLeftButtonDown="RefreshSectionsButton_PreviewMouseLeftButtonDown"
+                                         PreviewMouseLeftButtonUp="RefreshSectionsButton_PreviewMouseLeftButtonUp"
+                                         materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                         Background="{DynamicResource Secondary}"
+                                         Foreground="White"
+                                         >
+                        <materialDesign:PackIcon Kind="Refresh"
+                                                 VerticalAlignment="Center"
+                                                 HorizontalAlignment="Center"
+                                                 />
+                    </materialDesign:Card>
+                </Grid>
+
+                <ScrollViewer Grid.Row="1">
+                    <StackPanel Grid.Row="1"
+                                Name="SectionsStackPanel"/>
+                </ScrollViewer>
             </Grid>
-            
-            <StackPanel Grid.Row="1"
-                        x:Name="SectionsStackPanel"/>
+
+            <Grid Grid.ColumnSpan="2"
+                  Name="AddNewSectionStatusGrid"
+                  Background="{DynamicResource Secondary}"
+                  Opacity=".9"
+                  Visibility="Hidden"
+                  >
+                <Label Name="AddNewSectionStatusLabel"
+                       Content="Loading.."
+                       Foreground="#fff"
+                       VerticalAlignment="Stretch"
+                       HorizontalAlignment="Stretch"
+                       VerticalContentAlignment="Center"
+                       HorizontalContentAlignment="Center"
+                       FontSize="20"
+                       />
+            </Grid>
+
+            <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
+                                     x:Name="ErrorSnackbar"
+                                     Grid.ColumnSpan="2"
+                                     Foreground="White"
+                                     />
+
         </Grid>
 
-    </Grid>
+    </materialDesign:DialogHost>
 </UserControl>

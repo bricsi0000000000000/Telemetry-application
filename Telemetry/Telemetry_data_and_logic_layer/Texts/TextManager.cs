@@ -21,6 +21,12 @@
         public static string SettingsMenuName { get; private set; } = "Settings";
 
         /// <summary>
+        /// Name of the live menu.
+        /// "Live"
+        /// </summary>
+        public static string LiveMenuName { get; private set; } = "Live";
+
+        /// <summary>
         /// Name of the diagrams menu.
         /// "Diagrams"
         /// </summary>

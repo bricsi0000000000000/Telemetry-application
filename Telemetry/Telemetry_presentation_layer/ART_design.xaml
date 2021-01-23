@@ -69,6 +69,7 @@
     <SolidColorBrush x:Key="Delete" Color="#da0000" po:Freeze="True" />
     <SolidColorBrush x:Key="GridSplitter" Color="#fafafa" po:Freeze="True" />
     <SolidColorBrush x:Key="Secondary" Color="#3c3c3c" po:Freeze="True" />
+    <SolidColorBrush x:Key="Secondary800" Color="#606060" po:Freeze="True" />
 
     <SolidColorBrush x:Key="ErrorMessagePopUpBackground" Color="#ff200c" po:Freeze="True" />
     <SolidColorBrush x:Key="ErrorMessagePopUpOkButtonBackground" Color="#3c3c3c" po:Freeze="True" />
