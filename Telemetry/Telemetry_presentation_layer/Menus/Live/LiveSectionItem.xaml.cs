@@ -5,6 +5,8 @@ using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.Models;
 using Telemetry_data_and_logic_layer.Texts;
 using Telemetry_presentation_layer.Converters;
+using Telemetry_presentation_layer.Menus.Settings;
+using Telemetry_presentation_layer.Menus.Settings.Live;
 
 namespace Telemetry_presentation_layer.Menus.Live
 {
@@ -86,7 +88,7 @@ namespace Telemetry_presentation_layer.Menus.Live
             BackgroundCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary800) :
                                                    ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
 
-            ((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).SelectSection(SectionID);
+            ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).SelectSection(SectionID);
         }
 
         private void BackgroundCard_MouseEnter(object sender, MouseEventArgs e)
@@ -112,7 +114,7 @@ namespace Telemetry_presentation_layer.Menus.Live
             StatusCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary800) :
                                                ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
 
-            ((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).ChangeStatus(SectionID);
+            ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeStatus(SectionID);
         }
 
         private void StatusCard_MouseEnter(object sender, MouseEventArgs e)

@@ -1,0 +1,142 @@
+﻿<UserControl x:Class="Telemetry_presentation_layer.Menus.Live.LiveTelemetry"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Telemetry_presentation_layer.Menus.Live"
+             mc:Ignorable="d"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             TextElement.FontSize="14"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width=".5*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width=".7*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="55"/>
+                <RowDefinition Height="1.2*"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <materialDesign:Card Grid.Row="0"
+                                 Margin="5,5,0,0"
+                                 UniformCornerRadius="5"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                 >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height=".9*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox Name="SectionNameTextBox"
+                             TextWrapping="Wrap"
+                             VerticalAlignment="Stretch"
+                             HorizontalAlignment="Stretch"
+                             VerticalContentAlignment="Bottom"
+                             HorizontalContentAlignment="Center"
+                             IsReadOnly="True"
+                             materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                             BorderThickness="0"
+                             Text="bla bla fsg bla bla skidpad 4"
+                             />
+
+                    <TextBox Name="SectionDateLabel"
+                             Grid.Row="1"
+                             TextWrapping="Wrap"
+                             VerticalAlignment="Stretch"
+                             HorizontalAlignment="Stretch"
+                             VerticalContentAlignment="Bottom"
+                             HorizontalContentAlignment="Center"
+                             IsReadOnly="True"
+                             FontSize="12"
+                             Foreground="{DynamicResource Secondary800}"
+                             materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                             BorderThickness="0"
+                             Text="1/12/2021"
+                             />
+                </Grid>
+            </materialDesign:Card>
+
+            <materialDesign:Card Grid.Row="1"
+                                 Margin="5,5,0,0"
+                                 UniformCornerRadius="5"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                 >
+                <ScrollViewer Margin="5">
+                    <StackPanel Name="ChannelsStackPanel" />
+                </ScrollViewer>
+            </materialDesign:Card>
+
+            <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
+
+            <materialDesign:Card Grid.Row="3"
+                                 Margin="5,0,0,5"
+                                 UniformCornerRadius="5"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                 >
+                <ScrollViewer Margin="5">
+                    <StackPanel Name="GroupsStackPanel" />
+                </ScrollViewer>
+            </materialDesign:Card>
+        </Grid>
+
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+
+            <Slider Grid.Row="1"
+                    x:Name="DataSlider"
+                    Margin="5,0"
+                    ValueChanged="DataSlider_ValueChanged"
+                    IsSnapToTickEnabled="True"
+                    TickFrequency="1"
+                    VerticalAlignment="Center"
+                    >
+            </Slider>
+        </Grid>
+
+        <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
+
+        <Grid Grid.Column="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <materialDesign:Card Grid.Row="0"
+                                 Margin="0,5,5,0"
+                                 UniformCornerRadius="5"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                 >
+               
+            </materialDesign:Card>
+
+            <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
+
+            <materialDesign:Card Grid.Row="2"
+                                 Margin="0,0,5,5"
+                                 UniformCornerRadius="5"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                 >
+                <materialDesign:PackIcon Kind="Video" Opacity=".1"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Center"/>
+            </materialDesign:Card>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using Telemetry_data_and_logic_layer.Texts;
 using Telemetry_presentation_layer.Menus.Settings.Groups;
 using Telemetry_presentation_layer.Menus.Settings.InputFiles;
+using Telemetry_presentation_layer.Menus.Settings.Live;
 
 namespace Telemetry_presentation_layer.Menus.Settings
 {

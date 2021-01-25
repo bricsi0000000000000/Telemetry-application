@@ -29,4 +29,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Menus\Settings\Live\" />
+  </ItemGroup>
+
 </Project>

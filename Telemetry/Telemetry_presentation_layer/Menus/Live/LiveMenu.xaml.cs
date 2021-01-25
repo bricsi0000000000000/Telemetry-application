@@ -1,242 +1,52 @@
-﻿using MaterialDesignThemes.Wpf;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Collections.Generic;
 using System.Windows.Controls;
-using System.Windows.Media;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_data_and_logic_layer.Models;
-using Telemetry_presentation_layer.Errors;
+using Telemetry_data_and_logic_layer.Texts;
+using Telemetry_presentation_layer.Menus.Settings.Live;
 
 namespace Telemetry_presentation_layer.Menus.Live
 {
     public partial class LiveMenu : UserControl
     {
-        private static HttpClient client = new HttpClient();
-        private readonly BrushConverter brushConverter = new BrushConverter();
-        private List<Section> sections = new List<Section>();
-        private Section activeSection;
+        /// <summary>
+        /// Menu items.
+        /// </summary>
+        private readonly List<TabItem> tabs = new List<TabItem>();
 
         public LiveMenu()
         {
             InitializeComponent();
 
-            InitilaizeHttpClient();
+            InitializeTabs();
         }
 
-        private void InitilaizeHttpClient()
+        private void InitializeTabs()
         {
-            ServicePointManager.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
+            AddTab(TextManager.SettingsMenuName, new LiveSettings(), "liveSettingsTab");
+            AddTab(TextManager.LiveMenuName, new LiveTelemetry(), "liveTelemetryTab", selected: true);
+        }
 
-            client = new HttpClient
+        private void AddTab(string header, object content, string name, bool selected = false)
+        {
+            TabItem tab = new TabItem
             {
-                Timeout = TimeSpan.FromMinutes(1),
-                BaseAddress = new Uri("http://192.168.1.33:5000")
+                Header = header,
+                Content = content,
+                Name = name,
+                IsSelected = selected
             };
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        }
 
-        private void RefreshSectionsButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            RefreshSectionsButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800));
-        }
-
-        private void RefreshSectionsButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            RefreshSectionsButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
-        }
-
-        private void RefreshSectionsButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            RefreshSectionsButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary700));
-        }
-
-        private void RefreshSectionsButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            RefreshSectionsButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800));
-
-            GetAllSectionsAsync();
-        }
-
-        private async void GetAllSectionsAsync()
-        {
-            try
-            {
-                var response = await client.GetAsync("/api/Section").ConfigureAwait(false);
-                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                string resultString = result.GetAwaiter().GetResult();
-                sections = JsonConvert.DeserializeObject<List<Section>>(resultString);
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    FillSectionsStackPanel(sections);
-                    ChangeSectionColors();
-                });
-            }
-            catch (Exception)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    ShowErrorMessage("Couldn't connect to the sever");
-                });
-            }
-        }
-
-        private void FillSectionsStackPanel(List<Section> sections)
-        {
-            SectionsStackPanel.Children.Clear();
-            sections.Reverse();
-            activeSection = sections[0];
-            foreach (var section in sections)
-            {
-                SectionsStackPanel.Children.Add(new LiveSectionItem(section));
-            }
-        }
-
-        public void SelectSection(int id)
-        {
-            if (activeSection.ID != id)
-            {
-                activeSection = GetSection(id);
-                ChangeSectionColors();
-            }
-        }
-
-        public void ChangeStatus(int id)
-        {
-            SelectSection(id);
-
-            SectionDialogHost.ShowDialog(
-                    new ChangeIsLiveStatusDialogContent(
-                        $"You are about to change {activeSection.Name}'s status from " +
-                        $"{(activeSection.IsLive ? "live" : "offline")} to {(activeSection.IsLive ? "offline" : "live")}\n" +
-                        $"Are you sure about that?"));
+            tabs.Add(tab);
+            TabsTabControl.Items.Add(tab);
         }
 
         /// <summary>
-        /// 
+        /// Finds a <see cref="TabItem"/> in <see cref="tabs"/>.
         /// </summary>
-        /// <param name="change">True if the status should changed, false if not.</param>
-        public async void ChangeStatusResult(bool change)
-        {
-            SectionDialogHost.IsOpen = false;
+        /// <param name="name">Findable <see cref="TabItem"/>s name.</param>
+        /// <returns>A <see cref="TabItem"/> whose name is <paramref name="name"/>.</returns>
+        public TabItem GetTab(string name) => tabs.Find(x => x.Header.Equals(name));
 
-            var updatedSection = new Section
-            {
-                ID = activeSection.ID,
-                Date = activeSection.Date,
-                Name = activeSection.Name,
-                IsLive = (change ? !activeSection.IsLive : activeSection.IsLive)
-            };
-            try
-            {
-                var response = await client.PutAsJsonAsync($"/api/Section", updatedSection).ConfigureAwait(false);
-                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                string resultString = result.GetAwaiter().GetResult();
-                if (resultString.Equals("200"))
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        activeSection.IsLive = !activeSection.IsLive;
-                        ChangeSectionStatus(activeSection.ID, activeSection.IsLive);
-                        AddNewSectionStatusGrid.Visibility = Visibility.Hidden;
-                        ErrorSnackbar.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
-                        ErrorSnackbar.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
-                        ShowErrorMessage($"{activeSection.Name}'s status was modified from {!activeSection.IsLive} to {activeSection.IsLive}");
-                    });
-                }
-                else
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        AddNewSectionStatusGrid.Visibility = Visibility.Hidden;
-                        ErrorSnackbar.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary900));
-                        ErrorSnackbar.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
-                        ShowErrorMessage($"Couldn't update {activeSection.Name}'s status from {activeSection.IsLive} to {!activeSection.IsLive}");
-                    });
-                }
-            }
-            catch (Exception)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    AddNewSectionStatusGrid.Visibility = Visibility.Hidden;
-                    ErrorSnackbar.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary900));
-                    ErrorSnackbar.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
-                    ShowErrorMessage($"There was an error updating {activeSection.Name}");
-                });
-            }
-        }
-
-        private void ChangeSectionColors()
-        {
-            foreach (LiveSectionItem liveSectionItem in SectionsStackPanel.Children)
-            {
-                liveSectionItem.ChangeColor(liveSectionItem.SectionID == activeSection.ID);
-            }
-        }
-
-        private void ChangeSectionStatus(int sectionID, bool status)
-        {
-            foreach (LiveSectionItem liveSectionItem in SectionsStackPanel.Children)
-            {
-                if (liveSectionItem.SectionID == sectionID)
-                {
-                    liveSectionItem.ChangeStatus(status);
-                }
-            }
-        }
-
-        private Section GetSection(int id) => sections.Find(x => x.ID == id);
-
-        private void AddLiveSection_Click(object sender, RoutedEventArgs e)
-        {
-            AddNewSectionStatusGrid.Visibility = Visibility.Visible;
-
-            PostNewSection(AddLiveSectionNameTextBox.Text);
-            GetAllSectionsAsync();
-
-            AddLiveSectionNameTextBox.Text = string.Empty;
-        }
-
-        private async void PostNewSection(string sectionName)
-        {
-            var response = await client.PostAsJsonAsync($"/api/Section", new Section { Date = DateTime.Now, Name = sectionName }).ConfigureAwait(false);
-            var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            string resultString = result.GetAwaiter().GetResult();
-            if (resultString.Equals("200"))
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    AddNewSectionStatusGrid.Visibility = Visibility.Hidden;
-                    ErrorSnackbar.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
-                    ErrorSnackbar.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
-                    ShowErrorMessage($"{sectionName} was added succesfully");
-                });
-            }
-            else
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    AddNewSectionStatusGrid.Visibility = Visibility.Hidden;
-                    ErrorSnackbar.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary900));
-                    ErrorSnackbar.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
-                    ShowErrorMessage($"Couldn't add {sectionName}");
-                });
-            }
-        }
-
-        private void ShowErrorMessage(string message, double time = 3)
-        {
-            ErrorSnackbar.MessageQueue.Enqueue(message, null, null, null, false, true, TimeSpan.FromSeconds(time));
-        }
+     
 
         /* public void InitChannels()
          {
