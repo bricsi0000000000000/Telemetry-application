@@ -52,17 +52,6 @@
                 <ColumnDefinition Width="4*"/>
             </Grid.ColumnDefinitions>
 
-            <Button Grid.ColumnSpan="3"
-                    Name="AddLiveSectionButton"
-                    Margin="10"
-                    Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
-                    Style="{StaticResource MaterialDesignFloatingActionButton}"
-                    VerticalAlignment="Bottom"
-                    HorizontalAlignment="Right"
-                    >
-                <materialDesign:PackIcon Kind="AddNetwork"/>
-            </Button>
-
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
@@ -125,6 +114,18 @@
                        FontSize="20"
                        />
             </Grid>
+
+            <Button Grid.ColumnSpan="3"
+                    Name="AddLiveSectionButton"
+                    Margin="10"
+                    Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+                    Style="{StaticResource MaterialDesignFloatingActionButton}"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Right"
+                    >
+                <materialDesign:PackIcon Kind="AddNetwork"/>
+            </Button>
+
 
             <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
                                      x:Name="ErrorSnackbar"

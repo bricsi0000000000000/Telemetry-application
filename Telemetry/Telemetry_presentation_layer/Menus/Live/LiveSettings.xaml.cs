@@ -11,6 +11,7 @@ using Telemetry_presentation_layer.Menus.Live;
 using Telemetry_data_and_logic_layer.Models;
 using System.Windows.Controls;
 using System.Windows;
+using Telemetry_data_and_logic_layer.Texts;
 
 namespace Telemetry_presentation_layer.Menus.Settings.Live
 {
@@ -90,6 +91,11 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
 
         private void FillSectionsStackPanel(List<Section> sections)
         {
+            if (sections.Count <= 0)
+            {
+                ShowErrorMessage("There are no sections on the server", error: false);
+                return;
+            }
             SectionsStackPanel.Children.Clear();
             sections.Reverse();
             activeSection = sections[0];
@@ -105,6 +111,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
             {
                 activeSection = GetSection(id);
                 ChangeSectionColors();
+                ((LiveTelemetry)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.LiveMenuName).Content).UpdateSection(activeSection);
             }
         }
 
@@ -112,11 +119,16 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
         {
             SelectSection(id);
 
-            SectionDialogHost.ShowDialog(
+            var changeLiveStatusWindow = new ChangeLiveStatusWindow($"You are about to change {activeSection.Name}'s status from " +
+                                                                    $"{(activeSection.IsLive ? "live" : "offline")} to " +
+                                                                    $"{(activeSection.IsLive ? "offline" : "live")}\n" +
+                                                                    $"Are you sure about that?");
+            changeLiveStatusWindow.ShowDialog();
+            /*SectionDialogHost.ShowDialog(
                     new ChangeIsLiveStatusDialogContent(
                         $"You are about to change {activeSection.Name}'s status from " +
                         $"{(activeSection.IsLive ? "live" : "offline")} to {(activeSection.IsLive ? "offline" : "live")}\n" +
-                        $"Are you sure about that?"));
+                        $"Are you sure about that?"));*/
         }
 
         /// <summary>
@@ -125,14 +137,17 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
         /// <param name="change">True if the status should changed, false if not.</param>
         public async void ChangeStatusResult(bool change)
         {
-            SectionDialogHost.IsOpen = false;
+            if (!change)
+            {
+                return;
+            }
 
             var updatedSection = new Section
             {
                 ID = activeSection.ID,
                 Date = activeSection.Date,
                 Name = activeSection.Name,
-                IsLive = (change ? !activeSection.IsLive : activeSection.IsLive)
+                IsLive = !activeSection.IsLive
             };
             try
             {
@@ -143,12 +158,12 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        activeSection.IsLive = !activeSection.IsLive;
+                        activeSection.IsLive = updatedSection.IsLive;
                         ChangeSectionStatus(activeSection.ID, activeSection.IsLive);
                         AddNewSectionStatusGrid.Visibility = Visibility.Hidden;
                         ShowErrorMessage($"{activeSection.Name}'s status was modified from " +
-                                         $"{(!activeSection.IsLive ? "offline" : "live")} to " +
-                                         $"{(activeSection.IsLive ? "live" : "offline")}", error: false, time: 5);
+                                         $"{(!activeSection.IsLive ? "live" : "offline")} to " +
+                                         $"{(activeSection.IsLive ? "live" : "offline")}", error: false);
                     });
                 }
                 else
@@ -158,7 +173,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
                         AddNewSectionStatusGrid.Visibility = Visibility.Hidden;
                         ShowErrorMessage($"Couldn't update {activeSection.Name}'s status from " +
                                          $"{(activeSection.IsLive ? "live" : "offline")} to " +
-                                         $"{(!activeSection.IsLive ? "offline" : "live")}", time: 5);
+                                         $"{(!activeSection.IsLive ? "live" : "offline")}");
                     });
                 }
             }

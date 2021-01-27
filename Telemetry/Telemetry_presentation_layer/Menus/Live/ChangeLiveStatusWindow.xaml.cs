@@ -8,22 +8,20 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.Texts;
 using Telemetry_presentation_layer.Converters;
-using Telemetry_presentation_layer.Menus.Settings;
 using Telemetry_presentation_layer.Menus.Settings.Live;
 
 namespace Telemetry_presentation_layer.Menus.Live
 {
     /// <summary>
-    /// Interaction logic for ChangeIsLiveStatusDialogContent.xaml
+    /// Interaction logic for ChangeLiveStatusWindow.xaml
     /// </summary>
-    public partial class ChangeIsLiveStatusDialogContent : UserControl
+    public partial class ChangeLiveStatusWindow : Window
     {
-        public ChangeIsLiveStatusDialogContent(string title)
+        public ChangeLiveStatusWindow(string title)
         {
             InitializeComponent();
 
@@ -40,6 +38,7 @@ namespace Telemetry_presentation_layer.Menus.Live
             OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
 
             ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeStatusResult(change: true);
+            Close();
         }
 
         private void OkCardButton_MouseEnter(object sender, MouseEventArgs e)
@@ -62,6 +61,7 @@ namespace Telemetry_presentation_layer.Menus.Live
             CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
 
             ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeStatusResult(change: false);
+            Close();
         }
 
         private void CancelCardButton_MouseEnter(object sender, MouseEventArgs e)

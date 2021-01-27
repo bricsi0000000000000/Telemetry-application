@@ -15,8 +15,9 @@ namespace Telemetry_presentation_layer.Menus.Live
     /// </summary>
     public partial class LiveSectionItem : UserControl
     {
-        public int SectionID { get; private set; }
+        public int SectionID => section.ID;
 
+        private Section section;
         private bool isActive = false;
         private bool status = false;
 
@@ -24,7 +25,7 @@ namespace Telemetry_presentation_layer.Menus.Live
         {
             InitializeComponent();
 
-            SectionID = section.ID;
+            this.section = section;
 
             DateLabel.Content = section.DateString;
             NameLabel.Content = section.Name;
@@ -50,13 +51,13 @@ namespace Telemetry_presentation_layer.Menus.Live
 
             if (isActive)
             {
-                IsLiveIcon.Foreground = status ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50) :
-                                                 ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+                IsLiveIcon.Foreground = section.IsLive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50) :
+                                                         ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
             }
             else
             {
-                IsLiveIcon.Foreground = status ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
-                                                 ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+                IsLiveIcon.Foreground = section.IsLive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
+                                                         ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
             }
         }
 

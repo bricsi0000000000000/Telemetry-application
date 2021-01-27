@@ -47,7 +47,7 @@
                              IsReadOnly="True"
                              materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
                              BorderThickness="0"
-                             Text="bla bla fsg bla bla skidpad 4"
+                             Text="No section selected"
                              />
 
                     <TextBox Name="SectionDateLabel"
