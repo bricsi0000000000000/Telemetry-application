@@ -5,6 +5,7 @@ using Telemetry_data_and_logic_layer.Texts;
 using Telemetry_data_and_logic_layer.Tracks;
 using Telemetry_presentation_layer.Errors;
 using Telemetry_presentation_layer.Menus;
+using Telemetry_presentation_layer.Menus.Live;
 
 namespace Telemetry_presentation_layer
 {
@@ -27,6 +28,11 @@ namespace Telemetry_presentation_layer
             {
                 ShowError.ShowErrorMessage(exception.Message);
             }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ((LiveTelemetry)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.LiveMenuName).Content).Stop();
         }
     }
 }

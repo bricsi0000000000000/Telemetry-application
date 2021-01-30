@@ -430,6 +430,11 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         /// <returns>A single <see cref="Channel"/></returns>
         public Channel GetChannel(string channelName)
         {
+            if (Channels == null)
+            {
+                return null;
+            }
+
             return Channels.Find(x => x.Name.Equals(channelName));
         }
 

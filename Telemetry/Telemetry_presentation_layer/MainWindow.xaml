@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Telemetry_presentation_layer"
         mc:Ignorable="d"
-        Title="Telemetry 2.3.1"
+        Title="Telemetry 2.4"
         Height="700"
         Width="1300"
         WindowStartupLocation="CenterScreen"
@@ -14,7 +14,9 @@
         Background="{DynamicResource MaterialDesignPaper}"
         xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
         FontFamily="{materialDesign:MaterialDesignFont}"
-        WindowStyle="SingleBorderWindow">
+        WindowStyle="SingleBorderWindow"
+        Closing="Window_Closing"
+        >
 
     <dragablz:TabablzControl x:Name="MainMenuTabControl"/>
 </Window>

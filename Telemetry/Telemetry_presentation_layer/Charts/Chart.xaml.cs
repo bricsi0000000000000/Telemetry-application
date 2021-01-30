@@ -17,7 +17,8 @@ namespace Telemetry_presentation_layer.Charts
     {
         private PlottableScatterHighlight plottableScatterHighlight;
         private PlottableVLine plottableVLine;
-        private readonly ScottPlot.Style chartStyle = ScottPlot.Style.Light1;
+        private readonly Style chartStyle = ScottPlot.Style.Light1;
+        private List<double> liveChartValues = new List<double>();
 
         /// <summary>
         /// Name of the <see cref="Chart"/>.
@@ -35,7 +36,7 @@ namespace Telemetry_presentation_layer.Charts
         public bool HasVLine { get; set; } = false;
 
         /// <summary>
-        /// Constructor for <see cref="Chart"/>.
+        /// Represents a chart.
         /// </summary>
         /// <param name="name">Name of the <see cref="Chart"/>.</param>
         /// <param name="channelNames">List of channel names whose are in this <see cref="Chart"/>.</param>
@@ -133,6 +134,26 @@ namespace Telemetry_presentation_layer.Charts
             ScottPlotChart.Render();
 
             UpdateSideValues(ref channels, ref dataIndex);
+        }
+
+        /// <summary>
+        /// Updates the plot with new data.
+        /// </summary>
+        /// <param name="data"></param>
+        public void Update(double[] data)
+        {
+            liveChartValues.AddRange(data);
+
+            ScottPlotChart.plt.Clear();
+            ScottPlotChart.plt.PlotSignal(liveChartValues.ToArray(), minRenderIndex: 0, maxRenderIndex: liveChartValues.Count - 1);
+            ScottPlotChart.Render();
+            SetAxisLimitsToAuto();
+            /*ScottPlotChart.plt.Style(chartStyle);
+            ScottPlotChart.plt.Colorset(Colorset.Category10);
+            //ScottPlotChart.plt.YLabel(yAxisLabel);
+            //ScottPlotChart.plt.XLabel(xAxisLabel);
+            ScottPlotChart.plt.Legend();
+            ScottPlotChart.Render();*/
         }
 
         /// <summary>

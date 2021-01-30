@@ -12,6 +12,7 @@ using Telemetry_data_and_logic_layer.Models;
 using System.Windows.Controls;
 using System.Windows;
 using Telemetry_data_and_logic_layer.Texts;
+using System.Threading.Tasks;
 
 namespace Telemetry_presentation_layer.Menus.Settings.Live
 {
@@ -74,11 +75,22 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 string resultString = result.GetAwaiter().GetResult();
                 sections = JsonConvert.DeserializeObject<List<Section>>(resultString);
-                Application.Current.Dispatcher.Invoke(() =>
+                try
                 {
-                    FillSectionsStackPanel(sections);
-                    ChangeSectionColors();
-                });
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        FillSectionsStackPanel(sections);
+                        ChangeSectionColors();
+                        SelectSection(activeSection.ID, firstTime: true);
+                    });
+                }
+                catch (Exception)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        ShowErrorMessage("An error occured while getting the sections");
+                    });
+                }
             }
             catch (Exception)
             {
@@ -105,14 +117,47 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
             }
         }
 
-        public void SelectSection(int id)
+        /// <summary>
+        /// Calls if a section is selected.
+        /// </summary>
+        /// <param name="id">Selected sections ID.</param>
+        /// <param name="firstTime">If true, it will update the section in <see cref="LiveTelemetry"/>, no matter what.</param>
+        public void SelectSection(int id, bool firstTime = false)
         {
-            if (activeSection.ID != id)
+            if (activeSection.ID != id || firstTime)
             {
                 activeSection = GetSection(id);
                 ChangeSectionColors();
-                ((LiveTelemetry)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.LiveMenuName).Content).UpdateSection(activeSection);
+                var channelNames = GetActiveChannelsAsync(id).Result;
+                ((LiveTelemetry)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.LiveMenuName).Content).UpdateSection(activeSection, channelNames);
             }
+        }
+
+        private async Task<List<string>> GetActiveChannelsAsync(int sectionID)
+        {
+            var channelNames = new List<string>();
+
+            try
+            {
+                var response = await client.GetAsync($"/api/Section/channel_names?sectionID={sectionID}").ConfigureAwait(false);
+                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                string resultString = result.GetAwaiter().GetResult();
+                dynamic data = JsonConvert.DeserializeObject(resultString);
+                for (int i = 0; i < data.Count; i++)
+                {
+                    var a = data[i];
+                    channelNames.Add(data[i].ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    ShowErrorMessage("Couldn't connect to the sever");
+                });
+            }
+
+            return channelNames;
         }
 
         public void ChangeStatus(int id)

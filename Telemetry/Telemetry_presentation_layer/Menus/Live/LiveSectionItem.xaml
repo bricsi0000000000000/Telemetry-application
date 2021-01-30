@@ -9,24 +9,21 @@
              TextElement.FontSize="14"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              d:DesignHeight="100" d:DesignWidth="700">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="50"/>
-        </Grid.ColumnDefinitions>
-
-        <materialDesign:Card Name="BackgroundCard"
-                             Margin="5,5,2.5,5"
-                             materialDesign:ShadowAssist.ShadowDepth="Depth1"
-                             UniformCornerRadius="5"
-                             PreviewMouseLeftButtonDown="BackgroundCard_PreviewMouseLeftButtonDown"
-                             PreviewMouseLeftButtonUp="BackgroundCard_PreviewMouseLeftButtonUp"
-                             MouseEnter="BackgroundCard_MouseEnter"
-                             MouseLeave="BackgroundCard_MouseLeave"
-                             >
-            <Grid>
-
-
+    
+    <materialDesign:Card Name="BackgroundCard"
+                         Margin="5,5,2.5,5"
+                         materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                         UniformCornerRadius="5"
+                         PreviewMouseLeftButtonDown="BackgroundCard_PreviewMouseLeftButtonDown"
+                         PreviewMouseLeftButtonUp="BackgroundCard_PreviewMouseLeftButtonUp"
+                         MouseEnter="BackgroundCard_MouseEnter"
+                         MouseLeave="BackgroundCard_MouseLeave"
+                         >
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="50"/>
+            </Grid.ColumnDefinitions>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -34,53 +31,53 @@
                     </Grid.RowDefinitions>
 
                     <Label Name="DateLabel"
-                       VerticalAlignment="Stretch"
-                       HorizontalAlignment="Stretch"
-                       VerticalContentAlignment="Bottom"
-                       HorizontalContentAlignment="Left"
-                       Margin="5,0,0,0"
-                       Foreground="{DynamicResource Secondary800}"
-                       />
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch"
+                        VerticalContentAlignment="Bottom"
+                        HorizontalContentAlignment="Left"
+                        Margin="5,0,0,0"
+                        Foreground="{DynamicResource Secondary800}"
+                        />
 
                     <Label Name="NameLabel"
-                       Grid.Row="1"
-                       FontWeight="Bold"
-                       VerticalAlignment="Stretch"
-                       HorizontalAlignment="Stretch"
-                       VerticalContentAlignment="Top"
-                       HorizontalContentAlignment="Left"
-                       Margin="5,0,0,0"
-                       FontSize="16"
-                       />
+                        Grid.Row="1"
+                        FontWeight="Bold"
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch"
+                        VerticalContentAlignment="Top"
+                        HorizontalContentAlignment="Left"
+                        Margin="5,0,0,0"
+                        FontSize="16"
+                        />
                 </Grid>
-            </Grid>
-        </materialDesign:Card>
 
-        <materialDesign:Card Grid.Column="1"
-                             Name="StatusCard"
-                             Margin="2.5,5,5,5"
-                             materialDesign:ShadowAssist.ShadowDepth="Depth1"
-                             UniformCornerRadius="5"
-                             PreviewMouseLeftButtonDown="StatusCard_PreviewMouseLeftButtonDown"
-                             PreviewMouseLeftButtonUp="StatusCard_PreviewMouseLeftButtonUp"
-                             MouseEnter="StatusCard_MouseEnter"
-                             MouseLeave="StatusCard_MouseLeave"
-                             >
-            <materialDesign:PackIcon Name="IsLiveIcon"
-                                     Kind="Wifi"
-                                     VerticalAlignment="Stretch"
-                                     HorizontalAlignment="Stretch"
-                                     RenderTransformOrigin="0.5,0.5"
-                                     >
-                <materialDesign:PackIcon.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
-                        <SkewTransform/>
-                        <RotateTransform/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </materialDesign:PackIcon.RenderTransform>
-            </materialDesign:PackIcon>
-        </materialDesign:Card>
-    </Grid>
+            <materialDesign:Card Grid.Column="1"
+                                 Name="StatusCard"
+                                 Margin="2.5,5,5,5"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                 UniformCornerRadius="5"
+                                 PreviewMouseLeftButtonDown="StatusCard_PreviewMouseLeftButtonDown"
+                                 PreviewMouseLeftButtonUp="StatusCard_PreviewMouseLeftButtonUp"
+                                 MouseEnter="StatusCard_MouseEnter"
+                                 MouseLeave="StatusCard_MouseLeave"
+                                 >
+                <materialDesign:PackIcon Name="IsLiveIcon"
+                                         Kind="Wifi"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch"
+                                         RenderTransformOrigin="0.5,0.5"
+                                         >
+                    <materialDesign:PackIcon.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </materialDesign:PackIcon.RenderTransform>
+                </materialDesign:PackIcon>
+            </materialDesign:Card>
+        </Grid>
+    </materialDesign:Card>
+
 </UserControl>

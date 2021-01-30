@@ -25,6 +25,8 @@
                 <RowDefinition Height="1.2*"/>
                 <RowDefinition Height="5"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
 
             <materialDesign:Card Grid.Row="0"
@@ -80,13 +82,32 @@
             <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
 
             <materialDesign:Card Grid.Row="3"
-                                 Margin="5,0,0,5"
+                                 Margin="5,0,0,0"
                                  UniformCornerRadius="5"
                                  materialDesign:ShadowAssist.ShadowDepth="Depth1"
                                  >
                 <ScrollViewer Margin="5">
                     <StackPanel Name="GroupsStackPanel" />
                 </ScrollViewer>
+            </materialDesign:Card>
+
+            <GridSplitter Grid.Row="4" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
+
+            <materialDesign:Card Grid.Row="5"
+                                 Name="RecieveDataStatusCard"
+                                 Margin="5,0,0,5"
+                                 UniformCornerRadius="5"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                 PreviewMouseLeftButtonDown="RecieveDataStatusCard_PreviewMouseLeftButtonDown"
+                                 PreviewMouseLeftButtonUp="RecieveDataStatusCard_PreviewMouseLeftButtonUp"
+                                 MouseEnter="RecieveDataStatusCard_MouseEnter"
+                                 MouseLeave="RecieveDataStatusCard_MouseLeave"
+                                 >
+                <materialDesign:PackIcon Name="RecieveDataStatusIcon"
+                                         Kind="DatabaseRemove"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch"
+                                         />
             </materialDesign:Card>
         </Grid>
 
@@ -97,6 +118,10 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
+
+            <ScrollViewer>
+                <StackPanel x:Name="ChartsStackPanel"/>
+            </ScrollViewer>
 
             <Slider Grid.Row="1"
                     x:Name="DataSlider"
@@ -138,5 +163,11 @@
                                          HorizontalAlignment="Center"/>
             </materialDesign:Card>
         </Grid>
+
+        <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
+                                 x:Name="ErrorSnackbar"
+                                 Grid.ColumnSpan="5"
+                                 Foreground="White"
+                                 />
     </Grid>
 </UserControl>
