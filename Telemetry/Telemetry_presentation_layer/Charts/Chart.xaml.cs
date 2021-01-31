@@ -140,20 +140,33 @@ namespace Telemetry_presentation_layer.Charts
         /// Updates the plot with new data.
         /// </summary>
         /// <param name="data"></param>
-        public void Update(double[] data)
+        public void Update(double[] data, string xAxisLabel, string yAxisLabel)
         {
             liveChartValues.AddRange(data);
 
             ScottPlotChart.plt.Clear();
-            ScottPlotChart.plt.PlotSignal(liveChartValues.ToArray(), minRenderIndex: 0, maxRenderIndex: liveChartValues.Count - 1);
-            ScottPlotChart.Render();
-            SetAxisLimitsToAuto();
-            /*ScottPlotChart.plt.Style(chartStyle);
+            ScottPlotChart.plt.PlotSignal(liveChartValues.ToArray(), markerSize: 0);
+
+            ScottPlotChart.plt.Style(chartStyle);
             ScottPlotChart.plt.Colorset(Colorset.Category10);
-            //ScottPlotChart.plt.YLabel(yAxisLabel);
-            //ScottPlotChart.plt.XLabel(xAxisLabel);
+            ScottPlotChart.plt.YLabel(yAxisLabel);
+            ScottPlotChart.plt.XLabel(xAxisLabel);
             ScottPlotChart.plt.Legend();
-            ScottPlotChart.Render();*/
+            ScottPlotChart.Render();
+
+            SetAxisLimitsToAuto();
+
+            if (ValuesStackPanel.Children.Count == 0)
+            {
+                ValuesStackPanel.Children.Add(new ChartValue("#4d4d4d", yAxisLabel, liveChartValues.Last()));
+            }
+            else
+            {
+                foreach (ChartValue item in ValuesStackPanel.Children)
+                {
+                    item.SetChannelValue(liveChartValues.Last());
+                }
+            }
         }
 
         /// <summary>

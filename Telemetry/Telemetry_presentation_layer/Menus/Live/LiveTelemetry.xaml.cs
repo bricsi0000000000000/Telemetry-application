@@ -38,7 +38,7 @@ namespace Telemetry_presentation_layer.Menus.Live
         /// <summary>
         /// In milliseconds
         /// </summary>
-        private const int waitBetweenCollectData = 700;
+        private const int waitBetweenCollectData = 100;
 
         public LiveTelemetry()
         {
@@ -231,7 +231,7 @@ namespace Telemetry_presentation_layer.Menus.Live
                     {
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            GetChart("yaw_angle").Update(values.ToArray());
+                            GetChart("").Update(values.ToArray(), "", "");
                         });
                     }
 
@@ -252,6 +252,11 @@ namespace Telemetry_presentation_layer.Menus.Live
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 string resultString = result.GetAwaiter().GetResult();
                 dynamic data = JsonConvert.DeserializeObject(resultString);
+                if (data.Count == 0)
+                {
+                    canUpdateCharts = false;
+                }
+
                 for (int i = 0; i < data.Count; i++)
                 {
                     returnData.Add(double.Parse(data[i].ToString()));
