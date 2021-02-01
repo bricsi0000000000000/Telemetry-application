@@ -11,7 +11,7 @@
              d:DesignHeight="100" d:DesignWidth="700">
     
     <materialDesign:Card Name="BackgroundCard"
-                         Margin="5,5,2.5,5"
+                         Margin="5,2.,2.5,2.5"
                          materialDesign:ShadowAssist.ShadowDepth="Depth1"
                          UniformCornerRadius="5"
                          PreviewMouseLeftButtonDown="BackgroundCard_PreviewMouseLeftButtonDown"
@@ -30,25 +30,27 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <Label Name="DateLabel"
-                        VerticalAlignment="Stretch"
-                        HorizontalAlignment="Stretch"
-                        VerticalContentAlignment="Bottom"
-                        HorizontalContentAlignment="Left"
-                        Margin="5,0,0,0"
-                        Foreground="{DynamicResource Secondary800}"
-                        />
-
                     <Label Name="NameLabel"
-                        Grid.Row="1"
+                        Grid.Row="0"
                         FontWeight="Bold"
                         VerticalAlignment="Stretch"
                         HorizontalAlignment="Stretch"
-                        VerticalContentAlignment="Top"
+                        VerticalContentAlignment="Center"
                         HorizontalContentAlignment="Left"
                         Margin="5,0,0,0"
                         FontSize="16"
                         />
+                    
+                    <Label Name="DateLabel"
+                            Grid.Row="1"
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Stretch"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Left"
+                            Margin="5,0,0,0"
+                            Foreground="{DynamicResource Secondary800}"
+                            />
+
                 </Grid>
 
             <materialDesign:Card Grid.Column="1"
@@ -56,10 +58,6 @@
                                  Margin="2.5,5,5,5"
                                  materialDesign:ShadowAssist.ShadowDepth="Depth0"
                                  UniformCornerRadius="5"
-                                 PreviewMouseLeftButtonDown="StatusCard_PreviewMouseLeftButtonDown"
-                                 PreviewMouseLeftButtonUp="StatusCard_PreviewMouseLeftButtonUp"
-                                 MouseEnter="StatusCard_MouseEnter"
-                                 MouseLeave="StatusCard_MouseLeave"
                                  >
                 <materialDesign:PackIcon Name="IsLiveIcon"
                                          Kind="Wifi"

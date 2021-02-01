@@ -21,8 +21,8 @@ namespace Telemetry_presentation_layer.Menus.Live
 
         private void InitializeTabs()
         {
-            AddTab(TextManager.SettingsMenuName, new LiveSettings(), "liveSettingsTab");
-            AddTab(TextManager.LiveMenuName, new LiveTelemetry(), "liveTelemetryTab", selected: true);
+            AddTab(TextManager.SettingsMenuName, new LiveSettings(), "liveSettingsTab", selected: true);
+            AddTab(TextManager.LiveMenuName, new LiveTelemetry(), "liveTelemetryTab");
         }
 
         private void AddTab(string header, object content, string name, bool selected = false)

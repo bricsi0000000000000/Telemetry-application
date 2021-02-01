@@ -19,12 +19,17 @@ namespace Telemetry_presentation_layer.Menus.Live
     /// <summary>
     /// Interaction logic for ChangeLiveStatusWindow.xaml
     /// </summary>
-    public partial class ChangeLiveStatusWindow : Window
+    public partial class PopUpWindow : Window
     {
-        public ChangeLiveStatusWindow(string title)
+        public enum PopUpType { ChangeLiveStatus, DeleteSection }
+
+        private readonly PopUpType popUpType;
+
+        public PopUpWindow(string title, PopUpType popUpType)
         {
             InitializeComponent();
 
+            this.popUpType = popUpType;
             TitleTextBox.Text = title;
         }
 
@@ -37,7 +42,16 @@ namespace Telemetry_presentation_layer.Menus.Live
         {
             OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
 
-            ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeStatusResult(change: true);
+            switch (popUpType)
+            {
+                case PopUpType.ChangeLiveStatus:
+                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeStatusResultAsync(change: true);
+                    break;
+                case PopUpType.DeleteSection:
+                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).DeleteSeciton(delete: true);
+                    break;
+            }
+
             Close();
         }
 
@@ -53,25 +67,33 @@ namespace Telemetry_presentation_layer.Menus.Live
 
         private void CancelCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
         }
 
         private void CancelCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
+            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
 
-            ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeStatusResult(change: false);
+            switch (popUpType)
+            {
+                case PopUpType.ChangeLiveStatus:
+                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeStatusResultAsync(change: false);
+                    break;
+                case PopUpType.DeleteSection:
+                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).DeleteSeciton(delete: false);
+                    break;
+            }
             Close();
         }
 
         private void CancelCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
+            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
         }
 
         private void CancelCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary500);
+            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
         }
     }
 }

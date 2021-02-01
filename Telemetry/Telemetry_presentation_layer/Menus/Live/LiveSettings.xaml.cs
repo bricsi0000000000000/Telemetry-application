@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows;
 using Telemetry_data_and_logic_layer.Texts;
 using System.Threading.Tasks;
+using Telemetry_presentation_layer.Converters;
 
 namespace Telemetry_presentation_layer.Menus.Settings.Live
 {
@@ -45,28 +46,6 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        private void RefreshSectionsButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            RefreshSectionsButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
-        }
-
-        private void RefreshSectionsButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            RefreshSectionsButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
-        }
-
-        private void RefreshSectionsButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            RefreshSectionsButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
-        }
-
-        private void RefreshSectionsButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            RefreshSectionsButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
-
-            GetAllSectionsAsync();
-        }
-
         private async void GetAllSectionsAsync()
         {
             try
@@ -75,22 +54,23 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 string resultString = result.GetAwaiter().GetResult();
                 sections = JsonConvert.DeserializeObject<List<Section>>(resultString);
-                try
+
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    try
                     {
-                        FillSectionsStackPanel(sections);
-                        ChangeSectionColors();
-                        SelectSection(activeSection.ID, firstTime: true);
-                    });
-                }
-                catch (Exception)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
+                        if (FillSectionsStackPanel(sections))
+                        {
+                            ChangeSectionColors();
+                            SelectSection(activeSection.ID, firstTime: true);
+                        }
+                    }
+                    catch (Exception)
                     {
                         ShowErrorMessage("An error occured while getting the sections");
-                    });
-                }
+                    }
+                });
+
             }
             catch (Exception)
             {
@@ -99,22 +79,34 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
                     ShowErrorMessage("Couldn't connect to the sever");
                 });
             }
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                SetLoadingGrid(visibility: false);
+            });
         }
 
-        private void FillSectionsStackPanel(List<Section> sections)
+        private bool FillSectionsStackPanel(List<Section> sections)
         {
+            SectionsStackPanel.Children.Clear();
+            NoSectionsGrid.Visibility = Visibility.Visible;
+
             if (sections.Count <= 0)
             {
                 ShowErrorMessage("There are no sections on the server", error: false);
-                return;
+                return false;
             }
-            SectionsStackPanel.Children.Clear();
+
+            NoSectionsGrid.Visibility = Visibility.Hidden;
+
             sections.Reverse();
             activeSection = sections[0];
             foreach (var section in sections)
             {
                 SectionsStackPanel.Children.Add(new LiveSectionItem(section));
             }
+
+            return true;
         }
 
         /// <summary>
@@ -130,6 +122,35 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
                 ChangeSectionColors();
                 var channelNames = GetActiveChannelsAsync(id).Result;
                 ((LiveTelemetry)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.LiveMenuName).Content).UpdateSection(activeSection, channelNames);
+                UpdateSelectedSectionInfo(channelNames);
+                SelectedSectionStatusIcon.Kind = activeSection.IsLive ? PackIconKind.AccessPoint : PackIconKind.AccessPointOff;
+                SelectedSectionStatusIcon.Foreground = activeSection.IsLive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
+                                                                              ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+            }
+        }
+
+        private void UpdateSelectedSectionInfo(List<string> channelNames)
+        {
+            if (activeSection != null)
+            {
+                NoActiveSectionGrid.Visibility = Visibility.Hidden;
+
+                SelectedSectionNameTextBox.Text = activeSection.Name;
+                SelectedSectionDateLabel.Text = activeSection.Date.ToString();
+                SelectedSectionChannelsStackPanel.Children.Clear();
+
+                NoChannelsGrid.Visibility = channelNames.Count == 0 ? Visibility.Visible : Visibility.Hidden;
+
+                SelectedSectionChannelsCountTextBox.Text = $"({channelNames.Count})";
+
+                foreach (var item in channelNames)
+                {
+                    SelectedSectionChannelsStackPanel.Children.Add(new Label() { Content = item });
+                }
+            }
+            else
+            {
+                NoActiveSectionGrid.Visibility = Visibility.Visible;
             }
         }
 
@@ -164,24 +185,24 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
         {
             SelectSection(id);
 
-            var changeLiveStatusWindow = new ChangeLiveStatusWindow($"You are about to change {activeSection.Name}'s status from " +
-                                                                    $"{(activeSection.IsLive ? "live" : "offline")} to " +
-                                                                    $"{(activeSection.IsLive ? "offline" : "live")}\n" +
-                                                                    $"Are you sure about that?");
+            SetLoadingGrid(visibility: true, progressBarVisibility: false);
+
+            var changeLiveStatusWindow = new PopUpWindow($"You are about to change {activeSection.Name}'s status from " +
+                                                         $"{(activeSection.IsLive ? "live" : "offline")} to " +
+                                                         $"{(activeSection.IsLive ? "offline" : "live")}\n" +
+                                                         $"Are you sure about that?",
+                                                         PopUpWindow.PopUpType.ChangeLiveStatus);
             changeLiveStatusWindow.ShowDialog();
-            /*SectionDialogHost.ShowDialog(
-                    new ChangeIsLiveStatusDialogContent(
-                        $"You are about to change {activeSection.Name}'s status from " +
-                        $"{(activeSection.IsLive ? "live" : "offline")} to {(activeSection.IsLive ? "offline" : "live")}\n" +
-                        $"Are you sure about that?"));*/
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="change">True if the status should changed, false if not.</param>
-        public async void ChangeStatusResult(bool change)
+        public async void ChangeStatusResultAsync(bool change)
         {
+            SetLoadingGrid(visibility: false);
+
             if (!change)
             {
                 return;
@@ -205,17 +226,17 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
                     {
                         activeSection.IsLive = updatedSection.IsLive;
                         ChangeSectionStatus(activeSection.ID, activeSection.IsLive);
-                        AddNewSectionStatusGrid.Visibility = Visibility.Hidden;
-                        ShowErrorMessage($"{activeSection.Name}'s status was modified from " +
-                                         $"{(!activeSection.IsLive ? "live" : "offline")} to " +
-                                         $"{(activeSection.IsLive ? "live" : "offline")}", error: false);
+                        SetLoadingGrid(visibility: false);
+                        SelectedSectionStatusIcon.Kind = activeSection.IsLive ? PackIconKind.AccessPoint : PackIconKind.AccessPointOff;
+                        SelectedSectionStatusIcon.Foreground = activeSection.IsLive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
+                                                                                      ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
                     });
                 }
                 else
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        AddNewSectionStatusGrid.Visibility = Visibility.Hidden;
+                        SetLoadingGrid(visibility: false);
                         ShowErrorMessage($"Couldn't update {activeSection.Name}'s status from " +
                                          $"{(activeSection.IsLive ? "live" : "offline")} to " +
                                          $"{(!activeSection.IsLive ? "live" : "offline")}");
@@ -226,7 +247,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    AddNewSectionStatusGrid.Visibility = Visibility.Hidden;
+                    SetLoadingGrid(visibility: false);
                     ShowErrorMessage($"There was an error updating {activeSection.Name}");
                 });
             }
@@ -255,15 +276,14 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
 
         private void AddLiveSection_Click(object sender, RoutedEventArgs e)
         {
-            AddNewSectionStatusGrid.Visibility = Visibility.Visible;
+            SetLoadingGrid(visibility: true, "Adding new section..");
 
-            PostNewSection(AddLiveSectionNameTextBox.Text);
-            GetAllSectionsAsync();
+            PostNewSectionAsync(AddLiveSectionNameTextBox.Text);
 
             AddLiveSectionNameTextBox.Text = string.Empty;
         }
 
-        private async void PostNewSection(string sectionName)
+        private async void PostNewSectionAsync(string sectionName)
         {
             try
             {
@@ -274,7 +294,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        AddNewSectionStatusGrid.Visibility = Visibility.Hidden;
+                        GetAllSectionsAsync();
+                        SetLoadingGrid(visibility: false);
                         ShowErrorMessage($"{sectionName} was added succesfully", error: false);
                     });
                 }
@@ -282,7 +303,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        AddNewSectionStatusGrid.Visibility = Visibility.Hidden;
+                        SetLoadingGrid(visibility: false);
                         ShowErrorMessage($"Couldn't add {sectionName}");
                     });
                 }
@@ -291,7 +312,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    AddNewSectionStatusGrid.Visibility = Visibility.Hidden;
+                    SetLoadingGrid(visibility: false);
                     ShowErrorMessage($"Can't add {sectionName} because can't connect to the server");
                 });
             }
@@ -309,6 +330,193 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
                                                new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
 
             ErrorSnackbar.MessageQueue.Enqueue(message, null, null, null, false, true, TimeSpan.FromSeconds(time));
+        }
+
+        private void SetLoadingGrid(bool visibility, string message = "", bool progressBarVisibility = true)
+        {
+            LoadingGrid.Visibility = visibility ? Visibility.Visible : Visibility.Hidden;
+            LoadingLabel.Content = message;
+            LoadingProgressBar.Visibility = progressBarVisibility ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        private void RefreshSectionsButton_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshSectionsButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+            SetLoadingGrid(visibility: true, "Loading sections..");
+            GetAllSectionsAsync();
+        }
+
+        private void DeleteSectionCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
+        }
+
+        private void DeleteSectionCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+
+            SetLoadingGrid(visibility: true, progressBarVisibility: false);
+
+            var deleteSectionWindow = new PopUpWindow($"You are about to delete {activeSection.Name}\n" +
+                                                      $"Are you sure about that?",
+                                                      PopUpWindow.PopUpType.DeleteSection);
+            deleteSectionWindow.ShowDialog();
+        }
+
+        private void DeleteSectionCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+        }
+
+        private void DeleteSectionCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+        }
+
+        public void DeleteSeciton(bool delete)
+        {
+            if (delete)
+            {
+                DeleteSectionAsync(activeSection.ID);
+            }
+            else
+            {
+                SetLoadingGrid(visibility: false);
+            }
+        }
+
+        private async void DeleteSectionAsync(int id)
+        {
+            SetLoadingGrid(visibility: true, "Deleting section..");
+
+            try
+            {
+                var response = await client.DeleteAsync($"/api/Section/{id}").ConfigureAwait(false);
+                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                string resultString = result.GetAwaiter().GetResult();
+                if (resultString.Equals("200"))
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SetLoadingGrid(visibility: false);
+                        GetAllSectionsAsync();
+                    });
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SetLoadingGrid(visibility: false);
+                        ShowErrorMessage("Couldn't delete section");
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetLoadingGrid(visibility: false);
+                    ShowErrorMessage("Can't delete section because can't connect to the server");
+                });
+            }
+        }
+
+        private async void ChangeSectionNameAsync(int id, string name)
+        {
+            SetLoadingGrid(visibility: true, "Updating section..");
+
+            try
+            {
+                var response = await client.PutAsJsonAsync("/api/Section/change_name", new Section() { ID = id, Name = name }).ConfigureAwait(false);
+                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                string resultString = result.GetAwaiter().GetResult();
+                if (resultString.Equals("200"))
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SetLoadingGrid(visibility: false);
+                        GetAllSectionsAsync();
+                    });
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SetLoadingGrid(visibility: false);
+                        ShowErrorMessage("Couldn't update section");
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetLoadingGrid(visibility: false);
+                    ShowErrorMessage("Can't update section because can't connect to the server");
+                });
+            }
+        }
+
+        private void ChangeSectionStatusCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ChangeSectionStatusCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+        }
+
+        private void ChangeSectionStatusCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ChangeSectionStatusCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
+            ChangeStatus(activeSection.ID);
+        }
+
+        private void ChangeSectionStatusCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ChangeSectionStatusCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+        }
+
+        private void ChangeSectionStatusCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ChangeSectionStatusCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+        }
+
+        private void ChangeSectionNameCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ChangeSectionNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+        }
+
+        private void ChangeSectionNameCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ChangeSectionNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+        }
+
+        private void ChangeSectionNameCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ChangeSectionNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+        }
+
+        private void ChangeSectionNameCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ChangeSectionNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+        }
+
+        private void ChangeSectionDateCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ChangeSectionDateCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+        }
+
+        private void ChangeSectionDateCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ChangeSectionDateCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+        }
+
+        private void ChangeSectionDateCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ChangeSectionDateCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+        }
+
+        private void ChangeSectionDateCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ChangeSectionDateCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
         }
     }
 }

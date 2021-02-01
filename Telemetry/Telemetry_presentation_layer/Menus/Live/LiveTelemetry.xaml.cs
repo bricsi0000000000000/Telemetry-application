@@ -355,8 +355,8 @@ namespace Telemetry_presentation_layer.Menus.Live
         {
             RecieveDataStatusIcon.Foreground = canUpdateCharts ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
                                                                 new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary900));
-            RecieveDataStatusIcon.Kind = canUpdateCharts ? MaterialDesignThemes.Wpf.PackIconKind.DatabaseImport :
-                                                           MaterialDesignThemes.Wpf.PackIconKind.DatabaseRemove;
+            RecieveDataStatusIcon.Kind = canUpdateCharts ? MaterialDesignThemes.Wpf.PackIconKind.CloudDownload :
+                                                           MaterialDesignThemes.Wpf.PackIconKind.CloudOffOutline;
         }
 
         public void Stop()

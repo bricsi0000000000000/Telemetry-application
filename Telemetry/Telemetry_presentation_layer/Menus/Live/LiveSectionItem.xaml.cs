@@ -29,11 +29,15 @@ namespace Telemetry_presentation_layer.Menus.Live
 
             DateLabel.Content = section.DateString;
             NameLabel.Content = section.Name;
-
-            IsLiveIcon.Kind = section.IsLive ? MaterialDesignThemes.Wpf.PackIconKind.Wifi : MaterialDesignThemes.Wpf.PackIconKind.WifiOff;
+            ChangeStausIcon(section.IsLive);
 
             IsLiveIcon.Foreground = section.IsLive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
                                                      ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+        }
+
+        private void ChangeStausIcon(bool isLive)
+        {
+            IsLiveIcon.Kind = isLive ? MaterialDesignThemes.Wpf.PackIconKind.AccessPoint : MaterialDesignThemes.Wpf.PackIconKind.AccessPointOff;
         }
 
         public void ChangeColor(bool isActive)
@@ -64,7 +68,7 @@ namespace Telemetry_presentation_layer.Menus.Live
         public void ChangeStatus(bool status)
         {
             this.status = status;
-            IsLiveIcon.Kind = status ? MaterialDesignThemes.Wpf.PackIconKind.Wifi : MaterialDesignThemes.Wpf.PackIconKind.WifiOff;
+            ChangeStausIcon(status);
 
             if (isActive)
             {
@@ -82,12 +86,18 @@ namespace Telemetry_presentation_layer.Menus.Live
         {
             BackgroundCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary700) :
                                                    ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+
+            StatusCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary700) :
+                                               ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
         }
 
         private void BackgroundCard_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             BackgroundCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary800) :
                                                    ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
+            StatusCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary800) :
+                                              ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
 
             ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).SelectSection(SectionID);
         }
@@ -96,36 +106,16 @@ namespace Telemetry_presentation_layer.Menus.Live
         {
             BackgroundCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary800) :
                                                    ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
+            StatusCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary800) :
+                                               ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
         }
 
         private void BackgroundCard_MouseLeave(object sender, MouseEventArgs e)
         {
             BackgroundCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
                                                    ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
-        }
 
-        private void StatusCard_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            StatusCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary700) :
-                                               ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
-        }
-
-        private void StatusCard_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            StatusCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary800) :
-                                               ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
-
-            ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeStatus(SectionID);
-        }
-
-        private void StatusCard_MouseEnter(object sender, MouseEventArgs e)
-        {
-            StatusCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary800) :
-                                               ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
-        }
-
-        private void StatusCard_MouseLeave(object sender, MouseEventArgs e)
-        {
             StatusCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
                                                ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
         }
