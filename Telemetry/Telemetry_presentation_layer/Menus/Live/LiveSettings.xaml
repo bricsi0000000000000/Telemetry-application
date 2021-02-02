@@ -140,7 +140,7 @@
                                 </materialDesign:Card>
                             </Grid>
 
-                        <Grid Grid.Row="1">
+                            <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="80"/>
                                 <ColumnDefinition Width="*"/>
@@ -238,6 +238,17 @@
                                                              />
                                 </Grid>
                             </Grid>
+
+                            <Grid x:Name="NoActiveSectionGrid"
+                                  Background="White"
+                                  Grid.RowSpan="5"
+                                  >
+                                <materialDesign:PackIcon Kind="CardText"
+                                                         Opacity=".1"
+                                                         VerticalAlignment="Stretch"
+                                                         HorizontalAlignment="Stretch"
+                                                         />
+                            </Grid>
                         </Grid>
                     </materialDesign:Card>
 
@@ -248,6 +259,7 @@
                         </Grid.ColumnDefinitions>
 
                         <materialDesign:Card Name="ChangeSectionStatusCardButton"
+                                             Grid.Column="0"
                                              UniformCornerRadius="5"
                                              Margin="0,0,2.5,5"
                                              materialDesign:ShadowAssist.ShadowDepth="Depth1"
@@ -281,25 +293,79 @@
                                                      />
                         </materialDesign:Card>
                     </Grid>
-
-                    <Grid x:Name="NoActiveSectionGrid"
-                          Background="White"
-                          Grid.RowSpan="2"
-                          Visibility="Hidden"
-                          >
-                        <materialDesign:PackIcon Kind="CardText"
-                                                 Opacity=".1"
-                                                 VerticalAlignment="Stretch"
-                                                 HorizontalAlignment="Stretch"
-                                                 />
-                    </Grid>
                 </Grid>
             </Grid>
 
             <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
 
             <Grid Grid.Column="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="2*"/>
+                </Grid.RowDefinitions>
                 
+                <materialDesign:Card UniformCornerRadius="5"
+                                     Margin="0,5,5,0"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                     >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="40"/>
+                        </Grid.RowDefinitions>
+                        
+                        <Label Content="Cars status"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               FontWeight="Bold"
+                               Margin="5,0,0,0"
+                               />
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <materialDesign:PackIcon Name="CarIsConnectedIcon"
+                                                     Kind="Signal"
+                                                     Grid.Column="0"
+                                                     VerticalAlignment="Stretch"
+                                                     HorizontalAlignment="Stretch"
+                                                     />
+
+                            <Label Name="ConnectionSpeedLabel"
+                                   Grid.Column="1"
+                                   Content="348 ms"
+                                   VerticalAlignment="Center"
+                                   Margin="5,0,0,0"
+                                   />
+                        </Grid>
+
+
+                        <materialDesign:Card Name="ConnectCardButton"
+                                             Grid.Row="3"
+                                             UniformCornerRadius="5"
+                                             Margin="5"
+                                             materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                             PreviewMouseLeftButtonDown="ConnectCardButton_PreviewMouseLeftButtonDown"
+                                             PreviewMouseLeftButtonUp="ConnectCardButton_PreviewMouseLeftButtonUp"
+                                             MouseEnter="ConnectCardButton_MouseEnter"
+                                             MouseLeave="ConnectCardButton_MouseLeave"
+                                             >
+                            <materialDesign:PackIcon Name="SelectedSectionIsConnectedIcon"
+                                                     Kind="PowerPlug"
+                                                     VerticalAlignment="Stretch"
+                                                     HorizontalAlignment="Stretch"
+                                                     />
+                        </materialDesign:Card>
+                    </Grid>
+                </materialDesign:Card>
+
+                <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
             </Grid>
             
             <Button Grid.ColumnSpan="5"
@@ -335,6 +401,7 @@
                   >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="50"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 
@@ -352,6 +419,7 @@
                              IsIndeterminate="True"
                              RenderTransformOrigin="0.5,0.5"
                              Foreground="White"
+                             Margin="0,5,0,0"
                              >
                     <ProgressBar.RenderTransform>
                         <TransformGroup>
@@ -362,6 +430,30 @@
                         </TransformGroup>
                     </ProgressBar.RenderTransform>
                 </ProgressBar>
+
+                <materialDesign:Card Name="LoadingCancelButtonCard"
+                                     Grid.Row="2"
+                                     Width="100"
+                                     Height="40"
+                                     VerticalAlignment="Top"
+                                     Margin="0,5,0,0"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                     UniformCornerRadius="5"
+                                     Background="{DynamicResource Delete}"
+                                     PreviewMouseLeftButtonDown="LoadingCancelButtonCard_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="LoadingCancelButtonCard_PreviewMouseLeftButtonUp"
+                                     MouseEnter="LoadingCancelButtonCard_MouseEnter"
+                                     MouseLeave="LoadingCancelButtonCard_MouseLeave"
+                                     >
+                    
+                    <materialDesign:PackIcon Kind="No"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             VerticalContentAlignment="Center"
+                                             HorizontalContentAlignment="Center"
+                                             Foreground="White"
+                                             />
+                </materialDesign:Card>
             </Grid>
 
             <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"

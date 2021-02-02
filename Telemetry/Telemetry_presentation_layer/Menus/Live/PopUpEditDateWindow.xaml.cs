@@ -17,20 +17,18 @@ using Telemetry_presentation_layer.Menus.Settings.Live;
 namespace Telemetry_presentation_layer.Menus.Live
 {
     /// <summary>
-    /// Interaction logic for ChangeLiveStatusWindow.xaml
+    /// Interaction logic for PopUpEditDateWindow.xaml
     /// </summary>
-    public partial class PopUpWindow : Window
+    public partial class PopUpEditDateWindow : Window
     {
-        public enum PopUpType { ChangeLiveStatus, DeleteSection }
-
-        private readonly PopUpType popUpType;
-
-        public PopUpWindow(string title, PopUpType popUpType)
+        public PopUpEditDateWindow(string title)
         {
             InitializeComponent();
 
-            this.popUpType = popUpType;
-            TitleTextBox.Text = title;
+            TitleTextBlock.Text = title;
+
+            PickDateDatePicker.SelectedDate = DateTime.Now;
+            PickTimeTimePicker.SelectedTime = DateTime.Now;
         }
 
         private void OkCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -42,15 +40,10 @@ namespace Telemetry_presentation_layer.Menus.Live
         {
             OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
 
-            switch (popUpType)
-            {
-                case PopUpType.ChangeLiveStatus:
-                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeStatusResultAsync(change: true);
-                    break;
-                case PopUpType.DeleteSection:
-                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).DeleteSeciton(delete: true);
-                    break;
-            }
+            var date = (DateTime)PickDateDatePicker.SelectedDate;
+            var time = (DateTime)PickTimeTimePicker.SelectedTime;
+            var newDate = new DateTime(date.Year, date.Month, date.Day, time.Hour, time.Minute, time.Second);
+            ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeDate(change: true, newDate);
 
             Close();
         }
@@ -64,7 +57,7 @@ namespace Telemetry_presentation_layer.Menus.Live
         private void OkCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
             OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
-            Mouse.OverrideCursor = Cursors.Arrow;
+            Mouse.OverrideCursor = null;
         }
 
         private void CancelCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -76,15 +69,7 @@ namespace Telemetry_presentation_layer.Menus.Live
         {
             CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
 
-            switch (popUpType)
-            {
-                case PopUpType.ChangeLiveStatus:
-                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeStatusResultAsync(change: false);
-                    break;
-                case PopUpType.DeleteSection:
-                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).DeleteSeciton(delete: false);
-                    break;
-            }
+            ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeDate(change: false);
             Close();
         }
 
@@ -97,7 +82,7 @@ namespace Telemetry_presentation_layer.Menus.Live
         private void CancelCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
             CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
-            Mouse.OverrideCursor = Cursors.Arrow;
+            Mouse.OverrideCursor = null;
         }
     }
 }

@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.Texts;
 using Telemetry_presentation_layer.Converters;
@@ -17,20 +8,17 @@ using Telemetry_presentation_layer.Menus.Settings.Live;
 namespace Telemetry_presentation_layer.Menus.Live
 {
     /// <summary>
-    /// Interaction logic for ChangeLiveStatusWindow.xaml
+    /// Interaction logic for PopUpEditWindow.xaml
     /// </summary>
-    public partial class PopUpWindow : Window
+    public partial class PopUpEditWindow : Window
     {
-        public enum PopUpType { ChangeLiveStatus, DeleteSection }
-
-        private readonly PopUpType popUpType;
-
-        public PopUpWindow(string title, PopUpType popUpType)
+        public PopUpEditWindow(string title)
         {
             InitializeComponent();
 
-            this.popUpType = popUpType;
-            TitleTextBox.Text = title;
+            TitleTextBlock.Text = title;
+
+            ChaneNameTextBox.Focus();
         }
 
         private void OkCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -42,15 +30,7 @@ namespace Telemetry_presentation_layer.Menus.Live
         {
             OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
 
-            switch (popUpType)
-            {
-                case PopUpType.ChangeLiveStatus:
-                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeStatusResultAsync(change: true);
-                    break;
-                case PopUpType.DeleteSection:
-                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).DeleteSeciton(delete: true);
-                    break;
-            }
+            ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeName(change: true, ChaneNameTextBox.Text);
 
             Close();
         }
@@ -64,7 +44,7 @@ namespace Telemetry_presentation_layer.Menus.Live
         private void OkCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
             OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
-            Mouse.OverrideCursor = Cursors.Arrow;
+            Mouse.OverrideCursor = null;
         }
 
         private void CancelCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -76,15 +56,8 @@ namespace Telemetry_presentation_layer.Menus.Live
         {
             CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
 
-            switch (popUpType)
-            {
-                case PopUpType.ChangeLiveStatus:
-                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeStatusResultAsync(change: false);
-                    break;
-                case PopUpType.DeleteSection:
-                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).DeleteSeciton(delete: false);
-                    break;
-            }
+
+            ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeName(change: false);
             Close();
         }
 
@@ -97,7 +70,7 @@ namespace Telemetry_presentation_layer.Menus.Live
         private void CancelCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
             CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
-            Mouse.OverrideCursor = Cursors.Arrow;
+            Mouse.OverrideCursor = null;
         }
     }
 }

@@ -109,6 +109,8 @@ namespace Telemetry_presentation_layer.Menus.Live
 
             StatusCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary800) :
                                                ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
+            Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void BackgroundCard_MouseLeave(object sender, MouseEventArgs e)
@@ -118,6 +120,8 @@ namespace Telemetry_presentation_layer.Menus.Live
 
             StatusCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
                                                ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+
+            Mouse.OverrideCursor = null;
         }
     }
 }

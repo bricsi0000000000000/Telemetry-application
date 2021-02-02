@@ -14,6 +14,8 @@ using System.Windows;
 using Telemetry_data_and_logic_layer.Texts;
 using System.Threading.Tasks;
 using Telemetry_presentation_layer.Converters;
+using System.Windows.Input;
+using System.Diagnostics;
 
 namespace Telemetry_presentation_layer.Menus.Settings.Live
 {
@@ -25,12 +27,18 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
         private static HttpClient client = new HttpClient();
         private List<Section> sections = new List<Section>();
         private Section activeSection;
+        private bool sectionSelected = false;
+        private bool carConnected = false;
+        private bool connectingToCar = false;
+        private Stopwatch checkConnectionStopwatch = new Stopwatch();
 
         public LiveSettings()
         {
             InitializeComponent();
 
             InitilaizeHttpClient();
+            UpdateSelectedSectionButtons();
+            UpdateCarStatus();
         }
 
         private void InitilaizeHttpClient()
@@ -134,6 +142,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
             if (activeSection != null)
             {
                 NoActiveSectionGrid.Visibility = Visibility.Hidden;
+                sectionSelected = true;
 
                 SelectedSectionNameTextBox.Text = activeSection.Name;
                 SelectedSectionDateLabel.Text = activeSection.Date.ToString();
@@ -151,7 +160,18 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
             else
             {
                 NoActiveSectionGrid.Visibility = Visibility.Visible;
+                sectionSelected = false;
             }
+
+            UpdateSelectedSectionButtons();
+        }
+
+        private void UpdateSelectedSectionButtons()
+        {
+            ChangeSectionStatusCardButton.Foreground = sectionSelected ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
+                                                                         ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary400);
+            DeleteSectionCardButton.Background = sectionSelected ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900) :
+                                                                   ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary200);
         }
 
         private async Task<List<string>> GetActiveChannelsAsync(int sectionID)
@@ -332,11 +352,12 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
             ErrorSnackbar.MessageQueue.Enqueue(message, null, null, null, false, true, TimeSpan.FromSeconds(time));
         }
 
-        private void SetLoadingGrid(bool visibility, string message = "", bool progressBarVisibility = true)
+        private void SetLoadingGrid(bool visibility, string message = "", bool progressBarVisibility = true, bool cancelButtonVisibility = false)
         {
             LoadingGrid.Visibility = visibility ? Visibility.Visible : Visibility.Hidden;
             LoadingLabel.Content = message;
             LoadingProgressBar.Visibility = progressBarVisibility ? Visibility.Visible : Visibility.Hidden;
+            LoadingCancelButtonCard.Visibility = cancelButtonVisibility ? Visibility.Visible : Visibility.Hidden;
         }
 
         private void RefreshSectionsButton_Click(object sender, RoutedEventArgs e)
@@ -348,29 +369,43 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
 
         private void DeleteSectionCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
+            if (sectionSelected)
+            {
+                DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
+            }
         }
 
         private void DeleteSectionCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+            if (sectionSelected)
+            {
+                DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
 
-            SetLoadingGrid(visibility: true, progressBarVisibility: false);
+                SetLoadingGrid(visibility: true, progressBarVisibility: false);
 
-            var deleteSectionWindow = new PopUpWindow($"You are about to delete {activeSection.Name}\n" +
-                                                      $"Are you sure about that?",
-                                                      PopUpWindow.PopUpType.DeleteSection);
-            deleteSectionWindow.ShowDialog();
+                var deleteSectionWindow = new PopUpWindow($"You are about to delete {activeSection.Name}\n" +
+                                                          $"Are you sure about that?",
+                                                          PopUpWindow.PopUpType.DeleteSection);
+                deleteSectionWindow.ShowDialog();
+            }
         }
 
         private void DeleteSectionCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+            if (sectionSelected)
+            {
+                DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+                Mouse.OverrideCursor = Cursors.Hand;
+            }
         }
 
         private void DeleteSectionCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+            if (sectionSelected)
+            {
+                DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+                Mouse.OverrideCursor = null;
+            }
         }
 
         public void DeleteSeciton(bool delete)
@@ -421,6 +456,23 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
             }
         }
 
+        public void ChangeName(bool change, string newName = "")
+        {
+            if (change)
+            {
+                ChangeSectionNameAsync(activeSection.ID, newName);
+            }
+            else
+            {
+                SetLoadingGrid(visibility: false);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name">New name</param>
         private async void ChangeSectionNameAsync(int id, string name)
         {
             SetLoadingGrid(visibility: true, "Updating section..");
@@ -457,27 +509,254 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
             }
         }
 
+        public void ChangeDate(bool change, DateTime newDate = new DateTime())
+        {
+            if (change)
+            {
+                ChangeSectionDateAsync(activeSection.ID, newDate);
+            }
+            else
+            {
+                SetLoadingGrid(visibility: false);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name">New name</param>
+        private async void ChangeSectionDateAsync(int id, DateTime newDate)
+        {
+            SetLoadingGrid(visibility: true, "Updating section..");
+
+            try
+            {
+                var response = await client.PutAsJsonAsync("/api/Section/change_date", new Section() { ID = id, Date = newDate }).ConfigureAwait(false);
+                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                string resultString = result.GetAwaiter().GetResult();
+                if (resultString.Equals("200"))
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SetLoadingGrid(visibility: false);
+                        GetAllSectionsAsync();
+                    });
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SetLoadingGrid(visibility: false);
+                        ShowErrorMessage("Couldn't update section");
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetLoadingGrid(visibility: false);
+                    ShowErrorMessage("Can't update section because can't connect to the server");
+                });
+            }
+        }
+
+        private void UpdateCarStatus()
+        {
+            CarIsConnectedIcon.Foreground = carConnected ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
+                                                           ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+
+            CarIsConnectedIcon.Kind = carConnected ? PackIconKind.Signal : PackIconKind.SignalOff;
+
+            ConnectionSpeedLabel.Content = $"{(int)checkConnectionStopwatch.Elapsed.TotalMilliseconds} ms";
+        }
+
+        private void ConnectToCar()
+        {
+            ConnectToCarAsync(canConnect: true);
+        }
+
+        private async void ConnectToCarAsync(bool canConnect)
+        {
+            SetLoadingGrid(visibility: true, "Connecting to car..", cancelButtonVisibility: true);
+
+            try
+            {
+                var response = await client.PutAsJsonAsync($"/api/Connection/change_can_connect?canConnect={canConnect}", canConnect).ConfigureAwait(false);
+                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                string resultString = result.GetAwaiter().GetResult();
+                if (resultString.Equals("200"))
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        connectingToCar = true;
+                        GetCarIsConnected();
+                    });
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SetLoadingGrid(visibility: false);
+                        ShowErrorMessage("Couldn't connect to car");
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetLoadingGrid(visibility: false);
+                    ShowErrorMessage("Can't connect car because can't connect to the server");
+                });
+            }
+        }
+
+        private async void GetCarIsConnected()
+        {
+            try
+            {
+                var response = await client.GetAsync("/api/Connection/is_connected").ConfigureAwait(false);
+                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                string resultString = result.GetAwaiter().GetResult();
+                carConnected = JsonConvert.DeserializeObject<bool>(resultString);
+                if (carConnected)
+                {
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SetLoadingGrid(visibility: false);
+
+                        checkConnectionStopwatch.Start();
+                        CheckConnectionAsync(true);
+                    });
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        if (connectingToCar)
+                        {
+                            GetCarIsConnected();
+                        }
+                        else
+                        {
+                            SetLoadingGrid(visibility: false);
+                        }
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetLoadingGrid(visibility: false);
+                    ShowErrorMessage("Couldn't connect to the sever");
+                });
+            }
+        }
+
+        private async void CheckConnectionAsync(bool check)
+        {
+            SetLoadingGrid(visibility: true, "Checking connection speed..");
+
+            try
+            {
+                var response = await client.PutAsJsonAsync($"/api/Connection/change_check?check={check}", check).ConfigureAwait(false);
+                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                string resultString = result.GetAwaiter().GetResult();
+                if (resultString.Equals("200"))
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        //TODO a raspberry küldjön valami nagy csomagot pl 1 KB-nyit.
+                        GetCheckConnectionResultAsync();
+                        //
+                    });
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SetLoadingGrid(visibility: false);
+                        ShowErrorMessage("Couldn't connect to car");
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetLoadingGrid(visibility: false);
+                    ShowErrorMessage("Can't connect car because can't connect to the server");
+                });
+            }
+        }
+
+        private async void GetCheckConnectionResultAsync()
+        {
+            try
+            {
+                var response = await client.GetAsync("/api/Connection/check").ConfigureAwait(false);
+                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                string resultString = result.GetAwaiter().GetResult();
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetLoadingGrid(visibility: false);
+                    checkConnectionStopwatch.Stop();
+                    UpdateCarStatus();
+                });
+            }
+            catch (Exception)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetLoadingGrid(visibility: false);
+                    ShowErrorMessage("Couldn't connect to the sever");
+                });
+            }
+        }
+
+        #region cards
+
         private void ChangeSectionStatusCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ChangeSectionStatusCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            if (sectionSelected)
+            {
+                ChangeSectionStatusCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            }
         }
 
         private void ChangeSectionStatusCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ChangeSectionStatusCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            if (sectionSelected)
+            {
+                ChangeSectionStatusCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
 
-            ChangeStatus(activeSection.ID);
+                ChangeStatus(activeSection.ID);
+            }
         }
 
         private void ChangeSectionStatusCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ChangeSectionStatusCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            if (sectionSelected)
+            {
+                ChangeSectionStatusCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+                Mouse.OverrideCursor = Cursors.Hand;
+            }
         }
 
         private void ChangeSectionStatusCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ChangeSectionStatusCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            if (sectionSelected)
+            {
+                ChangeSectionStatusCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+                Mouse.OverrideCursor = null;
+            }
         }
+
 
         private void ChangeSectionNameCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -487,16 +766,23 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
         private void ChangeSectionNameCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ChangeSectionNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
+            SetLoadingGrid(visibility: true, progressBarVisibility: false);
+
+            var changeNameWindow = new PopUpEditWindow("Change name");
+            changeNameWindow.ShowDialog();
         }
 
         private void ChangeSectionNameCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             ChangeSectionNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void ChangeSectionNameCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             ChangeSectionNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            Mouse.OverrideCursor = null;
         }
 
         private void ChangeSectionDateCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -507,16 +793,72 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
         private void ChangeSectionDateCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ChangeSectionDateCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
+            SetLoadingGrid(visibility: true, progressBarVisibility: false);
+
+            var changeDateWindow = new PopUpEditDateWindow("Change date");
+            changeDateWindow.ShowDialog();
         }
 
         private void ChangeSectionDateCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             ChangeSectionDateCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void ChangeSectionDateCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             ChangeSectionDateCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            Mouse.OverrideCursor = null;
         }
+
+        private void ConnectCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ConnectCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+        }
+
+        private void ConnectCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            ConnectCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
+            ConnectToCar();
+        }
+
+        private void ConnectCardButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ConnectCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void ConnectCardButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            ConnectCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            Mouse.OverrideCursor = null;
+        }
+
+        private void LoadingCancelButtonCard_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            LoadingCancelButtonCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
+        }
+
+        private void LoadingCancelButtonCard_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            LoadingCancelButtonCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+
+            connectingToCar = false;
+        }
+
+        private void LoadingCancelButtonCard_MouseEnter(object sender, MouseEventArgs e)
+        {
+            LoadingCancelButtonCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void LoadingCancelButtonCard_MouseLeave(object sender, MouseEventArgs e)
+        {
+            LoadingCancelButtonCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+            Mouse.OverrideCursor = null;
+        }
+        #endregion
     }
 }
