@@ -13,14 +13,16 @@ namespace Telemetry_presentation_layer.Charts
         /// </summary>
         /// <param name="color"><see cref="Color"/> of the channel.</param>
         /// <param name="channelName">Channel name.</param>
-        /// <param name="channelValue">Channel value.</param>
-        public ChartValue(string color, string channelName, double channelValue)
+        /// <param name="value">Channel value.</param>
+        public ChartValue(string color, string channelName, double value, string unitOfMeasure = "")
         {
             InitializeComponent();
 
-            ValueColorCard.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
+            ChannelNameLabel.Foreground= new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
+            ChannelValueLabel.Foreground= new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
             ChannelName = channelName;
-            SetChannelValue(channelValue);
+            SetChannelValue(value);
+            UnitOfMeasureFormulaControl.Formula = @"\color[HTML]{" + color.Substring(3, color.Length - 3) + "}{" + unitOfMeasure + "}";
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -12,7 +13,9 @@ using System.Windows.Media;
 using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.Groups;
 using Telemetry_data_and_logic_layer.Models;
+using Telemetry_data_and_logic_layer.Texts;
 using Telemetry_presentation_layer.Charts;
+using Telemetry_presentation_layer.Menus.Settings.Live;
 
 namespace Telemetry_presentation_layer.Menus.Live
 {
@@ -29,16 +32,16 @@ namespace Telemetry_presentation_layer.Menus.Live
         private bool canUpdateCharts = false;
         private static HttpClient client = new HttpClient();
         private const int getDataAmount = 5;
-
-        private Queue<double> yawAngleData = new Queue<double>();
         private int yawAngleLastIndex = 0;
+
+        private List<Tuple<double, TimeSpan>> yawAngleData = new List<Tuple<double, TimeSpan>>();
         private object getDataLock = new object();
         private AutoResetEvent getDataSignal = new AutoResetEvent(false);
 
         /// <summary>
         /// In milliseconds
         /// </summary>
-        private const int waitBetweenCollectData = 100;
+        private const int waitBetweenCollectData = 5000;
 
         public LiveTelemetry()
         {
@@ -160,6 +163,11 @@ namespace Telemetry_presentation_layer.Menus.Live
                 item.IsChecked = false;
             }
 
+            yawAngleLastIndex = 0;
+            Stop(); //TODO biztos?
+            yawAngleData.Clear();
+            canUpdateCharts = false;
+
             UpdateSectionTitle();
             InitializeChannels();
             InitializeCharts();
@@ -196,17 +204,38 @@ namespace Telemetry_presentation_layer.Menus.Live
         {
             while (canUpdateCharts)
             {
-                var getYawAngleData = GetDataAsync(controller: "YawAngle", amount: getDataAmount).Result;
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+                var getYawAngleData = GetDataAsync(controller: "YawAngle", bufferAmount: getDataAmount).Result;
+                stopwatch.Stop();
 
-                for (int i = 0; i < getYawAngleData.Count; i++)
+                lock (getDataLock)
                 {
-                    lock (getDataLock)
-                    {
-                        yawAngleData.Enqueue(getYawAngleData[i]);
-                    }
+                    yawAngleData = getYawAngleData;
                 }
 
                 getDataSignal.Set();
+
+                if (activeSection.IsLive)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        var times = new List<TimeSpan>();
+                        foreach (var item in getYawAngleData)
+                        {
+                            times.Add(item.Item2);
+                        }
+                        ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).UpdateCarStatus(times, stopwatch.ElapsedMilliseconds);
+                    });
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        canUpdateCharts = false;
+                        UpdateCanRecieveDataStatus();
+                    });
+                }
 
                 Thread.Sleep(waitBetweenCollectData);
             }
@@ -219,19 +248,26 @@ namespace Telemetry_presentation_layer.Menus.Live
                 getDataSignal.WaitOne();
                 if (canUpdateCharts)
                 {
-                    var values = new List<double>();
-                    while (yawAngleData.Count > 0)
+                    var values = new List<Tuple<double, TimeSpan>>();
+                    lock (getDataLock)
                     {
-                        lock (getDataLock)
-                        {
-                            values.Add(yawAngleData.Dequeue());
-                        }
+                        values = yawAngleData;
                     }
+
                     if (values.Count > 0)
                     {
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            GetChart("").Update(values.ToArray(), "", "");
+                            var yawAngleChannel = GetChart("yaw_angle");
+                            if (yawAngleChannel != null)
+                            {
+                                var updateableValues = new List<double>();
+                                foreach (var item in values)
+                                {
+                                    updateableValues.Add(item.Item1);
+                                }
+                                yawAngleChannel.Update(updateableValues.ToArray(), "", "yaw angle");
+                            }
                         });
                     }
 
@@ -242,33 +278,41 @@ namespace Telemetry_presentation_layer.Menus.Live
 
         private Chart GetChart(string name) => charts.Find(x => x.ChartName.Equals(name));
 
-        private async Task<List<double>> GetDataAsync(string controller, int amount)
+        private async Task<List<Tuple<double, TimeSpan>>> GetDataAsync(string controller, int bufferAmount)
         {
-            var returnData = new List<double>();
+            var returnData = new List<Tuple<double, TimeSpan>>();
 
             try
             {
-                var response = await client.GetAsync($"/api/{controller}/last_buffer?amount={amount}&lastIndex={yawAngleLastIndex}").ConfigureAwait(false);
+                var response = await client.GetAsync($"/api/{controller}/last_buffer?id={activeSection.ID}&bufferAmount={bufferAmount}&lastIndex={yawAngleLastIndex}").ConfigureAwait(false);
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 string resultString = result.GetAwaiter().GetResult();
                 dynamic data = JsonConvert.DeserializeObject(resultString);
-                if (data.Count == 0)
-                {
-                    canUpdateCharts = false;
-                }
 
                 for (int i = 0; i < data.Count; i++)
                 {
-                    returnData.Add(double.Parse(data[i].ToString()));
+                    double actualValue = double.Parse(data[i].value.ToString());
+                    string actualDateString = data[i].ellapsedTime.ToString();
+                    TimeSpan actualTime = new TimeSpan(long.Parse(actualDateString));
+                    returnData.Add(new Tuple<double, TimeSpan>(actualValue, actualTime));
                 }
 
-                yawAngleLastIndex += amount;
+                yawAngleLastIndex += data.Count;
+
+                /* if (yawAngleLastIndex == 0)
+                 {
+                     yawAngleLastIndex += data.Count;
+                 }
+                 else
+                 {
+                     yawAngleLastIndex += bufferAmount;
+                 }*/
             }
             catch (Exception e)
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    ShowErrorMessage("Couldn't connect to the sever");
+                    ShowErrorMessage("Couldn't connect to the sever\t" + e.Message);
                 });
             }
 
@@ -339,6 +383,13 @@ namespace Telemetry_presentation_layer.Menus.Live
                 var updateThread = new Thread(new ThreadStart(UpdateCharts));
                 updateThread.Start();
             }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).UpdateCarStatus(new List<TimeSpan>(), -1);
+                });
+            }
         }
 
         private void RecieveDataStatusCard_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -353,10 +404,8 @@ namespace Telemetry_presentation_layer.Menus.Live
 
         private void UpdateCanRecieveDataStatus()
         {
-            RecieveDataStatusIcon.Foreground = canUpdateCharts ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
-                                                                new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary900));
-            RecieveDataStatusIcon.Kind = canUpdateCharts ? MaterialDesignThemes.Wpf.PackIconKind.CloudDownload :
-                                                           MaterialDesignThemes.Wpf.PackIconKind.CloudOffOutline;
+            RecieveDataStatusIcon.Kind = canUpdateCharts ? MaterialDesignThemes.Wpf.PackIconKind.Pause :
+                                                           MaterialDesignThemes.Wpf.PackIconKind.Play;
         }
 
         public void Stop()

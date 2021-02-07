@@ -3,7 +3,9 @@ using System.Windows.Input;
 using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.Texts;
 using Telemetry_presentation_layer.Converters;
+using Telemetry_presentation_layer.Menus.Settings;
 using Telemetry_presentation_layer.Menus.Settings.Live;
+using Telemetry_presentation_layer.Menus.Settings.Units;
 
 namespace Telemetry_presentation_layer.Menus.Live
 {
@@ -12,9 +14,14 @@ namespace Telemetry_presentation_layer.Menus.Live
     /// </summary>
     public partial class PopUpEditWindow : Window
     {
-        public PopUpEditWindow(string title)
+        public enum EditType { ChangeSectionName, ChangeUnitName }
+        private EditType editType;
+
+        public PopUpEditWindow(string title, EditType editType)
         {
             InitializeComponent();
+
+            this.editType = editType;
 
             TitleTextBlock.Text = title;
 
@@ -30,7 +37,15 @@ namespace Telemetry_presentation_layer.Menus.Live
         {
             OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
 
-            ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeName(change: true, ChaneNameTextBox.Text);
+            switch (editType)
+            {
+                case EditType.ChangeSectionName:
+                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeName(change: true, ChaneNameTextBox.Text);
+                    break;
+                case EditType.ChangeUnitName:
+                    ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).cha;
+                    break;
+            }
 
             Close();
         }
@@ -56,8 +71,15 @@ namespace Telemetry_presentation_layer.Menus.Live
         {
             CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
 
+            switch (editType)
+            {
+                case EditType.ChangeSectionName:
+                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeName(change: false);
+                    break;
+                case EditType.ChangeUnitName:
+                    break;
+            }
 
-            ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeName(change: false);
             Close();
         }
 

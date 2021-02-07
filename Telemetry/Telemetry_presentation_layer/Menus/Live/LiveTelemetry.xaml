@@ -104,7 +104,7 @@
                                  MouseLeave="RecieveDataStatusCard_MouseLeave"
                                  >
                 <materialDesign:PackIcon Name="RecieveDataStatusIcon"
-                                         Kind="CloudOffOutline"
+                                         Kind="Play"
                                          VerticalAlignment="Stretch"
                                          HorizontalAlignment="Stretch"
                                          />

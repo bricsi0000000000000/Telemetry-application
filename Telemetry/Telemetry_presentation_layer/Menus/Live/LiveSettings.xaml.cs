@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Telemetry_presentation_layer.Converters;
 using System.Windows.Input;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Telemetry_presentation_layer.Menus.Settings.Live
 {
@@ -28,9 +29,6 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
         private List<Section> sections = new List<Section>();
         private Section activeSection;
         private bool sectionSelected = false;
-        private bool carConnected = false;
-        private bool connectingToCar = false;
-        private Stopwatch checkConnectionStopwatch = new Stopwatch();
 
         public LiveSettings()
         {
@@ -38,7 +36,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
 
             InitilaizeHttpClient();
             UpdateSelectedSectionButtons();
-            UpdateCarStatus();
+            UpdateCarStatus(new List<TimeSpan>(), -1);
         }
 
         private void InitilaizeHttpClient()
@@ -252,6 +250,14 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
                                                                                       ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
                     });
                 }
+                else if (resultString.Equals("409"))
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SetLoadingGrid(visibility: false);
+                        ShowErrorMessage($"Only one live section can be at the time!");
+                    });
+                }
                 else
                 {
                     Application.Current.Dispatcher.Invoke(() =>
@@ -316,7 +322,6 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
                     {
                         GetAllSectionsAsync();
                         SetLoadingGrid(visibility: false);
-                        ShowErrorMessage($"{sectionName} was added succesfully", error: false);
                     });
                 }
                 else
@@ -346,8 +351,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
         /// <param name="time"></param>
         private void ShowErrorMessage(string message, bool error = true, double time = 3)
         {
-            ErrorSnackbar.Background = error ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary900)) :
-                                               new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
+            ErrorSnackbar.Foreground = error ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary500)) :
+                                               new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
 
             ErrorSnackbar.MessageQueue.Enqueue(message, null, null, null, false, true, TimeSpan.FromSeconds(time));
         }
@@ -562,160 +567,30 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
             }
         }
 
-        private void UpdateCarStatus()
+        public void UpdateCarStatus(List<TimeSpan> carTimes, long appTimes)
         {
-            CarIsConnectedIcon.Foreground = carConnected ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
-                                                           ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
-
-            CarIsConnectedIcon.Kind = carConnected ? PackIconKind.Signal : PackIconKind.SignalOff;
-
-            ConnectionSpeedLabel.Content = $"{(int)checkConnectionStopwatch.Elapsed.TotalMilliseconds} ms";
-        }
-
-        private void ConnectToCar()
-        {
-            ConnectToCarAsync(canConnect: true);
-        }
-
-        private async void ConnectToCarAsync(bool canConnect)
-        {
-            SetLoadingGrid(visibility: true, "Connecting to car..", cancelButtonVisibility: true);
-
-            try
+            if (carTimes.Count > 0)
             {
-                var response = await client.PutAsJsonAsync($"/api/Connection/change_can_connect?canConnect={canConnect}", canConnect).ConfigureAwait(false);
-                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                string resultString = result.GetAwaiter().GetResult();
-                if (resultString.Equals("200"))
+                var timesTicks = new List<long>();
+                foreach (var item in carTimes)
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        connectingToCar = true;
-                        GetCarIsConnected();
-                    });
+                    timesTicks.Add(item.Ticks);
                 }
-                else
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SetLoadingGrid(visibility: false);
-                        ShowErrorMessage("Couldn't connect to car");
-                    });
-                }
+                var time = new TimeSpan((long)timesTicks.Average());
+                CarToDBConnectionSpeedLabel.Content = $"{time.Milliseconds:f0} ms";
             }
-            catch (Exception)
+            else
             {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SetLoadingGrid(visibility: false);
-                    ShowErrorMessage("Can't connect car because can't connect to the server");
-                });
+                CarToDBConnectionSpeedLabel.Content = "-";
             }
-        }
 
-        private async void GetCarIsConnected()
-        {
-            try
+            if (appTimes >= 0)
             {
-                var response = await client.GetAsync("/api/Connection/is_connected").ConfigureAwait(false);
-                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                string resultString = result.GetAwaiter().GetResult();
-                carConnected = JsonConvert.DeserializeObject<bool>(resultString);
-                if (carConnected)
-                {
-
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SetLoadingGrid(visibility: false);
-
-                        checkConnectionStopwatch.Start();
-                        CheckConnectionAsync(true);
-                    });
-                }
-                else
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        if (connectingToCar)
-                        {
-                            GetCarIsConnected();
-                        }
-                        else
-                        {
-                            SetLoadingGrid(visibility: false);
-                        }
-                    });
-                }
+                DBToAppConnectionSpeedLabel.Content = $"{appTimes:f0} ms";
             }
-            catch (Exception)
+            else
             {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SetLoadingGrid(visibility: false);
-                    ShowErrorMessage("Couldn't connect to the sever");
-                });
-            }
-        }
-
-        private async void CheckConnectionAsync(bool check)
-        {
-            SetLoadingGrid(visibility: true, "Checking connection speed..");
-
-            try
-            {
-                var response = await client.PutAsJsonAsync($"/api/Connection/change_check?check={check}", check).ConfigureAwait(false);
-                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                string resultString = result.GetAwaiter().GetResult();
-                if (resultString.Equals("200"))
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        //TODO a raspberry küldjön valami nagy csomagot pl 1 KB-nyit.
-                        GetCheckConnectionResultAsync();
-                        //
-                    });
-                }
-                else
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SetLoadingGrid(visibility: false);
-                        ShowErrorMessage("Couldn't connect to car");
-                    });
-                }
-            }
-            catch (Exception)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SetLoadingGrid(visibility: false);
-                    ShowErrorMessage("Can't connect car because can't connect to the server");
-                });
-            }
-        }
-
-        private async void GetCheckConnectionResultAsync()
-        {
-            try
-            {
-                var response = await client.GetAsync("/api/Connection/check").ConfigureAwait(false);
-                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                string resultString = result.GetAwaiter().GetResult();
-
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SetLoadingGrid(visibility: false);
-                    checkConnectionStopwatch.Stop();
-                    UpdateCarStatus();
-                });
-            }
-            catch (Exception)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SetLoadingGrid(visibility: false);
-                    ShowErrorMessage("Couldn't connect to the sever");
-                });
+                DBToAppConnectionSpeedLabel.Content = "-";
             }
         }
 
@@ -769,7 +644,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
 
             SetLoadingGrid(visibility: true, progressBarVisibility: false);
 
-            var changeNameWindow = new PopUpEditWindow("Change name");
+            var changeNameWindow = new PopUpEditWindow("Change name", PopUpEditWindow.EditType.ChangeSectionName);
             changeNameWindow.ShowDialog();
         }
 
@@ -812,30 +687,6 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
             Mouse.OverrideCursor = null;
         }
 
-        private void ConnectCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            ConnectCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
-        }
-
-        private void ConnectCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            ConnectCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
-
-            ConnectToCar();
-        }
-
-        private void ConnectCardButton_MouseEnter(object sender, MouseEventArgs e)
-        {
-            ConnectCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
-            Mouse.OverrideCursor = Cursors.Hand;
-        }
-
-        private void ConnectCardButton_MouseLeave(object sender, MouseEventArgs e)
-        {
-            ConnectCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
-            Mouse.OverrideCursor = null;
-        }
-
         private void LoadingCancelButtonCard_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             LoadingCancelButtonCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
@@ -844,8 +695,6 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
         private void LoadingCancelButtonCard_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             LoadingCancelButtonCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
-
-            connectingToCar = false;
         }
 
         private void LoadingCancelButtonCard_MouseEnter(object sender, MouseEventArgs e)

@@ -302,7 +302,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="5"/>
-                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="3*"/>
                 </Grid.RowDefinitions>
                 
                 <materialDesign:Card UniformCornerRadius="5"
@@ -314,10 +314,9 @@
                             <RowDefinition Height="40"/>
                             <RowDefinition Height="40"/>
                             <RowDefinition Height="*"/>
-                            <RowDefinition Height="40"/>
                         </Grid.RowDefinitions>
                         
-                        <Label Content="Cars status"
+                        <Label Content="Connection status"
                                VerticalAlignment="Center"
                                HorizontalAlignment="Center"
                                FontWeight="Bold"
@@ -326,42 +325,45 @@
 
                         <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <materialDesign:PackIcon Name="CarIsConnectedIcon"
-                                                     Kind="Signal"
+                            <materialDesign:PackIcon Kind="Car"
                                                      Grid.Column="0"
                                                      VerticalAlignment="Stretch"
                                                      HorizontalAlignment="Stretch"
                                                      />
 
-                            <Label Name="ConnectionSpeedLabel"
+                            <Label Name="CarToDBConnectionSpeedLabel"
                                    Grid.Column="1"
-                                   Content="348 ms"
+                                   Content="-"
                                    VerticalAlignment="Center"
-                                   Margin="5,0,0,0"
+                                   HorizontalAlignment="Center"
                                    />
-                        </Grid>
 
-
-                        <materialDesign:Card Name="ConnectCardButton"
-                                             Grid.Row="3"
-                                             UniformCornerRadius="5"
-                                             Margin="5"
-                                             materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                             PreviewMouseLeftButtonDown="ConnectCardButton_PreviewMouseLeftButtonDown"
-                                             PreviewMouseLeftButtonUp="ConnectCardButton_PreviewMouseLeftButtonUp"
-                                             MouseEnter="ConnectCardButton_MouseEnter"
-                                             MouseLeave="ConnectCardButton_MouseLeave"
-                                             >
-                            <materialDesign:PackIcon Name="SelectedSectionIsConnectedIcon"
-                                                     Kind="PowerPlug"
+                            <materialDesign:PackIcon Kind="Server"
+                                                     Grid.Column="2"
                                                      VerticalAlignment="Stretch"
                                                      HorizontalAlignment="Stretch"
                                                      />
-                        </materialDesign:Card>
+
+                            <Label Name="DBToAppConnectionSpeedLabel"
+                                   Grid.Column="3"
+                                   Content="-"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   />
+
+                            <materialDesign:PackIcon Kind="Application"
+                                                     Grid.Column="4"
+                                                     VerticalAlignment="Stretch"
+                                                     HorizontalAlignment="Stretch"
+                                                     />
+                        </Grid>
                     </Grid>
                 </materialDesign:Card>
 
@@ -459,7 +461,7 @@
             <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
                                      x:Name="ErrorSnackbar"
                                      Grid.ColumnSpan="5"
-                                     Foreground="White"
+                                     Background="{DynamicResource Secondary}"
                                      />
 
         </Grid>

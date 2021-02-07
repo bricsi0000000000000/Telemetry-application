@@ -4,6 +4,7 @@ using Telemetry_data_and_logic_layer.Texts;
 using Telemetry_presentation_layer.Menus.Settings.Groups;
 using Telemetry_presentation_layer.Menus.Settings.InputFiles;
 using Telemetry_presentation_layer.Menus.Settings.Live;
+using Telemetry_presentation_layer.Menus.Settings.Units;
 
 namespace Telemetry_presentation_layer.Menus.Settings
 {
@@ -35,6 +36,7 @@ namespace Telemetry_presentation_layer.Menus.Settings
 
             AddSettingsTab(TextManager.FilesSettingsName, new InputFilesSettings(), selected: true);
             AddSettingsTab(TextManager.GroupsSettingsName, new GroupSettings());
+            AddSettingsTab(TextManager.UnitsSettingsName, new UnitsMenu());
             //   AddSettingsTab(TextManager.TracksSettingsName, new TrackSettings());
 
             /*  AddSettingsTab(new TabItem

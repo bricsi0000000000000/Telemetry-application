@@ -12,7 +12,9 @@ using System.Windows.Shapes;
 using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.Texts;
 using Telemetry_presentation_layer.Converters;
+using Telemetry_presentation_layer.Menus.Settings;
 using Telemetry_presentation_layer.Menus.Settings.Live;
+using Telemetry_presentation_layer.Menus.Settings.Units;
 
 namespace Telemetry_presentation_layer.Menus.Live
 {
@@ -21,7 +23,7 @@ namespace Telemetry_presentation_layer.Menus.Live
     /// </summary>
     public partial class PopUpWindow : Window
     {
-        public enum PopUpType { ChangeLiveStatus, DeleteSection }
+        public enum PopUpType { ChangeLiveStatus, ChangeUnit, DeleteSection, DeleteUnit }
 
         private readonly PopUpType popUpType;
 
@@ -50,6 +52,12 @@ namespace Telemetry_presentation_layer.Menus.Live
                 case PopUpType.DeleteSection:
                     ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).DeleteSeciton(delete: true);
                     break;
+                case PopUpType.ChangeUnit:
+                    ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).UpdateUnit(update: true);
+                    break;
+                case PopUpType.DeleteUnit:
+                    ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).DeleteUnit(delete: true);
+                    break;
             }
 
             Close();
@@ -64,7 +72,7 @@ namespace Telemetry_presentation_layer.Menus.Live
         private void OkCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
             OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
-            Mouse.OverrideCursor = Cursors.Arrow;
+            Mouse.OverrideCursor = null;
         }
 
         private void CancelCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -84,6 +92,12 @@ namespace Telemetry_presentation_layer.Menus.Live
                 case PopUpType.DeleteSection:
                     ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).DeleteSeciton(delete: false);
                     break;
+                case PopUpType.ChangeUnit:
+                    ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).UpdateUnit(update: true);
+                    break;
+                case PopUpType.DeleteUnit:
+                    ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).DeleteUnit(delete: true);
+                    break;
             }
             Close();
         }
@@ -97,7 +111,7 @@ namespace Telemetry_presentation_layer.Menus.Live
         private void CancelCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
             CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
-            Mouse.OverrideCursor = Cursors.Arrow;
+            Mouse.OverrideCursor = null;
         }
     }
 }
