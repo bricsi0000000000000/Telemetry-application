@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.Groups;
@@ -84,11 +85,11 @@ namespace Telemetry_presentation_layer.Menus.Live
             GroupsStackPanel.Children.Clear();
             foreach (var group in GroupManager.Groups)
             {
-                var checkBox = new CheckBox()
-                {
-                    Content = group.Name
-                };
-                checkBox.Click += GroupCheckBox_Click;
+                 var checkBox = new CheckBox()
+                 {
+                     Content = group.Name
+                 };
+                 checkBox.Click += GroupCheckBox_Click;
 
                 GroupsStackPanel.Children.Add(checkBox);
             }

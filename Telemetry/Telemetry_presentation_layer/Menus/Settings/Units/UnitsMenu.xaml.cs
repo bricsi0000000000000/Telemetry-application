@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -44,7 +45,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
                 UnitsStackPanel.Children.Add(new UnitItem(unit));
             }
 
-            SelectUnit(activeUnit);
+            SelectUnit(activeUnit, firstTime: true);
         }
 
         public void UpdateUnit(bool update)
@@ -63,9 +64,9 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
             }
         }
 
-        public void SelectUnit(Unit unit)
+        public void SelectUnit(Unit unit, bool firstTime = false)
         {
-            if (activeUnit.ID != unit.ID)
+            if (activeUnit.ID != unit.ID || firstTime)
             {
                 activeUnit = unit;
 
@@ -80,14 +81,52 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
 
         private void UpdateSelectedUnitUI()
         {
-            //TODO edit unit
+            SelectedUnitNameTextBox.Text = activeUnit.Name;
         }
 
-        public void ChangeUnitName(string newName)
+        public void ChangeUnitName(bool change, string newName = "")
         {
-            UnitOfMeasureManager.ChangeUnitOfMeasureName(activeUnit.ID, newName);
-            InitializeUnits();
+            if (change)
+            {
+                if (newName.Equals(string.Empty))
+                {
+                    ShowErrorMessage("Name can't be empty");
+                }
+                else
+                {
+                    if (!activeUnit.Name.Equals(newName))
+                    {
+                        UnitOfMeasureManager.ChangeUnitOfMeasureName(activeUnit.ID, newName);
+                        InitializeUnits();
+                    }
+                }
+            }
+
+            SetLoadingGrid(visibility: false);
         }
+
+        private void SetLoadingGrid(bool visibility)
+        {
+            LoadingGrid.Visibility = visibility ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="error">If true, it's an error message, if not, it's a regular one.</param>
+        /// <param name="time"></param>
+        private void ShowErrorMessage(string message, bool error = true, double time = 3)
+        {
+            ErrorSnackbar.Foreground = error ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary500)) :
+                                               new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+
+            ErrorSnackbar.MessageQueue.Enqueue(message, null, null, null, false, true, TimeSpan.FromSeconds(time));
+        }
+
+
+
+
 
         private void DeleteSectionCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -125,7 +164,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
         {
             ChangeUnitNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
 
-            var changeNameWindow = new PopUpEditWindow("Change unit", PopUpEditWindow.EditType.ChangeUnitName);
+            SetLoadingGrid(visibility: true);
+            var changeNameWindow = new PopUpEditWindow("Change name", PopUpEditWindow.EditType.ChangeUnitName);
             changeNameWindow.ShowDialog();
         }
 
@@ -139,6 +179,16 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
         {
             ChangeUnitNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
             Mouse.OverrideCursor = null;
+        }
+
+        private void AddUnitButton_Click(object sender, RoutedEventArgs e)
+        {
+            /*if (AddUnitNameTextBox.Text.Equals(string.Empty))
+            {
+                ShowErrorMessage("Name can't be empty");
+            }
+            activeUnit = UnitOfMeasureManager.UnitOfMeasures.Last();
+            InitializeUnits();*/
         }
     }
 }

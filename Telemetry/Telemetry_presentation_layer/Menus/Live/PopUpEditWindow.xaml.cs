@@ -43,7 +43,7 @@ namespace Telemetry_presentation_layer.Menus.Live
                     ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeName(change: true, ChaneNameTextBox.Text);
                     break;
                 case EditType.ChangeUnitName:
-                    ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).cha;
+                    ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).ChangeUnitName(change: true, ChaneNameTextBox.Text);
                     break;
             }
 
@@ -77,6 +77,7 @@ namespace Telemetry_presentation_layer.Menus.Live
                     ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeName(change: false);
                     break;
                 case EditType.ChangeUnitName:
+                    ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).ChangeUnitName(change: false);
                     break;
             }
 

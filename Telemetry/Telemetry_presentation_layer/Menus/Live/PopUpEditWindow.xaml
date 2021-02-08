@@ -42,7 +42,6 @@
                      VerticalContentAlignment="Bottom"
                      Margin="5"
                      Grid.Row="1"
-                     
                      />
             
             <Grid Grid.Row="2">
