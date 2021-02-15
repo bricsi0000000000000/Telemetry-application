@@ -23,7 +23,7 @@ namespace Telemetry_presentation_layer.Menus.Live
     /// </summary>
     public partial class PopUpWindow : Window
     {
-        public enum PopUpType { ChangeLiveStatus, ChangeUnit, DeleteSection, DeleteUnit }
+        public enum PopUpType { ChangeLiveStatus, DeleteSection, DeleteUnit }
 
         private readonly PopUpType popUpType;
 
@@ -51,9 +51,6 @@ namespace Telemetry_presentation_layer.Menus.Live
                     break;
                 case PopUpType.DeleteSection:
                     ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).DeleteSeciton(delete: true);
-                    break;
-                case PopUpType.ChangeUnit:
-                    ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).UpdateUnit(update: true);
                     break;
                 case PopUpType.DeleteUnit:
                     ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).DeleteUnit(delete: true);
@@ -92,11 +89,8 @@ namespace Telemetry_presentation_layer.Menus.Live
                 case PopUpType.DeleteSection:
                     ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).DeleteSeciton(delete: false);
                     break;
-                case PopUpType.ChangeUnit:
-                    ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).UpdateUnit(update: true);
-                    break;
                 case PopUpType.DeleteUnit:
-                    ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).DeleteUnit(delete: true);
+                    ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).DeleteUnit(delete: false);
                     break;
             }
             Close();

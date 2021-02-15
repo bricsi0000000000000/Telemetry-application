@@ -54,20 +54,20 @@ namespace Telemetry_data_and_logic_layer.Units
                         throw new Exception("Can't add unit of measure, because 'description' is null!");
                     }
 
-                    if (unitOfMeasuresJSON[i].Unit == null)
+                    if (unitOfMeasuresJSON[i].UnitOfMeasure == null)
                     {
-                        throw new Exception("Can't add unit of measure, because 'unit' is null!");
+                        throw new Exception("Can't add unit of measure, because 'unit of measure' is null!");
                     }
 
-                    if (unitOfMeasuresJSON[i].Unit.ToString().Equals(string.Empty))
+                    if (unitOfMeasuresJSON[i].UnitOfMeasure.ToString().Equals(string.Empty))
                     {
-                        throw new Exception("Can't add unit of measure, because 'unit' is empty!");
+                        throw new Exception("Can't add unit of measure, because 'unit of measure' is empty!");
                     }
 
                     AddUnitOfMeasure(new Unit(i,
                                               unitOfMeasuresJSON[i].Name.ToString(),
                                               unitOfMeasuresJSON[i].Description.ToString(),
-                                              unitOfMeasuresJSON[i].Unit.ToString()));
+                                              unitOfMeasuresJSON[i].UnitOfMeasure.ToString()));
                 }
             }
             catch (JsonReaderException)
@@ -79,7 +79,7 @@ namespace Telemetry_data_and_logic_layer.Units
         /// <summary>
         /// Saves unit of measures to file.
         /// </summary>
-        public static void SaveGroups()
+        public static void Save()
         {
             string fileName = TextManager.UnitOfMeasuresFileName;
             if (!File.Exists(fileName))
@@ -104,6 +104,7 @@ namespace Telemetry_data_and_logic_layer.Units
         public static void AddUnitOfMeasure(Unit unit) => UnitOfMeasures.Add(unit);
 
         public static Unit GetUnitOfMeasure(int id) => UnitOfMeasures.Find(x => x.ID == id);
+        public static Unit GetUnitOfMeasure(string name) => UnitOfMeasures.Find(x => x.Name.Equals(name));
 
         public static void RemoveUnitOfMeasure(int id) => UnitOfMeasures.Remove(GetUnitOfMeasure(id));
 

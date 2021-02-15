@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using Telemetry_data_and_logic_layer.Groups;
 using System.Linq;
 using Telemetry_presentation_layer.Errors;
+using Telemetry_data_and_logic_layer.Units;
 
 namespace Telemetry_presentation_layer.Charts
 {
@@ -158,7 +159,8 @@ namespace Telemetry_presentation_layer.Charts
 
             if (ValuesStackPanel.Children.Count == 0)
             {
-                ValuesStackPanel.Children.Add(new ChartValue("#4d4d4d", yAxisLabel, liveChartValues.Last()));
+                var unit = UnitOfMeasureManager.GetUnitOfMeasure(yAxisLabel);
+                ValuesStackPanel.Children.Add(new ChartValue("#4d4d4d", yAxisLabel, liveChartValues.Last(), unit == null ? "" : unit.UnitOfMeasure));
             }
             else
             {
@@ -236,7 +238,8 @@ namespace Telemetry_presentation_layer.Charts
                 {
                     if (HasChannelName(channel.Name))
                     {
-                        ValuesStackPanel.Children.Add(new ChartValue(channel.Color, channel.Name, dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last()));
+                        var unit = UnitOfMeasureManager.GetUnitOfMeasure(channel.Name);
+                        ValuesStackPanel.Children.Add(new ChartValue(channel.Color, channel.Name, dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last(), unit == null ? "" : unit.UnitOfMeasure));
                     }
                 }
             }

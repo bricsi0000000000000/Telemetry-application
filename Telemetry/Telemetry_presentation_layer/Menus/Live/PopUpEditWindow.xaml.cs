@@ -14,7 +14,7 @@ namespace Telemetry_presentation_layer.Menus.Live
     /// </summary>
     public partial class PopUpEditWindow : Window
     {
-        public enum EditType { ChangeSectionName, ChangeUnitName }
+        public enum EditType { ChangeSectionName }
         private EditType editType;
 
         public PopUpEditWindow(string title, EditType editType)
@@ -41,9 +41,6 @@ namespace Telemetry_presentation_layer.Menus.Live
             {
                 case EditType.ChangeSectionName:
                     ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeName(change: true, ChaneNameTextBox.Text);
-                    break;
-                case EditType.ChangeUnitName:
-                    ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).ChangeUnitName(change: true, ChaneNameTextBox.Text);
                     break;
             }
 
@@ -75,9 +72,6 @@ namespace Telemetry_presentation_layer.Menus.Live
             {
                 case EditType.ChangeSectionName:
                     ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeName(change: false);
-                    break;
-                case EditType.ChangeUnitName:
-                    ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).ChangeUnitName(change: false);
                     break;
             }
 

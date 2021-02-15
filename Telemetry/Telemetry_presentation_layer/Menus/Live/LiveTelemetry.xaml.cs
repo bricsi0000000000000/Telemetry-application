@@ -26,6 +26,7 @@ namespace Telemetry_presentation_layer.Menus.Live
     public partial class LiveTelemetry : UserControl
     {
         private Section activeSection;
+        private bool isActiveSection = false;
         private List<string> channelNames = new List<string>();
         private List<string> activeChannelNames = new List<string>();
         private List<Group> activeGroups = new List<Group>();
@@ -35,7 +36,7 @@ namespace Telemetry_presentation_layer.Menus.Live
         private const int getDataAmount = 5;
         private int yawAngleLastIndex = 0;
 
-        private List<Tuple<double, TimeSpan>> yawAngleData = new List<Tuple<double, TimeSpan>>();
+        private List<Tuple<double, TimeSpan>> yawAngleData = new List<Tuple<double, TimeSpan>>(); 
         private object getDataLock = new object();
         private AutoResetEvent getDataSignal = new AutoResetEvent(false);
 
@@ -52,6 +53,16 @@ namespace Telemetry_presentation_layer.Menus.Live
             UpdateSectionTitle();
             UpdateCanRecieveDataStatus();
             InitilaizeHttpClient();
+            UpdateNoGrids();
+        }
+
+        private void UpdateNoGrids()
+        {
+            NoSectionGrid.Visibility = isActiveSection ? Visibility.Hidden : Visibility.Visible;
+            NoChannelsGrid.Visibility = isActiveSection ? Visibility.Hidden : Visibility.Visible;
+            NoGroupsGrid.Visibility = isActiveSection ? Visibility.Hidden : Visibility.Visible;
+            NoChartsGrid.Visibility = isActiveSection ? Visibility.Hidden : Visibility.Visible;
+            RecieveDataStatusIcon.Opacity = isActiveSection ? 1 : .2f;
         }
 
         private void InitilaizeHttpClient()
@@ -85,11 +96,11 @@ namespace Telemetry_presentation_layer.Menus.Live
             GroupsStackPanel.Children.Clear();
             foreach (var group in GroupManager.Groups)
             {
-                 var checkBox = new CheckBox()
-                 {
-                     Content = group.Name
-                 };
-                 checkBox.Click += GroupCheckBox_Click;
+                var checkBox = new CheckBox()
+                {
+                    Content = group.Name
+                };
+                checkBox.Click += GroupCheckBox_Click;
 
                 GroupsStackPanel.Children.Add(checkBox);
             }
@@ -120,6 +131,7 @@ namespace Telemetry_presentation_layer.Menus.Live
         private void InitializeChannels()
         {
             ChannelsStackPanel.Children.Clear();
+
             foreach (var channelName in channelNames)
             {
                 var checkBox = new CheckBox()
@@ -144,6 +156,7 @@ namespace Telemetry_presentation_layer.Menus.Live
             {
                 activeChannelNames.Remove(content);
             }
+
             InitializeCharts();
         }
 
@@ -154,6 +167,11 @@ namespace Telemetry_presentation_layer.Menus.Live
         public void UpdateSection(Section section, List<string> channelNames)
         {
             activeSection = section;
+
+            isActiveSection = true;
+
+            UpdateNoGrids();
+
             this.channelNames = channelNames;
             activeChannelNames.Clear();
             activeGroups.Clear();
@@ -366,41 +384,53 @@ namespace Telemetry_presentation_layer.Menus.Live
 
         private void RecieveDataStatusCard_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            RecieveDataStatusCard.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
+            if (isActiveSection)
+            {
+                RecieveDataStatusCard.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
+            }
         }
 
         private void RecieveDataStatusCard_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            RecieveDataStatusCard.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
-
-            canUpdateCharts = !canUpdateCharts;
-            UpdateCanRecieveDataStatus();
-
-            if (canUpdateCharts)
+            if (isActiveSection)
             {
-                var t2 = new Thread(new ThreadStart(CollectData));
-                t2.Start();
+                RecieveDataStatusCard.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
 
-                var updateThread = new Thread(new ThreadStart(UpdateCharts));
-                updateThread.Start();
-            }
-            else
-            {
-                Application.Current.Dispatcher.Invoke(() =>
+                canUpdateCharts = !canUpdateCharts;
+                UpdateCanRecieveDataStatus();
+
+                if (canUpdateCharts)
                 {
-                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).UpdateCarStatus(new List<TimeSpan>(), -1);
-                });
+                    var collectDataThread = new Thread(new ThreadStart(CollectData));
+                    collectDataThread.Start();
+
+                    var updateThread = new Thread(new ThreadStart(UpdateCharts));
+                    updateThread.Start();
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).UpdateCarStatus(new List<TimeSpan>(), -1);
+                    });
+                }
             }
         }
 
         private void RecieveDataStatusCard_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            RecieveDataStatusCard.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+            if (isActiveSection)
+            {
+                RecieveDataStatusCard.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+            }
         }
 
         private void RecieveDataStatusCard_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            RecieveDataStatusCard.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+            if (isActiveSection)
+            {
+                RecieveDataStatusCard.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+            }
         }
 
         private void UpdateCanRecieveDataStatus()

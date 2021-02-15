@@ -14,7 +14,7 @@ namespace Telemetry_presentation_layer.Charts
         /// <param name="color"><see cref="Color"/> of the channel.</param>
         /// <param name="channelName">Channel name.</param>
         /// <param name="value">Channel value.</param>
-        public ChartValue(string color, string channelName, double value, string unitOfMeasure = "")
+        public ChartValue(string color, string channelName, double value, string unitOfMeasure)
         {
             InitializeComponent();
 

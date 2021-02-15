@@ -10,28 +10,38 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:controls="clr-namespace:WpfMath.Controls;assembly=WpfMath"
         Height="400"
-        Width="400"
-        ResizeMode="NoResize"
+        Width="500"
         WindowStartupLocation="CenterScreen" 
         WindowState="Normal"
         WindowStyle="None"
         ShowInTaskbar="False" 
         Topmost="True"
         Background="Transparent"
-        AllowsTransparency="True">
+        AllowsTransparency="True"
+        xmlns:validation="clr-namespace:Telemetry_presentation_layer.ValidationRules"
+        d:DataContext="{d:DesignInstance validation:FieldsViewModel, IsDesignTimeCreatable=False}"
+        >
 
     <materialDesign:Card Margin="50"
                          materialDesign:ShadowAssist.ShadowDepth="Depth5"
                          UniformCornerRadius="5"
                          >
-        <Grid Margin="5">
+        <Grid Margin="5"
+              Expander.Collapsed="Grid_Collapsed"
+              Expander.Expanded="Grid_Expanded">
             <Grid.RowDefinitions>
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
 
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
             <TextBlock Text="Add unit of measure"
+                       Grid.ColumnSpan="2"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"
                        Margin="5"
@@ -39,81 +49,129 @@
                        />
 
             <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="65"/>
+                    <RowDefinition Height="65"/>
+                    <RowDefinition Height="65"/>
+                </Grid.RowDefinitions>
 
                 <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="50"/>
-                        <RowDefinition Height="50"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                    <TextBox Name="AddNameTextBox"
-                             HorizontalAlignment="Stretch"
-                             VerticalContentAlignment="Bottom"
-                             Margin="5"
-                              materialDesign:HintAssist.Hint="Large Font"
-                    materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-                    materialDesign:HintAssist.FloatingScale="0.50"
-                    Text="Some Text"
-                              SpellCheck.IsEnabled="True"
-                    Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                             />
+                    <materialDesign:PackIcon Grid.Column="0"
+                                             Kind="RenameBox"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Center"
+                                             Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}"/>
 
-                    <TextBox Name="AddFormulaTextBox"
-                             Grid.Row="1"
-                             HorizontalAlignment="Stretch"
-                             VerticalContentAlignment="Bottom"
-                             Margin="5"
-                             materialDesign:HintAssist.Hint="Unit of measure"
+                    <TextBox x:Name="NameTextBox"
+                             Grid.Column="1"
+                             materialDesign:HintAssist.Hint="Name"
                              materialDesign:HintAssist.IsFloating="True"
-                             Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
-                             />
-
-                    <TextBox Name="AddDescriptionTextBox"
-                             Grid.Row="2"
-                             HorizontalAlignment="Stretch"
-                             VerticalContentAlignment="Bottom"
-                             Margin="5"
-                             materialDesign:HintAssist.Hint="Description"
-                             materialDesign:HintAssist.IsFloating="True"
-                             Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
-                             />
+                             Margin="0,0,0,15"
+                             >
+                        <TextBox.Text>
+                            <Binding Path="Name"
+                                     UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
                 </Grid>
 
-                <Grid Grid.Column="1"
-                      Name="HelpGrid"
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <materialDesign:PackIcon Grid.Column="0"
+                                                Kind="MathCompass"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Foreground="{Binding ElementName=FormulaTextBox, Path=BorderBrush}"/>
+
+                    <TextBox x:Name="FormulaTextBox"
+                                Grid.Column="1"
+                                materialDesign:HintAssist.Hint="Unit of measure"
+                                materialDesign:HintAssist.IsFloating="True"
+                                Margin="0,0,0,15"
+                                >
+                        <TextBox.Text>
+                            <Binding Path="Formula"
+                                    UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                </Grid>
+
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <materialDesign:PackIcon Grid.Column="0"
+                                             Kind="Text"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Center"
+                                             Foreground="{DynamicResource Secondary}"
+                                             />
+
+                    <TextBox x:Name="DescriptionTextBox"
+                             Grid.Column="1"
+                             materialDesign:HintAssist.Hint="Unit of measure"
+                             materialDesign:HintAssist.IsFloating="True"
+                             materialDesign:HintAssist.HelperText="Optional"
+                             Margin="0,0,0,15"
+                             />
+                </Grid>
+            </Grid>
+
+            <Expander Grid.Column="1"
+                      Grid.Row="1"
+                      ExpandDirection="Right"
+                      VerticalAlignment="Stretch"
+                      Background="{DynamicResource Expander}"
+                      Margin="5,0,0,0"
                       >
+                <Expander.Header>
+                    <materialDesign:PackIcon Kind="Information"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Center"
+                                             Opacity=".2"
+                                             Margin="0,0,0,60"
+                                             />
+                </Expander.Header>
+
+                <Grid Margin="0,10,0,0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
                         <RowDefinition Height="45"/>
+                        <RowDefinition Height="5"/>
                         <RowDefinition Height="45"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <Label Content="Little help"
-                           VerticalAlignment="Stretch"
-                           HorizontalAlignment="Stretch"
-                           VerticalContentAlignment="Top"
-                           HorizontalContentAlignment="Center"
-                           FontStyle="Italic"
-                           />
-
-                    <Grid Grid.Row="1">
+                    <Grid Grid.Row="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="2*"/>
                         </Grid.ColumnDefinitions>
 
                         <controls:FormulaControl VerticalContentAlignment="Center"
-                                                 HorizontalContentAlignment="Stretch"
-                                                 Style="{StaticResource ClearTypeFormula}"
-                                                 Formula="\frac{km}{h}"
-                                                 RenderTransformOrigin="0.5,0.5"
-                                                 >
+                                                    HorizontalContentAlignment="Stretch"
+                                                    Style="{StaticResource ClearTypeFormula}"
+                                                    Formula="\frac{km}{h}"
+                                                    RenderTransformOrigin="0.5,0.5"
+                                                    >
                             <controls:FormulaControl.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform ScaleX="0.6" ScaleY="0.6"/>
@@ -138,6 +196,11 @@
                                  />
                     </Grid>
 
+                    <Separator Grid.Row="1"
+                               Background="{DynamicResource Secondary300}"
+                               Margin="5,0"
+                               />
+                    
                     <Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -152,7 +215,7 @@
                                                  >
                             <controls:FormulaControl.RenderTransform>
                                 <TransformGroup>
-                                    <ScaleTransform ScaleX="0.6" ScaleY="0.6"/>
+                                    <ScaleTransform ScaleX="0.8" ScaleY="0.8"/>
                                     <SkewTransform/>
                                     <RotateTransform/>
                                     <TranslateTransform/>
@@ -174,20 +237,10 @@
                                  />
                     </Grid>
                 </Grid>
+            </Expander>
 
-                <Grid Grid.Column="1"
-                      Background="White"
-                      Name="HelpIconGrid"
-                      >
-                    <materialDesign:PackIcon Kind="Information"
-                                             Opacity=".1"
-                                             VerticalAlignment="Stretch"
-                                             HorizontalAlignment="Stretch"
-                                             />
-                </Grid>
-            </Grid>
-
-           <!-- <Grid Grid.Row="2">
+            <Grid Grid.Row="2"
+                  Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -228,7 +281,7 @@
                                              Foreground="{DynamicResource Delete}"
                                              />
                 </materialDesign:Card>
-            </Grid>-->
+            </Grid>
         </Grid>
     </materialDesign:Card>
 </Window>

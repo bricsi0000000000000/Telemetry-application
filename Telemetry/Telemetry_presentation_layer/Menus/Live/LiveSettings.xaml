@@ -64,7 +64,7 @@
                 <Grid x:Name="NoSectionsGrid"
                         Background="White">
                     <materialDesign:PackIcon Kind="CardsVariant"
-                                                Opacity=".1"
+                                                Opacity=".2"
                                                 VerticalAlignment="Stretch"
                                                 HorizontalAlignment="Stretch"
                                                 />
@@ -244,7 +244,7 @@
                                   Grid.RowSpan="5"
                                   >
                                 <materialDesign:PackIcon Kind="CardText"
-                                                         Opacity=".1"
+                                                         Opacity=".2"
                                                          VerticalAlignment="Stretch"
                                                          HorizontalAlignment="Stretch"
                                                          />

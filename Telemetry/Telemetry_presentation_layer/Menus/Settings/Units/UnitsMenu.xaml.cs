@@ -15,6 +15,7 @@ using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.Units;
 using Telemetry_presentation_layer.Converters;
 using Telemetry_presentation_layer.Menus.Live;
+using Telemetry_presentation_layer.ValidationRules;
 
 namespace Telemetry_presentation_layer.Menus.Settings.Units
 {
@@ -24,16 +25,30 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
     public partial class UnitsMenu : UserControl
     {
         private Unit activeUnit;
+        private bool isUnitSelected = false;
+        private GridLength expanderHeight = GridLength.Auto;
 
         public UnitsMenu()
         {
             InitializeComponent();
 
+            DataContext = new FieldsViewModel();
+
             if (UnitOfMeasureManager.UnitOfMeasures.Count > 0)
             {
-                activeUnit = UnitOfMeasureManager.UnitOfMeasures[0];
+                activeUnit = UnitOfMeasureManager.UnitOfMeasures.First();
                 InitializeUnits();
             }
+
+            UpdateSelectedSectionButtons();
+        }
+
+        private void UpdateSelectedSectionButtons()
+        {
+            DeleteSectionCardButton.Background = isUnitSelected ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900) :
+                                                                  ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary200);
+
+            NoUnitSelectedGrid.Visibility = isUnitSelected ? Visibility.Hidden : Visibility.Visible;
         }
 
         private void InitializeUnits()
@@ -44,31 +59,41 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
             {
                 UnitsStackPanel.Children.Add(new UnitItem(unit));
             }
-
-            SelectUnit(activeUnit, firstTime: true);
         }
 
-        public void UpdateUnit(bool update)
+        public void AddUnit(Unit unit, bool add)
         {
-            if (update)
+            if (add)
             {
-
+                UnitOfMeasureManager.AddUnitOfMeasure(unit);
+                UnitOfMeasureManager.Save();
+                activeUnit = UnitOfMeasureManager.UnitOfMeasures.Last();
+                InitializeUnits();
             }
+
+            SetLoadingGrid(visibility: false);
         }
 
         public void DeleteUnit(bool delete)
         {
             if (delete)
             {
-
+                UnitOfMeasureManager.RemoveUnitOfMeasure(activeUnit.ID);
+                UnitOfMeasureManager.Save();
+                activeUnit = UnitOfMeasureManager.UnitOfMeasures.Last();
+                InitializeUnits();
             }
+
+            SetLoadingGrid(visibility: false);
         }
 
-        public void SelectUnit(Unit unit, bool firstTime = false)
+        public void SelectUnit(Unit unit)
         {
-            if (activeUnit.ID != unit.ID || firstTime)
+            if (activeUnit.ID != unit.ID || !isUnitSelected)
             {
                 activeUnit = unit;
+
+                isUnitSelected = true;
 
                 UpdateSelectedUnitUI();
 
@@ -77,32 +102,51 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
                     ((UnitItem)item).ChangeColor(((UnitItem)item).Unit.ID == unit.ID);
                 }
             }
+
+            UpdateSelectedSectionButtons();
         }
 
         private void UpdateSelectedUnitUI()
         {
             SelectedUnitNameTextBox.Text = activeUnit.Name;
+            SelectedUnitFormulaTextBox.Text = activeUnit.UnitOfMeasure;
+            UnitOfMeasureFormulaControl.Formula = activeUnit.UnitOfMeasure;
         }
 
-        public void ChangeUnitName(bool change, string newName = "")
+        public void ChangeUnitName(string newName)
         {
-            if (change)
+            if (newName.Equals(string.Empty))
             {
-                if (newName.Equals(string.Empty))
+                ShowErrorMessage("Name can't be empty");
+            }
+            else
+            {
+                if (!activeUnit.Name.Equals(newName))
                 {
-                    ShowErrorMessage("Name can't be empty");
-                }
-                else
-                {
-                    if (!activeUnit.Name.Equals(newName))
-                    {
-                        UnitOfMeasureManager.ChangeUnitOfMeasureName(activeUnit.ID, newName);
-                        InitializeUnits();
-                    }
+                    UnitOfMeasureManager.ChangeUnitOfMeasureName(activeUnit.ID, newName);
+                    UnitOfMeasureManager.Save();
+                    InitializeUnits();
+                    ShowErrorMessage("Saved", error: false);
                 }
             }
+        }
 
-            SetLoadingGrid(visibility: false);
+        public void ChangeUnitFormula(string newFormula)
+        {
+            if (newFormula.Equals(string.Empty))
+            {
+                ShowErrorMessage("Unit of measure can't be empty");
+            }
+            else
+            {
+                if (!activeUnit.UnitOfMeasure.Equals(newFormula))
+                {
+                    UnitOfMeasureManager.ChangeUnitOfMeasureFormula(activeUnit.ID, newFormula);
+                    UnitOfMeasureManager.Save();
+                    InitializeUnits();
+                    ShowErrorMessage("Saved", error: false);
+                }
+            }
         }
 
         private void SetLoadingGrid(bool visibility)
@@ -118,7 +162,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
         /// <param name="time"></param>
         private void ShowErrorMessage(string message, bool error = true, double time = 3)
         {
-            ErrorSnackbar.Foreground = error ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary500)) :
+            ErrorSnackbar.Foreground = error ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary400)) :
                                                new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
 
             ErrorSnackbar.MessageQueue.Enqueue(message, null, null, null, false, true, TimeSpan.FromSeconds(time));
@@ -130,65 +174,116 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
 
         private void DeleteSectionCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
+            if (isUnitSelected)
+            {
+                DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
+            }
         }
 
         private void DeleteSectionCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+            if (isUnitSelected)
+            {
+                DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
 
-            var deleteSectionWindow = new PopUpWindow($"You are about to delete {activeUnit.Name}\n" +
-                                                      $"Are you sure about that?",
-                                                      PopUpWindow.PopUpType.DeleteUnit);
-            deleteSectionWindow.ShowDialog();
+                SetLoadingGrid(visibility: true);
+                var deleteSectionWindow = new PopUpWindow($"You are about to delete '{activeUnit.Name}'\n" +
+                                                          $"Are you sure about that?",
+                                                          PopUpWindow.PopUpType.DeleteUnit);
+                deleteSectionWindow.ShowDialog();
+            }
         }
 
         private void DeleteSectionCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
-            Mouse.OverrideCursor = Cursors.Hand;
+            if (isUnitSelected)
+            {
+                DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+                Mouse.OverrideCursor = Cursors.Hand;
+            }
         }
 
         private void DeleteSectionCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
-            Mouse.OverrideCursor = null;
+            if (isUnitSelected)
+            {
+                DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+                Mouse.OverrideCursor = null;
+            }
         }
 
-        private void ChangeSectionNameCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ChangeNameCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ChangeUnitNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            ChangeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
         }
 
-        private void ChangeSectionNameCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ChangeNameCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ChangeUnitNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
 
-            SetLoadingGrid(visibility: true);
-            var changeNameWindow = new PopUpEditWindow("Change name", PopUpEditWindow.EditType.ChangeUnitName);
-            changeNameWindow.ShowDialog();
+            ChangeUnitName(SelectedUnitNameTextBox.Text);
         }
 
-        private void ChangeSectionNameCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        private void ChangeNameCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ChangeUnitNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
-        private void ChangeSectionNameCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void ChangeNameCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ChangeUnitNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            ChangeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            Mouse.OverrideCursor = null;
+        }
+
+        private void ChangeSectionFormulaCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ChangeUnitFormulaCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+        }
+
+        private void ChangeSectionFormulaCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ChangeUnitFormulaCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
+            ChangeUnitFormula(SelectedUnitFormulaTextBox.Text);
+        }
+
+        private void ChangeSectionFormulaCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ChangeUnitFormulaCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void ChangeSectionFormulaCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ChangeUnitFormulaCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
             Mouse.OverrideCursor = null;
         }
 
         private void AddUnitButton_Click(object sender, RoutedEventArgs e)
         {
-            /*if (AddUnitNameTextBox.Text.Equals(string.Empty))
+            SetLoadingGrid(visibility: true);
+            var addUnitOfMeasureWindow = new AddUnitOfMeasureWindow();
+            addUnitOfMeasureWindow.ShowDialog();
+        }
+
+        private void Grid_Collapsed(object sender, RoutedEventArgs e)
+        {
+            var grid = sender as Grid;
+            if (grid != null)
             {
-                ShowErrorMessage("Name can't be empty");
+                expanderHeight = grid.RowDefinitions[2].Height;
+                grid.RowDefinitions[2].Height = GridLength.Auto;
             }
-            activeUnit = UnitOfMeasureManager.UnitOfMeasures.Last();
-            InitializeUnits();*/
+        }
+
+        private void Grid_Expanded(object sender, RoutedEventArgs e)
+        {
+            var grid = sender as Grid;
+            if (grid != null)
+            {
+                grid.RowDefinitions[2].Height = expanderHeight;
+            }
         }
     }
 }
