@@ -1,0 +1,317 @@
+﻿<UserControl x:Class="Telemetry_presentation_layer.Menus.Settings.Units.UnitsMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Telemetry_presentation_layer.Menus.Settings.Units"
+             mc:Ignorable="d" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             d:DesignHeight="450" d:DesignWidth="800"
+             xmlns:validation="clr-namespace:Telemetry_presentation_layer.ValidationRules"
+             d:DataContext="{d:DesignInstance validation:FieldsViewModel, IsDesignTimeCreatable=False}"
+             xmlns:controls="clr-namespace:WpfMath.Controls;assembly=WpfMath"
+             >
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <ScrollViewer>
+            <StackPanel x:Name="UnitsStackPanel"/>
+        </ScrollViewer>
+
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+
+            <materialDesign:Card Margin="0,5,0,5"
+                                UniformCornerRadius="5"
+                                materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                >
+                <Grid>
+                    <Grid  Expander.Collapsed="Grid_Collapsed"
+                           Expander.Expanded="Grid_Expanded">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="65"/>
+                            <RowDefinition Height="65"/>
+                            <RowDefinition Height="65"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="80"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox Name="SelectedUnitNameTextBox"
+                                     VerticalAlignment="Stretch"
+                                     HorizontalAlignment="Stretch"
+                                     VerticalContentAlignment="Center"
+                                     HorizontalContentAlignment="Left"
+                                     materialDesign:HintAssist.Hint="Name"
+                                     materialDesign:HintAssist.IsFloating="True"
+                                     Margin="5,0,0,15"
+                                     >
+                                <TextBox.Text>
+                                    <Binding Path="Name"
+                                             UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+
+                            <materialDesign:Card Name="ChangeNameCardButton"
+                                                 Grid.Column="1"
+                                                 UniformCornerRadius="5"
+                                                 Margin="5"
+                                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                                 PreviewMouseLeftButtonDown="ChangeNameCardButton_PreviewMouseLeftButtonDown"
+                                                 PreviewMouseLeftButtonUp="ChangeNameCardButton_PreviewMouseLeftButtonUp"
+                                                 MouseEnter="ChangeNameCardButton_MouseEnter"
+                                                 MouseLeave="ChangeNameCardButton_MouseLeave"
+                                                 >
+                                <materialDesign:PackIcon Kind="ContentSave"
+                                                         VerticalAlignment="Stretch"
+                                                         HorizontalAlignment="Stretch"
+                                                         />
+                            </materialDesign:Card>
+                        </Grid>
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="80"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox Name="SelectedUnitFormulaTextBox"
+                                     VerticalAlignment="Stretch"
+                                     HorizontalAlignment="Stretch"
+                                     VerticalContentAlignment="Center"
+                                     HorizontalContentAlignment="Left"
+                                     Grid.Column="0"
+                                     materialDesign:HintAssist.Hint="Unit of measure"
+                                     materialDesign:HintAssist.IsFloating="True"
+                                     Margin="5,0,0,15"
+                                     >
+                                <TextBox.Text>
+                                    <Binding Path="Formula"
+                                             UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+
+                            <controls:FormulaControl Grid.Column="1"
+                                                     Name="UnitOfMeasureFormulaControl"
+                                                     VerticalContentAlignment="Center"
+                                                     HorizontalContentAlignment="Center"
+                                                     Style="{StaticResource ClearTypeFormula}"
+                                                     RenderTransformOrigin="0.5,0.5"
+                                                     >
+                                <controls:FormulaControl.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="0.8" ScaleY="0.8"/>
+                                        <SkewTransform/>
+                                        <RotateTransform/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </controls:FormulaControl.RenderTransform>
+                            </controls:FormulaControl>
+
+                            <materialDesign:Card Name="ChangeUnitFormulaCardButton"
+                                                 Grid.Column="2"
+                                                 Margin="5"
+                                                 UniformCornerRadius="5"
+                                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                                 PreviewMouseLeftButtonDown="ChangeSectionFormulaCardButton_PreviewMouseLeftButtonDown"
+                                                 PreviewMouseLeftButtonUp="ChangeSectionFormulaCardButton_PreviewMouseLeftButtonUp"
+                                                 MouseEnter="ChangeSectionFormulaCardButton_MouseEnter"
+                                                 MouseLeave="ChangeSectionFormulaCardButton_MouseLeave"
+                                                 >
+                                <materialDesign:PackIcon Kind="ContentSave"
+                                                         VerticalAlignment="Stretch"
+                                                         HorizontalAlignment="Stretch"
+                                                         />
+                            </materialDesign:Card>
+                        </Grid>
+
+                        <Expander Grid.Row="2"
+                                  ExpandDirection="Down"
+                                  VerticalAlignment="Stretch"
+                                  Margin="5,0,5,0"
+                                  Background="{DynamicResource Expander}"
+                                  >
+                            <Expander.Header>
+                                <materialDesign:PackIcon Kind="Information"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Center"
+                                             Opacity=".2"
+                                             />
+                            </Expander.Header>
+
+                            <Grid Margin="0,10,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="45"/>
+                                    <RowDefinition Height="5"/>
+                                    <RowDefinition Height="45"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <controls:FormulaControl VerticalContentAlignment="Center"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    Style="{StaticResource ClearTypeFormula}"
+                                                    Formula="\frac{km}{h}"
+                                                    RenderTransformOrigin="0.5,0.5"
+                                                    >
+                                        <controls:FormulaControl.RenderTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform ScaleX="0.6" ScaleY="0.6"/>
+                                                <SkewTransform/>
+                                                <RotateTransform/>
+                                                <TranslateTransform/>
+                                            </TransformGroup>
+                                        </controls:FormulaControl.RenderTransform>
+                                    </controls:FormulaControl>
+
+                                    <TextBox Grid.Column="1"
+                                             TextWrapping="Wrap"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             VerticalContentAlignment="Center"
+                                             HorizontalContentAlignment="Left"
+                                             Margin="5"
+                                             IsReadOnly="True"
+                                             materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                                             BorderThickness="0"
+                                             Text="\frac{km}{h}"
+                                             />
+                                </Grid>
+
+                                <Separator Grid.Row="1"
+                                           Background="{DynamicResource Secondary300}"
+                                           Margin="5,0"
+                                           />
+
+                                <Grid Grid.Row="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <controls:FormulaControl VerticalContentAlignment="Center"
+                                                             HorizontalContentAlignment="Stretch"
+                                                             Style="{StaticResource ClearTypeFormula}"
+                                                             Formula="C^{\circ}"
+                                                             RenderTransformOrigin="0.5,0.5"
+                                                             >
+                                        <controls:FormulaControl.RenderTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform ScaleX="0.6" ScaleY="0.6"/>
+                                                <SkewTransform/>
+                                                <RotateTransform/>
+                                                <TranslateTransform/>
+                                            </TransformGroup>
+                                        </controls:FormulaControl.RenderTransform>
+                                    </controls:FormulaControl>
+
+                                    <TextBox Grid.Column="1"
+                                             TextWrapping="Wrap"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             VerticalContentAlignment="Center"
+                                             HorizontalContentAlignment="Left"
+                                             Margin="5"
+                                             IsReadOnly="True"
+                                             materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                                             BorderThickness="0"
+                                             Text="C^{\circ}"
+                                             />
+                                </Grid>
+                            </Grid>
+                        </Expander>
+
+
+                    </Grid>
+
+                    <Grid x:Name="NoUnitSelectedGrid"
+                          Background="White"
+                          Visibility="Hidden"
+                          >
+                        <materialDesign:PackIcon Kind="Edit"
+                                                 VerticalAlignment="Center"
+                                                 HorizontalAlignment="Center"
+                                                 Opacity=".2"
+                                                 />
+                    </Grid>
+                </Grid>
+            </materialDesign:Card>
+
+            <materialDesign:Card Name="DeleteSectionCardButton"
+                                 Grid.Row="1"
+                                 UniformCornerRadius="5"
+                                 Margin="0,0,0,5"
+                                 Background="{DynamicResource Delete}"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                 PreviewMouseLeftButtonDown="DeleteSectionCardButton_PreviewMouseLeftButtonDown"
+                                 PreviewMouseLeftButtonUp="DeleteSectionCardButton_PreviewMouseLeftButtonUp"
+                                 MouseEnter="DeleteSectionCardButton_MouseEnter"
+                                 MouseLeave="DeleteSectionCardButton_MouseLeave"
+                                 >
+                <materialDesign:PackIcon Kind="Delete"
+                                                VerticalAlignment="Stretch"
+                                                HorizontalAlignment="Stretch"
+                                                Foreground="White"
+                                                />
+            </materialDesign:Card>
+        </Grid>
+
+        <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
+
+        <Button Grid.ColumnSpan="5"
+            Name="AddLiveSectionButton"
+            Margin="10"
+            Click="AddUnitButton_Click"
+            Style="{StaticResource MaterialDesignFloatingActionButton}"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Right"
+            >
+            <materialDesign:PackIcon Kind="Add"/>
+        </Button>
+
+        <Grid Grid.ColumnSpan="5"
+            Name="LoadingGrid"
+            Background="{DynamicResource Secondary}"
+            Opacity=".8"
+            Visibility="Hidden"
+            />
+
+        <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
+                                x:Name="ErrorSnackbar"
+                                Grid.ColumnSpan="5"
+                                Background="{DynamicResource Secondary}"
+                                />
+    </Grid>
+</UserControl>

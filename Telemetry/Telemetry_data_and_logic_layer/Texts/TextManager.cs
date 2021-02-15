@@ -21,6 +21,12 @@
         public static string SettingsMenuName { get; private set; } = "Settings";
 
         /// <summary>
+        /// Name of the live menu.
+        /// "Live"
+        /// </summary>
+        public static string LiveMenuName { get; private set; } = "Live";
+
+        /// <summary>
         /// Name of the diagrams menu.
         /// "Diagrams"
         /// </summary>
@@ -52,6 +58,12 @@
         /// "Groups"
         /// </summary>
         public static string GroupsSettingsName { get; private set; } = "Groups";
+
+        /// <summary>
+        /// Name of the group unit of measures.
+        /// "Units"
+        /// </summary>
+        public static string UnitsSettingsName { get; private set; } = "Units";
 
         /// <summary>
         /// Name of the file settings menu.
@@ -112,6 +124,12 @@
         /// "groups.json"
         /// </summary>
         public static string GroupsFileName { get; private set; } = "groups.json";
+
+        /// <summary>
+        /// Name of the unit of measures file.
+        /// "unit_of_measures.json"
+        /// </summary>
+        public static string UnitOfMeasuresFileName { get; private set; } = "unit_of_measures.json";
         #endregion
 
         #region input file default channel names

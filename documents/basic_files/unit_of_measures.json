@@ -1,0 +1,27 @@
+[
+  {
+    "Name" : "time",
+    "Description" : "Idő századonként mérve",
+    "Unit" : "s"
+  },
+  {
+    "Name" : "yaw_angle",
+    "Description" : "Autó elfordulása a függőleges tengelye körül (perdület)",
+    "Unit" : "\\frac{deg}{sec}"
+  },
+  {
+    "Name" : "speed",
+    "Description" : "Az autó sebessége az ECU-ból",
+    "Unit" : "\\frac{km}{h}"
+  },
+  {
+    "Name" : "Gsum",
+    "Description" : "",
+    "Unit" : "KW^{\\circ}"
+  },
+  {
+    "Name" : "tfuel",
+    "Description" : "fuel temperature",
+    "Unit" : "C^{\\circ}"
+  }
+]

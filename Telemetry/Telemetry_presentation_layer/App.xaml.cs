@@ -13,5 +13,6 @@ namespace Telemetry_presentation_layer
     /// </summary>
     public partial class App : Application
     {
+    
     }
 }

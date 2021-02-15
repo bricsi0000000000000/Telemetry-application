@@ -9,51 +9,25 @@
              Background="{DynamicResource MaterialDesignPaper}"
              TextElement.FontSize="14"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="4*"/>
-        </Grid.ColumnDefinitions>
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="50"/>
-                </Grid.ColumnDefinitions>
-
-                <Label Content="Sections"
-                       VerticalContentAlignment="Center"
-                       HorizontalContentAlignment="Center"/>
-
-                <materialDesign:Card Name="RefreshSectionsButton"
-                                     Grid.Column="1"
-                                     UniformCornerRadius="5"
-                                     Margin="5"
-                                     MouseEnter="RefreshSectionsButton_MouseEnter"
-                                     MouseLeave="RefreshSectionsButton_MouseLeave"
-                                     PreviewMouseLeftButtonDown="RefreshSectionsButton_PreviewMouseLeftButtonDown"
-                                     PreviewMouseLeftButtonUp="RefreshSectionsButton_PreviewMouseLeftButtonUp"
-                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                     Background="{DynamicResource Secondary}"
-                                     Foreground="White"
-                                     >
-                    <materialDesign:PackIcon Kind="Refresh"
-                                             VerticalAlignment="Center"
-                                             HorizontalAlignment="Center"
-                                             />
-                </materialDesign:Card>
-            </Grid>
-            
-            <StackPanel Grid.Row="1"
-                        x:Name="SectionsStackPanel"/>
-        </Grid>
-
-    </Grid>
+    <dragablz:TabablzControl TabStripPlacement="Left" x:Name="TabsTabControl">
+        <TabControl.Resources>
+            <Style TargetType="{x:Type TabItem}">
+                <Setter Property="HeaderTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <ContentPresenter Content="{TemplateBinding Content}">
+                                <ContentPresenter.LayoutTransform>
+                                    <RotateTransform Angle="270" />
+                                </ContentPresenter.LayoutTransform>
+                            </ContentPresenter>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Padding" Value="3" />
+            </Style>
+        </TabControl.Resources>
+    </dragablz:TabablzControl>
 </UserControl>

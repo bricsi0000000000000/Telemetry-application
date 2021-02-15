@@ -32,7 +32,10 @@
                       SelectionChanged="ChooseInputFileCombobox_SelectionChanged" />
 
             <materialDesign:Card Grid.Row="1"
-                                 Margin="5,2,0,0">
+                                 Margin="5,2,0,0"
+                                 UniformCornerRadius="5"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                 >
                 <ScrollViewer Margin="5">
                     <StackPanel Name="ChannelsStackPanel" />
                 </ScrollViewer>
@@ -41,7 +44,10 @@
             <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
 
             <materialDesign:Card Grid.Row="3"
-                                 Margin="5,0,0,5">
+                                 Margin="5,0,0,5"
+                                 UniformCornerRadius="5"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                 >
                 <ScrollViewer Margin="5">
                     <StackPanel Name="GroupsStackPanel" />
                 </ScrollViewer>
@@ -65,7 +71,9 @@
                     Margin="5,0"
                     ValueChanged="DataSlider_ValueChanged"
                     IsSnapToTickEnabled="True"
-                    TickFrequency="1" />
+                    TickFrequency="1"
+                    VerticalAlignment="Center"
+                    />
         </Grid>
 
         <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />

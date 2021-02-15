@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using Telemetry_data_and_logic_layer.Groups;
 using System.Linq;
 using Telemetry_presentation_layer.Errors;
+using Telemetry_data_and_logic_layer.Units;
 
 namespace Telemetry_presentation_layer.Charts
 {
@@ -17,7 +18,8 @@ namespace Telemetry_presentation_layer.Charts
     {
         private PlottableScatterHighlight plottableScatterHighlight;
         private PlottableVLine plottableVLine;
-        private readonly ScottPlot.Style chartStyle = ScottPlot.Style.Light1;
+        private readonly Style chartStyle = ScottPlot.Style.Light1;
+        private List<double> liveChartValues = new List<double>();
 
         /// <summary>
         /// Name of the <see cref="Chart"/>.
@@ -35,7 +37,7 @@ namespace Telemetry_presentation_layer.Charts
         public bool HasVLine { get; set; } = false;
 
         /// <summary>
-        /// Constructor for <see cref="Chart"/>.
+        /// Represents a chart.
         /// </summary>
         /// <param name="name">Name of the <see cref="Chart"/>.</param>
         /// <param name="channelNames">List of channel names whose are in this <see cref="Chart"/>.</param>
@@ -136,6 +138,40 @@ namespace Telemetry_presentation_layer.Charts
         }
 
         /// <summary>
+        /// Updates the plot with new data.
+        /// </summary>
+        /// <param name="data"></param>
+        public void Update(double[] data, string xAxisLabel, string yAxisLabel)
+        {
+            liveChartValues.AddRange(data);
+
+            ScottPlotChart.plt.Clear();
+            ScottPlotChart.plt.PlotSignal(liveChartValues.ToArray(), markerSize: 0);
+
+            ScottPlotChart.plt.Style(chartStyle);
+            ScottPlotChart.plt.Colorset(Colorset.Category10);
+            ScottPlotChart.plt.YLabel(yAxisLabel);
+            ScottPlotChart.plt.XLabel(xAxisLabel);
+            ScottPlotChart.plt.Legend();
+            ScottPlotChart.Render();
+
+            SetAxisLimitsToAuto();
+
+            if (ValuesStackPanel.Children.Count == 0)
+            {
+                var unit = UnitOfMeasureManager.GetUnitOfMeasure(yAxisLabel);
+                ValuesStackPanel.Children.Add(new ChartValue("#4d4d4d", yAxisLabel, liveChartValues.Last(), unit == null ? "" : unit.UnitOfMeasure));
+            }
+            else
+            {
+                foreach (ChartValue item in ValuesStackPanel.Children)
+                {
+                    item.SetChannelValue(liveChartValues.Last());
+                }
+            }
+        }
+
+        /// <summary>
         /// Sets the axis limits to automatic.
         /// </summary>
         public void SetAxisLimitsToAuto()
@@ -202,7 +238,8 @@ namespace Telemetry_presentation_layer.Charts
                 {
                     if (HasChannelName(channel.Name))
                     {
-                        ValuesStackPanel.Children.Add(new ChartValue(channel.Color, channel.Name, dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last()));
+                        var unit = UnitOfMeasureManager.GetUnitOfMeasure(channel.Name);
+                        ValuesStackPanel.Children.Add(new ChartValue(channel.Color, channel.Name, dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last(), unit == null ? "" : unit.UnitOfMeasure));
                     }
                 }
             }

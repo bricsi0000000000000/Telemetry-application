@@ -1,0 +1,470 @@
+﻿<UserControl x:Class="Telemetry_presentation_layer.Menus.Settings.Live.LiveSettings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Telemetry_presentation_layer.Menus.Settings.Live"
+             mc:Ignorable="d" 
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             TextElement.FontSize="14"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <materialDesign:DialogHost HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch"
+                               CloseOnClickAway="True"
+                               Name="SectionDialogHost"
+                               >
+        <materialDesign:DialogHost.DialogContent>
+            <StackPanel Margin="16">
+                <TextBlock Text="Add new live section"/>
+                <TextBox Margin="0 8 0 0"
+                         Name="AddLiveSectionNameTextBox"
+                         HorizontalAlignment="Stretch"
+                         materialDesign:HintAssist.Hint="Section name"
+                         materialDesign:HintAssist.IsFloating="True"
+                         />
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            >
+                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                            IsDefault="True"
+                            Margin="0 8 8 0"
+                            Command="materialDesign:DialogHost.CloseDialogCommand"
+                            Content="Add"
+                            Click="AddLiveSection_Click"
+                            >
+                    </Button>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                            IsCancel="True"
+                            Margin="0 8 8 0"
+                            Command="materialDesign:DialogHost.CloseDialogCommand"
+                            Content="Cancel"
+                            >
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </materialDesign:DialogHost.DialogContent>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".9*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+          
+            <Grid>
+                <ScrollViewer>
+                    <StackPanel Name="SectionsStackPanel"
+                                Margin="0,2.5,0,0"/>
+                </ScrollViewer>
+                <Grid x:Name="NoSectionsGrid"
+                        Background="White">
+                    <materialDesign:PackIcon Kind="CardsVariant"
+                                                Opacity=".2"
+                                                VerticalAlignment="Stretch"
+                                                HorizontalAlignment="Stretch"
+                                                />
+                </Grid>
+            </Grid>
+
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
+
+            <Grid Grid.Column="2">
+               
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="45"/>
+                    </Grid.RowDefinitions>
+                    
+                    <materialDesign:Card UniformCornerRadius="5"
+                                 Margin="0,5,0,5"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                 >
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="45"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="80"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label Content="Name"
+                                       VerticalAlignment="Stretch"
+                                       HorizontalAlignment="Stretch"
+                                       VerticalContentAlignment="Center"
+                                       HorizontalContentAlignment="Left"
+                                       FontWeight="Bold"
+                                       Margin="5,0,0,0"
+                                       />
+
+                                <TextBox Name="SelectedSectionNameTextBox"
+                                         Grid.Column="1"
+                                         TextWrapping="Wrap"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch"
+                                         VerticalContentAlignment="Center"
+                                         HorizontalContentAlignment="Left"
+                                         IsReadOnly="True"
+                                         materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                                         BorderThickness="0"
+                                         Text="Section name"
+                                         />
+
+                                <materialDesign:Card Name="ChangeSectionNameCardButton"
+                                                     Grid.Column="2"
+                                                     UniformCornerRadius="5"
+                                                     Margin="5"
+                                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                                     PreviewMouseLeftButtonDown="ChangeSectionNameCardButton_PreviewMouseLeftButtonDown"
+                                                     PreviewMouseLeftButtonUp="ChangeSectionNameCardButton_PreviewMouseLeftButtonUp"
+                                                     MouseEnter="ChangeSectionNameCardButton_MouseEnter"
+                                                     MouseLeave="ChangeSectionNameCardButton_MouseLeave"
+                                                     >
+                                    <materialDesign:PackIcon Kind="Pencil"
+                                                             VerticalAlignment="Stretch"
+                                                             HorizontalAlignment="Stretch"
+                                                             />
+                                </materialDesign:Card>
+                            </Grid>
+
+                            <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="80"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Content="Date"
+                                   VerticalAlignment="Stretch"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalContentAlignment="Center"
+                                   HorizontalContentAlignment="Left"
+                                   FontWeight="Bold"
+                                   Margin="5,0,0,0"
+                                   />
+
+                            <TextBox Name="SelectedSectionDateLabel"
+                                     Grid.Column="1"
+                                     TextWrapping="Wrap"
+                                     VerticalAlignment="Stretch"
+                                     HorizontalAlignment="Stretch"
+                                     VerticalContentAlignment="Center"
+                                     HorizontalContentAlignment="Left"
+                                     IsReadOnly="True"
+                                     materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                                     BorderThickness="0"
+                                     Text="1/12/2021"
+                                     />
+
+                             <materialDesign:Card Name="ChangeSectionDateCardButton"
+                                                  Grid.Column="2"
+                                                  UniformCornerRadius="5"
+                                                  Margin="5"
+                                                  materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                                  PreviewMouseLeftButtonDown="ChangeSectionDateCardButton_PreviewMouseLeftButtonDown"
+                                                  PreviewMouseLeftButtonUp="ChangeSectionDateCardButton_PreviewMouseLeftButtonUp"
+                                                  MouseEnter="ChangeSectionDateCardButton_MouseEnter"
+                                                  MouseLeave="ChangeSectionDateCardButton_MouseLeave"
+                                                  >
+                                    <materialDesign:PackIcon Kind="Pencil"
+                                                             VerticalAlignment="Stretch"
+                                                             HorizontalAlignment="Stretch"
+                                                             />
+                                </materialDesign:Card>
+                            </Grid>
+
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label Content="Channels"
+                                       VerticalAlignment="Stretch"
+                                       HorizontalAlignment="Stretch"
+                                       VerticalContentAlignment="Center"
+                                       HorizontalContentAlignment="Left"
+                                       FontWeight="Bold"
+                                       Margin="5,0,0,0"
+                                       />
+
+                                <TextBox Name="SelectedSectionChannelsCountTextBox"
+                                         Grid.Column="1"
+                                         TextWrapping="Wrap"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch"
+                                         VerticalContentAlignment="Center"
+                                         HorizontalContentAlignment="Left"
+                                         IsReadOnly="True"
+                                         materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                                         BorderThickness="0"
+                                         Text="(4)"
+                                         FontStyle="Italic"
+                                         />
+                            </Grid>
+
+                            <Grid Grid.Row="3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <ScrollViewer Margin="0,0,5,0"
+                                              Grid.Column="1">
+                                    <StackPanel x:Name="SelectedSectionChannelsStackPanel"/>
+                                </ScrollViewer>
+
+                                <Grid x:Name="NoChannelsGrid"
+                                      Background="White"
+                                      Grid.ColumnSpan="2"
+                                      >
+                                    <materialDesign:PackIcon Kind="ListStatus"
+                                                             Opacity=".1"
+                                                             VerticalAlignment="Stretch"
+                                                             HorizontalAlignment="Stretch"
+                                                             />
+                                </Grid>
+                            </Grid>
+
+                            <Grid x:Name="NoActiveSectionGrid"
+                                  Background="White"
+                                  Grid.RowSpan="5"
+                                  >
+                                <materialDesign:PackIcon Kind="CardText"
+                                                         Opacity=".2"
+                                                         VerticalAlignment="Stretch"
+                                                         HorizontalAlignment="Stretch"
+                                                         />
+                            </Grid>
+                        </Grid>
+                    </materialDesign:Card>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <materialDesign:Card Name="ChangeSectionStatusCardButton"
+                                             Grid.Column="0"
+                                             UniformCornerRadius="5"
+                                             Margin="0,0,2.5,5"
+                                             materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                             PreviewMouseLeftButtonDown="ChangeSectionStatusCardButton_PreviewMouseLeftButtonDown"
+                                             PreviewMouseLeftButtonUp="ChangeSectionStatusCardButton_PreviewMouseLeftButtonUp"
+                                             MouseEnter="ChangeSectionStatusCardButton_MouseEnter"
+                                             MouseLeave="ChangeSectionStatusCardButton_MouseLeave"
+                                             >
+                            <materialDesign:PackIcon Name="SelectedSectionStatusIcon"
+                                                     Kind="AccessPoint"
+                                                     VerticalAlignment="Stretch"
+                                                     HorizontalAlignment="Stretch"
+                                                     />
+                        </materialDesign:Card>
+
+                        <materialDesign:Card Name="DeleteSectionCardButton"
+                                             Grid.Column="1"
+                                             UniformCornerRadius="5"
+                                             Margin="2.5,0,0,5"
+                                             Background="{DynamicResource Delete}"
+                                             materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                             PreviewMouseLeftButtonDown="DeleteSectionCardButton_PreviewMouseLeftButtonDown"
+                                             PreviewMouseLeftButtonUp="DeleteSectionCardButton_PreviewMouseLeftButtonUp"
+                                             MouseEnter="DeleteSectionCardButton_MouseEnter"
+                                             MouseLeave="DeleteSectionCardButton_MouseLeave"
+                                             >
+                            <materialDesign:PackIcon Kind="Delete"
+                                                     VerticalAlignment="Stretch"
+                                                     HorizontalAlignment="Stretch"
+                                                     Foreground="White"
+                                                     />
+                        </materialDesign:Card>
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
+
+            <Grid Grid.Column="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="3*"/>
+                </Grid.RowDefinitions>
+                
+                <materialDesign:Card UniformCornerRadius="5"
+                                     Margin="0,5,5,0"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                     >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <Label Content="Connection status"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               FontWeight="Bold"
+                               Margin="5,0,0,0"
+                               />
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <materialDesign:PackIcon Kind="Car"
+                                                     Grid.Column="0"
+                                                     VerticalAlignment="Stretch"
+                                                     HorizontalAlignment="Stretch"
+                                                     />
+
+                            <Label Name="CarToDBConnectionSpeedLabel"
+                                   Grid.Column="1"
+                                   Content="-"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   />
+
+                            <materialDesign:PackIcon Kind="Server"
+                                                     Grid.Column="2"
+                                                     VerticalAlignment="Stretch"
+                                                     HorizontalAlignment="Stretch"
+                                                     />
+
+                            <Label Name="DBToAppConnectionSpeedLabel"
+                                   Grid.Column="3"
+                                   Content="-"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   />
+
+                            <materialDesign:PackIcon Kind="Application"
+                                                     Grid.Column="4"
+                                                     VerticalAlignment="Stretch"
+                                                     HorizontalAlignment="Stretch"
+                                                     />
+                        </Grid>
+                    </Grid>
+                </materialDesign:Card>
+
+                <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
+            </Grid>
+            
+            <Button Grid.ColumnSpan="5"
+                    Name="AddLiveSectionButton"
+                    Margin="10"
+                    Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+                    Style="{StaticResource MaterialDesignFloatingActionButton}"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Right"
+                    >
+                <materialDesign:PackIcon Kind="Add"/>
+            </Button>
+
+            <Button Grid.ColumnSpan="5"
+                    Name="RefreshSectionsButton"
+                    Margin="10,10,10,75"
+                    Click="RefreshSectionsButton_Click"
+                    Style="{StaticResource MaterialDesignFloatingActionButton}"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Right"
+                    Background="White"
+                    BorderBrush="White"
+                    Foreground="{DynamicResource Secondary}"
+                    >
+                <materialDesign:PackIcon Kind="Refresh"/>
+            </Button>
+
+            <Grid Grid.ColumnSpan="5"
+                  Name="LoadingGrid"
+                  Background="{DynamicResource Secondary}"
+                  Opacity=".8"
+                  Visibility="Hidden"
+                  >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <Label Name="LoadingLabel"
+                       Content="Loading sections.."
+                       FontSize="20"
+                       Foreground="#ffffff"
+                       VerticalContentAlignment="Bottom"
+                       HorizontalContentAlignment="Center"
+                       />
+                <ProgressBar Grid.Row="1"
+                             Name="LoadingProgressBar"
+                             VerticalAlignment="Top"
+                             Style="{StaticResource MaterialDesignCircularProgressBar}" 
+                             IsIndeterminate="True"
+                             RenderTransformOrigin="0.5,0.5"
+                             Foreground="White"
+                             Margin="0,5,0,0"
+                             >
+                    <ProgressBar.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="2" ScaleY="2"/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform Y="10"/>
+                        </TransformGroup>
+                    </ProgressBar.RenderTransform>
+                </ProgressBar>
+
+                <materialDesign:Card Name="LoadingCancelButtonCard"
+                                     Grid.Row="2"
+                                     Width="100"
+                                     Height="40"
+                                     VerticalAlignment="Top"
+                                     Margin="0,5,0,0"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                     UniformCornerRadius="5"
+                                     Background="{DynamicResource Delete}"
+                                     PreviewMouseLeftButtonDown="LoadingCancelButtonCard_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="LoadingCancelButtonCard_PreviewMouseLeftButtonUp"
+                                     MouseEnter="LoadingCancelButtonCard_MouseEnter"
+                                     MouseLeave="LoadingCancelButtonCard_MouseLeave"
+                                     >
+                    
+                    <materialDesign:PackIcon Kind="No"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             VerticalContentAlignment="Center"
+                                             HorizontalContentAlignment="Center"
+                                             Foreground="White"
+                                             />
+                </materialDesign:Card>
+            </Grid>
+
+            <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
+                                     x:Name="ErrorSnackbar"
+                                     Grid.ColumnSpan="5"
+                                     Background="{DynamicResource Secondary}"
+                                     />
+
+        </Grid>
+
+    </materialDesign:DialogHost>
+</UserControl>
