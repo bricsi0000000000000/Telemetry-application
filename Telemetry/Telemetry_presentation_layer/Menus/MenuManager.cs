@@ -24,8 +24,8 @@ namespace Telemetry_presentation_layer.Menus
         public static void InitMainMenuTabs(TabControl tabControl)
         {
             AddTab(TextManager.SettingsMenuName, new SettingsMenu(), "settingsMenuTab", tabControl);
-            AddTab(TextManager.DriverlessMenuName, new DriverlessMenu(), "driverlessMenuTab", tabControl);
-            AddTab(TextManager.LiveMenuName, new LiveMenu(), "liveMenuTab", tabControl, selected: true);
+            AddTab(TextManager.DriverlessMenuName, new DriverlessMenu(), "driverlessMenuTab", tabControl, selected: true);
+            AddTab(TextManager.LiveMenuName, new LiveMenu(), "liveMenuTab", tabControl);
           //  AddTab(TextManager.DriversMenuName, new DriversMenu(), "driversMenuTab", tabControl, false);
            // AddTab(TextManager.DiagramsMenuName, new Diagrams(), "diagramsMenuTab", tabControl, false);
           //  AddTab(TextManager.DiagramsSettingsMenuName, new SelectDriversAndInputFiles(), "diagramsSettingsMenuTab", tabControl, false);

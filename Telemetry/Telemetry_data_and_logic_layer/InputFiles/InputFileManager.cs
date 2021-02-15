@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Telemetry_data_and_logic_layer.InputFiles
 {
@@ -33,6 +34,12 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         public static InputFile GetDriverlessInputFile(string inputFileName) => InputFiles.Find(x => x.Name.Equals(inputFileName) && x is DriverlessInputFile);
 
         /// <summary>
+        /// Finds the last driverless <see cref="InputFile"/> in <see cref="InputFiles"/>.
+        /// </summary>
+        /// <returns>The last driverless <see cref="InputFile"/>.</returns>
+        public static InputFile GetLastDriverlessInputFile => InputFiles.FindLast(x => x is DriverlessInputFile);
+
+        /// <summary>
         /// Finds a stadnard <see cref="InputFile"/> in <see cref="InputFiles"/>.
         /// </summary>
         /// <param name="inputFileName">Name of the findable <see cref="InputFile"/>.</param>
@@ -51,8 +58,19 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         public static string ActiveInputFileName { get; set; }
 
         /// <summary>
+        /// Active driverless <see cref="InputFile"/>s name.
+        /// </summary>
+        public static string ActiveDriverlessInputFileName { get; set; }
+
+        /// <summary>
         /// Returns the active <see cref="InputFile"/>.
         /// </summary>
         public static InputFile GetActiveInputFile => GetInputFile(ActiveInputFileName);
+
+        public static int DriverlessInputFilesCount => InputFiles.FindAll(x => x is DriverlessInputFile).Count;
+
+        public static int LastID => InputFiles.Count == 0 ? -1 : InputFiles.Last().ID;
+
+        public static InputFile GetInputFile(int id) => InputFiles.Find(x => x.ID == id);
     }
 }

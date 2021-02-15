@@ -10,6 +10,8 @@ namespace Telemetry_data_and_logic_layer.InputFiles
     /// </summary>
     public abstract class InputFile
     {
+        public int ID { get; set; }
+
         /// <summary>
         /// <see cref="InputFile"/>s name.
         /// </summary>
@@ -36,8 +38,9 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         /// </summary>
         /// <param name="name"><see cref="InputFile"/>s name.</param>
         /// <param name="channels"><see cref="InputFile"/>s channels</param>
-        public InputFile(string name, List<Channel> channels)
+        public InputFile(int id, string name, List<Channel> channels)
         {
+            ID = id;
             Name = name;
             Channels = channels;
         }
@@ -48,6 +51,7 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         /// <param name="driverlessInputFile">An <see cref="InputFile"/> which will be created the <see cref="InputFile"/>.</param>
         public InputFile(InputFile inputFile)
         {
+            ID = inputFile.ID;
             Name = inputFile.Name;
             Channels = inputFile.Channels;
         }

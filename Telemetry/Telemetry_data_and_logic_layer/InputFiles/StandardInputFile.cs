@@ -5,7 +5,7 @@ namespace Telemetry_data_and_logic_layer.InputFiles
 {
     public class StandardInputFile : InputFile
     {
-        public StandardInputFile(string name, List<Channel> channels) : base(name, channels)
+        public StandardInputFile(int id, string name, List<Channel> channels) : base(id, name, channels)
         {
             InitRequiredChannels();
 

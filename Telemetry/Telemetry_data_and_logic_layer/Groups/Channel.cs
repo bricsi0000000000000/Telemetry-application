@@ -26,12 +26,15 @@ namespace Telemetry_data_and_logic_layer.Groups
         ///</list>
         /// </summary>
         /// <param name="name">Channel name.</param>
-        public Channel(string name)
+        public Channel(int id, string name)
         {
+            ID = id;
             Name = name;
             Data = new List<double>();
             Color = ColorManager.GetChartColor;
         }
+
+        public int ID { get; set; }
 
         /// <summary>
         /// Name of the channel.

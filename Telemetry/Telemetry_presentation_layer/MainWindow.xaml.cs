@@ -23,9 +23,9 @@ namespace Telemetry_presentation_layer
             try
             {
                 UnitOfMeasureManager.InitializeUnitOfMeasures(TextManager.UnitOfMeasuresFileName);
+                DriverlessTrackManager.LoadTracks();
                 GroupManager.InitGroups(TextManager.GroupsFileName);
                 MenuManager.InitMainMenuTabs(MainMenuTabControl);
-                DriverlessTrackManager.LoadTracks();
             }
             catch (Exception exception)
             {

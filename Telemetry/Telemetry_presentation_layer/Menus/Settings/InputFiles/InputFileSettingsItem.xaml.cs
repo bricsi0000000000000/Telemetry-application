@@ -65,6 +65,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
             InputFileManager.RemoveInputFile(InputFileName);
 
             ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).RemoveSingleInputFileSettingsItem(InputFileName);
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).RemoveInputFileItem(InputFileName);
         }
 
         public void ChangeColorMode(bool selected)

@@ -12,6 +12,10 @@ using Telemetry_presentation_layer.Menus.Settings;
 using Telemetry_presentation_layer.Menus.Settings.Groups;
 using Telemetry_data_and_logic_layer.Tracks;
 using Telemetry_presentation_layer.Errors;
+using Microsoft.Win32;
+using Telemetry_data_and_logic_layer;
+using System.Windows.Controls.Primitives;
+using System.Diagnostics;
 
 namespace Telemetry_presentation_layer.Menus.Driverless
 {
@@ -20,11 +24,6 @@ namespace Telemetry_presentation_layer.Menus.Driverless
     /// </summary>
     public partial class DriverlessMenu : UserControl
     {
-        /// <summary>
-        /// A list of the <see cref="Channel"/>s from the input file.
-        /// </summary>
-        public List<Channel> Channels { get; private set; }
-
         /// <summary>
         /// List of selected <see cref="Group"/>s.
         /// </summary>
@@ -46,54 +45,65 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         /// </summary>
         private Channel HorizontalAxisData => GetChannel("x");
 
+        private List<Tuple<Channel, List<int>>> Channels = new List<Tuple<Channel, List<int>>>();
+
+        private TrackChart trackChart;
+
+        private const string YChannelName = "y";
+
         /// <summary>
         /// Constructor of the <see cref="DriverlessMenu"/> class.
         /// </summary>
         public DriverlessMenu()
         {
             InitializeComponent();
+
+            InitializeGroupItems();
+            InitializeTrackChart();
         }
 
-        /// <summary>
-        /// Initializes <see cref="ChooseInputFileCombobox"/>es items.
-        /// </summary>
-        public void InitChooseInputFileComboBox()
+        private void InitializeTrackChart()
         {
-            //TODO az éppen beolvasott legyen a selected
-            ChooseInputFileCombobox.Items.Clear();
+            trackChart = new TrackChart();
+            TrackGrid.Children.Add(trackChart);
 
-            foreach (var inputFile in InputFileManager.InputFiles)
+            var track = DriverlessTrackManager.GetTrack("Straight");
+            if (track != null)
             {
-                if (inputFile.Driverless)
-                {
-                    ChooseInputFileCombobox.Items.Add(new ComboBoxItem()
-                    {
-                        Content = inputFile.Name,
-                        IsSelected = true
-                    });
-                }
+                var data = ConvertChannelDataToPlotData(track.LeftSide);
+
+                trackChart.InitPlot(xAxisValues: data.Item1,
+                                    yAxisValues: data.Item2,
+                                    color: Color.Black);
+
+                data = ConvertChannelDataToPlotData(track.RightSide);
+                trackChart.InitPlot(xAxisValues: data.Item1,
+                                    yAxisValues: data.Item2,
+                                    color: Color.Black);
+
+                data = ConvertChannelDataToPlotData(track.Center);
+                trackChart.InitPlot(xAxisValues: data.Item1,
+                                    yAxisValues: data.Item2,
+                                    color: Color.Black,
+                                    lineStyle: ScottPlot.LineStyle.Dash);
+
+                trackChart.SetAxisLimitsToAuto();
             }
-        }
-
-        /// <summary>
-        /// Initializes <see cref="CheckBox"/>es based on <see cref="Channels"/>.
-        /// </summary>
-        private void InitChannelCheckBoxes()
-        {
-            ChannelsStackPanel.Children.Clear();
-
-            foreach (var channel in Channels)
+            else
             {
-                AddChannelCheckBox(channel);
+                throw new Exception("Straight track can't be found!");
             }
         }
 
         /// <summary>
         /// Initializes <see cref="CheckBox"/>es based on <see cref="GroupManager.Groups"/>.
         /// </summary>
-        private void InitGroupCheckBoxes()
+        private void InitializeGroupItems()
         {
             GroupsStackPanel.Children.Clear();
+
+            NoGroupsGrid.Visibility = GroupManager.Groups.Count == 0 ? Visibility.Visible : Visibility.Hidden;
+
             foreach (var group in GroupManager.Groups)
             {
                 if (group.Driverless)
@@ -102,6 +112,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                     {
                         Content = group.Name
                     };
+
                     checkBox.Click += GroupCheckBox_Click;
 
                     GroupsStackPanel.Children.Add(checkBox);
@@ -118,6 +129,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         {
             var checkBox = (CheckBox)sender;
             string content = checkBox.Content.ToString();
+
             if ((bool)checkBox.IsChecked)
             {
                 selectedGroups.Add(content);
@@ -132,42 +144,11 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         }
 
         /// <summary>
-        /// Adds a single <see cref="CheckBox"/> to the <see cref="ChannelsStackPanel"/> based on the <paramref name="channel"/>.
-        /// </summary>
-        /// <param name="channel">The <see cref="CheckBox"/> will be made based on this <see cref="Channel"/>.</param>
-        private void AddChannelCheckBox(Channel channel)
-        {
-            var checkBox = new CheckBox()
-            {
-                Content = channel.Name,
-                IsChecked = channel.IsActive
-            };
-
-            checkBox.Click += ChannelCheckBox_Click;
-
-            ChannelsStackPanel.Children.Add(checkBox);
-        }
-
-        /// <summary>
-        /// Updates <see cref="Chart"/>s after the <see cref="CheckBox"/>es state is changed.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ChannelCheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            var checkBox = (CheckBox)sender;
-
-            GetChannel(checkBox.Content.ToString()).IsActive = (bool)checkBox.IsChecked;
-
-            UpdateCharts();
-        }
-
-        /// <summary>
         /// Clears all the children of <see cref="ChannelsStackPanel"/> and fill it with the newly created <see cref="Chart"/>s.
         /// </summary>
         public void UpdateCharts()
         {
-            if (Channels == null)
+            /*if (Channels == null)
             {
                 return;
             }
@@ -193,7 +174,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                         }
                     }
                 }
-            }
+            }*/
         }
 
         /// <summary>
@@ -203,7 +184,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         /// <returns>A <see cref="Chart"/> with the highligthed point and the v-line</returns>
         private Chart BuildChart(Channel channel)
         {
-            var chart = new Chart(channel.Name);
+            var chart = new Chart(channel.Name);/*
             chart.AddChannelName(channel.Name);
 
             var horizontalAxisData = HorizontalAxisData.Data;
@@ -223,7 +204,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                            channels: Channels,
                            dataIndex: dataIndex,
                            yAxisLabel: channel.Name);
-
+           */
             return chart;
         }
 
@@ -235,7 +216,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         {
             var chart = new TrackChart();
 
-            var yChannel = GetChannel("y");
+            var yChannel = GetChannel(YChannelName);
             if (yChannel == null)
             {
                 return chart;
@@ -249,70 +230,44 @@ namespace Telemetry_presentation_layer.Menus.Driverless
 
             if ((bool)TrackStraightRadioButton.IsChecked)
             {
-                var track = DriverlessTrackManager.GetTrack("Straight");
-                if (track != null)
+                int dataIndex = (int)DataSlider.Value;
+
+                var channelData = CreateOffset(yChannel.Data, (float)c0refChannel.Data.First());
+                var data = ConvertChannelDataToPlotData(HorizontalAxisData.Data.ToArray(), channelData);
+
+                double xValue = 0;
+                double yValue = 0;
+                if (dataIndex < HorizontalAxisData.Data.Count)
                 {
-                    var data = ConvertChannelDataToPlotData(track.LeftSide);
-                    int dataIndex = (int)DataSlider.Value;
-
-                    chart.InitPlot(xAxisValues: data.Item1,
-                                   yAxisValues: data.Item2,
-                                   color: Color.Black);
-
-                    data = ConvertChannelDataToPlotData(track.RightSide);
-                    chart.InitPlot(xAxisValues: data.Item1,
-                                   yAxisValues: data.Item2,
-                                   color: Color.Black);
-
-                    data = ConvertChannelDataToPlotData(track.Center);
-                    chart.InitPlot(xAxisValues: data.Item1,
-                                   yAxisValues: data.Item2,
-                                   color: Color.Black,
-                                   lineStyle: ScottPlot.LineStyle.Dash);
-
-                  
-
-                    var channelData = CreateOffset(yChannel.Data, (float)c0refChannel.Data.First());
-                    data = ConvertChannelDataToPlotData(HorizontalAxisData.Data.ToArray(), channelData);
-
-                    double xValue = 0;
-                    double yValue = 0;
-                    if (dataIndex < HorizontalAxisData.Data.Count)
-                    {
-                        xValue = channelData[dataIndex];
-                        yValue = HorizontalAxisData.Data[dataIndex];
-                    }
-                    else
-                    {
-                        xValue = channelData.Last();
-                        yValue = HorizontalAxisData.Data.Last();
-                    }
-
-                    chart.InitPlot(xValue: xValue,
-                                   yValue: yValue,
-                                   xAxisValues: data.Item1,
-                                   yAxisValues: data.Item2,
-                                   color: Color.Orange,
-                                   yAxisLabel: "y",
-                                   lineWidth: 2,
-                                   enableLabel: true
-                                   );
-
-                    chart.SetAxisLimitsToAuto();
-                    chart.SetFrameBorder(left: false, bottom: false, top: false, right: false);
-
-                    if (dataIndex < integratedYawAngle.Count)
-                    {
-                        chart.PlotImage(xValue, yValue, CreateOffset(integratedYawAngle, (float)c0refChannel.Data.First())[dataIndex]);
-                    }
-                    else
-                    {
-                        chart.PlotImage(xValue, yValue, CreateOffset(integratedYawAngle, (float)c0refChannel.Data.First()).Last());
-                    }
+                    xValue = channelData[dataIndex];
+                    yValue = HorizontalAxisData.Data[dataIndex];
                 }
                 else
                 {
-                    throw new Exception("Straight track can't be found!");
+                    xValue = channelData.Last();
+                    yValue = HorizontalAxisData.Data.Last();
+                }
+
+                chart.InitPlot(xValue: xValue,
+                               yValue: yValue,
+                               xAxisValues: data.Item1,
+                               yAxisValues: data.Item2,
+                               color: Color.Orange,
+                               yAxisLabel: YChannelName,
+                               lineWidth: 2,
+                               enableLabel: true
+                               );
+
+                chart.SetAxisLimitsToAuto();
+                chart.SetFrameBorder(left: false, bottom: false, top: false, right: false);
+
+                if (dataIndex < integratedYawAngle.Count)
+                {
+                    chart.PlotImage(xValue, yValue, CreateOffset(integratedYawAngle, (float)c0refChannel.Data.First())[dataIndex]);
+                }
+                else
+                {
+                    chart.PlotImage(xValue, yValue, CreateOffset(integratedYawAngle, (float)c0refChannel.Data.First()).Last());
                 }
             }
 
@@ -327,7 +282,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         private Chart BuildGroupChart(Group group)
         {
             var chart = new Chart(group.Name);
-            foreach (var channel in Channels)
+            /*foreach (var channel in Channels)
             {
                 if (group.GetAttribute(channel.Name) != null)
                 {
@@ -362,7 +317,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             }
 
             chart.SetAxisLimitsToAuto();
-
+           */
             return chart;
         }
 
@@ -435,7 +390,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 return null;
             }
 
-            return Channels.Find(x => x.Name.Equals(channelName));
+            return Channels.Find(x => x.Item1.Name.Equals(channelName)).Item1;
         }
 
         /// <summary>
@@ -462,7 +417,6 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             for (int i = 0; i < integratedYawAngle.Count; i++)
             {
                 integratedYawAngle[i] *= 180 / Math.PI;
-
             }
         }
 
@@ -497,8 +451,58 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         /// </summary>
         public void UpdateAfterReadFile()
         {
-            UpdateAfterInputFileChoose();
-            InitChooseInputFileComboBox();
+            DisableNoInputFileAndChannelsGrids();
+            InputFileManager.ActiveDriverlessInputFileName = InputFileManager.GetLastDriverlessInputFile.Name;
+            AddInputFileItem(InputFileManager.ActiveDriverlessInputFileName);
+
+            // UpdateAfterInputFileChoose();
+            // InitChooseInputFileComboBox();
+        }
+
+        private void DisableNoInputFileAndChannelsGrids(bool disable = true)
+        {
+            NoInputFilesGrid.Visibility =
+            NoChannelsGrid.Visibility = disable ? Visibility.Hidden : Visibility.Visible;
+        }
+
+        private void AddInputFileItem(string fileName)
+        {
+            var checkbox = new CheckBox { Content = fileName };
+            checkbox.Checked += InputFileItem_Checked;
+            checkbox.Unchecked += InputFileItem_Checked;
+            InputFilesStackPanel.Children.Add(checkbox);
+        }
+
+        public void RemoveInputFileItem(string fileName)
+        {
+            int index = GetInputFileItemIndex(fileName);
+            if (index != -1)
+            {
+                InputFilesStackPanel.Children.RemoveAt(index);
+            }
+
+            if (InputFileManager.DriverlessInputFilesCount <= 0)
+            {
+                DisableNoInputFileAndChannelsGrids(disable: false);
+                ChannelsStackPanel.Children.Clear();
+            }
+        }
+
+        private int GetInputFileItemIndex(string fileName)
+        {
+            int index = 0;
+
+            foreach (CheckBox item in InputFilesStackPanel.Children)
+            {
+                if (item.Content.Equals(fileName))
+                {
+                    return index;
+                }
+
+                index++;
+            }
+
+            return -1;
         }
 
         /// <summary>
@@ -506,13 +510,12 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         /// </summary>
         private void UpdateAfterInputFileChoose()
         {
-            UnselectAllChannel();
+            /*UnselectAllChannel();
             var activeInputFile = InputFileManager.GetActiveInputFile;
             if (activeInputFile != null)
             {
                 Channels = activeInputFile.Channels;
-                InitChannelCheckBoxes();
-                InitGroupCheckBoxes();
+                InitializeGroupItems();
                 SetUpDataSlider();
                 CalculateYawAngle();
                 // TODO: ha nem kell a highlight karika, akkor a kikommentelt sor kell, az UpdateCharts(); pedig nem
@@ -527,7 +530,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 GroupsStackPanel.Children.Clear();
                 TrackGrid.Children.Clear();
                 ChartsStackPanel.Children.Clear();
-            }
+            }*/
         }
 
         /// <summary>
@@ -535,7 +538,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         /// </summary>
         private void SetUpDataSlider()
         {
-            DataSlider.Maximum = Channels.First().Data.Count;
+            //DataSlider.Maximum = Channels.First().Data.Count;
         }
 
         /// <summary>
@@ -558,14 +561,14 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         /// <param name="dataIndex">Index of the data on the horizontal axis.</param>
         private void ChangeChartHighlight(int dataIndex)
         {
-            foreach (Chart chart in ChartsStackPanel.Children)
+            /*foreach (Chart chart in ChartsStackPanel.Children)
             {
                 double value = dataIndex < HorizontalAxisData.Data.Count ? HorizontalAxisData.Data[dataIndex] : HorizontalAxisData.Data.Last();
                 chart.RenderPlot(xValue: value,
                                  vLineColor: Color.Black,
                                  Channels,
                                  dataIndex);
-            }
+            }*/
         }
 
         /// <summary>
@@ -573,27 +576,179 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         /// </summary>
         private void UnselectAllChannel()
         {
-            if (Channels != null)
+            /*  if (Channels != null)
+              {
+                  foreach (var channel in Channels)
+                  {
+                      channel.IsActive = false;
+                  }
+              }*/
+        }
+
+
+        private void InputFileItem_Checked(object sender, RoutedEventArgs e)
+        {
+            var checkBox = (CheckBox)sender;
+            string name = checkBox.Content.ToString();
+
+            var actInputFile = InputFileManager.GetDriverlessInputFile(name);
+
+            if ((bool)checkBox.IsChecked)
             {
-                foreach (var channel in Channels)
+                MergeChannelNames(actInputFile.Channels, actInputFile.ID);
+
+                var yChannel = GetChannel(YChannelName);
+                if (yChannel == null)
                 {
-                    channel.IsActive = false;
+                    ShowError.ShowErrorMessage($"Can't find '{YChannelName}', so can't build track");
+                    return;
+                }
+
+                var c0refChannel = GetChannel("c0ref");
+                if (c0refChannel == null)
+                {
+                    ShowError.ShowErrorMessage("Can't find 'c0ref', so can't build track");
+                    return;
+                }
+
+                var channelData = CreateOffset(yChannel.Data, (float)c0refChannel.Data.First());
+                var data = ConvertChannelDataToPlotData(HorizontalAxisData.Data.ToArray(), channelData);
+
+                trackChart.AddTrackData(actInputFile.Name, data.Item1, data.Item2);
+            }
+            else
+            {
+                UnMergeChannelNames(actInputFile.Channels, actInputFile.ID);
+            }
+
+            UpdateChannelsList();
+
+            /*foreach (var item in Channels)
+            {
+                Trace.Write(item.Item1.Name + "\t");
+                foreach (var i in item.Item2)
+                {
+                    Trace.Write(i + ";");
+                }
+                Trace.WriteLine("");
+            }*/
+        }
+
+        private void ChannelItem_Checked(object sender, RoutedEventArgs e)
+        {
+            var checkBox = (CheckBox)sender;
+            string name = checkBox.Content.ToString();
+
+
+        }
+
+        private void UpdateChannelsList()
+        {
+            ChannelsStackPanel.Children.Clear();
+
+            int max = 0;
+
+            foreach (var item in Channels)
+            {
+                if (item.Item2.Count > max)
+                {
+                    max = item.Item2.Count;
+                }
+            }
+
+            foreach (var item in Channels)
+            {
+                var checkBox = new CheckBox();
+                checkBox.Checked += ChannelItem_Checked;
+                checkBox.Unchecked += ChannelItem_Checked;
+
+                if (item.Item2.Count == max)
+                {
+                    checkBox.Content = item.Item1.Name;
+                }
+                else
+                {
+                    string content = item.Item1.Name + " - ";
+                    foreach (var fileID in item.Item2)
+                    {
+                        content += InputFileManager.GetInputFile(fileID).Name + ";";
+                    }
+                    content = content.Substring(0, content.Length - 1);
+                    checkBox.Content = content;
+                }
+
+                ChannelsStackPanel.Children.Add(checkBox);
+            }
+        }
+
+        private void MergeChannelNames(List<Channel> channels, int inputFileID)
+        {
+            foreach (var channel in channels)
+            {
+                var actChannel = Channels.Find(x => x.Item1.Name.Equals(channel.Name));
+                if (actChannel != null)
+                {
+                    actChannel.Item2.Add(inputFileID);
+                }
+                else
+                {
+                    Channels.Add(new Tuple<Channel, List<int>>(channel, new List<int>() { inputFileID }));
                 }
             }
         }
 
-        /// <summary>
-        /// Updates active <see cref="InputFile"/>s name in <see cref="DriverlessInputFileManager"/>.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ChooseInputFileCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void UnMergeChannelNames(List<Channel> channels, int inputFileID)
         {
-            if (ChooseInputFileCombobox.Items.Count > 0)
+            foreach (var channel in channels)
             {
-                InputFileManager.ActiveInputFileName = ((ComboBoxItem)ChooseInputFileCombobox.SelectedItem).Content.ToString();
-                UpdateAfterInputFileChoose();
+                var actChannel = Channels.Find(x => x.Item1.Name.Equals(channel.Name));
+                if (actChannel != null)
+                {
+                    actChannel.Item2.Remove(inputFileID);
+                    if (actChannel.Item2.Count == 0)
+                    {
+                        Channels.Remove(actChannel);
+                    }
+                }
             }
         }
+
+        private void ReadInputFileBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Title = "Read file",
+                DefaultExt = ".csv",
+                Multiselect = false,
+                Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    string fileName = openFileDialog.FileName.Split('\\').Last();
+
+                    if (InputFileManager.GetInputFile(fileName) == null)
+                    {
+                        ReadFileProgressBarLabel.Content = $"Reading \"{fileName}\"";
+                        var dataReader = new DataReader();
+                        dataReader.SetupReader(ReadFileProgressBarGrid,
+                                               ReadFileProgressBar,
+                                               FileType.Driverless);
+                        dataReader.ReadFile(openFileDialog.FileName);
+                    }
+                    else
+                    {
+                        throw new Exception($"File '{fileName}' already exists");
+                    }
+                }
+                catch (Exception exception)
+                {
+                    ShowError.ShowErrorMessage(exception.Message);
+                }
+            }
+        }
+
     }
 }

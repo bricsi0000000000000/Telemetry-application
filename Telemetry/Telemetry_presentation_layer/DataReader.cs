@@ -33,6 +33,7 @@ namespace Telemetry_presentation_layer
         private List<Channel> channels;
         private FileType fileType;
         private bool processingError = false;
+        private static int lastChannelID = 0;
 
         public void SetupReader(Grid progressBarGrid,
                                 ProgressBar progressBar,
@@ -94,7 +95,8 @@ namespace Telemetry_presentation_layer
                     throw new Exception($"Channels name is empty in {fileName}");
                 }
 
-                var channel = new Channel(channelName);
+                var channel = new Channel(lastChannelID, channelName);
+                lastChannelID++;
 
                 foreach (var group in GroupManager.Groups)
                 {
@@ -197,7 +199,7 @@ namespace Telemetry_presentation_layer
 
             if (!processingError)
             {
-                var inputFile = new DriverlessInputFile(FileNameWithoutPath, channels);
+                var inputFile = new DriverlessInputFile(InputFileManager.LastID + 1, FileNameWithoutPath, channels);
 
                 //TODO: ha lesz standard input file is, akkor azt még előbb kell eldönteni vagy utána rögtön válassza ki és utána nézzem meg hogy ezek benne vannak e.
                 var yChannel = inputFile.GetChannel("y");
