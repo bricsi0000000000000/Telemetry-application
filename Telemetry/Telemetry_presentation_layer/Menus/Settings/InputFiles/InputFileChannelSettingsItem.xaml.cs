@@ -33,7 +33,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
             // InitImportantChannelsComboBox();
         }
 
-        private void ChangeColor(Color color)
+        public void ChangeColor(Color color)
         {
             ChangeColorBtn.Background = new SolidColorBrush(color);
         }
@@ -114,6 +114,16 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
         private void ChooseInputFileComboBox_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
 
+        }
+
+        private void ChangeColorBtn_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void ChangeColorBtn_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Mouse.OverrideCursor = null;
         }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using ScottPlot;
 using ScottPlot.Drawing;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Telemetry_data_and_logic_layer.Groups;
 
 namespace Telemetry_presentation_layer.Charts
 {
@@ -23,15 +26,21 @@ namespace Telemetry_presentation_layer.Charts
 
         private GridLength expanderWidth = GridLength.Auto;
 
-        private struct TrackData
+        public struct TrackData
         {
             public int ID { get; set; }
             public string Name { get; set; }
             public double[] XAxisValues { get; set; }
             public double[] YAxisValues { get; set; }
+            public double[] IntegratedYawAngle { get; set; }
+            public float C0refChannelFirstValue { get; set; }
         }
 
         private List<TrackData> trackData = new List<TrackData>();
+
+        private Tuple<double[], double[]> leftSide;
+        private Tuple<double[], double[]> rightSide;
+        private Tuple<double[], double[]> centerSide;
 
         /// <summary>
         /// Constructor for TrackChart
@@ -53,11 +62,49 @@ namespace Telemetry_presentation_layer.Charts
             ScottPlotChart.Render();
         }
 
-        public void AddTrackData(string name, double[] xAxisValues, double[] yAxisValues)
+        public void AddTrackLayout(Tuple<double[], double[]> leftSide,
+                             Tuple<double[], double[]> rightSide,
+                             Tuple<double[], double[]> centerSide)
+        {
+            this.leftSide = leftSide;
+            this.rightSide = rightSide;
+            this.centerSide = centerSide;
+
+            UpdateTrackLayout();
+        }
+
+        private void UpdateTrackLayout()
+        {
+            InitPlot(xAxisValues: leftSide.Item1,
+                                 yAxisValues: leftSide.Item2,
+                                 color: Color.Black);
+
+            InitPlot(xAxisValues: rightSide.Item1,
+                                  yAxisValues: rightSide.Item2,
+                                  color: Color.Black);
+
+            InitPlot(xAxisValues: centerSide.Item1,
+                                  yAxisValues: centerSide.Item2,
+                                  color: Color.Black,
+                                  lineStyle: LineStyle.Dash);
+
+            SetAxisLimitsToAuto();
+        }
+
+        public void AddTrackData(string name, double[] xAxisValues, double[] yAxisValues, double[] integratedYawAngle, float c0refChannelFirstValue)
         {
             NoInputFilesGrid.Visibility = Visibility.Hidden;
 
-            trackData.Add(new TrackData() { ID = lastTrackDataID, Name = name, XAxisValues = xAxisValues, YAxisValues = yAxisValues });
+            trackData.Add(new TrackData()
+            {
+                ID = lastTrackDataID,
+                Name = name,
+                XAxisValues = xAxisValues,
+                YAxisValues = yAxisValues,
+                IntegratedYawAngle = integratedYawAngle,
+                C0refChannelFirstValue = c0refChannelFirstValue
+            });
+
             lastTrackDataID++;
             AddInputFileItem(name);
         }
@@ -77,8 +124,8 @@ namespace Telemetry_presentation_layer.Charts
         private void AddInputFileItem(string name)
         {
             var checkBox = new CheckBox() { Content = name };
-            checkBox.Checked += CheckBox_Click;
-            checkBox.Unchecked += CheckBox_Click;
+            checkBox.Checked += InputFileCheckBox_Click;
+            checkBox.Unchecked += InputFileCheckBox_Click;
             InputFilesStackPanel.Children.Add(checkBox);
         }
 
@@ -108,37 +155,64 @@ namespace Telemetry_presentation_layer.Charts
             return -1;
         }
 
-        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        private void InputFileCheckBox_Click(object sender, RoutedEventArgs e)
         {
             var checkBox = (CheckBox)sender;
             string content = checkBox.Content.ToString();
 
-            var actTrackData = trackData.Find(x => x.Name.Equals(content));
 
             if ((bool)checkBox.IsChecked)
             {
-                InitPlot(actTrackData.XAxisValues, actTrackData.YAxisValues, Color.Black);
+                Update(0);
             }
             else
             {
             }
+        }
 
-            double xValue = 0;
-            double yValue = 0;
-            if (dataIndex < HorizontalAxisData.Data.Count)
+        public void Update(int dataIndex)
+        {
+            ScottPlotChart.plt.Clear();
+
+            foreach (var item in trackData)
             {
-                xValue = channelData[dataIndex];
-                yValue = HorizontalAxisData.Data[dataIndex];
+                var actTrackData = trackData.Find(x => x.Name.Equals(item.Name));
+
+                double xValue = 0;
+                double yValue = 0;
+                if (dataIndex < actTrackData.XAxisValues.Length)
+                {
+                    xValue = actTrackData.YAxisValues[dataIndex];
+                    yValue = actTrackData.XAxisValues[dataIndex];
+                }
+                else
+                {
+                    xValue = actTrackData.YAxisValues.Last();
+                    yValue = actTrackData.XAxisValues.Last();
+                }
+
+                UpdateTrackLayout();
+                InitPlot(CreateOffset(actTrackData.YAxisValues, actTrackData.C0refChannelFirstValue).ToArray(), CreateOffset(actTrackData.XAxisValues, actTrackData.C0refChannelFirstValue).ToArray(), Color.Black);
+                PlotImage(xValue, yValue, CreateOffset(actTrackData.IntegratedYawAngle, actTrackData.C0refChannelFirstValue)[dataIndex]);
+                SetAxisLimitsToAuto();
             }
-            else
+        }
+
+        /// <summary>
+        /// Pushes the <paramref name="list"/> with <paramref name="offset"/>.
+        /// </summary>
+        /// <param name="list">List to be shifted.</param>
+        /// <param name="offset">Value to be shifted.</param>
+        /// <returns>Shifted list based on <paramref name="offset"/>.</returns>
+        private List<double> CreateOffset(double[] list, float offset)
+        {
+            var newList = new List<double>();
+            foreach (var number in list)
             {
-                xValue = channelData.Last();
-                yValue = HorizontalAxisData.Data.Last();
+                newList.Add(number - offset);
             }
 
-            PlotImage(xValue, yValue, CreateOffset(integratedYawAngle, (float)c0refChannel.Data.First())[dataIndex]);
-            SetAxisLimitsToAuto();
-            ScottPlotChart.Render();
+            return newList;
         }
 
         /// <summary>

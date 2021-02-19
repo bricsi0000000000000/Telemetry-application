@@ -8,7 +8,10 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid MouseMove="Grid_MouseMove">
+    <Grid MouseMove="Grid_MouseMove"
+          MinHeight="150"
+          MaxHeight="400"
+          >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
             <ColumnDefinition Width="5"/>

@@ -34,6 +34,13 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         public static InputFile GetDriverlessInputFile(string inputFileName) => InputFiles.Find(x => x.Name.Equals(inputFileName) && x is DriverlessInputFile);
 
         /// <summary>
+        /// Finds a driverless <see cref="InputFile"/> in <see cref="InputFiles"/>.
+        /// </summary>
+        /// <param name="inputFileID">ID of the findable <see cref="InputFile"/>.</param>
+        /// <returns>An <see cref="InputFile"/> whose name is <paramref name="inputFileName"/>.</returns>
+        public static InputFile GetDriverlessInputFile(int inputFileID) => InputFiles.Find(x => x.ID == inputFileID && x is DriverlessInputFile);
+
+        /// <summary>
         /// Finds the last driverless <see cref="InputFile"/> in <see cref="InputFiles"/>.
         /// </summary>
         /// <returns>The last driverless <see cref="InputFile"/>.</returns>
@@ -60,7 +67,7 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         /// <summary>
         /// Active driverless <see cref="InputFile"/>s name.
         /// </summary>
-        public static string ActiveDriverlessInputFileName { get; set; }
+        public static int ActiveDriverlessInputFileID { get; set; }
 
         /// <summary>
         /// Returns the active <see cref="InputFile"/>.

@@ -8,6 +8,7 @@ using Telemetry_data_and_logic_layer.Groups;
 using System.Linq;
 using Telemetry_presentation_layer.Errors;
 using Telemetry_data_and_logic_layer.Units;
+using Telemetry_data_and_logic_layer.InputFiles;
 
 namespace Telemetry_presentation_layer.Charts
 {
@@ -41,12 +42,11 @@ namespace Telemetry_presentation_layer.Charts
         /// </summary>
         /// <param name="name">Name of the <see cref="Chart"/>.</param>
         /// <param name="channelNames">List of channel names whose are in this <see cref="Chart"/>.</param>
-        /// <param name="chartHeight">Height of the <see cref="Chart"/>. Default value is <c>300</c></param>
-        public Chart(string name, int chartHeight = 300)
+        public Chart(string name)
         {
             InitializeComponent();
-            ScottPlotChart.Height = chartHeight;
             ChartName = name;
+            ScottPlotChart.Configure(enableScrollWheelZoom: false);
         }
 
         /// <summary>
@@ -63,69 +63,21 @@ namespace Telemetry_presentation_layer.Charts
         public bool HasChannelName(string channelName) => channelNames.Contains(channelName);
 
         /// <summary>
-        /// Initializes and renders a plot for <see cref="Laps"/>.
-        /// </summary>
-        /// <param name="xAxisValues">Values on <b>horizontal</b> axis.</param>
-        /// <param name="yAxisValues">Values on <b>vertical</b> axis.</param>
-        /// <param name="lapIndex">Index of selected <see cref="Lap"/>.</param>
-        /// <param name="driverName">Name of the selected <see cref="Driver"/>.</param>
-        /// <param name="fileName">Name of the selected file.</param>
-        /// <param name="yAxisLabel">Label on <b>vertical</b> axis.</param>
-        /// <param name="xAxisLabel">Label on <b>horizontal</b> axis. Default is <c>Distance (m)</c></param>
-        public void InitPlot(double[] xAxisValues, double[] yAxisValues, int lapIndex, string driverName, string fileName, string yAxisLabel, string xAxisLabel = "Distance (m)")
-        {
-            plottableScatterHighlight = ScottPlotChart.plt.PlotScatterHighlight(xAxisValues, yAxisValues, markerShape: MarkerShape.none, label: $"lap {lapIndex} - {driverName} - {fileName}");
-            plottableVLine = ScottPlotChart.plt.PlotVLine(0, lineStyle: LineStyle.Dash);
-
-            ScottPlotChart.plt.Style(chartStyle);
-            ScottPlotChart.plt.Colorset(Colorset.Category10);
-            ScottPlotChart.plt.YLabel(yAxisLabel);
-            ScottPlotChart.plt.XLabel(xAxisLabel);
-            ScottPlotChart.plt.Legend();
-            ScottPlotChart.Render();
-        }
-
-        /// <summary>
         /// Initializes and renders a plot for <see cref="Driverless"/>.
         /// </summary>
-        /// <param name="xValue">Selected points <b>x</b> value</param>
-        /// <param name="yValue">Selected points <b>y</b> value</param>
         /// <param name="xAxisValues">Values on <b>horizontal</b> axis.</param>
         /// <param name="yAxisValues">Values on <b>vertical</b> axis.</param>
-        /// <param name="vLineColor"><see cref="Color"/> of the VLine.</param>
         /// <param name="lineColor"><see cref="Color"/> of the line.</param>
-        /// <param name="channels"><see cref="Channel"/>s.</param>
         /// <param name="yAxisLabel">Label on <b>vertical</b> axis.</param>
         /// <param name="xAxisLabel">Label on <b>horizontal</b> axis. Default is <c>x</c></param>
-        /// <param name="plotVLine">If true, a VLine will be plotted.</param>
-        /// <param name="plotHighlightPoint">If true, a highlighted point will be plotted at <paramref name="xValue"/> and <paramref name="yValue"/>.</param>
-        public void InitPlot(double xValue,
-                             double yValue,
-                             double[] xAxisValues,
+        public void InitPlot(double[] xAxisValues,
                              double[] yAxisValues,
-                             Color vLineColor,
                              Color lineColor,
-                             List<Channel> channels,
-                             int dataIndex,
                              string yAxisLabel = "",
-                             string xAxisLabel = "x",
-                             bool plotVLine = true,
-                             bool plotHighlightPoint = false
+                             string xAxisLabel = "x"
                              )
         {
             plottableScatterHighlight = ScottPlotChart.plt.PlotScatterHighlight(xAxisValues, yAxisValues, markerShape: MarkerShape.none, color: lineColor);
-
-            if (plotVLine)
-            {
-                plottableVLine = ScottPlotChart.plt.PlotVLine(xValue,
-                                                              lineStyle: LineStyle.Dash,
-                                                              color: vLineColor);
-            }
-
-            if (plotHighlightPoint)
-            {
-                ScottPlotChart.plt.PlotPoint(xValue, yValue, color: Color.Red, markerSize: 10);
-            }
 
             ScottPlotChart.plt.Style(chartStyle);
             ScottPlotChart.plt.Colorset(Colorset.OneHalfDark);
@@ -133,8 +85,13 @@ namespace Telemetry_presentation_layer.Charts
             ScottPlotChart.plt.XLabel(xAxisLabel);
             ScottPlotChart.plt.Legend();
             ScottPlotChart.Render();
+        }
 
-            UpdateSideValues(ref channels, ref dataIndex);
+        public void UpdateVLine(double xValue, Color vLineColor)
+        {
+            plottableVLine = ScottPlotChart.plt.PlotVLine(xValue,
+                                                          lineStyle: LineStyle.Dash,
+                                                          color: vLineColor);
         }
 
         /// <summary>
@@ -160,7 +117,7 @@ namespace Telemetry_presentation_layer.Charts
             if (ValuesStackPanel.Children.Count == 0)
             {
                 var unit = UnitOfMeasureManager.GetUnitOfMeasure(yAxisLabel);
-                ValuesStackPanel.Children.Add(new ChartValue("#4d4d4d", yAxisLabel, liveChartValues.Last(), unit == null ? "" : unit.UnitOfMeasure));
+                ValuesStackPanel.Children.Add(new ChartValue("#4d4d4d", yAxisLabel, liveChartValues.Last(), unit == null ? "" : unit.UnitOfMeasure, 0));
             }
             else
             {
@@ -199,58 +156,30 @@ namespace Telemetry_presentation_layer.Charts
             Console.WriteLine(plottableScatterHighlight.GetPointNearestX(mouseXPosition));*/
         }
 
-        /// <summary>
-        /// Updates the VLine(s) on the chart.
-        /// </summary>
-        /// <param name="xValue">VLines <b>x</b> coordinate.</param>
-        /// <param name="vLineColor"><see cref="Color"/> of the VLine.</param>
-        /// <param name="channels"><b>All channels from the <see cref="Driverless.UserControls.DriverlessMenu"/>.</param>
-        /// <param name="dataIndex"><b>Index of the channel data.</param>
-        public void RenderPlot(double xValue, Color vLineColor, List<Channel> channels, int dataIndex)
+        public void UpdateSideValues(int inputFileID, string channelName, ref int dataIndex)
         {
-            if (plottableScatterHighlight == null)
+            var channel = InputFileManager.GetInputFile(inputFileID).GetChannel(channelName);
+
+            bool found = false;
+            foreach (ChartValue item in ValuesStackPanel.Children)
             {
-                return;
-            }
-
-            plottableScatterHighlight.HighlightClear();
-
-            ScottPlotChart.plt.Clear(plottableVLine);
-
-            plottableVLine = ScottPlotChart.plt.PlotVLine(xValue,
-                                                          lineStyle: LineStyle.Dash,
-                                                          color: vLineColor);
-
-            ScottPlotChart.Render();
-            UpdateSideValues(ref channels, ref dataIndex);
-        }
-
-        /// <summary>
-        /// Update the <see cref="ChartValue"/>s next to the <see cref="Chart"/>.
-        /// </summary>
-        /// <param name="channels">List, where the <see cref="Channel"/>s are.</param>
-        /// <param name="dataIndex">Index where the actual data is.</param>
-        private void UpdateSideValues(ref List<Channel> channels, ref int dataIndex)
-        {
-            if (ValuesStackPanel.Children.Count == 0)
-            {
-                foreach (var channel in channels)
+                if (item.Name.Equals(channelName))
                 {
-                    if (HasChannelName(channel.Name))
-                    {
-                        var unit = UnitOfMeasureManager.GetUnitOfMeasure(channel.Name);
-                        ValuesStackPanel.Children.Add(new ChartValue(channel.Color, channel.Name, dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last(), unit == null ? "" : unit.UnitOfMeasure));
-                    }
-                }
-            }
-            else
-            {
-                foreach (ChartValue item in ValuesStackPanel.Children)
-                {
-                    var channel = channels.Find(x => x.Name.Equals(item.ChannelName));
                     double value = dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last();
                     item.SetChannelValue(value);
+
+                    found = true;
                 }
+            }
+
+            if (!found)
+            {
+                var unit = UnitOfMeasureManager.GetUnitOfMeasure(channelName);
+                if (unit == null)
+                {
+                    unit = UnitOfMeasureManager.GetUnitOfMeasure(channelName.Replace("_", ""));
+                }
+                ValuesStackPanel.Children.Add(new ChartValue(channel.Color, channel.Name, dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last(), unit == null ? "" : unit.UnitOfMeasure, inputFileID));
             }
         }
     }

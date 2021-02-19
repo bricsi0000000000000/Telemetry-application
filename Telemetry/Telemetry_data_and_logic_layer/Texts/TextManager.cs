@@ -66,6 +66,12 @@
         public static string UnitsSettingsName { get; private set; } = "Units";
 
         /// <summary>
+        /// Name of default settings.
+        /// "Default"
+        /// </summary>
+        public static string DefaultSettingsName { get; private set; } = "Default";
+
+        /// <summary>
         /// Name of the file settings menu.
         /// "Files"
         /// </summary>
@@ -126,6 +132,12 @@
         public static string GroupsFileName { get; private set; } = "groups.json";
 
         /// <summary>
+        /// Name of the default settings file.
+        /// "default.json"
+        /// </summary>
+        public static string DefaultFileName { get; private set; } = "default.json";
+
+        /// <summary>
         /// Name of the unit of measures file.
         /// "unit_of_measures.json"
         /// </summary>
@@ -168,6 +180,28 @@
         /// "yawrate"
         /// </summary>
         public static string DefaultYawRateChannelName { get; private set; } = "yawrate";
+        #endregion
+
+        #region default settings names
+
+        /// <summary>
+        /// Default driverless horizontal axis name.
+        /// "DriverlessHorizontalAxis"
+        /// </summary>
+        public static string DriverlessHorizontalAxis { get; private set; } = "DriverlessHorizontalAxis";
+
+        /// <summary>
+        /// Default driverless c0ref channel name.
+        /// "DriverlessC0refChannel"
+        /// </summary>
+        public static string DriverlessC0refChannel { get; private set; } = "DriverlessC0refChannel";
+
+        /// <summary>
+        /// Default driverless y channel name.
+        /// "DriverlessYChannel"
+        /// </summary>
+        public static string DriverlessYChannel { get; private set; } = "DriverlessYChannel";
+
         #endregion
     }
 }

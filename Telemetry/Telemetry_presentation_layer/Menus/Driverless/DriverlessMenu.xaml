@@ -23,7 +23,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="5" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="2*" />
                 <RowDefinition Height="5" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
@@ -114,9 +114,13 @@
             </Grid.RowDefinitions>
 
             <ScrollViewer Grid.Row="0"
-                                  HorizontalScrollBarVisibility="Auto"
-                                  VerticalScrollBarVisibility="Auto">
-                <StackPanel x:Name="ChartsStackPanel" />
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto">
+                <Grid x:Name="ChartsGrid" 
+                      Margin="0,5,0,0"
+                      VerticalAlignment="Stretch"
+                      HorizontalAlignment="Stretch"
+                      />
             </ScrollViewer>
 
             <Slider Grid.Row="1"
@@ -132,6 +136,7 @@
         <Grid Grid.Column="2"
               Background="White"
               Name="NoChartsGrid"
+              Visibility="Hidden"
               >
             <materialDesign:PackIcon Kind="ChartLine"
                                      VerticalAlignment="Stretch"

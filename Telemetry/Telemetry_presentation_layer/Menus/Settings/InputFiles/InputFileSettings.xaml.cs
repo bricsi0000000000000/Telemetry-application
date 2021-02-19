@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Telemetry_data_and_logic_layer;
 using Telemetry_data_and_logic_layer.Groups;
 using Telemetry_data_and_logic_layer.InputFiles;
+using Telemetry_presentation_layer.Converters;
 using Telemetry_presentation_layer.Errors;
 
 namespace Telemetry_presentation_layer.Menus.Settings.InputFiles

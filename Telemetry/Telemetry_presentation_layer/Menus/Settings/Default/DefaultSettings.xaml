@@ -1,0 +1,172 @@
+﻿<UserControl x:Class="Telemetry_presentation_layer.Menus.Settings.Default.DefaultSettings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Telemetry_presentation_layer.Menus.Settings.Default"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             xmlns:validation="clr-namespace:Telemetry_presentation_layer.ValidationRules"
+             d:DataContext="{d:DesignInstance validation:FieldsViewModel, IsDesignTimeCreatable=False}"
+             >
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width=".7*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Margin="5,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Label Content="Driverless"
+                   VerticalAlignment="Stretch"
+                   HorizontalAlignment="Stretch"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Center"
+                   FontWeight="Bold"
+                   />
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="80"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Name="DriverlessHorizontalAxisTextBox"
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Left"
+                         materialDesign:HintAssist.Hint="horizontal axis"
+                         materialDesign:HintAssist.IsFloating="True"
+                         Margin="5,0,0,15"
+                         >
+                    <TextBox.Text>
+                        <Binding Path="DriverlessHorizontalAxis"
+                                 UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <materialDesign:Card Name="DriverlessHorizontalAxisCardButton"
+                                     Grid.Column="1"
+                                     UniformCornerRadius="5"
+                                     Margin="5"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                     PreviewMouseLeftButtonDown="DriverlessHorizontalAxisCardButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="DriverlessHorizontalAxisCardButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="DriverlessHorizontalAxisCardButton_MouseEnter"
+                                     MouseLeave="DriverlessHorizontalAxisCardButton_MouseLeave"
+                                     >
+                    <materialDesign:PackIcon Kind="ContentSave"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             />
+                </materialDesign:Card>
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="80"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Name="DriverlessC0refTextBox"
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Left"
+                         materialDesign:HintAssist.Hint="c0ref channel"
+                         materialDesign:HintAssist.IsFloating="True"
+                         Margin="5,0,0,15"
+                         >
+                    <TextBox.Text>
+                        <Binding Path="DriverlessC0refChannel"
+                                 UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <materialDesign:Card Name="DriverlessC0refCardButton"
+                                     Grid.Column="1"
+                                     UniformCornerRadius="5"
+                                     Margin="5"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                     PreviewMouseLeftButtonDown="DriverlessC0refCardButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="DriverlessC0refCardButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="DriverlessC0refCardButton_MouseEnter"
+                                     MouseLeave="DriverlessC0refCardButton_MouseLeave"
+                                     >
+                    <materialDesign:PackIcon Kind="ContentSave"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             />
+                </materialDesign:Card>
+            </Grid>
+            
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="80"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Name="DriverlessYChannelTextBox"
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Left"
+                         materialDesign:HintAssist.Hint="y channel"
+                         materialDesign:HintAssist.IsFloating="True"
+                         Margin="5,0,0,15"
+                         >
+                    <TextBox.Text>
+                        <Binding Path="DriverlessYChannel"
+                                 UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <materialDesign:Card Name="DriverlessYChannelCardButton"
+                                     Grid.Column="1"
+                                     UniformCornerRadius="5"
+                                     Margin="5"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                     PreviewMouseLeftButtonDown="DriverlessYChannelCardButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="DriverlessYChannelCardButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="DriverlessYChannelCardButton_MouseEnter"
+                                     MouseLeave="DriverlessYChannelCardButton_MouseLeave"
+                                     >
+                    <materialDesign:PackIcon Kind="ContentSave"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             />
+                </materialDesign:Card>
+            </Grid>
+        </Grid>
+        
+        <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
+                                 x:Name="ErrorSnackbar"
+                                 Grid.ColumnSpan="3"
+                                 Background="{DynamicResource Secondary}"
+                                 />
+    </Grid>
+</UserControl>

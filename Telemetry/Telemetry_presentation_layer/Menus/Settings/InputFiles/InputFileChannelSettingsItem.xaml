@@ -24,13 +24,14 @@
             </Grid.ColumnDefinitions>
 
             <materialDesign:Card Grid.Column="0"
+                                 UniformCornerRadius="5"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                 Name="ChangeColorBtn"
                                  PreviewMouseUp="ChangeColorBtn_Click"
+                                 MouseEnter="ChangeColorBtn_MouseEnter"
+                                 MouseLeave="ChangeColorBtn_MouseLeave"
                                  Margin="5"
                                  MinHeight="30"
-                                 UniformCornerRadius="5"
-                                 Name="ChangeColorBtn"
-                                 BorderThickness="0"
-                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
                                  />
 
             <Label Grid.Column="1"
