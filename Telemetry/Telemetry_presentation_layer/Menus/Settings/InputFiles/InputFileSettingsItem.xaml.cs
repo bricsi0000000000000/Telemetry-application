@@ -9,6 +9,7 @@ using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.InputFiles;
 using Telemetry_data_and_logic_layer.Texts;
 using Telemetry_presentation_layer.Menus.Driverless;
+using Telemetry_presentation_layer.Menus.Settings.Groups;
 
 namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
 {
@@ -66,6 +67,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
 
             ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).RemoveSingleInputFileSettingsItem(InputFileName);
             ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).RemoveInputFileItem(InputFileName);
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).UpdateAfterDeleteFile(InputFileName);
         }
 
         public void ChangeColorMode(bool selected)

@@ -16,6 +16,8 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// </summary>
         public static List<Group> Groups { get; } = new List<Group>();
 
+        public static int LastGroupID = 0;
+
         /// <summary>
         /// Initializes groups from file.
         /// </summary>
@@ -87,7 +89,7 @@ namespace Telemetry_data_and_logic_layer.Groups
                     }
                     else
                     {
-                        var group = new Group(groupsJSON[i].Name.ToString())
+                        var group = new Group(LastGroupID++, groupsJSON[i].Name.ToString())
                         {
                             Driverless = groupsJSON[i].Driverless,
                             Customizable = groupsJSON[i].Customizable
@@ -97,6 +99,7 @@ namespace Telemetry_data_and_logic_layer.Groups
                         {
                             string attributeName = "";
                             string attributeColor = "";
+                            int attributeLineWidth = 0;
 
                             if (groupsJSON[i].Attributes[j].Name == null)
                             {
@@ -108,13 +111,19 @@ namespace Telemetry_data_and_logic_layer.Groups
                                 throw new Exception("Can't add attribute, because 'color' is null!");
                             }
 
+                            if (groupsJSON[i].Attributes[j].LineWidth == null)
+                            {
+                                throw new Exception("Can't add attribute, because 'line width' is null!");
+                            }
+
                             attributeName = groupsJSON[i].Attributes[j].Name.ToString();
                             attributeColor = groupsJSON[i].Attributes[j].Color.ToString();
+                            attributeLineWidth = int.Parse(groupsJSON[i].Attributes[j].LineWidth.ToString());
 
                             if (!attributeName.Equals(string.Empty) &&
                                 !attributeColor.Equals(string.Empty))
                             {
-                                group.AddAttribute(attributeName, attributeColor);
+                                group.AddAttribute(attributeName, attributeColor, attributeLineWidth);
                             }
                             else
                             {
@@ -170,6 +179,7 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// <param name="name">Findable <see cref="Group"/>s name.</param>
         /// <returns>A <see cref="Group"/>.</returns>
         public static Group GetGroup(string name) => Groups.Find(x => x.Name.Equals(name));
+        public static Group GetGroup(int id) => Groups.Find(x => x.ID == id);
 
         /// <summary>
         /// Removes a <see cref="Group"/> from <see cref="Groups"/>.

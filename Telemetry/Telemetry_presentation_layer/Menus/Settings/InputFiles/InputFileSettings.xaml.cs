@@ -194,7 +194,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
         /// <param name="channel"></param>
         private void AddInputFileChannelSettingsItem(Channel channel)
         {
-            var inputFileChannelSettingsItem = new InputFileChannelSettingsItem(channel.Name, ActiveInputFileName, channel.Color);
+            var inputFileChannelSettingsItem = new InputFileChannelSettingsItem(channel, ActiveInputFileName);
             ChannelItemsStackPanel.Children.Add(inputFileChannelSettingsItem);
             inputFileChannelSettingsItems.Add(inputFileChannelSettingsItem);
         }

@@ -7,7 +7,10 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              Background="{DynamicResource MaterialDesignPaper}"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             xmlns:validation="clr-namespace:Telemetry_presentation_layer.ValidationRules"
+             d:DataContext="{d:DesignInstance validation:FieldsViewModel, IsDesignTimeCreatable=False}"
+             >
     <Grid>
         <materialDesign:DialogHost HorizontalAlignment="Stretch"
                                        VerticalAlignment="Stretch"
@@ -44,110 +47,180 @@
 
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width=".8*"/>
+                    <ColumnDefinition Width="5"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="5"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.ColumnSpan="3"
-                        Name="AddGroupBtn"
+                <Button Name="AddGroupBtn"
                         Margin="10"
                         Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
                         Style="{StaticResource MaterialDesignFloatingActionButton}"
                         VerticalAlignment="Bottom"
                         HorizontalAlignment="Right"
                         >
-                    <materialDesign:PackIcon Kind="GroupAdd"/>
+                    <materialDesign:PackIcon Kind="Add"/>
                 </Button>
 
-                <Grid>
+                <ScrollViewer Margin="5,5,0,5"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Auto"
+                              >
+                    <StackPanel x:Name="GroupsStackPanel"/>
+                </ScrollViewer>
+
+                <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}"/>
+
+                <ScrollViewer Margin="0,5,0,5"
+                              Grid.Column="2">
+                    <StackPanel x:Name="AttributesStackPanel"/>
+                </ScrollViewer>
+
+                <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}"/>
+
+                <Grid Grid.Column="4">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="65"/>
+                        <RowDefinition Height="65"/>
+                        <RowDefinition Height="50"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="50"/>
                     </Grid.RowDefinitions>
 
-                    <ScrollViewer Margin="2.5 5">
-                        <StackPanel x:Name="GroupsStackPanel"
-                                    />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="80"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox Name="SelectedAttributeNameTextBox"
+                                 VerticalAlignment="Stretch"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalContentAlignment="Center"
+                                 HorizontalContentAlignment="Left"
+                                 materialDesign:HintAssist.Hint="Name"
+                                 materialDesign:HintAssist.IsFloating="True"
+                                 Margin="5,0,0,15"
+                                 IsReadOnly="True"
+                                 />
+
+                        <materialDesign:Card Grid.Column="1"
+                                             UniformCornerRadius="5"
+                                             Margin="5"
+                                             materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                             >
+                            <materialDesign:PackIcon Kind="ContentSave"
+                                                     VerticalAlignment="Stretch"
+                                                     HorizontalAlignment="Stretch"
+                                                     Opacity=".2"
+                                                         />
+                        </materialDesign:Card>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="80"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox Name="SelectedAttributeLineWidthTextBox"
+                                 VerticalAlignment="Stretch"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalContentAlignment="Center"
+                                 HorizontalContentAlignment="Left"
+                                 materialDesign:HintAssist.Hint="Line width"
+                                 materialDesign:HintAssist.IsFloating="True"
+                                 Margin="5,0,0,15"
+                                 >
+                            <TextBox.Text>
+                                <Binding Path="LineWidth"
+                                         UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <validation:IsNumberValidationRule ValidatesOnTargetUpdated="True"/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <materialDesign:Card Name="ChangeSelectedAttributeLineWidthCardButton"
+                                             Grid.Column="1"
+                                             Margin="5"
+                                             UniformCornerRadius="5"
+                                             materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                             PreviewMouseLeftButtonDown="ChangeSelectedAttributeLineWidthCardButton_PreviewMouseLeftButtonDown"
+                                             PreviewMouseLeftButtonUp="ChangeSelectedAttributeLineWidthCardButton_PreviewMouseLeftButtonUp"
+                                             MouseEnter="ChangeSelectedAttributeLineWidthCardButton_MouseEnter"
+                                             MouseLeave="ChangeSelectedAttributeLineWidthCardButton_MouseLeave"
+                                             >
+                            <materialDesign:PackIcon Kind="ContentSave"
+                                                     VerticalAlignment="Stretch"
+                                                     HorizontalAlignment="Stretch"
+                                                     />
+                        </materialDesign:Card>
+                    </Grid>
+
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="80"/>
+                        </Grid.ColumnDefinitions>
+
+                        <materialDesign:Card Margin="5,5,0,5"
+                                             UniformCornerRadius="5"
+                                             materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                             Name="SelectedAttributeColorCard"
+                                             PreviewMouseLeftButtonUp="SelectedAttributeColorCard_PreviewMouseLeftButtonUp"
+                                             MouseEnter="SelectedAttributeColorCard_MouseEnter"
+                                             MouseLeave="SelectedAttributeColorCard_MouseLeave"
+                                             />
+                    </Grid>
+
+                    <materialDesign:Card Grid.Row="4"
+                                         Margin="5"
+                                         UniformCornerRadius="5"
+                                         materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                         />
+                </Grid>
+
+                <GridSplitter Grid.Column="5" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}"/>
+
+                <Grid Grid.Column="6"
+                      Margin="5,0,5,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Auto"
+                                  >
+                        <StackPanel x:Name="InputFilesStackPanel"/>
+                    </ScrollViewer>
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Auto"
+                                  Grid.Column="1"
+                                  >
+                        <StackPanel x:Name="ChannelsStackPanel"/>
                     </ScrollViewer>
                 </Grid>
 
-                <Grid Grid.Column="1">
-                    <materialDesign:DialogHost HorizontalAlignment="Stretch"
-                                           VerticalAlignment="Stretch"
-                                           CloseOnClickAway="True"
-                                           >
-                        <materialDesign:DialogHost.DialogContent>
-                            <StackPanel Margin="16">
-                                <TextBlock Text="Add attribute"/>
-                                <TextBox Margin="0 8 0 0"
-                                     Name="AddAttributeTxtBox"
-                                     HorizontalAlignment="Stretch"
-                                     />
-                                <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Right"
-                                        >
-                                    <Button Style="{StaticResource MaterialDesignFlatButton}"
-                                        IsDefault="True"
-                                        Margin="0 8 8 0"
-                                        Command="materialDesign:DialogHost.CloseDialogCommand"
-                                        Content="Add"
-                                        Click="AddAttribute_Click"
-                                        >
-                                    </Button>
-                                    <Button Style="{StaticResource MaterialDesignFlatButton}"
-                                        IsCancel="True"
-                                        Margin="0 8 8 0"
-                                        Command="materialDesign:DialogHost.CloseDialogCommand"
-                                        Content="Cancel"
-                                        >
-                                    </Button>
-                                </StackPanel>
-                            </StackPanel>
-                        </materialDesign:DialogHost.DialogContent>
-
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="50"/>
-                            </Grid.RowDefinitions>
-
-                            <ScrollViewer Margin="2.5 5"
-                                      >
-                                <StackPanel x:Name="AttributesStackPanel"
-                                        />
-                            </ScrollViewer>
-
-                            <Button Grid.Row="1"
-                                Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
-                                Name="AddAttributeBtn"
-                                Margin="10 5"
-                                Content="Add attribute"
-                                Visibility="Hidden"
-                                >
-                            </Button>
-                        </Grid>
-                    </materialDesign:DialogHost>
-                </Grid>
-
-                <Grid Grid.Column="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <ComboBox Name="InputFilesComboBox"
-                          Margin="5,0"
-                          SelectionChanged="InputFilesComboBox_SelectionChanged"/>
-
-                    <StackPanel Grid.Row="1"
-                            Margin="5"
-                            Name="GroupChannelsStackPanel"/>
-
+                <Grid Background="White"
+                      Name="NoInputFilesGrid"
+                      Grid.Column="6"
+                      >
+                    <materialDesign:PackIcon Kind="FileMultiple"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             Opacity=".2"
+                                             />
                 </Grid>
             </Grid>
         </materialDesign:DialogHost>
-       
 
         <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
                                  Grid.ColumnSpan="3"

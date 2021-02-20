@@ -105,6 +105,7 @@ namespace Telemetry_presentation_layer
                         if (attribute.Name.Equals(channel.Name))
                         {
                             channel.Color = attribute.Color;
+                            channel.LineWidth = attribute.LineWidth;
                         }
                     }
                 }

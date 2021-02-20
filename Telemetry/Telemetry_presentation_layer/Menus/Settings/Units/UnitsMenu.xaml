@@ -40,8 +40,8 @@
                                 materialDesign:ShadowAssist.ShadowDepth="Depth1"
                                 >
                 <Grid>
-                    <Grid  Expander.Collapsed="Grid_Collapsed"
-                           Expander.Expanded="Grid_Expanded">
+                    <Grid Expander.Collapsed="Grid_Collapsed"
+                          Expander.Expanded="Grid_Expanded">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="65"/>
                             <RowDefinition Height="65"/>

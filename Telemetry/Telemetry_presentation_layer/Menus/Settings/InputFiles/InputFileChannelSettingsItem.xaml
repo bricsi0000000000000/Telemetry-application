@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:Telemetry_presentation_layer.Menus.Settings.InputFiles"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
+             xmlns:controls="clr-namespace:WpfMath.Controls;assembly=WpfMath"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              TextElement.FontWeight="Medium"
              TextElement.FontSize="14"
@@ -19,6 +20,7 @@
         <Grid Margin="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="65"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
@@ -41,10 +43,25 @@
                    Margin="15,0,0,0"
                    />
 
-            <ComboBox Grid.Column="2"
-                      x:Name="ImportantChannelsComboBox"
-                      Margin="5,0"
-                      Visibility="Hidden"/>
+            <controls:FormulaControl Grid.Column="2"
+                                     Name="UnitOfMeasureFormulaControl"
+                                     VerticalContentAlignment="Center"
+                                     HorizontalContentAlignment="Left"
+                                     Style="{StaticResource ClearTypeFormula}"
+                                     RenderTransformOrigin="0,0.5"
+                                     >
+                <controls:FormulaControl.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="0.6" ScaleY="0.6"/>
+                    </TransformGroup>
+                </controls:FormulaControl.RenderTransform>
+            </controls:FormulaControl>
+
+            <Label Grid.Column="3"
+                   Name="LineWidthLabel"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Left"
+                   />
         </Grid>
     </materialDesign:Card>
 </UserControl>

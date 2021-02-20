@@ -28,6 +28,10 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         /// </summary>
         private bool driverless;
 
+        private bool isSelected = false;
+
+        public int ID { get; private set; }
+
         /// <summary>
         /// Constructor for <see cref="GroupSettingsItem"/>.
         /// </summary>
@@ -36,13 +40,14 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         /// If true, this <see cref="GroupSettingsItem"/> is driverless.
         /// Otherwise it's not.
         /// </param>
-        public GroupSettingsItem(string groupName, bool driverless = false)
+        public GroupSettingsItem(Group group)
         {
             InitializeComponent();
 
-            GroupName = groupName;
-            GroupLbl.Content = groupName;
-            this.driverless = driverless;
+            ID = group.ID;
+            GroupName = group.Name;
+            GroupLabel.Content = GroupName;
+            driverless = group.Driverless;
             ChangeTypeImage();
         }
 
@@ -92,19 +97,25 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         /// <param name="change"></param>
         public void ChangeColorMode(bool change)
         {
-            var converter = new BrushConverter();
-            BackgroundColor.Background = change ? (Brush)converter.ConvertFromString("#3c3c3c") : Brushes.White;
-            GroupLbl.Foreground = !change ? (Brush)converter.ConvertFromString("#3c3c3c") : Brushes.White;
+            isSelected = change;
+
+            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
+                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+
+            GroupLabel.Foreground = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50)) :
+                                                 new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
         }
 
         private void DeleteGroupBtn_MouseEnter(object sender, MouseEventArgs e)
         {
             DeleteGroupBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary500));
+            Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void DeleteGroupBtn_MouseLeave(object sender, MouseEventArgs e)
         {
             DeleteGroupBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary900));
+            Mouse.OverrideCursor = null;
         }
 
         private void DeleteGroupBtn_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -121,18 +132,18 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
 
             GroupManager.SaveGroups();
-
-            // ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
         }
 
         private void ChangeGroupItemType_MouseEnter(object sender, MouseEventArgs e)
         {
             ChangeGroupItemType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
+            Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void ChangeGroupItemType_MouseLeave(object sender, MouseEventArgs e)
         {
             ChangeGroupItemType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+            Mouse.OverrideCursor = null;
         }
 
         private void ChangeGroupItemType_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -154,21 +165,51 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             group.Driverless = !group.Driverless;
             driverless = group.Driverless;
             GroupManager.SaveGroups();
-            // ChangeTypeImage();
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
+            ChangeTypeImage();
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ChangeActiveGroupItem(ID);
 
             if (group.Driverless)
             {
-                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitActiveChannelSelectableAttributes();
+                // ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitActiveChannelSelectableAttributes();
             }
             else
             {
-                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).DestroyAllActiveChannelSelectableAttributes();
+                //((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).DestroyAllActiveChannelSelectableAttributes();
             }
 
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitInputFilesComboBox();
+            //((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitInputFilesComboBox();
 
             ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
+        }
+
+        private void BackgroundColor_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary700)) :
+                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
+        }
+
+        private void BackgroundColor_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
+                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ChangeActiveGroupItem(ID);
+        }
+
+        private void BackgroundColor_MouseEnter(object sender, MouseEventArgs e)
+        {
+            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
+                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void BackgroundColor_MouseLeave(object sender, MouseEventArgs e)
+        {
+            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
+                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+
+            Mouse.OverrideCursor = null;
         }
     }
 }

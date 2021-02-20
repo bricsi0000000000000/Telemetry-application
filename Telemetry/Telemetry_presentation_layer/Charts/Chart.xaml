@@ -22,7 +22,10 @@
 
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}"/>
 
-        <ScrollViewer Grid.Column="2">
+        <ScrollViewer Grid.Column="2"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Auto"
+                      >
             <StackPanel Name="ValuesStackPanel"/>
         </ScrollViewer>
     </Grid>

@@ -2,9 +2,11 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.Groups;
 using Telemetry_data_and_logic_layer.InputFiles;
 using Telemetry_data_and_logic_layer.Texts;
+using Telemetry_data_and_logic_layer.Units;
 using Telemetry_presentation_layer.Menus.Driverless;
 using Telemetry_presentation_layer.Menus.Settings.Groups;
 
@@ -15,22 +17,27 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
     /// </summary>
     public partial class InputFileChannelSettingsItem : UserControl
     {
-        public string ChannelName { get; set; }
+        public string ActiveInputFileName { get; set; }
 
-        private readonly string inputFileName;
 
         private readonly string colorCode;
 
-        public InputFileChannelSettingsItem(string channelName, string inputFileName, string color)
+        public InputFileChannelSettingsItem(Channel channel, string activeInputFileName)
         {
             InitializeComponent();
 
-            ChannelName = channelName;
-            this.inputFileName = inputFileName;
-            colorCode = color;
-            AttributeLbl.Content = channelName;
-            ChangeColor((Color)ColorConverter.ConvertFromString(color));
-            // InitImportantChannelsComboBox();
+            ActiveInputFileName = activeInputFileName;
+            colorCode = channel.Color;
+            ChangeColor((Color)ColorConverter.ConvertFromString(colorCode));
+            AttributeLbl.Content = activeInputFileName;
+
+            var unitOfMeasure = UnitOfMeasureManager.GetUnitOfMeasure(channel.Name);
+            if (unitOfMeasure != null)
+            {
+                var formula = @"\color[HTML]{" + ColorManager.Secondary900[1..] + "}{" + unitOfMeasure.UnitOfMeasure + "}";
+                UnitOfMeasureFormulaControl.Formula = formula;
+            }
+            LineWidthLabel.Content = $"{channel.LineWidth} pt";
         }
 
         public void ChangeColor(Color color)
@@ -45,25 +52,10 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
             {
                 var pickedColor = pickColor.ColorPicker.Color;
                 ChangeColor(pickedColor);
-                /* var driverlessInputFile = DriverlessInputFileManager.Instance.GetInputFile(inputFileName);
-                 if (driverlessInputFile != null)
-                 {
-                     driverlessInputFile.GetChannel(ChannelName).Color = pickedColor;
-                 }
-                 else
-                 {
-                     var standardInputFile = StandardInputFileManager.Instance.GetInputFile(inputFileName);
-                     if (standardInputFile != null)
-                     {
-                         standardInputFile.GetChannel(ChannelName).Color = pickedColor;
-                     }
-                 }*/
-
-                //((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).InitInputFileSettingsItems();
 
                 foreach (var group in GroupManager.Groups)
                 {
-                    var channel = group.GetAttribute(ChannelName);
+                    var channel = group.GetAttribute(ActiveInputFileName);
                     if (channel != null)
                     {
                         channel.Color = pickedColor.ToString();
@@ -74,7 +66,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
                 {
                     foreach (var channel in inputFile.Channels)
                     {
-                        if (channel.Name.Equals(ChannelName))
+                        if (channel.Name.Equals(ActiveInputFileName))
                         {
                             channel.Color = pickedColor.ToString();
                         }
@@ -87,33 +79,6 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
                 //TODO if driverless, a driverlesseset updatelje ha nem akkor meg a másikat
                 ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
             }
-        }
-
-        private void InitImportantChannelsComboBox()
-        {
-            ImportantChannelsComboBox.Items.Clear();
-
-            var comboBoxItem = new ComboBoxItem() { Content = "", IsSelected = true };
-            comboBoxItem.PreviewMouseLeftButtonDown += ChooseInputFileComboBox_PreviewMouseRightButtonUp;
-            ImportantChannelsComboBox.Items.Add(comboBoxItem);
-
-            var inputFile = InputFileManager.GetInputFile(inputFileName);
-
-            foreach (var item in ImportantChannels.DriverlessImportantChannelNames)
-            {
-                bool found = item.Equals(ChannelName);
-
-                inputFile.ChangeRequiredChannelSatisfaction(item, found);
-
-                comboBoxItem = new ComboBoxItem() { Content = item, IsSelected = found };
-                comboBoxItem.PreviewMouseLeftButtonDown += ChooseInputFileComboBox_PreviewMouseRightButtonUp;
-                ImportantChannelsComboBox.Items.Add(comboBoxItem);
-            }
-        }
-
-        private void ChooseInputFileComboBox_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
-        {
-
         }
 
         private void ChangeColorBtn_MouseEnter(object sender, MouseEventArgs e)

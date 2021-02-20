@@ -7,54 +7,44 @@
              mc:Ignorable="d" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             d:DesignHeight="60" d:DesignWidth="800">
+             Height="55"
+             d:DesignWidth="800">
     <materialDesign:Card UniformCornerRadius="5"
-                         Margin="5 2.5"
                          Name="BackgroundColor"
                          materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                         Margin="5 2.5"
+                         PreviewMouseLeftButtonDown="BackgroundColor_PreviewMouseLeftButtonDown"
+                         PreviewMouseLeftButtonUp="BackgroundColor_PreviewMouseLeftButtonUp"
+                         MouseEnter="BackgroundColor_MouseEnter"
+                         MouseLeave="BackgroundColor_MouseLeave"
                          >
         <Grid Margin="5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="65"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="65"/>
             </Grid.ColumnDefinitions>
 
-            <Label Name="AttributeLbl"
+            <materialDesign:Card Grid.Column="0"
+                                 Margin="5"
+                                 UniformCornerRadius="5"
+                                 Name="ColorCard"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                 BorderThickness="0"
+                                 />
+            
+            <Label Grid.Column="1"
+                   Name="AttributeLabel"
                    VerticalContentAlignment="Center"
-                   HorizontalContentAlignment="Center"
+                   HorizontalContentAlignment="Left"
                    />
 
-            <materialDesign:Card Grid.Column="1"
-                                 PreviewMouseUp="ChangeColorBtn_Click"
-                                 Margin="5"
-                                 UniformCornerRadius="5"
-                                 Name="ChangeColorBtn"
-                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                 BorderThickness="0"
-                    />
-
-            <materialDesign:Card Grid.Column="2"
-                                 Margin="5"
-                                 Name="DeleteAttributeBtn"
-                                 MouseEnter="DeleteAttributeBtn_MouseEnter"
-                                 MouseLeave="DeleteAttributeBtn_MouseLeave"
-                                 PreviewMouseLeftButtonDown="DeleteAttributeBtn_PreviewMouseLeftButtonDown"
-                                 PreviewMouseLeftButtonUp="DeleteAttributeBtn_PreviewMouseLeftButtonUp"
-                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                 BorderThickness="0"
-                                 UniformCornerRadius="5"
-                                 Background="{DynamicResource Delete}"
-                                 VerticalAlignment="Stretch"
-                                 HorizontalAlignment="Stretch"
-                    >
-                <materialDesign:PackIcon Kind="Delete"
-                                         VerticalAlignment="Center"
-                                         HorizontalAlignment="Center"
-                                         Foreground="White"
-                                         Margin="0,8"
-                                         />
-            </materialDesign:Card>
+            <Label Grid.Column="2"
+                   Name="LineWidthLabel"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Left"
+                   />
         </Grid>
     </materialDesign:Card>
 </UserControl>

@@ -8,60 +8,53 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:controls="clr-namespace:WpfMath.Controls;assembly=WpfMath"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             d:DesignHeight="50" d:DesignWidth="800">
-    <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                         UniformCornerRadius="0"
-                         >
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+             d:DesignHeight="50" d:DesignWidth="800"
+             >
+    <Grid Margin="5,5,5,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-            <materialDesign:Card Margin="5"
-                                 UniformCornerRadius="5"
-                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                 Name="ColorCard"
-                                 Width="30"
-                                 Height="20"
-                                 PreviewMouseUp="ColorCard_PreviewMouseUp"
-                                 MouseEnter="ColorCard_MouseEnter"
-                                 MouseLeave="ColorCard_MouseLeave"
-                                 >
+        <materialDesign:Card UniformCornerRadius="3"
+                             materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                             Name="ColorCard"
+                             Height="23"
+                             PreviewMouseUp="ColorCard_PreviewMouseUp"
+                             MouseEnter="ColorCard_MouseEnter"
+                             MouseLeave="ColorCard_MouseLeave"
+                             >
                 
-            </materialDesign:Card>
+        </materialDesign:Card>
 
-            <Label Grid.Column="1"
-                   Name="ChannelNameLabel"
-                   VerticalContentAlignment="Center"
-                   Content="adsadsa"
-                   />
+        <Label Grid.Column="1"
+               Name="ChannelNameLabel"
+               VerticalContentAlignment="Center"
+               HorizontalContentAlignment="Left"
+               FontSize="12"
+               />
 
-            <Label Grid.Column="2"
-                   Name="ChannelValueLabel"
-                   VerticalContentAlignment="Center"
-                   HorizontalContentAlignment="Left"
-                   Content="adsadsa"
-                   />
+        <Label Grid.Column="2"
+               Name="ChannelValueLabel"
+               VerticalContentAlignment="Center"
+               HorizontalContentAlignment="Left"
+               FontSize="12"
+               />
 
-            <controls:FormulaControl Grid.Column="3"
-                                     Name="UnitOfMeasureFormulaControl"
-                                     VerticalContentAlignment="Center"
-                                     HorizontalContentAlignment="Left"
-                                     Style="{StaticResource ClearTypeFormula}"
-                                     RenderTransformOrigin="0,0.5"
-                                     >
-                <controls:FormulaControl.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform ScaleX="0.6" ScaleY="0.6"/>
-                        <SkewTransform/>
-                        <RotateTransform/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </controls:FormulaControl.RenderTransform>
-            </controls:FormulaControl>
-        </Grid>
-    </materialDesign:Card>
+        <controls:FormulaControl Grid.Column="3"
+                                 Name="UnitOfMeasureFormulaControl"
+                                 VerticalContentAlignment="Center"
+                                 HorizontalContentAlignment="Left"
+                                 Style="{StaticResource ClearTypeFormula}"
+                                 RenderTransformOrigin="0,0.5"
+                                 >
+            <controls:FormulaControl.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="0.6" ScaleY="0.6"/>
+                </TransformGroup>
+            </controls:FormulaControl.RenderTransform>
+        </controls:FormulaControl>
+    </Grid>
 </UserControl>

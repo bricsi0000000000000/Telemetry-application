@@ -134,12 +134,11 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             ChartsGrid.RowDefinitions.Clear();
 
             int rowIndex = 0;
-
             foreach (var channelName in ChannelNames)
             {
                 if (selectedChannels.Contains(channelName.Item1))
                 {
-                    var group = new Group(channelName.Item1)
+                    var group = new Group(GroupManager.LastGroupID++, channelName.Item1)
                     {
                         Driverless = true
                     };
@@ -167,7 +166,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
 
                     var chart = BuildGroupChart(group);
                     ChartsGrid.Children.Add(chart);
-                  
+
                     Grid.SetRow(chart, rowIndex++);
                     Grid.SetRow(splitter, rowIndex++);
                 }
@@ -375,8 +374,11 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         public void UpdateAfterReadFile()
         {
             DisableNoInputFileAndChannelsGrids();
-            InputFileManager.ActiveDriverlessInputFileID = InputFileManager.GetLastDriverlessInputFile.ID;
-            AddInputFileItem(InputFileManager.GetLastDriverlessInputFile.ID, InputFileManager.GetLastDriverlessInputFile.Name);
+            if (InputFileManager.InputFiles.Count > 0)
+            {
+                InputFileManager.ActiveDriverlessInputFileID = InputFileManager.GetLastDriverlessInputFile.ID;
+                AddInputFileItem(InputFileManager.GetLastDriverlessInputFile.ID, InputFileManager.GetLastDriverlessInputFile.Name);
+            }
 
             // UpdateAfterInputFileChoose();
             // InitChooseInputFileComboBox();
@@ -533,9 +535,42 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 UnMergeChannelNames(actInputFile.Channels, actInputFile.ID);
             }
 
-            UpdateChannelsList();
-            SetUpDataSlider();
+            var removableElements = new List<string>();
 
+            foreach (var selectedChannel in selectedChannels)
+            {
+                bool found = false;
+                int index = 0;
+                while (index < ChannelNames.Count && !found)
+                {
+                    if (selectedChannel.Equals(ChannelNames[index].Item1))
+                    {
+                        found = true;
+                    }
+
+                    index++;
+                }
+
+                if (!found)
+                {
+                    removableElements.Add(selectedChannel);
+                }
+            }
+
+            foreach (var item in removableElements)
+            {
+                selectedChannels.Remove(item);
+            }
+
+          /*  Trace.WriteLine("###################################");
+            foreach (var item in selectedChannels)
+            {
+                Trace.WriteLine(item);
+            }*/
+
+            UpdateChannelsList();
+            UpdateCharts();
+            SetUpDataSlider();
             /*foreach (var item in Channels)
             {
                 Trace.Write(item.Item1.Name + "\t");
@@ -551,6 +586,10 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         {
             var checkBox = (CheckBox)sender;
             string name = checkBox.Content.ToString();
+            if (name.Contains(" - "))
+            {
+                name = name.Split(" - ")[0];
+            }
 
             if ((bool)checkBox.IsChecked)
             {
@@ -580,7 +619,10 @@ namespace Telemetry_presentation_layer.Menus.Driverless
 
             foreach (var item in ChannelNames)
             {
-                var checkBox = new CheckBox();
+                var checkBox = new CheckBox
+                {
+                    IsChecked = selectedChannels.Contains(item.Item1)
+                };
                 checkBox.Checked += ChannelItem_Checked;
                 checkBox.Unchecked += ChannelItem_Checked;
                 //TODO drag and drop
@@ -596,8 +638,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                     {
                         content += InputFileManager.GetInputFile(fileID).Name + ";";
                     }
-                    content = content.Substring(0, content.Length - 1);
-                    checkBox.Content = content;
+                    checkBox.Content = content[0..^1];
                 }
 
                 ChannelsStackPanel.Children.Add(checkBox);
@@ -634,6 +675,18 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                     }
                 }
             }
+
+           /* Trace.WriteLine("###################################");
+
+            foreach (var item in ChannelNames)
+            {
+                Trace.Write(item.Item1 + "\t");
+                foreach (var itemi in item.Item2)
+                {
+                    Trace.Write(itemi + ";");
+                }
+                Trace.WriteLine("");
+            }*/
         }
 
         private void ReadInputFileBtn_Click(object sender, RoutedEventArgs e)

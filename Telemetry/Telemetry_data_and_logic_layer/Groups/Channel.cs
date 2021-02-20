@@ -58,6 +58,11 @@ namespace Telemetry_data_and_logic_layer.Groups
         public string Color { get; set; }
 
         /// <summary>
+        /// Line width of the channel.
+        /// </summary>
+        public int LineWidth { get; set; } = 1;
+
+        /// <summary>
         /// Add <paramref name="value"/> to the channel.
         /// </summary>
         /// <param name="value">Value to add.</param>

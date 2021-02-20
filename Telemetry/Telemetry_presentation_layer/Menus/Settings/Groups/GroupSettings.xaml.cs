@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.Groups;
 using Telemetry_data_and_logic_layer.InputFiles;
 using Telemetry_data_and_logic_layer.Texts;
+using Telemetry_presentation_layer.Converters;
 using Telemetry_presentation_layer.Menus.Driverless;
+using Telemetry_presentation_layer.ValidationRules;
 
 namespace Telemetry_presentation_layer.Menus.Settings.Groups
 {
@@ -29,6 +35,10 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         /// Default is empty string.
         /// </summary>
         public string ActiveGroupName { get; set; } = string.Empty;
+        public int ActiveGroupID { get; set; }
+        public int ActiveAttributeID { get; set; }
+
+        private int activeInputFileID;
 
         /// <summary>
         /// Active <see cref="Attribute"/>s name.
@@ -41,12 +51,16 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         /// </summary>
         public string SelectedInputFileName { get; set; }
 
+        private FieldsViewModel fieldsViewModel = new FieldsViewModel();
+
         /// <summary>
         /// Constructor for <see cref="GroupSettings"/>.
         /// </summary>
         public GroupSettings()
         {
             InitializeComponent();
+
+            DataContext = fieldsViewModel;
 
             if (GroupManager.Groups.Count > 0)
             {
@@ -55,83 +69,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
                     ActiveGroupName = GroupManager.Groups[0].Name;
                 }
 
-                if (!GroupManager.GetGroup(ActiveGroupName).Driverless)
-                {
-                    DestroyAllActiveChannelSelectableAttributes();
-                }
-
-                InitActiveChannelSelectableAttributes();
                 InitGroups();
             }
-
-            InitInputFilesComboBox();
-        }
-
-        /// <summary>
-        /// Initializes the <see cref="InputFilesComboBox"/>es items.
-        /// </summary>
-        public void InitInputFilesComboBox()
-        {
-            InputFilesComboBox.Items.Clear();
-
-            foreach (var item in InputFileManager.InputFiles)
-            {
-                AddInputFileComboBoxItem(item.Name);
-            }
-        }
-
-        /// <summary>
-        /// Adds a newly created <see cref="ComboBoxItem"/> to <see cref="InputFilesComboBox"/>.
-        /// </summary>
-        /// <param name="name"><see cref="ComboBoxItem"/>s name you want to add.</param>
-        private void AddInputFileComboBoxItem(string name)
-        {
-            InputFilesComboBox.Items.Add(new ComboBoxItem()
-            {
-                Content = name,
-                IsSelected = name.Equals(SelectedInputFileName)
-            });
-        }
-
-        /// <summary>
-        /// Initializes the active channels selectable attributes into <see cref="GroupChannelsStackPanel"/> if driverless.
-        /// </summary>
-        public void InitActiveChannelSelectableAttributes()
-        {
-            if (GroupManager.GetGroup(ActiveGroupName).Driverless)
-            {
-                var inputFile = InputFileManager.GetDriverlessInputFile(SelectedInputFileName);
-                if (inputFile != null)
-                {
-                    var channels = inputFile.Channels;
-                    if (channels == null)
-                    {
-                        return;
-                    }
-
-                    GroupChannelsStackPanel.Children.Clear();
-
-                    foreach (var channel in channels)
-                    {
-                        var checkBox = new CheckBox()
-                        {
-                            Content = channel.Name,
-                            IsChecked = GetGroupSettingsAttribute(channel.Name) != null
-                        };
-                        checkBox.Click += ChannelCheckBox_Click;
-                        GroupChannelsStackPanel.Children.Add(checkBox);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Destroys all active channels selectable attributes in <see cref="GroupChannelsStackPanel"/>.
-        /// </summary>
-        public void DestroyAllActiveChannelSelectableAttributes()
-        {
-            if (GroupChannelsStackPanel.Children.Count > 0)
-                GroupChannelsStackPanel.Children.Clear();
         }
 
         /// <summary>
@@ -174,7 +113,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             {
                 if (group.Customizable)
                 {
-                    var groupSettingsItem = new GroupSettingsItem(group.Name, group.Driverless);
+                    var groupSettingsItem = new GroupSettingsItem(group);
                     groupSettingsItem.ChangeColorMode(group.Name.Equals(ActiveGroupName));
                     GroupsStackPanel.Children.Add(groupSettingsItem);
                     groupSettingsItems.Add(groupSettingsItem);
@@ -190,6 +129,21 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             InitAttributes();
         }
 
+        public void ChangeActiveGroupItem(int groupID)
+        {
+            if (ActiveGroupID != groupID)
+            {
+                ActiveGroupID = groupID;
+
+                foreach (GroupSettingsItem item in GroupsStackPanel.Children)
+                {
+                    item.ChangeColorMode(item.ID == groupID);
+                }
+
+                InitAttributes();
+            }
+        }
+
         /// <summary>
         /// Initializes <see cref="GroupSettingsAttribute"/>s in to <see cref="AttributesStackPanel"/>.
         /// </summary>
@@ -197,13 +151,111 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         {
             AttributesStackPanel.Children.Clear();
             groupSettingsAttributes.Clear();
-            foreach (var attribute in GroupManager.GetGroup(ActiveGroupName).Attributes)
+
+            var attributes = GroupManager.GetGroup(ActiveGroupID).Attributes;
+
+            ActiveAttributeID = attributes[0].ID;
+
+            foreach (var attribute in attributes)
             {
-                var groupSettingsAttribute = new GroupSettingsAttribute(attribute.Name, ActiveGroupName, attribute.Color);
+                var groupSettingsAttribute = new GroupSettingsAttribute(ActiveGroupName, attribute);
+                groupSettingsAttribute.ChangeColorMode(attribute.ID == ActiveAttributeID);
                 AttributesStackPanel.Children.Add(groupSettingsAttribute);
                 groupSettingsAttributes.Add(groupSettingsAttribute);
             }
+
+            UpdateActiveAttributeOptions();
         }
+
+        public void ChangeActiveAttributeItem(int attributeID)
+        {
+            if (ActiveAttributeID != attributeID)
+            {
+                ActiveAttributeID = attributeID;
+
+                foreach (GroupSettingsAttribute item in AttributesStackPanel.Children)
+                {
+                    item.ChangeColorMode(item.ID == attributeID);
+                }
+
+                UpdateActiveAttributeOptions();
+            }
+        }
+
+        private void UpdateActiveAttributeOptions()
+        {
+            var attribute = GroupManager.GetGroup(ActiveGroupID).GetAttribute(ActiveAttributeID);
+            fieldsViewModel.LineWidth = attribute.LineWidth;
+            SelectedAttributeNameTextBox.Text = attribute.Name;
+            SelectedAttributeColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(attribute.Color);
+
+            UpdateInputFiles();
+        }
+
+        private void UpdateInputFiles()
+        {
+            InputFilesStackPanel.Children.Clear();
+
+            NoInputFilesGrid.Visibility = InputFileManager.InputFiles.Count == 0 ? Visibility.Visible : Visibility.Hidden;
+
+            foreach (var inputFile in InputFileManager.InputFiles)
+            {
+                var inputFileRadioButton = new RadioButton()
+                {
+                    Content = inputFile.Name
+                };
+                inputFileRadioButton.GroupName = "inputFiles";
+                inputFileRadioButton.Checked += InputFile_Checked;
+
+                InputFilesStackPanel.Children.Add(inputFileRadioButton);
+            }
+        }
+
+        private void UpdateChannels()
+        {
+            ChannelsStackPanel.Children.Clear();
+
+            var inputFile = InputFileManager.GetInputFile(activeInputFileID);
+
+            if (inputFile != null)
+            {
+                foreach (var channel in inputFile.Channels)
+                {
+                    var channelCheckbox = new CheckBox()
+                    {
+                        Content = channel.Name
+                    };
+                    channelCheckbox.Checked += Channel_Checked;
+                    channelCheckbox.Unchecked += Channel_Checked;
+
+                    ChannelsStackPanel.Children.Add(channelCheckbox);
+                }
+            }
+        }
+
+        private void InputFile_Checked(object sender, RoutedEventArgs e)
+        {
+            activeInputFileID = InputFileManager.GetInputFile(((RadioButton)sender).Content.ToString()).ID;
+            UpdateChannels();
+        }
+
+        private void Channel_Checked(object sender, RoutedEventArgs e)
+        {
+            string content = ((CheckBox)sender).Content.ToString();
+
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            GroupManager.GetGroup(ActiveGroupID).AddAttribute(InputFileManager.GetInputFile(activeInputFileID).GetChannel(content));
+            ActiveAttribute = GroupManager.GetGroup(ActiveGroupID).GetAttribute(content);
+            GroupManager.SaveGroups();
+            InitGroups();
+            SelectInputFile(InputFileManager.GetInputFile(activeInputFileID).Name);
+
+            //TODO maradjon is kipipálva a channel checkbox
+
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
 
         /// <summary>
         /// Finds a <see cref="GroupSettingsItem"/> based on <paramref name="name"/>.
@@ -231,7 +283,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
                 throw new Exception("Group name is empty!");
             }
 
-            var group = new Group(AddGroupTxtBox.Text);
+            var group = new Group(GroupManager.LastGroupID++, AddGroupTxtBox.Text);
             GroupManager.AddGroup(group);
             ActiveGroupName = AddGroupTxtBox.Text;
             AddGroupTxtBox.Text = string.Empty;
@@ -243,38 +295,12 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         }
 
         /// <summary>
-        /// Adds an <see cref="Attribute"/> based on <see cref="AddAttributeTxtBox"/>es text.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void AddAttribute_Click(object sender, RoutedEventArgs e)
-        {
-            string addAttributeText = AddAttributeTxtBox.Text;
-            if (addAttributeText.Equals(string.Empty))
-            {
-                throw new Exception("Attribute name is empty!");
-            }
-
-            if (addAttributeText.Equals("*"))
-            {
-                throw new Exception("Attribute name can't be an asterisk!");
-            }
-
-            GroupManager.GetGroup(ActiveGroupName).AddAttribute(InputFileManager.InputFiles[0].GetChannel(addAttributeText));
-            ActiveAttribute = GroupManager.GetGroup(ActiveGroupName).GetAttribute(addAttributeText);
-            AddAttributeTxtBox.Text = string.Empty;
-            InitGroups();
-
-            GroupManager.SaveGroups();
-        }
-
-        /// <summary>
         /// Updates the <see cref="Group"/>s in the settings menu, when one of the <see cref="GroupSettingsItem"/> is clicked.
         /// </summary>
         /// <param name="groupName">Clicked <see cref="Group"/>s name.</param>
         public void GroupSettingsItemClicked(string groupName)
         {
-            ActiveGroupName = groupName;
+            /*ActiveGroupName = groupName;
             InitGroups();
             if (GroupManager.GetGroup(groupName).Driverless)
             {
@@ -283,7 +309,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             else
             {
                 DestroyAllActiveChannelSelectableAttributes();
-            }
+            }*/
         }
 
         /// <summary>
@@ -293,19 +319,129 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         /// <param name="e"></param>
         private void InputFilesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selectedItem = ((ComboBoxItem)InputFilesComboBox.SelectedItem);
+            /*var selectedItem = ((ComboBoxItem)InputFilesComboBox.SelectedItem);
             if (selectedItem != null)
             {
                 SelectedInputFileName = selectedItem.Content.ToString();
                 InitActiveChannelSelectableAttributes();
-            }
+            }*/
         }
 
         public void UpdateAfterReadFile(string fileName)
         {
-            SelectedInputFileName = fileName;
-            InitInputFilesComboBox();
-            InitActiveChannelSelectableAttributes();
+            UpdateActiveAttributeOptions();
+            SelectInputFile(fileName);
+            /* SelectedInputFileName = fileName;
+             InitInputFilesComboBox();
+             InitActiveChannelSelectableAttributes();*/
+        }
+
+        public void UpdateAfterDeleteFile(string fileName)
+        {
+            UpdateInputFiles();
+            UpdateChannels();
+            SelectInputFile(fileName);
+        }
+
+        private void SelectInputFile(string fileName)
+        {
+            var inputFile = InputFileManager.GetInputFile(fileName);
+
+            if (inputFile != null)
+            {
+                activeInputFileID = inputFile.ID;
+            }
+            else
+            {
+                if (InputFileManager.InputFiles.Count > 0)
+                {
+                    activeInputFileID = InputFileManager.InputFiles.Last().ID;
+                }
+                else
+                {
+                    activeInputFileID = -1;
+                }
+            }
+
+            inputFile = InputFileManager.GetInputFile(activeInputFileID);
+            if (inputFile != null)
+            {
+                foreach (RadioButton item in InputFilesStackPanel.Children)
+                {
+                    item.IsChecked = item.Content.Equals(inputFile.Name);
+                }
+            }
+
+            UpdateChannels();
+        }
+
+        private void SelectedAttributeColorCard_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+            PickColor pickColor = new PickColor(GroupManager.GetGroup(ActiveGroupID).GetAttribute(ActiveAttributeID).Color);
+            if (pickColor.ShowDialog() == true)
+            {
+                var pickedColor = pickColor.ColorPicker.Color;
+                SelectedAttributeColorCard.Background = new SolidColorBrush(pickedColor);
+
+                var activeAttribute = GroupManager.GetGroup(ActiveGroupID).GetAttribute(ActiveAttributeID);
+                activeAttribute.Color = pickedColor.ToString();
+                GroupManager.SaveGroups();
+
+                foreach (GroupSettingsAttribute item in AttributesStackPanel.Children)
+                {
+                    if (item.ID == ActiveAttributeID)
+                    {
+                        item.ChangeColor(pickedColor.ToString());
+                    }
+                }
+            }
+
+            Mouse.OverrideCursor = null;
+        }
+
+        private void SelectedAttributeColorCard_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void SelectedAttributeColorCard_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Mouse.OverrideCursor = null;
+        }
+
+        private void ChangeSelectedAttributeLineWidthCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ChangeSelectedAttributeLineWidthCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+        }
+
+        private void ChangeSelectedAttributeLineWidthCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            ChangeSelectedAttributeLineWidthCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Wait;
+            var activeAttribute = GroupManager.GetGroup(ActiveGroupID).GetAttribute(ActiveAttributeID);
+            activeAttribute.LineWidth = int.Parse(SelectedAttributeLineWidthTextBox.Text);
+            GroupManager.SaveGroups();
+            foreach (GroupSettingsAttribute item in AttributesStackPanel.Children)
+            {
+                if (item.ID == ActiveAttributeID)
+                {
+                    item.LineWidth = activeAttribute.LineWidth;
+                }
+            }
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void ChangeSelectedAttributeLineWidthCardButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ChangeSelectedAttributeLineWidthCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void ChangeSelectedAttributeLineWidthCardButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            ChangeSelectedAttributeLineWidthCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            Mouse.OverrideCursor = null;
         }
     }
 }

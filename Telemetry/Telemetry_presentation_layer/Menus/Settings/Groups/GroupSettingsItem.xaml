@@ -7,26 +7,29 @@
              mc:Ignorable="d" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             d:DesignHeight="60" d:DesignWidth="800">
+             Height="55" d:DesignWidth="800">
 
     <materialDesign:Card UniformCornerRadius="5"
                          Margin="5 2.5"
                          Name="BackgroundColor"
                          BorderThickness="0"
                          materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                         PreviewMouseLeftButtonDown="BackgroundColor_PreviewMouseLeftButtonDown"
+                         PreviewMouseLeftButtonUp="BackgroundColor_PreviewMouseLeftButtonUp"
+                         MouseEnter="BackgroundColor_MouseEnter"
+                         MouseLeave="BackgroundColor_MouseLeave"
                          >
-        <Grid PreviewMouseLeftButtonUp="Grid_PreviewMouseLeftButtonUp"
-              Margin="5"
-              >
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="65"/>
                 <ColumnDefinition Width="65"/>
             </Grid.ColumnDefinitions>
 
-            <Label Name="GroupLbl"
+            <Label Name="GroupLabel"
                    VerticalContentAlignment="Center"
-                   HorizontalContentAlignment="Center"
+                   HorizontalContentAlignment="Left"
+                   Margin="5"
                    />
 
             <materialDesign:Card Grid.Column="1"
@@ -57,7 +60,7 @@
                                  Background="{DynamicResource Delete}"
                                  VerticalAlignment="Stretch"
                                  HorizontalAlignment="Stretch"
-                    >
+                                 >
                 <materialDesign:PackIcon Kind="Delete"
                                          VerticalAlignment="Center"
                                          HorizontalAlignment="Center"

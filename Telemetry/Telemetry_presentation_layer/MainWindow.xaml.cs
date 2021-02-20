@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using Telemetry_data_and_logic_layer;
 using Telemetry_data_and_logic_layer.Groups;
 using Telemetry_data_and_logic_layer.Texts;
 using Telemetry_data_and_logic_layer.Tracks;
@@ -23,8 +22,29 @@ namespace Telemetry_presentation_layer
             try
             {
                 UnitOfMeasureManager.InitializeUnitOfMeasures(TextManager.UnitOfMeasuresFileName);
+            }
+            catch (Exception exception)
+            {
+                ShowError.ShowErrorMessage(exception.Message);
+            }
+            try
+            {
                 DriverlessTrackManager.LoadTracks();
+            }
+            catch (Exception exception)
+            {
+                ShowError.ShowErrorMessage(exception.Message);
+            }
+            try
+            {
                 GroupManager.InitGroups(TextManager.GroupsFileName);
+            }
+            catch (Exception exception)
+            {
+                ShowError.ShowErrorMessage(exception.Message);
+            }
+            try
+            {
                 MenuManager.InitMainMenuTabs(MainMenuTabControl);
             }
             catch (Exception exception)
