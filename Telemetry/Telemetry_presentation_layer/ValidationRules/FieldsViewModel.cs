@@ -5,17 +5,47 @@ namespace Telemetry_presentation_layer.ValidationRules
 {
     public class FieldsViewModel : INotifyPropertyChanged
     {
+#nullable enable
         private string? name;
+        private string? groupName;
+        private string? addGroupName;
+        private string? addAttributeName;
+        private int addAttributeLineWidth;
         private string? formula;
         private string? driverlessHorizontalAxis;
         private string? driverlessC0refChannel;
         private string? driverlessYChannel;
         private int lineWidth;
+        private string? fileName;
 
         public string? Name
         {
             get => name;
             set => this.MutateVerbose(ref name, value, RaisePropertyChanged());
+        }
+
+        public string? GroupName
+        {
+            get => groupName;
+            set => this.MutateVerbose(ref groupName, value, RaisePropertyChanged());
+        }
+
+        public string? AddGroupName
+        {
+            get => addGroupName;
+            set => this.MutateVerbose(ref addGroupName, value, RaisePropertyChanged());
+        }
+
+        public string? AddAttributeName
+        {
+            get => addAttributeName;
+            set => this.MutateVerbose(ref addAttributeName, value, RaisePropertyChanged());
+        }
+
+        public int AddAttributeLineWidth
+        {
+            get => addAttributeLineWidth;
+            set => this.MutateVerbose(ref addAttributeLineWidth, value, RaisePropertyChanged());
         }
 
         public string? Formula
@@ -46,6 +76,12 @@ namespace Telemetry_presentation_layer.ValidationRules
         {
             get => lineWidth;
             set => this.MutateVerbose(ref lineWidth, value, RaisePropertyChanged());
+        }
+
+        public string FileName
+        {
+            get => fileName;
+            set => this.MutateVerbose(ref fileName, value, RaisePropertyChanged());
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

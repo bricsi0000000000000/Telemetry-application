@@ -88,17 +88,14 @@ namespace Telemetry_presentation_layer.Menus.Driverless
 
             foreach (var group in GroupManager.Groups)
             {
-                if (group.Driverless)
+                var checkBox = new CheckBox()
                 {
-                    var checkBox = new CheckBox()
-                    {
-                        Content = group.Name
-                    };
+                    Content = group.Name
+                };
 
-                    checkBox.Click += GroupCheckBox_Click;
+                checkBox.Click += GroupCheckBox_Click;
 
-                    GroupsStackPanel.Children.Add(checkBox);
-                }
+                GroupsStackPanel.Children.Add(checkBox);
             }
         }
 
@@ -138,10 +135,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             {
                 if (selectedChannels.Contains(channelName.Item1))
                 {
-                    var group = new Group(GroupManager.LastGroupID++, channelName.Item1)
-                    {
-                        Driverless = true
-                    };
+                    var group = new Group(GroupManager.LastGroupID++, channelName.Item1);
 
                     foreach (var inputFileID in channelName.Item2)
                     {
@@ -562,11 +556,11 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 selectedChannels.Remove(item);
             }
 
-          /*  Trace.WriteLine("###################################");
-            foreach (var item in selectedChannels)
-            {
-                Trace.WriteLine(item);
-            }*/
+            /*  Trace.WriteLine("###################################");
+              foreach (var item in selectedChannels)
+              {
+                  Trace.WriteLine(item);
+              }*/
 
             UpdateChannelsList();
             UpdateCharts();
@@ -676,17 +670,17 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 }
             }
 
-           /* Trace.WriteLine("###################################");
+            /* Trace.WriteLine("###################################");
 
-            foreach (var item in ChannelNames)
-            {
-                Trace.Write(item.Item1 + "\t");
-                foreach (var itemi in item.Item2)
-                {
-                    Trace.Write(itemi + ";");
-                }
-                Trace.WriteLine("");
-            }*/
+             foreach (var item in ChannelNames)
+             {
+                 Trace.Write(item.Item1 + "\t");
+                 foreach (var itemi in item.Item2)
+                 {
+                     Trace.Write(itemi + ";");
+                 }
+                 Trace.WriteLine("");
+             }*/
         }
 
         private void ReadInputFileBtn_Click(object sender, RoutedEventArgs e)

@@ -9,7 +9,6 @@ using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.InputFiles;
 using Telemetry_data_and_logic_layer.Texts;
 using Telemetry_presentation_layer.Menus.Driverless;
-using Telemetry_presentation_layer.Menus.Settings.Groups;
 
 namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
 {
@@ -18,18 +17,18 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
     /// </summary>
     public partial class InputFileSettingsItem : UserControl
     {
-        public string InputFileName { get; set; }
+        public int ID { get; set; }
 
         private bool driverless;
 
-        public InputFileSettingsItem(string inputFileName, bool driverless = false)
+        public InputFileSettingsItem(InputFile inputFile)
         {
             InitializeComponent();
 
-            InputFileName = inputFileName;
-            this.driverless = driverless;
+            ID = inputFile.ID;
+            driverless = inputFile.Driverless;
 
-            InputFileNameLbl.Content = inputFileName;
+            InputFileNameLbl.Content = inputFile.Name;
 
             ChangeTypeImage();
         }
@@ -61,15 +60,6 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
             InputFileTypeImage.Source = logo;
         }
 
-        private void DeleteInputFile_Click(object sender, RoutedEventArgs e)
-        {
-            InputFileManager.RemoveInputFile(InputFileName);
-
-            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).RemoveSingleInputFileSettingsItem(InputFileName);
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).RemoveInputFileItem(InputFileName);
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).UpdateAfterDeleteFile(InputFileName);
-        }
-
         public void ChangeColorMode(bool selected)
         {
             var converter = new BrushConverter();
@@ -79,24 +69,24 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
 
         private void Grid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeActiveInputFileSettingsItem(InputFileName);
+            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeActiveInputFileSettingsItem(ID);
             ChangeColorMode(selected: true);
         }
 
         private void ChangeGroupItemType_Click(object sender, RoutedEventArgs e)
         {
-            var inputFile = InputFileManager.GetInputFile(InputFileName);
+            var inputFile = InputFileManager.GetInputFile(ID);
             if (inputFile != null)
             {
                 if (inputFile is DriverlessInputFile)
                 {
-                    InputFileManager.RemoveInputFile(InputFileName);
+                    InputFileManager.RemoveInputFile(ID);
                     InputFileManager.AddInputFile(new StandardInputFile(inputFile));
                     driverless = false;
                 }
                 else
                 {
-                    InputFileManager.RemoveInputFile(InputFileName);
+                    InputFileManager.RemoveInputFile(ID);
                     InputFileManager.AddInputFile(new DriverlessInputFile(inputFile));
                     driverless = true;
                 }
@@ -105,16 +95,6 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
             ChangeTypeImage();
             ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
             ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).UpdateRequiredChannels();
-        }
-
-        private void DeleteGroupBtn_MouseEnter(object sender, MouseEventArgs e)
-        {
-            DeleteGroupBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary400));
-        }
-
-        private void DeleteGroupBtn_MouseLeave(object sender, MouseEventArgs e)
-        {
-            DeleteGroupBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary900));
         }
 
         private void ChangeGroupItemType_MouseEnter(object sender, MouseEventArgs e)

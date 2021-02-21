@@ -9,7 +9,10 @@
              Background="{DynamicResource MaterialDesignPaper}"
              TextElement.FontWeight="Medium"
              TextElement.FontSize="14"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             xmlns:validation="clr-namespace:Telemetry_presentation_layer.ValidationRules"
+             d:DataContext="{d:DesignInstance validation:FieldsViewModel, IsDesignTimeCreatable=False}"
+             >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -19,28 +22,119 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Button Grid.ColumnSpan="5"
-                Name="ReadInputFileBtn"
-                Click="ReadInputFileBtn_Click"
-                Margin="10"
-                VerticalAlignment="Bottom"
-                HorizontalAlignment="Right"
-                Style="{StaticResource MaterialDesignFloatingActionButton}"
-                ToolTip="Import file"
-                materialDesign:ShadowAssist.ShadowDepth="Depth1">
-            <materialDesign:PackIcon Kind="File"/>
-        </Button>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="45"/>
+            </Grid.RowDefinitions>
 
-        <ScrollViewer Margin="2.5 5">
-            <StackPanel x:Name="InputFileStackPanel"/>
-        </ScrollViewer>
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Auto"
+                      >
+                <StackPanel x:Name="InputFileStackPanel"/>
+            </ScrollViewer>
 
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <materialDesign:Card Margin="5,5,2.5,5"
+                                     UniformCornerRadius="5"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                     Name="ReadFileCardButton"
+                                     PreviewMouseLeftButtonDown="ReadFileCardButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="ReadFileCardButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="ReadFileCardButton_MouseEnter"
+                                     MouseLeave="ReadFileCardButton_MouseLeave"
+                                 >
+                    <materialDesign:PackIcon Kind="FileOutline"
+                                             Name="ReadFileIcon"
+                                             Foreground="{DynamicResource Secondary}"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             />
+                </materialDesign:Card>
+
+                <materialDesign:Card Grid.Column="1"
+                                     Margin="2.5,5,5,5"
+                                     UniformCornerRadius="5"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                     Background="{DynamicResource Delete}"
+                                     Name="DeleteFileCardButton"
+                                     PreviewMouseLeftButtonDown="DeleteFileCardButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="DeleteFileCardButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="DeleteFileCardButton_MouseEnter"
+                                     MouseLeave="DeleteFileCardButton_MouseLeave"
+                                    >
+                    <materialDesign:PackIcon Kind="Delete"
+                                            Foreground="White"
+                                            VerticalAlignment="Stretch"
+                                            HorizontalAlignment="Stretch"
+                                            />
+                </materialDesign:Card>
+            </Grid>
+        </Grid>
+        
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}"/>
 
-        <ScrollViewer Grid.Column="2"
-                    Margin="2.5 5">
-            <StackPanel x:Name="ChannelItemsStackPanel"/>
-        </ScrollViewer>
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="65"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Name="SelectedInputFileNameTextBox"
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Left"
+                         materialDesign:HintAssist.Hint="File name"
+                         materialDesign:HintAssist.IsFloating="True"
+                         Margin="5,0,0,15"
+                         >
+                    <TextBox.Text>
+                        <Binding Path="FileName"
+                                 UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <materialDesign:Card Name="ChangeSelectedInputFileNameCardButton"
+                                     Grid.Column="1"
+                                     Margin="5,10"
+                                     UniformCornerRadius="5"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                     PreviewMouseLeftButtonDown="ChangeSelectedInputFileNameCardButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="ChangeSelectedInputFileNameCardButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="ChangeSelectedInputFileNameCardButton_MouseEnter"
+                                     MouseLeave="ChangeSelectedInputFileNameCardButton_MouseLeave"
+                                        >
+                    <materialDesign:PackIcon Kind="ContentSave"
+                                             Name="ChangeSelectedInputFileNameIcon"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             />
+                </materialDesign:Card>
+            </Grid>
+
+            <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Auto"
+                      >
+                <StackPanel x:Name="ChannelItemsStackPanel"/>
+            </ScrollViewer>
+        </Grid>
 
         <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}"/>
 

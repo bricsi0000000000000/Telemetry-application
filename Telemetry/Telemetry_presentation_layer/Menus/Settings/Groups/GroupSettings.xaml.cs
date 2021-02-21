@@ -41,17 +41,11 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         private int activeInputFileID;
 
         /// <summary>
-        /// Active <see cref="Attribute"/>s name.
-        /// Default is empty string.
-        /// </summary>
-        public Telemetry_data_and_logic_layer.Groups.Attribute ActiveAttribute { get; set; }
-
-        /// <summary>
         /// Selected <see cref="InputFile"/>s name.
         /// </summary>
         public string SelectedInputFileName { get; set; }
 
-        private FieldsViewModel fieldsViewModel = new FieldsViewModel();
+        private readonly FieldsViewModel fieldsViewModel = new FieldsViewModel();
 
         /// <summary>
         /// Constructor for <see cref="GroupSettings"/>.
@@ -61,6 +55,9 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             InitializeComponent();
 
             DataContext = fieldsViewModel;
+            fieldsViewModel.AddGroupName = "";
+            fieldsViewModel.AddAttributeName = "";
+            AddAttributeLineWidthTextBox.Text = "1";
 
             if (GroupManager.Groups.Count > 0)
             {
@@ -86,14 +83,15 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             if ((bool)checkBox.IsChecked)
             {
                 var inputFile = InputFileManager.GetInputFile(SelectedInputFileName);
-                GroupManager.GetGroup(ActiveGroupName).AddAttribute(inputFile.GetChannel(attributeName));
+                GroupManager.GetGroup(ActiveGroupID).AddAttribute(inputFile.GetChannel(attributeName));
+                ActiveAttributeID = GroupManager.GetGroup(ActiveGroupID).Attributes.Last().ID;
             }
             else
             {
-                GroupManager.GetGroup(ActiveGroupName).RemoveAttribute(checkBox.Content.ToString());
+                GroupManager.GetGroup(ActiveGroupID).RemoveAttribute(checkBox.Content.ToString());
                 if (GroupManager.Groups.Count > 0)
                 {
-                    ActiveAttribute = GroupManager.Groups[0].Attributes[0];
+                    ActiveAttributeID = GroupManager.Groups[0].Attributes.Last().ID;
                 }
             }
 
@@ -111,20 +109,22 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
 
             foreach (var group in GroupManager.Groups)
             {
-                if (group.Customizable)
-                {
-                    var groupSettingsItem = new GroupSettingsItem(group);
-                    groupSettingsItem.ChangeColorMode(group.Name.Equals(ActiveGroupName));
-                    GroupsStackPanel.Children.Add(groupSettingsItem);
-                    groupSettingsItems.Add(groupSettingsItem);
-                }
+                var groupSettingsItem = new GroupSettingsItem(group);
+                groupSettingsItem.ChangeColorMode(group.ID == ActiveGroupID);
+                GroupsStackPanel.Children.Add(groupSettingsItem);
+                groupSettingsItems.Add(groupSettingsItem);
             }
 
-            var activeGroup = GroupManager.GetGroup(ActiveGroupName);
+            var activeGroup = GroupManager.GetGroup(ActiveGroupID);
+            SelectedGroupNameTextBox.Text = GroupManager.GetGroup(ActiveGroupID).Name;
             if (activeGroup.Attributes.Count > 0)
             {
-                ActiveAttribute = activeGroup.Attributes[0];
+                if (ActiveAttributeID == -1)
+                {
+                    ActiveAttributeID = activeGroup.Attributes.Last().ID;
+                }
             }
+            fieldsViewModel.GroupName = activeGroup.Name;
 
             InitAttributes();
         }
@@ -134,6 +134,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             if (ActiveGroupID != groupID)
             {
                 ActiveGroupID = groupID;
+
+                SelectedGroupNameTextBox.Text = GroupManager.GetGroup(ActiveGroupID).Name;
 
                 foreach (GroupSettingsItem item in GroupsStackPanel.Children)
                 {
@@ -152,16 +154,27 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             AttributesStackPanel.Children.Clear();
             groupSettingsAttributes.Clear();
 
-            var attributes = GroupManager.GetGroup(ActiveGroupID).Attributes;
-
-            ActiveAttributeID = attributes[0].ID;
-
-            foreach (var attribute in attributes)
+            var group = GroupManager.GetGroup(ActiveGroupID);
+            if (group != null)
             {
-                var groupSettingsAttribute = new GroupSettingsAttribute(ActiveGroupName, attribute);
-                groupSettingsAttribute.ChangeColorMode(attribute.ID == ActiveAttributeID);
-                AttributesStackPanel.Children.Add(groupSettingsAttribute);
-                groupSettingsAttributes.Add(groupSettingsAttribute);
+                var attributes = group.Attributes;
+
+                if (attributes.Count > 0)
+                {
+                    if (ActiveAttributeID == -1)
+                    {
+                        ActiveAttributeID = attributes[0].ID;
+                    }
+
+                    foreach (var attribute in attributes)
+                    {
+                        var groupSettingsAttribute = new GroupSettingsAttribute(ActiveGroupName, attribute);
+                        groupSettingsAttribute.ChangeColorMode(attribute.ID == ActiveAttributeID);
+                        AttributesStackPanel.Children.Add(groupSettingsAttribute);
+                        groupSettingsAttributes.Add(groupSettingsAttribute);
+                    }
+
+                }
             }
 
             UpdateActiveAttributeOptions();
@@ -184,12 +197,29 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
 
         private void UpdateActiveAttributeOptions()
         {
-            var attribute = GroupManager.GetGroup(ActiveGroupID).GetAttribute(ActiveAttributeID);
-            fieldsViewModel.LineWidth = attribute.LineWidth;
-            SelectedAttributeNameTextBox.Text = attribute.Name;
-            SelectedAttributeColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(attribute.Color);
+            var group = GroupManager.GetGroup(ActiveGroupID);
+            if (group != null)
+            {
+                NoAttributesGrid.Visibility = Visibility.Hidden;
 
-            UpdateInputFiles();
+                var attribute = group.GetAttribute(ActiveAttributeID);
+                if (attribute != null)
+                {
+                    fieldsViewModel.LineWidth = attribute.LineWidth;
+                    SelectedAttributeNameTextBox.Text = attribute.Name;
+                    SelectedAttributeColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(attribute.Color);
+
+                    UpdateInputFiles();
+                }
+                else
+                {
+                    NoAttributesGrid.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                NoAttributesGrid.Visibility = Visibility.Visible;
+            }
         }
 
         private void UpdateInputFiles()
@@ -219,12 +249,14 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
 
             if (inputFile != null)
             {
+                var group = GroupManager.GetGroup(ActiveGroupID);
                 foreach (var channel in inputFile.Channels)
                 {
                     var channelCheckbox = new CheckBox()
                     {
                         Content = channel.Name
                     };
+                    channelCheckbox.IsChecked = group.GetAttribute(channel.Name) != null;
                     channelCheckbox.Checked += Channel_Checked;
                     channelCheckbox.Unchecked += Channel_Checked;
 
@@ -241,19 +273,34 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
 
         private void Channel_Checked(object sender, RoutedEventArgs e)
         {
-            string content = ((CheckBox)sender).Content.ToString();
-
             Mouse.OverrideCursor = Cursors.Wait;
 
-            GroupManager.GetGroup(ActiveGroupID).AddAttribute(InputFileManager.GetInputFile(activeInputFileID).GetChannel(content));
-            ActiveAttribute = GroupManager.GetGroup(ActiveGroupID).GetAttribute(content);
+            string content = ((CheckBox)sender).Content.ToString();
+
+            if ((bool)((CheckBox)sender).IsChecked)
+            {
+                GroupManager.GetGroup(ActiveGroupID).AddAttribute(InputFileManager.GetInputFile(activeInputFileID).GetChannel(content));
+                ActiveAttributeID = GroupManager.GetGroup(ActiveGroupID).GetAttribute(content).ID;
+            }
+            else
+            {
+                GroupManager.GetGroup(ActiveGroupID).RemoveAttribute(content);
+                var group = GroupManager.GetGroup(ActiveGroupID);
+                if (group.Attributes.Count > 0)
+                {
+                    ActiveAttributeID = group.Attributes.Last().ID;
+                }
+                else
+                {
+                    ActiveAttributeID = -1;
+                }
+            }
+
             GroupManager.SaveGroups();
             InitGroups();
-            SelectInputFile(InputFileManager.GetInputFile(activeInputFileID).Name);
+            SelectInputFile();
 
-            //TODO maradjon is kipipálva a channel checkbox
-
-            Mouse.OverrideCursor = Cursors.Hand;
+            Mouse.OverrideCursor = null;
         }
 
 
@@ -270,29 +317,6 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         /// <param name="name">Name of the <see cref="GroupSettingsAttribute"/> you want to find.</param>
         /// <returns>A <see cref="GroupSettingsAttribute"/>.</returns>
         public GroupSettingsAttribute GetGroupSettingsAttribute(string name) => groupSettingsAttributes.Find(n => n.AttributeName.Equals(name));
-
-        /// <summary>
-        /// Adds a <see cref="Group"/> based on <see cref="AddGroupTxtBox"/>es text.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void AddGroup_Click(object sender, RoutedEventArgs e)
-        {
-            if (AddGroupTxtBox.Text.Equals(string.Empty))
-            {
-                throw new Exception("Group name is empty!");
-            }
-
-            var group = new Group(GroupManager.LastGroupID++, AddGroupTxtBox.Text);
-            GroupManager.AddGroup(group);
-            ActiveGroupName = AddGroupTxtBox.Text;
-            AddGroupTxtBox.Text = string.Empty;
-            InitGroups();
-
-            GroupManager.SaveGroups();
-
-            // ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
-        }
 
         /// <summary>
         /// Updates the <see cref="Group"/>s in the settings menu, when one of the <see cref="GroupSettingsItem"/> is clicked.
@@ -343,9 +367,18 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             SelectInputFile(fileName);
         }
 
-        private void SelectInputFile(string fileName)
+        public void SelectInputFile(string fileName = "")
         {
-            var inputFile = InputFileManager.GetInputFile(fileName);
+            InputFile inputFile;
+            if (fileName.Equals(string.Empty))
+            {
+                inputFile = InputFileManager.GetInputFile(activeInputFileID);
+            }
+            else
+            {
+                inputFile = InputFileManager.GetInputFile(fileName);
+            }
+
 
             if (inputFile != null)
             {
@@ -441,6 +474,312 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         private void ChangeSelectedAttributeLineWidthCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
             ChangeSelectedAttributeLineWidthCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            Mouse.OverrideCursor = null;
+        }
+
+        private void DeleteAttributeCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DeleteAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
+        }
+
+        private void DeleteAttributeCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            DeleteAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+
+            GroupManager.GetGroup(ActiveGroupID).RemoveAttribute(ActiveAttributeID);
+            var group = GroupManager.GetGroup(ActiveGroupID);
+            if (group.Attributes.Count > 0)
+            {
+                ActiveAttributeID = group.Attributes.Last().ID;
+            }
+            else
+            {
+                ActiveAttributeID = -1;
+            }
+
+            GroupManager.SaveGroups();
+            InitGroups();
+            SelectInputFile();
+        }
+
+        private void DeleteAttributeCardButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            DeleteAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void DeleteAttributeCardButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            DeleteAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+            Mouse.OverrideCursor = null;
+        }
+
+        private void AddAttributeCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AddAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+        }
+
+        private void AddAttributeCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            AddAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            AddGroupGridBackground.Visibility = Visibility.Visible;
+            AddAttributeGrid.Visibility = Visibility.Visible;
+            AddAttributeNameTextBox.Focus();
+
+            Mouse.OverrideCursor = null;
+        }
+
+        private void AddAttributeCardButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            AddAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void AddAttributeCardButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            AddAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            Mouse.OverrideCursor = null;
+        }
+
+        private void DeleteGroupCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DeleteGroupCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary700));
+        }
+
+        private void DeleteGroupCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            DeleteGroupCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary800));
+
+            GroupManager.RemoveGroup(ActiveGroupID);
+            ActiveGroupID = GroupManager.Groups[0].ID;
+            InitGroups();
+
+            GroupManager.SaveGroups();
+        }
+
+        private void DeleteGroupCardButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            DeleteGroupCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary800));
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void DeleteGroupCardButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            DeleteGroupCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary900));
+            Mouse.OverrideCursor = null;
+        }
+
+        private void ChangeSelectedGroupNameCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ChangeSelectedGroupNameCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
+        }
+
+        private void ChangeSelectedGroupNameCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            ChangeSelectedGroupNameCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+            Mouse.OverrideCursor = Cursors.Wait;
+            GroupManager.GetGroup(ActiveGroupID).Name = SelectedGroupNameTextBox.Text;
+            GroupManager.SaveGroups();
+            foreach (GroupSettingsItem item in GroupsStackPanel.Children)
+            {
+                if (item.ID == ActiveGroupID)
+                {
+                    item.GroupName = SelectedGroupNameTextBox.Text;
+                }
+            }
+            Mouse.OverrideCursor = null;
+        }
+
+        private void ChangeSelectedGroupNameCardButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ChangeSelectedGroupNameCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void ChangeSelectedGroupNameCardButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            ChangeSelectedGroupNameCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+            Mouse.OverrideCursor = null;
+        }
+
+        private void AddGroupCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+        }
+
+        private void AddGroupCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            AddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            AddGroupGridBackground.Visibility = Visibility.Visible;
+            AddGroupGrid.Visibility = Visibility.Visible;
+            AddGroupNameTextBox.Focus();
+
+            Mouse.OverrideCursor = null;
+        }
+
+        private void AddGroupCardButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            AddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void AddGroupCardButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            AddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            Mouse.OverrideCursor = null;
+        }
+
+        private void AddGroupPopUpCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+        }
+
+        private void AddGroupPopUpCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            if (!AddGroupNameTextBox.Text.Equals(string.Empty))
+            {
+                AddGroupGridBackground.Visibility = Visibility.Hidden;
+                AddGroupGrid.Visibility = Visibility.Hidden;
+
+                var group = new Group(GroupManager.LastGroupID++, AddGroupNameTextBox.Text);
+                GroupManager.AddGroup(group);
+                GroupManager.SaveGroups();
+                ActiveGroupID = group.ID;
+                AddGroupNameTextBox.Text = string.Empty;
+                InitGroups();
+
+                // ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
+            }
+
+            Mouse.OverrideCursor = null;
+        }
+
+        private void AddGroupPopUpCardButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void AddGroupPopUpCardButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            Mouse.OverrideCursor = null;
+        }
+
+        private void AddAttributePopUpCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+        }
+
+        private void AddAttributePopUpCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            if (AddAttributeNameTextBox.Text.Equals(string.Empty) ||
+                AddAttributeLineWidthTextBox.Text.Equals(string.Empty))
+            {
+                Mouse.OverrideCursor = null;
+
+                return;
+            }
+
+            if (!int.TryParse(AddAttributeLineWidthTextBox.Text, out int lineWidth))
+            {
+                Mouse.OverrideCursor = null;
+
+                return;
+            }
+
+            AddGroupGridBackground.Visibility = Visibility.Hidden;
+            AddAttributeGrid.Visibility = Visibility.Hidden;
+
+            GroupManager.GetGroup(ActiveGroupID).AddAttribute(AddAttributeNameTextBox.Text, ColorManager.GetChartColor, lineWidth);
+            ActiveAttributeID = GroupManager.GetGroup(ActiveGroupID).Attributes.Last().ID;
+
+            GroupManager.SaveGroups();
+            InitGroups();
+            SelectInputFile();
+
+            Mouse.OverrideCursor = null;
+
+            AddAttributeNameTextBox.Text = string.Empty;
+            AddAttributeLineWidthTextBox.Text = "1";
+        }
+
+        private void AddAttributePopUpCardButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void AddAttributePopUpCardButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            Mouse.OverrideCursor = null;
+        }
+
+        private void CancelAddAttributeCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            CancelAddAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+        }
+
+        private void CancelAddAttributeCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            CancelAddAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
+            AddGroupGridBackground.Visibility = Visibility.Hidden;
+            AddAttributeGrid.Visibility = Visibility.Hidden;
+
+            AddAttributeNameTextBox.Text = string.Empty;
+            AddAttributeLineWidthTextBox.Text = "1";
+        }
+
+        private void CancelAddAttributeCardButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            CancelAddAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void CancelAddAttributeCardButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            CancelAddAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            Mouse.OverrideCursor = null;
+        }
+
+        private void CancelAddGroupCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            CancelAddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+        }
+
+        private void CancelAddGroupCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            CancelAddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
+            AddGroupGridBackground.Visibility = Visibility.Hidden;
+            AddGroupGrid.Visibility = Visibility.Hidden;
+
+            AddGroupNameTextBox.Text = string.Empty;
+        }
+
+        private void CancelAddGroupCardButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            CancelAddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void CancelAddGroupCardButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            CancelAddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
             Mouse.OverrideCursor = null;
         }
     }

@@ -188,7 +188,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Live
                     channelNames.Add(data[i].ToString());
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {

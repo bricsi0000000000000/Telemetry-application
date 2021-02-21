@@ -149,6 +149,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
                                                       new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
 
             ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ChangeActiveAttributeItem(ID);
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).SelectInputFile();
         }
 
         private void BackgroundColor_MouseEnter(object sender, MouseEventArgs e)

@@ -12,19 +12,7 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// <summary>
         /// <see cref="Group"/>s name.
         /// </summary>
-        public string Name { get; }
-
-        /// <summary>
-        /// If true, you can customize this <see cref="Group"/> in settings.
-        /// If false, you can't customize and it doesn't show up in the settings.
-        /// </summary>
-        public bool Customizable { get; set; }
-
-        /// <summary>
-        /// If true, this <see cref="Group"/> is a driverless group.
-        /// If false, this <see cref="Group"/> is a standard group.
-        /// </summary>
-        public bool Driverless { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// <see cref="Attribute"/>s used by this <see cref="Group"/>.
@@ -41,7 +29,6 @@ namespace Telemetry_data_and_logic_layer.Groups
         {
             ID = id;
             Name = name.Trim();
-            Customizable = true;
         }
 
         /// <summary>
@@ -71,6 +58,7 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// </summary>
         /// <param name="name"><see cref="Attribute"/>s name you want to delete.</param>
         public void RemoveAttribute(string name) => Attributes.Remove(GetAttribute(name));
+        public void RemoveAttribute(int id) => Attributes.Remove(GetAttribute(id));
 
         /// <summary>
         /// Finds an <see cref="Attribute"/> based on <paramref name="name"/>.

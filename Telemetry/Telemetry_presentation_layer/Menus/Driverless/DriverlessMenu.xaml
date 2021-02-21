@@ -207,6 +207,7 @@
         <Grid Name="ReadFileProgressBarGrid"
               Background="{DynamicResource MaterialDesignBody}"
               Grid.ColumnSpan="5"
+              Opacity=".9"
               Visibility="Hidden"
               >
             <Grid.RowDefinitions>

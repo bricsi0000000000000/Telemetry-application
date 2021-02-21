@@ -58,6 +58,7 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         /// </summary>
         /// <param name="inputFileName">Removabel <see cref="InputFile"/>s name.</param>
         public static void RemoveInputFile(string inputFileName) => InputFiles.Remove(GetInputFile(inputFileName));
+        public static void RemoveInputFile(int id) => InputFiles.Remove(GetInputFile(id));
 
         /// <summary>
         /// Active <see cref="InputFile"/>s name.

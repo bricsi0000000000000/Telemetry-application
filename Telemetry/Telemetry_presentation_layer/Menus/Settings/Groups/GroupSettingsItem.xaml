@@ -10,7 +10,7 @@
              Height="55" d:DesignWidth="800">
 
     <materialDesign:Card UniformCornerRadius="5"
-                         Margin="5 2.5"
+                         Margin="5,5,5,0"
                          Name="BackgroundColor"
                          BorderThickness="0"
                          materialDesign:ShadowAssist.ShadowDepth="Depth1"
@@ -19,55 +19,10 @@
                          MouseEnter="BackgroundColor_MouseEnter"
                          MouseLeave="BackgroundColor_MouseLeave"
                          >
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="65"/>
-                <ColumnDefinition Width="65"/>
-            </Grid.ColumnDefinitions>
-
             <Label Name="GroupLabel"
                    VerticalContentAlignment="Center"
                    HorizontalContentAlignment="Left"
                    Margin="5"
                    />
-
-            <materialDesign:Card Grid.Column="1"
-                                 Name="ChangeGroupItemType"
-                                 Background="White"
-                                 UniformCornerRadius="5"
-                                 Margin="5"
-                                 MouseEnter="ChangeGroupItemType_MouseEnter"
-                                 MouseLeave="ChangeGroupItemType_MouseLeave"
-                                 PreviewMouseLeftButtonDown="ChangeGroupItemType_PreviewMouseLeftButtonDown"
-                                 PreviewMouseLeftButtonUp="ChangeGroupItemType_PreviewMouseLeftButtonUp"
-                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                 BorderThickness="0">
-                <Image x:Name="GroupTypeImage"/>
-            </materialDesign:Card>
-
-
-            <materialDesign:Card Grid.Column="2"
-                                 Margin="5"
-                                 Name="DeleteGroupBtn"
-                                 MouseEnter="DeleteGroupBtn_MouseEnter"
-                                 MouseLeave="DeleteGroupBtn_MouseLeave"
-                                 PreviewMouseLeftButtonDown="DeleteGroupBtn_PreviewMouseLeftButtonDown"
-                                 PreviewMouseLeftButtonUp="DeleteGroupBtn_PreviewMouseLeftButtonUp"
-                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                 BorderThickness="0"
-                                 UniformCornerRadius="5"
-                                 Background="{DynamicResource Delete}"
-                                 VerticalAlignment="Stretch"
-                                 HorizontalAlignment="Stretch"
-                                 >
-                <materialDesign:PackIcon Kind="Delete"
-                                         VerticalAlignment="Center"
-                                         HorizontalAlignment="Center"
-                                         Foreground="White"
-                                         Margin="0,8"
-                                         />
-            </materialDesign:Card>
-        </Grid>
     </materialDesign:Card>
 </UserControl>

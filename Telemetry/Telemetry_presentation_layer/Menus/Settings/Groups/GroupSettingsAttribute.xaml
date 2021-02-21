@@ -12,7 +12,7 @@
     <materialDesign:Card UniformCornerRadius="5"
                          Name="BackgroundColor"
                          materialDesign:ShadowAssist.ShadowDepth="Depth1"
-                         Margin="5 2.5"
+                         Margin="5,5,5,0"
                          PreviewMouseLeftButtonDown="BackgroundColor_PreviewMouseLeftButtonDown"
                          PreviewMouseLeftButtonUp="BackgroundColor_PreviewMouseLeftButtonUp"
                          MouseEnter="BackgroundColor_MouseEnter"

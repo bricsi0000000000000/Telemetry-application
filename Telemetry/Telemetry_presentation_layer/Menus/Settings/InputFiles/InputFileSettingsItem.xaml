@@ -21,7 +21,6 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="65"/>
-                <ColumnDefinition Width="65"/>
             </Grid.ColumnDefinitions>
 
             <Label Name="InputFileNameLbl"
@@ -40,27 +39,6 @@
                                  materialDesign:ShadowAssist.ShadowDepth="Depth0"
                                  BorderThickness="0">
                 <Image x:Name="InputFileTypeImage"/>
-            </materialDesign:Card>
-
-            <materialDesign:Card Grid.Column="2"
-                                 PreviewMouseDown="DeleteInputFile_Click"
-                                 Margin="5"
-                                 Name="DeleteGroupBtn"
-                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                 MouseEnter="DeleteGroupBtn_MouseEnter"
-                                 MouseLeave="DeleteGroupBtn_MouseLeave"
-                                 BorderThickness="0"
-                                 UniformCornerRadius="5"
-                                 Background="{DynamicResource Delete}"
-                                 VerticalAlignment="Stretch"
-                                 HorizontalAlignment="Stretch"
-                    >
-                <materialDesign:PackIcon Kind="Delete"
-                                         VerticalAlignment="Center"
-                                         HorizontalAlignment="Center"
-                                         Foreground="White"
-                                         Margin="0,8"
-                                         />
             </materialDesign:Card>
         </Grid>
     </materialDesign:Card>

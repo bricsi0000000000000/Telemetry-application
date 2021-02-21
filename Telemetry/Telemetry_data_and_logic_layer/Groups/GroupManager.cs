@@ -61,39 +61,13 @@ namespace Telemetry_data_and_logic_layer.Groups
                         throw new Exception("Can't add group, because 'name' is empty!");
                     }
 
-                    if (groupsJSON[i].Driverless == null)
-                    {
-                        throw new Exception("Can't add group, because 'driverless' is null!");
-                    }
-
-                    bool? driverlessResult = groupsJSON[i].Driverless;
-                    if (driverlessResult == null)
-                    {
-                        throw new Exception("Can't add group, because can't convert 'driverless' to a logical variable!");
-                    }
-
-                    if (groupsJSON[i].Customizable == null)
-                    {
-                        throw new Exception("Can't add group, because 'customizable' is null!");
-                    }
-
-                    bool? customizableResult = groupsJSON[i].Customizable;
-                    if (customizableResult == null)
-                    {
-                        throw new Exception("Can't add group, because can't convert 'customizable' to a logical variable!");
-                    }
-
                     if (groupsJSON[i].Attributes == null)
                     {
                         throw new Exception("Can't add group, because 'attributes' are null!");
                     }
                     else
                     {
-                        var group = new Group(LastGroupID++, groupsJSON[i].Name.ToString())
-                        {
-                            Driverless = groupsJSON[i].Driverless,
-                            Customizable = groupsJSON[i].Customizable
-                        };
+                        var group = new Group(LastGroupID++, groupsJSON[i].Name.ToString());
 
                         for (int j = 0; j < groupsJSON[i].Attributes.Count; j++)
                         {
@@ -186,5 +160,6 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// </summary>
         /// <param name="name">Removable <see cref="Group"/>s name.</param>
         public static void RemoveGroup(string name) => Groups.Remove(GetGroup(name));
+        public static void RemoveGroup(int id) => Groups.Remove(GetGroup(id));
     }
 }

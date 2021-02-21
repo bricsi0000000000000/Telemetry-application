@@ -17,19 +17,18 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
     /// </summary>
     public partial class InputFileChannelSettingsItem : UserControl
     {
-        public string ActiveInputFileName { get; set; }
-
+        public int InputFileID { get; set; }
 
         private readonly string colorCode;
 
-        public InputFileChannelSettingsItem(Channel channel, string activeInputFileName)
+        public InputFileChannelSettingsItem(Channel channel, int inputFileID)
         {
             InitializeComponent();
 
-            ActiveInputFileName = activeInputFileName;
+            InputFileID = inputFileID;
             colorCode = channel.Color;
             ChangeColor((Color)ColorConverter.ConvertFromString(colorCode));
-            AttributeLbl.Content = activeInputFileName;
+            AttributeLbl.Content = channel.Name;
 
             var unitOfMeasure = UnitOfMeasureManager.GetUnitOfMeasure(channel.Name);
             if (unitOfMeasure != null)
@@ -55,7 +54,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
 
                 foreach (var group in GroupManager.Groups)
                 {
-                    var channel = group.GetAttribute(ActiveInputFileName);
+                    var channel = group.GetAttribute(InputFileID);
                     if (channel != null)
                     {
                         channel.Color = pickedColor.ToString();
@@ -66,7 +65,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
                 {
                     foreach (var channel in inputFile.Channels)
                     {
-                        if (channel.Name.Equals(ActiveInputFileName))
+                        if (channel.ID == InputFileID)
                         {
                             channel.Color = pickedColor.ToString();
                         }

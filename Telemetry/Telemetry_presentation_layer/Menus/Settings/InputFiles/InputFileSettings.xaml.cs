@@ -4,12 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using Telemetry_data_and_logic_layer;
+using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.Groups;
 using Telemetry_data_and_logic_layer.InputFiles;
+using Telemetry_data_and_logic_layer.Texts;
 using Telemetry_presentation_layer.Converters;
 using Telemetry_presentation_layer.Errors;
+using Telemetry_presentation_layer.Menus.Driverless;
+using Telemetry_presentation_layer.Menus.Settings.Groups;
+using Telemetry_presentation_layer.ValidationRules;
 
 namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
 {
@@ -29,14 +35,16 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
         private readonly List<InputFileChannelSettingsItem> inputFileChannelSettingsItems = new List<InputFileChannelSettingsItem>();
 
         /// <summary>
-        /// Active <see cref="InputFile"/>s name.
+        /// Active <see cref="InputFile"/>s ID.
         /// </summary>
-        public string ActiveInputFileName { get; set; } = string.Empty;
+        public int ActiveInputFileID { get; set; }
 
         /// <summary>
         /// Active <see cref="Channel"/>.
         /// </summary>
         public Channel ActiveChannel { get; set; }
+
+        private bool isAnyInputFile = false;
 
         /// <summary>
         /// Constructor
@@ -44,6 +52,10 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
         public InputFilesSettings()
         {
             InitializeComponent();
+
+            DataContext = new FieldsViewModel();
+
+            ChangeAvailabilityOfInputFileButtons();
         }
 
         /// <summary>
@@ -53,21 +65,26 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
         public void AddInputFileSettingsItem(InputFile inputFile)
         {
             InitActiveChannel();
-            ActiveInputFileName = inputFile.Name;
+            ActiveInputFileID = inputFile.ID;
 
             InitChannelItems();
             ChangeAllInputFileSettingsItemColorMode();
             AddSingleInputFileSettingsItem(inputFile);
+
+            isAnyInputFile = InputFileManager.InputFiles.Count > 0;
+            ChangeAvailabilityOfInputFileButtons();
+
+            SelectedInputFileNameTextBox.Text = inputFile.Name;
         }
 
         /// <summary>
         /// Changes the <see cref="ActiveInputFileName"/> to <paramref name="inputFileName"/> and updates channel items.
         /// </summary>
         /// <param name="inputFileName"><see cref="InputFile"/>s name that will be the <see cref="ActiveInputFileName"/>.</param>
-        public void ChangeActiveInputFileSettingsItem(string inputFileName)
+        public void ChangeActiveInputFileSettingsItem(int id)
         {
             ChangeAllInputFileSettingsItemColorMode();
-            ActiveInputFileName = inputFileName;
+            ActiveInputFileID = id;
             InitChannelItems();
         }
 
@@ -103,7 +120,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
         /// </summary>
         public void InitInputFileSettingsItems()
         {
-            UpdateActiveInputFileName();
+            UpdateActiveInputFileID();
 
             InputFileStackPanel.Children.Clear();
             InitInputFileSettingsItemElements();
@@ -115,17 +132,13 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
         /// <summary>
         /// Sets <see cref="ActiveInputFileName"/> to <see cref="DriverlessInputFileManager"/>s or <see cref="StandardInputFileManager"/>s first <see cref="InputFile"/>s name if there is any <see cref="InputFile"/>.
         /// </summary>
-        private void UpdateActiveInputFileName()
+        private void UpdateActiveInputFileID()
         {
-            if (ActiveInputFileName.Equals(string.Empty))
+            if (ActiveInputFileID == -1)
             {
                 if (InputFileManager.InputFiles.Count > 0)
                 {
-                    ActiveInputFileName = InputFileManager.InputFiles.First().Name;
-                }
-                else
-                {
-                    ActiveInputFileName = string.Empty;
+                    ActiveInputFileID = InputFileManager.InputFiles.First().ID;
                 }
             }
         }
@@ -147,8 +160,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
         /// <param name="inputFile">The <see cref="InputFileSettingsItem"/> will be based on this <see cref="InputFile"/>.</param>
         private void AddSingleInputFileSettingsItem(InputFile inputFile)
         {
-            var inputFileSettingsItem = new InputFileSettingsItem(inputFileName: inputFile.Name, driverless: inputFile.Driverless);
-            inputFileSettingsItem.ChangeColorMode(inputFile.Name.Equals(ActiveInputFileName));
+            var inputFileSettingsItem = new InputFileSettingsItem(inputFile);
+            inputFileSettingsItem.ChangeColorMode(inputFile.ID == ActiveInputFileID);
             InputFileStackPanel.Children.Add(inputFileSettingsItem);
             inputFileSettingsItems.Add(inputFileSettingsItem);
         }
@@ -158,7 +171,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
         /// </summary>
         private void InitActiveChannel()
         {
-            var activeInputFile = InputFileManager.GetInputFile(ActiveInputFileName);
+            var activeInputFile = InputFileManager.GetInputFile(ActiveInputFileID);
             if (activeInputFile != null)
             {
                 if (activeInputFile.Channels.Count > 0)
@@ -176,7 +189,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
             ChannelItemsStackPanel.Children.Clear();
             inputFileChannelSettingsItems.Clear();
 
-            var activeInputFile = InputFileManager.GetInputFile(ActiveInputFileName);
+            var activeInputFile = InputFileManager.GetInputFile(ActiveInputFileID);
             if (activeInputFile != null)
             {
                 foreach (var channel in activeInputFile.Channels)
@@ -194,17 +207,12 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
         /// <param name="channel"></param>
         private void AddInputFileChannelSettingsItem(Channel channel)
         {
-            var inputFileChannelSettingsItem = new InputFileChannelSettingsItem(channel, ActiveInputFileName);
+            var inputFileChannelSettingsItem = new InputFileChannelSettingsItem(channel, ActiveInputFileID);
             ChannelItemsStackPanel.Children.Add(inputFileChannelSettingsItem);
             inputFileChannelSettingsItems.Add(inputFileChannelSettingsItem);
         }
 
-        /// <summary>
-        /// Reads file.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ReadInputFileBtn_Click(object sender, RoutedEventArgs e)
+        private void ReadInputFile()
         {
             var openFileDialog = new OpenFileDialog
             {
@@ -248,7 +256,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
         {
             RequiredChannelsStackPanel.Children.Clear();
 
-            var activeInputFile = InputFileManager.GetInputFile(ActiveInputFileName);
+            var activeInputFile = InputFileManager.GetInputFile(ActiveInputFileID);
 
             if (activeInputFile != null)
             {
@@ -286,6 +294,129 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
                 IsChecked = isChecked,
                 IsEnabled = false
             });
+        }
+
+        private void ChangeAvailabilityOfInputFileButtons()
+        {
+            DeleteFileCardButton.Background = isAnyInputFile ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900) :
+                                                               ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary400);
+
+            ChangeSelectedInputFileNameIcon.Foreground = isAnyInputFile ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
+                                                                          ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary400);
+
+            SelectedInputFileNameTextBox.IsEnabled = isAnyInputFile;
+        }
+
+        private void ChangeSelectedInputFileNameCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (isAnyInputFile)
+            {
+                ChangeSelectedInputFileNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            }
+        }
+
+        private void ChangeSelectedInputFileNameCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (isAnyInputFile)
+            {
+                ChangeSelectedInputFileNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
+                if (!SelectedInputFileNameTextBox.Text.Equals(string.Empty))
+                {
+                    // InputFileManager.GetInputFile()
+                }
+            }
+        }
+
+        private void ChangeSelectedInputFileNameCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (isAnyInputFile)
+            {
+                ChangeSelectedInputFileNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+                Mouse.OverrideCursor = Cursors.Hand;
+            }
+        }
+
+        private void ChangeSelectedInputFileNameCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (isAnyInputFile)
+            {
+                ChangeSelectedInputFileNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+                Mouse.OverrideCursor = null;
+            }
+        }
+
+        private void ReadFileCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ReadFileCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+        }
+
+        private void ReadFileCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ReadFileCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ReadInputFile();
+        }
+
+        private void ReadFileCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ReadFileCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void ReadFileCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ReadFileCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            Mouse.OverrideCursor = null;
+        }
+
+        private void DeleteFileCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (isAnyInputFile)
+            {
+                DeleteFileCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
+            }
+        }
+
+        private void DeleteFileCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (isAnyInputFile)
+            {
+                DeleteFileCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+
+                string inputFileName = InputFileManager.GetInputFile(ActiveInputFileID).Name;
+
+                InputFileManager.RemoveInputFile(ActiveInputFileID);
+
+                RemoveSingleInputFileSettingsItem(inputFileName);
+
+                ActiveInputFileID = InputFileManager.InputFiles.Last().ID;
+                foreach (InputFileSettingsItem item in InputFileStackPanel.Children)
+                {
+                    item.ChangeColorMode(item.ID == ActiveInputFileID);
+                }
+                InitChannelItems();
+
+                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).RemoveInputFileItem(inputFileName);
+                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).UpdateAfterDeleteFile(inputFileName);
+            }
+        }
+
+        private void DeleteFileCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (isAnyInputFile)
+            {
+                DeleteFileCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+                Mouse.OverrideCursor = Cursors.Hand;
+            }
+        }
+
+        private void DeleteFileCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (isAnyInputFile)
+            {
+                DeleteFileCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+                Mouse.OverrideCursor = null;
+            }
         }
     }
 }
