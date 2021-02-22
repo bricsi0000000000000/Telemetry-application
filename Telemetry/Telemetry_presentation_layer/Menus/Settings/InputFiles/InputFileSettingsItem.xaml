@@ -11,19 +11,23 @@
              d:DesignHeight="60" d:DesignWidth="800">
 
     <materialDesign:Card UniformCornerRadius="5"
-                         Margin="5 2.5"
+                         Margin="5,5,5,0"
                          Name="BackgroundCard"
                          materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                         Height="55"
+                         PreviewMouseLeftButtonDown="BackgroundCard_PreviewMouseLeftButtonDown"
+                         PreviewMouseLeftButtonUp="BackgroundCard_PreviewMouseLeftButtonUp"
+                         MouseEnter="BackgroundCard_MouseEnter"
+                         MouseLeave="BackgroundCard_MouseLeave"
                          >
-        <Grid PreviewMouseLeftButtonUp="Grid_PreviewMouseLeftButtonUp"
-              Margin="5"
+        <Grid Margin="5"
               >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="65"/>
             </Grid.ColumnDefinitions>
 
-            <Label Name="InputFileNameLbl"
+            <Label Name="InputFileNameLabel"
                    VerticalContentAlignment="Center"
                    HorizontalContentAlignment="Left"
                    />

@@ -80,5 +80,7 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         public static int LastID => InputFiles.Count == 0 ? -1 : InputFiles.Last().ID;
 
         public static InputFile GetInputFile(int id) => InputFiles.Find(x => x.ID == id);
+
+        public static bool HasInputFile(string originalName) => InputFiles.Find(x => x.OriginalName.Equals(originalName)) != null;
     }
 }

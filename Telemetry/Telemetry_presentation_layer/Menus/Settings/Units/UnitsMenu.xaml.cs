@@ -45,7 +45,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
 
         private void UpdateSelectedSectionButtons()
         {
-            DeleteSectionCardButton.Background = isUnitSelected ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900) :
+            DeleteUnitCardButton.Background = isUnitSelected ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900) :
                                                                   ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary200);
 
             NoUnitSelectedGrid.Visibility = isUnitSelected ? Visibility.Hidden : Visibility.Visible;
@@ -67,8 +67,9 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
             {
                 UnitOfMeasureManager.AddUnitOfMeasure(unit);
                 UnitOfMeasureManager.Save();
-                activeUnit = UnitOfMeasureManager.UnitOfMeasures.Last();
                 InitializeUnits();
+                activeUnit = UnitOfMeasureManager.UnitOfMeasures.Last();
+                SelectUnit(activeUnit);
             }
 
             SetLoadingGrid(visibility: false);
@@ -80,8 +81,12 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
             {
                 UnitOfMeasureManager.RemoveUnitOfMeasure(activeUnit.ID);
                 UnitOfMeasureManager.Save();
-                activeUnit = UnitOfMeasureManager.UnitOfMeasures.Last();
                 InitializeUnits();
+                if (UnitOfMeasureManager.UnitOfMeasures.Count > 0)
+                {
+                    activeUnit = UnitOfMeasureManager.UnitOfMeasures.Last();
+                    SelectUnit(activeUnit);
+                }
             }
 
             SetLoadingGrid(visibility: false);
@@ -89,18 +94,15 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
 
         public void SelectUnit(Unit unit)
         {
-            if (activeUnit.ID != unit.ID || !isUnitSelected)
+            activeUnit = unit;
+
+            isUnitSelected = true;
+
+            UpdateSelectedUnitUI();
+
+            foreach (UnitItem item in UnitsStackPanel.Children)
             {
-                activeUnit = unit;
-
-                isUnitSelected = true;
-
-                UpdateSelectedUnitUI();
-
-                foreach (var item in UnitsStackPanel.Children)
-                {
-                    ((UnitItem)item).ChangeColor(((UnitItem)item).Unit.ID == unit.ID);
-                }
+                item.ChangeColor(item.Unit.ID == unit.ID);
             }
 
             UpdateSelectedSectionButtons();
@@ -168,23 +170,19 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
             ErrorSnackbar.MessageQueue.Enqueue(message, null, null, null, false, true, TimeSpan.FromSeconds(time));
         }
 
-
-
-
-
-        private void DeleteSectionCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void DeleteUnitCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (isUnitSelected)
             {
-                DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
+                DeleteUnitCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
             }
         }
 
-        private void DeleteSectionCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void DeleteUnitCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (isUnitSelected)
             {
-                DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+                DeleteUnitCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
 
                 SetLoadingGrid(visibility: true);
                 var deleteSectionWindow = new PopUpWindow($"You are about to delete '{activeUnit.Name}'\n" +
@@ -194,20 +192,20 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
             }
         }
 
-        private void DeleteSectionCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        private void DeleteUnitCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (isUnitSelected)
             {
-                DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+                DeleteUnitCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
                 Mouse.OverrideCursor = Cursors.Hand;
             }
         }
 
-        private void DeleteSectionCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void DeleteUnitCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (isUnitSelected)
             {
-                DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+                DeleteUnitCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
                 Mouse.OverrideCursor = null;
             }
         }
@@ -260,17 +258,9 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
             Mouse.OverrideCursor = null;
         }
 
-        private void AddUnitButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetLoadingGrid(visibility: true);
-            var addUnitOfMeasureWindow = new AddUnitOfMeasureWindow();
-            addUnitOfMeasureWindow.ShowDialog();
-        }
-
         private void Grid_Collapsed(object sender, RoutedEventArgs e)
         {
-            var grid = sender as Grid;
-            if (grid != null)
+            if (sender is Grid grid)
             {
                 expanderHeight = grid.RowDefinitions[2].Height;
                 grid.RowDefinitions[2].Height = GridLength.Auto;
@@ -279,11 +269,36 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
 
         private void Grid_Expanded(object sender, RoutedEventArgs e)
         {
-            var grid = sender as Grid;
-            if (grid != null)
+            if (sender is Grid grid)
             {
                 grid.RowDefinitions[2].Height = expanderHeight;
             }
+        }
+
+        private void AddUnitCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AddUnitCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+        }
+
+        private void AddUnitCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            AddUnitCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
+            SetLoadingGrid(visibility: true);
+            var addUnitOfMeasureWindow = new AddUnitOfMeasureWindow();
+            addUnitOfMeasureWindow.ShowDialog();
+        }
+
+        private void AddUnitCardButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            AddUnitCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void AddUnitCardButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            AddUnitCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            Mouse.OverrideCursor = null;
         }
     }
 }

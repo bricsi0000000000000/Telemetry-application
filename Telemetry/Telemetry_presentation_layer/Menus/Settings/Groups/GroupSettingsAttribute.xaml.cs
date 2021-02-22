@@ -21,7 +21,20 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         /// <summary>
         /// <see cref="Attribute"/>s name.
         /// </summary>
-        public string AttributeName { get; set; }
+
+        private string attributeName;
+        public string AttributeName
+        {
+            get
+            {
+                return attributeName;
+            }
+            set
+            {
+                attributeName = value;
+                AttributeLabel.Content = attributeName;
+            }
+        }
 
         /// <summary>
         /// <see cref="Group"/>s name.
@@ -64,7 +77,6 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             AttributeName = attribute.Name;
             this.groupName = groupName;
             colorCode = attribute.Color;
-            AttributeLabel.Content = AttributeName;
             LineWidth = attribute.LineWidth;
             ChangeColor(colorCode);
         }

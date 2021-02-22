@@ -15,7 +15,14 @@ namespace Telemetry_presentation_layer.ValidationRules
             {
                 if (int.TryParse(value.ToString(), out int result))
                 {
-                    return ValidationResult.ValidResult;
+                    if (result > 0)
+                    {
+                        return ValidationResult.ValidResult;
+                    }
+                    else
+                    {
+                        return new ValidationResult(false, "Must be bigger than 0.");
+                    }
                 }
                 else
                 {

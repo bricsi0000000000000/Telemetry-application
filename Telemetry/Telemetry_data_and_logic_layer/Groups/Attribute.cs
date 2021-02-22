@@ -9,7 +9,7 @@
         /// <summary>
         /// <see cref="Attribute"/>s name.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// <see cref="Attribute"/>s color.

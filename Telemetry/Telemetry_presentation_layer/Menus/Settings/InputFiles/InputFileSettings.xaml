@@ -34,6 +34,16 @@
                 <StackPanel x:Name="InputFileStackPanel"/>
             </ScrollViewer>
 
+            <Grid Background="White"
+                  Name="NoInputFilesGrid"
+                  >
+                <materialDesign:PackIcon Kind="Files"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch"
+                                         Opacity=".2"
+                                         />
+            </Grid>
+
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*"/>
@@ -82,10 +92,24 @@
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="65"/>
+                <RowDefinition Height="65"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            
-            <Grid Grid.Row="0">
+
+            <TextBox Name="SelectedInputFileOriginalNameTextBox"
+                     VerticalAlignment="Stretch"
+                     HorizontalAlignment="Stretch"
+                     VerticalContentAlignment="Center"
+                     HorizontalContentAlignment="Left"
+                     materialDesign:HintAssist.Hint="Original file name"
+                     materialDesign:HintAssist.IsFloating="True"
+                     Margin="5,0,0,15"
+                     IsReadOnly="True"
+                     materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                     BorderThickness="0"
+                     />
+
+            <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="60"/>
@@ -96,7 +120,7 @@
                          HorizontalAlignment="Stretch"
                          VerticalContentAlignment="Center"
                          HorizontalContentAlignment="Left"
-                         materialDesign:HintAssist.Hint="File name"
+                         materialDesign:HintAssist.Hint="Change file name"
                          materialDesign:HintAssist.IsFloating="True"
                          Margin="5,0,0,15"
                          >
@@ -128,7 +152,7 @@
                 </materialDesign:Card>
             </Grid>
 
-            <ScrollViewer Grid.Row="1"
+            <ScrollViewer Grid.Row="2"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Auto"
                       >
@@ -136,21 +160,122 @@
             </ScrollViewer>
         </Grid>
 
+        <Grid Background="White"
+              Name="NoChannelsGrid"
+              Grid.Column="2"
+              >
+            <materialDesign:PackIcon Kind="Group"
+                                     VerticalAlignment="Stretch"
+                                     HorizontalAlignment="Stretch"
+                                     Opacity=".2"
+                                     />
+        </Grid>
+
         <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}"/>
 
-        <Grid Grid.Column="4" Visibility="Hidden">
+        <Grid Grid.Column="4">
             <Grid.RowDefinitions>
-                <RowDefinition Height="45"/>
+                <RowDefinition Height="65"/>
+                <RowDefinition Height="65"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+            
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
 
-            <Label Content="Required channels"
-                VerticalContentAlignment="Center"
-                HorizontalContentAlignment="Center"/>
+                <TextBox Name="SelectedChannelNameTextBox"
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Left"
+                         materialDesign:HintAssist.Hint="Channel name"
+                         materialDesign:HintAssist.IsFloating="True"
+                         Margin="5,0,0,15"
+                         >
+                    <TextBox.Text>
+                        <Binding Path="ChannelName"
+                                 UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
 
-            <StackPanel Grid.Row="1"
-                    Name="RequiredChannelsStackPanel"
-                    Margin="15,0,0,5"/>
+                <materialDesign:Card Name="ChangeSelectedChannelNameCardButton"
+                                     Grid.Column="1"
+                                     Margin="5,10"
+                                     UniformCornerRadius="5"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                     PreviewMouseLeftButtonDown="ChangeSelectedChannelNameCardButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="ChangeSelectedChannelNameCardButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="ChangeSelectedChannelNameCardButton_MouseEnter"
+                                     MouseLeave="ChangeSelectedChannelNameCardButton_MouseLeave"
+                                        >
+                    <materialDesign:PackIcon Kind="ContentSave"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             />
+                </materialDesign:Card>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Name="SelectedChannelLineWidthTextBox"
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Stretch"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Left"
+                            materialDesign:HintAssist.Hint="Line width"
+                            materialDesign:HintAssist.IsFloating="True"
+                            Margin="5,0,0,15"
+                         
+                            >
+                    <TextBox.Text>
+                        <Binding Path="LineWidth"
+                                    UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validation:IsNumberValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <materialDesign:Card Name="ChangeSelectedChannelLineWidthCardButton"
+                                        Grid.Column="1"
+                                        Margin="5,10"
+                                        UniformCornerRadius="5"
+                                        materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                        PreviewMouseLeftButtonDown="ChangeSelectedChannelLineWidthCardButton_PreviewMouseLeftButtonDown"
+                                        PreviewMouseLeftButtonUp="ChangeSelectedChannelLineWidthCardButton_PreviewMouseLeftButtonUp"
+                                        MouseEnter="ChangeSelectedChannelLineWidthCardButton_MouseEnter"
+                                        MouseLeave="ChangeSelectedChannelLineWidthCardButton_MouseLeave"
+                                        >
+                    <materialDesign:PackIcon Kind="ContentSave"
+                                                VerticalAlignment="Stretch"
+                                                HorizontalAlignment="Stretch"
+                                                />
+                </materialDesign:Card>
+            </Grid>
+
+
+        </Grid>
+
+        <Grid Background="White"
+              Name="NoSelectedChannelGrid"
+              Grid.Column="4">
+            <materialDesign:PackIcon Kind="FormatListBulleted"
+                                     VerticalAlignment="Stretch"
+                                     HorizontalAlignment="Stretch"
+                                     Opacity=".2"
+                                     />
         </Grid>
 
         <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
@@ -158,6 +283,7 @@
                                 x:Name="ErrorSnackbar"
                                 Foreground="White"
                                 />
+        
         <Grid Name="ReadFileProgressBarGrid"
               Background="{DynamicResource MaterialDesignBody}"
               Grid.ColumnSpan="5"
@@ -192,5 +318,12 @@
                 </ProgressBar.RenderTransform>
             </ProgressBar>
         </Grid>
+
+        <Grid Name="LoadingGrid"
+              Background="{DynamicResource MaterialDesignBody}"
+              Grid.ColumnSpan="5"
+              Visibility="Hidden"
+              Opacity=".9"
+              />
     </Grid>
 </UserControl>

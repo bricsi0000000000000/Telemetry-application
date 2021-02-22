@@ -17,26 +17,64 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
     /// </summary>
     public partial class InputFileChannelSettingsItem : UserControl
     {
-        public int InputFileID { get; set; }
+        public int ID { get; set; }
 
-        private readonly string colorCode;
+        public int ChannelID;
+
+        private string colorCode;
+
+        private int lineWidth;
+        public int LineWidth
+        {
+            get
+            {
+                return lineWidth;
+            }
+            set
+            {
+                lineWidth = value;
+                LineWidthLabel.Content = $"{lineWidth} pt";
+            }
+        }
+
+        private string channelName;
+        public string ChannelName
+        {
+            get
+            {
+                return channelName;
+            }
+            set
+            {
+                channelName = value;
+                AttributeLabel.Content = channelName;
+            }
+        }
+
+        private bool isSelected = false;
+
+        private string unitOfMeasureFormula;
 
         public InputFileChannelSettingsItem(Channel channel, int inputFileID)
         {
             InitializeComponent();
 
-            InputFileID = inputFileID;
+            channelName = channel.Name;
+            ChannelID = channel.ID;
+            ID = inputFileID;
             colorCode = channel.Color;
             ChangeColor((Color)ColorConverter.ConvertFromString(colorCode));
-            AttributeLbl.Content = channel.Name;
+            ChannelName = channel.Name;
 
             var unitOfMeasure = UnitOfMeasureManager.GetUnitOfMeasure(channel.Name);
             if (unitOfMeasure != null)
             {
+                unitOfMeasureFormula = unitOfMeasure.UnitOfMeasure;
                 var formula = @"\color[HTML]{" + ColorManager.Secondary900[1..] + "}{" + unitOfMeasure.UnitOfMeasure + "}";
                 UnitOfMeasureFormulaControl.Formula = formula;
             }
-            LineWidthLabel.Content = $"{channel.LineWidth} pt";
+
+            LineWidth = channel.LineWidth;
         }
 
         public void ChangeColor(Color color)
@@ -50,11 +88,12 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
             if (pickColor.ShowDialog() == true)
             {
                 var pickedColor = pickColor.ColorPicker.Color;
+                colorCode = pickedColor.ToString();
                 ChangeColor(pickedColor);
 
                 foreach (var group in GroupManager.Groups)
                 {
-                    var channel = group.GetAttribute(InputFileID);
+                    var channel = group.GetAttribute(channelName);
                     if (channel != null)
                     {
                         channel.Color = pickedColor.ToString();
@@ -65,7 +104,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
                 {
                     foreach (var channel in inputFile.Channels)
                     {
-                        if (channel.ID == InputFileID)
+                        if (channel.Name.Equals(channelName))
                         {
                             channel.Color = pickedColor.ToString();
                         }
@@ -87,6 +126,57 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
 
         private void ChangeColorBtn_MouseLeave(object sender, MouseEventArgs e)
         {
+            Mouse.OverrideCursor = null;
+        }
+
+        public void ChangeColorMode(bool selected)
+        {
+            isSelected = selected;
+
+            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+
+            AttributeLabel.Foreground = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50)) :
+                                                         new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
+
+            LineWidthLabel.Foreground = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50)) :
+                                                         new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
+
+            var formula = @"\color[HTML]{" + (isSelected ? ColorManager.Secondary50[1..] : ColorManager.Secondary900[1..]) + "}{" + unitOfMeasureFormula + "}";
+            UnitOfMeasureFormulaControl.Formula = formula;
+        }
+
+        private void BackgroundCard_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary700)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
+        }
+
+        private void BackgroundCard_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+
+            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeActiveChannelSettingsItem(ChannelID);
+
+            Mouse.OverrideCursor = null;
+        }
+
+        private void BackgroundCard_MouseEnter(object sender, MouseEventArgs e)
+        {
+            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void BackgroundCard_MouseLeave(object sender, MouseEventArgs e)
+        {
+            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+
             Mouse.OverrideCursor = null;
         }
     }

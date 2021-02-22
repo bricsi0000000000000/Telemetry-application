@@ -23,9 +23,35 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <ScrollViewer>
-            <StackPanel x:Name="UnitsStackPanel"/>
-        </ScrollViewer>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="45"/>
+            </Grid.RowDefinitions>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Auto"
+                          >
+                <StackPanel x:Name="UnitsStackPanel"/>
+            </ScrollViewer>
+
+            <materialDesign:Card Grid.Row="1"
+                                 Margin="5,5,2.5,5"
+                                 UniformCornerRadius="5"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                 Name="AddUnitCardButton"
+                                 PreviewMouseLeftButtonDown="AddUnitCardButton_PreviewMouseLeftButtonDown"
+                                 PreviewMouseLeftButtonUp="AddUnitCardButton_PreviewMouseLeftButtonUp"
+                                 MouseEnter="AddUnitCardButton_MouseEnter"
+                                 MouseLeave="AddUnitCardButton_MouseLeave"
+                                 >
+                <materialDesign:PackIcon Kind="Add"
+                                         Foreground="{DynamicResource Secondary}"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch"
+                                         />
+            </materialDesign:Card>
+        </Grid>
 
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
 
@@ -269,16 +295,16 @@
                 </Grid>
             </materialDesign:Card>
 
-            <materialDesign:Card Name="DeleteSectionCardButton"
+            <materialDesign:Card Name="DeleteUnitCardButton"
                                  Grid.Row="1"
                                  UniformCornerRadius="5"
                                  Margin="0,0,0,5"
                                  Background="{DynamicResource Delete}"
                                  materialDesign:ShadowAssist.ShadowDepth="Depth1"
-                                 PreviewMouseLeftButtonDown="DeleteSectionCardButton_PreviewMouseLeftButtonDown"
-                                 PreviewMouseLeftButtonUp="DeleteSectionCardButton_PreviewMouseLeftButtonUp"
-                                 MouseEnter="DeleteSectionCardButton_MouseEnter"
-                                 MouseLeave="DeleteSectionCardButton_MouseLeave"
+                                 PreviewMouseLeftButtonDown="DeleteUnitCardButton_PreviewMouseLeftButtonDown"
+                                 PreviewMouseLeftButtonUp="DeleteUnitCardButton_PreviewMouseLeftButtonUp"
+                                 MouseEnter="DeleteUnitCardButton_MouseEnter"
+                                 MouseLeave="DeleteUnitCardButton_MouseLeave"
                                  >
                 <materialDesign:PackIcon Kind="Delete"
                                                 VerticalAlignment="Stretch"
@@ -289,17 +315,6 @@
         </Grid>
 
         <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
-
-        <Button Grid.ColumnSpan="5"
-            Name="AddLiveSectionButton"
-            Margin="10"
-            Click="AddUnitButton_Click"
-            Style="{StaticResource MaterialDesignFloatingActionButton}"
-            VerticalAlignment="Bottom"
-            HorizontalAlignment="Right"
-            >
-            <materialDesign:PackIcon Kind="Add"/>
-        </Button>
 
         <Grid Grid.ColumnSpan="5"
             Name="LoadingGrid"

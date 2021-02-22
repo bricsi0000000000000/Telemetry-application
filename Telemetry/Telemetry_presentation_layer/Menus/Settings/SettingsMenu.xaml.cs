@@ -38,7 +38,7 @@ namespace Telemetry_presentation_layer.Menus.Settings
             AddSettingsTab(TextManager.FilesSettingsName, new InputFilesSettings(), selected: true);
             AddSettingsTab(TextManager.GroupsSettingsName, new GroupSettings());
             AddSettingsTab(TextManager.UnitsSettingsName, new UnitsMenu());
-            AddSettingsTab(TextManager.DefaultSettingsName, new DefaultSettings(), selected: true);
+            AddSettingsTab(TextManager.DefaultSettingsName, new DefaultSettings());
             //   AddSettingsTab(TextManager.TracksSettingsName, new TrackSettings());
 
             /*  AddSettingsTab(new TabItem

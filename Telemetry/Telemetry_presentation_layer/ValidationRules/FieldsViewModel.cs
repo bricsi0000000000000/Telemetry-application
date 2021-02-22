@@ -8,6 +8,8 @@ namespace Telemetry_presentation_layer.ValidationRules
 #nullable enable
         private string? name;
         private string? groupName;
+        private string? attributeName;
+        private string? channelName;
         private string? addGroupName;
         private string? addAttributeName;
         private int addAttributeLineWidth;
@@ -28,6 +30,18 @@ namespace Telemetry_presentation_layer.ValidationRules
         {
             get => groupName;
             set => this.MutateVerbose(ref groupName, value, RaisePropertyChanged());
+        }
+
+        public string? AttributeName
+        {
+            get => attributeName;
+            set => this.MutateVerbose(ref attributeName, value, RaisePropertyChanged());
+        }
+
+        public string? ChannelName
+        {
+            get => channelName;
+            set => this.MutateVerbose(ref channelName, value, RaisePropertyChanged());
         }
 
         public string? AddGroupName

@@ -47,6 +47,9 @@ namespace Telemetry_presentation_layer.Charts
             InitializeComponent();
             ChartName = name;
             ScottPlotChart.Configure(enableScrollWheelZoom: false);
+            ScottPlotChart.plt.YLabel(name);
+            ScottPlotChart.plt.Legend();
+            ScottPlotChart.Render();
         }
 
         /// <summary>
@@ -63,25 +66,22 @@ namespace Telemetry_presentation_layer.Charts
         public bool HasChannelName(string channelName) => channelNames.Contains(channelName);
 
         /// <summary>
-        /// Initializes and renders a plot for <see cref="Driverless"/>.
+        /// Adds and renders a plot for <see cref="Driverless"/>.
         /// </summary>
         /// <param name="xAxisValues">Values on <b>horizontal</b> axis.</param>
         /// <param name="yAxisValues">Values on <b>vertical</b> axis.</param>
         /// <param name="lineColor"><see cref="Color"/> of the line.</param>
-        /// <param name="yAxisLabel">Label on <b>vertical</b> axis.</param>
         /// <param name="xAxisLabel">Label on <b>horizontal</b> axis. Default is <c>x</c></param>
-        public void InitPlot(double[] xAxisValues,
-                             double[] yAxisValues,
-                             Color lineColor,
-                             string yAxisLabel = "",
-                             string xAxisLabel = "x"
-                             )
+        public void AddPlot(double[] xAxisValues,
+                            double[] yAxisValues,
+                            Color lineColor,
+                            string xAxisLabel = "x"
+                            )
         {
             plottableScatterHighlight = ScottPlotChart.plt.PlotScatterHighlight(xAxisValues, yAxisValues, markerShape: MarkerShape.none, color: lineColor);
 
             ScottPlotChart.plt.Style(chartStyle);
             ScottPlotChart.plt.Colorset(Colorset.OneHalfDark);
-            ScottPlotChart.plt.YLabel(yAxisLabel);
             ScottPlotChart.plt.XLabel(xAxisLabel);
             ScottPlotChart.plt.Legend();
             ScottPlotChart.Render();
@@ -117,7 +117,7 @@ namespace Telemetry_presentation_layer.Charts
             if (ValuesStackPanel.Children.Count == 0)
             {
                 var unit = UnitOfMeasureManager.GetUnitOfMeasure(yAxisLabel);
-                ValuesStackPanel.Children.Add(new ChartValue("#4d4d4d", yAxisLabel, liveChartValues.Last(), unit == null ? "" : unit.UnitOfMeasure, 0));
+                ValuesStackPanel.Children.Add(new ChartValue("#4d4d4d", yAxisLabel, /*liveChartValues.Last(),*/ unit == null ? "" : unit.UnitOfMeasure, 0));
             }
             else
             {
@@ -156,30 +156,29 @@ namespace Telemetry_presentation_layer.Charts
             Console.WriteLine(plottableScatterHighlight.GetPointNearestX(mouseXPosition));*/
         }
 
+        public void AddSideValue(string channelName)
+        {
+            var unit = UnitOfMeasureManager.GetUnitOfMeasure(channelName);
+            if (unit == null)
+            {
+                unit = UnitOfMeasureManager.GetUnitOfMeasure(channelName.Replace("_", ""));
+            }
+
+            ValuesStackPanel.Children.Add(new ChartValue("#ffffff", channelName, unit == null ? "" : unit.UnitOfMeasure, -1));
+        }
+
         public void UpdateSideValues(int inputFileID, string channelName, ref int dataIndex)
         {
             var channel = InputFileManager.GetInputFile(inputFileID).GetChannel(channelName);
 
-            bool found = false;
             foreach (ChartValue item in ValuesStackPanel.Children)
             {
-                if (item.Name.Equals(channelName))
+                if (item.ChannelName.Equals(channelName))
                 {
                     double value = dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last();
                     item.SetChannelValue(value);
-
-                    found = true;
+                    item.Set(channel.Color, inputFileID);
                 }
-            }
-
-            if (!found)
-            {
-                var unit = UnitOfMeasureManager.GetUnitOfMeasure(channelName);
-                if (unit == null)
-                {
-                    unit = UnitOfMeasureManager.GetUnitOfMeasure(channelName.Replace("_", ""));
-                }
-                ValuesStackPanel.Children.Add(new ChartValue(channel.Color, channel.Name, dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last(), unit == null ? "" : unit.UnitOfMeasure, inputFileID));
             }
         }
     }

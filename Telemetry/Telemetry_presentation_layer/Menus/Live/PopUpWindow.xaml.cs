@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_data_and_logic_layer.Texts;
 using Telemetry_presentation_layer.Converters;
 using Telemetry_presentation_layer.Menus.Settings;
+using Telemetry_presentation_layer.Menus.Settings.Groups;
+using Telemetry_presentation_layer.Menus.Settings.InputFiles;
 using Telemetry_presentation_layer.Menus.Settings.Live;
 using Telemetry_presentation_layer.Menus.Settings.Units;
 
@@ -23,7 +16,7 @@ namespace Telemetry_presentation_layer.Menus.Live
     /// </summary>
     public partial class PopUpWindow : Window
     {
-        public enum PopUpType { ChangeLiveStatus, DeleteSection, DeleteUnit }
+        public enum PopUpType { ChangeLiveStatus, DeleteSection, DeleteUnit, DeleteGroup, DeleteGroupAttribute, DeleteInputFile }
 
         private readonly PopUpType popUpType;
 
@@ -54,6 +47,15 @@ namespace Telemetry_presentation_layer.Menus.Live
                     break;
                 case PopUpType.DeleteUnit:
                     ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).DeleteUnit(delete: true);
+                    break;
+                case PopUpType.DeleteGroup:
+                    ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).DeleteGroup(delete: true);
+                    break;
+                case PopUpType.DeleteGroupAttribute:
+                    ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).DeleteAttribute(delete: true);
+                    break;
+                case PopUpType.DeleteInputFile:
+                    ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).DeleteInputFile(delete: true);
                     break;
             }
 
@@ -91,6 +93,15 @@ namespace Telemetry_presentation_layer.Menus.Live
                     break;
                 case PopUpType.DeleteUnit:
                     ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).DeleteUnit(delete: false);
+                    break;
+                case PopUpType.DeleteGroup:
+                    ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).DeleteGroup(delete: false);
+                    break;
+                case PopUpType.DeleteGroupAttribute:
+                    ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).DeleteAttribute(delete: false);
+                    break;
+                case PopUpType.DeleteInputFile:
+                    ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).DeleteInputFile(delete: false);
                     break;
             }
             Close();

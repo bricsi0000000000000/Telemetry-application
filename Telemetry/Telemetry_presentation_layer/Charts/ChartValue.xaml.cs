@@ -19,8 +19,8 @@ namespace Telemetry_presentation_layer.Charts
     /// </summary>
     public partial class ChartValue : UserControl
     {
-        private readonly string colorCode;
-        private readonly int inputFileID;
+        private string colorCode;
+        private int inputFileID;
 
         /// <summary>
         /// Constructor
@@ -28,16 +28,20 @@ namespace Telemetry_presentation_layer.Charts
         /// <param name="color"><see cref="Color"/> of the channel.</param>
         /// <param name="channelName">Channel name.</param>
         /// <param name="value">Channel value.</param>
-        public ChartValue(string color, string channelName, double value, string unitOfMeasure, int inputFileID)
+        public ChartValue(string color, string channelName, string unitOfMeasure, int inputFileID)
         {
             InitializeComponent();
+
+            ChannelNameLabel.Opacity = .4f;
+            ChannelValueLabel.Opacity = .4f;
+            UnitOfMeasureFormulaControl.Opacity = .4f;
 
             colorCode = color;
             this.inputFileID = inputFileID;
 
             ColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(color);
             ChannelName = channelName;
-            SetChannelValue(value);
+            SetChannelValue(0);
             var formula = @"\color[HTML]{" + ColorManager.Secondary900[1..] + "}{" + unitOfMeasure + "}";
             UnitOfMeasureFormulaControl.Formula = formula;
         }
@@ -69,7 +73,14 @@ namespace Telemetry_presentation_layer.Charts
         /// <param name="channelName"><see cref="Channel"/>s name.</param>
         private void SetChannelName(string channelName)
         {
-            ChannelNameLabel.Content = $"{channelName}{inputFileID}";
+            if (inputFileID != -1)
+            {
+                ChannelNameLabel.Content = $"{channelName}_{inputFileID}";
+            }
+            else
+            {
+                ChannelNameLabel.Content = channelName;
+            }
         }
 
         /// <summary>
@@ -78,56 +89,85 @@ namespace Telemetry_presentation_layer.Charts
         /// <param name="channelValue"><see cref="Channel"/>s value.</param>
         public void SetChannelValue(double channelValue)
         {
-            ChannelValueLabel.Content = $"{channelValue:f3}";
+            if (inputFileID != -1)
+            {
+                ChannelValueLabel.Content = $"{channelValue:f3}";
+            }
+        }
+
+        public void Set(string color, int inputFileID)
+        {
+            ChannelNameLabel.Opacity = 1;
+            ChannelValueLabel.Opacity = 1;
+            UnitOfMeasureFormulaControl.Opacity = 1;
+
+            colorCode = color;
+            this.inputFileID = inputFileID;
+
+            ColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(color);
+            ChannelName = channelName;
         }
 
         private void ColorCard_MouseEnter(object sender, MouseEventArgs e)
         {
-            Mouse.OverrideCursor = Cursors.Hand;
+            if (inputFileID != -1)
+            {
+                Mouse.OverrideCursor = Cursors.Hand;
+            }
         }
 
         private void ColorCard_MouseLeave(object sender, MouseEventArgs e)
         {
-            Mouse.OverrideCursor = null;
+            if (inputFileID != -1)
+            {
+                Mouse.OverrideCursor = null;
+            }
         }
 
         private void ColorCard_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            PickColor pickColor = new PickColor(colorCode);
-            if (pickColor.ShowDialog() == true)
+            if (inputFileID != -1)
             {
-                var pickedColor = pickColor.ColorPicker.Color;
-                ChangeColor(pickedColor);
-
-                foreach (var group in GroupManager.Groups)
+                PickColor pickColor = new PickColor(colorCode);
+                if (pickColor.ShowDialog() == true)
                 {
-                    var channel = group.GetAttribute(ChannelName);
-                    if (channel != null)
-                    {
-                        channel.Color = pickedColor.ToString();
-                    }
-                }
+                    Mouse.OverrideCursor = Cursors.Wait;
 
-                foreach (var inputFile in InputFileManager.InputFiles)
-                {
-                    if (inputFile.ID == inputFileID)
+                    var pickedColor = pickColor.ColorPicker.Color;
+                    ChangeColor(pickedColor);
+
+                    foreach (var group in GroupManager.Groups)
                     {
-                        foreach (var channel in inputFile.Channels)
+                        var channel = group.GetAttribute(ChannelName);
+                        if (channel != null)
                         {
-                            if (channel.Name.Equals(ChannelName))
+                            channel.Color = pickedColor.ToString();
+                        }
+                    }
+
+                    foreach (var inputFile in InputFileManager.InputFiles)
+                    {
+                        if (inputFile.ID == inputFileID)
+                        {
+                            foreach (var channel in inputFile.Channels)
                             {
-                                channel.Color = pickedColor.ToString();
+                                if (channel.Name.Equals(ChannelName))
+                                {
+                                    channel.Color = pickedColor.ToString();
+                                }
                             }
                         }
                     }
+
+                    GroupManager.SaveGroups();
+                    ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitAttributes();
+                    ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).InitChannelItems();
+
+                    //TODO if driverless, a driverlesseset updatelje ha nem akkor meg a másikat
+                    ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
+
+                    Mouse.OverrideCursor = null;
                 }
-
-                GroupManager.SaveGroups();
-                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitAttributes();
-                ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).InitChannelItems();
-
-                //TODO if driverless, a driverlesseset updatelje ha nem akkor meg a másikat
-                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
             }
         }
 

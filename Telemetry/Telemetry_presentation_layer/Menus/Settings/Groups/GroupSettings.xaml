@@ -190,33 +190,45 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Grid>
+            <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="60"/>
                 </Grid.ColumnDefinitions>
 
                 <TextBox Name="SelectedAttributeNameTextBox"
-                            VerticalAlignment="Stretch"
-                            HorizontalAlignment="Stretch"
-                            VerticalContentAlignment="Center"
-                            HorizontalContentAlignment="Left"
-                            materialDesign:HintAssist.Hint="Channel name"
-                            materialDesign:HintAssist.IsFloating="True"
-                            Margin="5,0,0,15"
-                            IsReadOnly="True"
-                            />
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Left"
+                         materialDesign:HintAssist.Hint="Channel name"
+                         materialDesign:HintAssist.IsFloating="True"
+                         Margin="5,0,0,15"
+                         >
+                <TextBox.Text>
+                        <Binding Path="AttributeName"
+                                 UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
 
-                <materialDesign:Card Grid.Column="1"
-                                        UniformCornerRadius="5"
-                                        Margin="5,10"
-                                        materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                        >
+                <materialDesign:Card Name="ChangeSelectedAttributeNameCardButton"
+                                     Grid.Column="1"
+                                     Margin="5,10"
+                                     UniformCornerRadius="5"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                     PreviewMouseLeftButtonDown="ChangeSelectedAttributeNameCardButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="ChangeSelectedAttributeNameCardButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="ChangeSelectedAttributeNameCardButton_MouseEnter"
+                                     MouseLeave="ChangeSelectedAttributeNameCardButton_MouseLeave"
+                                     >
                     <materialDesign:PackIcon Kind="ContentSave"
-                                                VerticalAlignment="Stretch"
-                                                HorizontalAlignment="Stretch"
-                                                Opacity=".2"
-                                                    />
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             />
                 </materialDesign:Card>
             </Grid>
 
@@ -234,6 +246,7 @@
                             materialDesign:HintAssist.Hint="Line width"
                             materialDesign:HintAssist.IsFloating="True"
                             Margin="5,0,0,15"
+                         
                             >
                     <TextBox.Text>
                         <Binding Path="LineWidth"
@@ -294,21 +307,26 @@
 
         <Grid Grid.Column="6"
                 Margin="5,0,5,5">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="3*"/>
+            </Grid.RowDefinitions>
 
             <ScrollViewer VerticalScrollBarVisibility="Auto"
-                            HorizontalScrollBarVisibility="Auto"
-                            >
+                          HorizontalScrollBarVisibility="Auto"
+                          Margin="5"
+                          >
                 <StackPanel x:Name="InputFilesStackPanel"/>
             </ScrollViewer>
 
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
-                            HorizontalScrollBarVisibility="Auto"
-                            Grid.Column="1"
-                            >
+            <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}"/>
+
+            <ScrollViewer Grid.Row="2"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Auto"
+                          Margin="5"
+                          >
                 <StackPanel x:Name="ChannelsStackPanel"/>
             </ScrollViewer>
         </Grid>

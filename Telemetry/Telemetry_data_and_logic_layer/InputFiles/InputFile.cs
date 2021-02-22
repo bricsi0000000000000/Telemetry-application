@@ -16,6 +16,7 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         /// <see cref="InputFile"/>s name.
         /// </summary>
         public string Name { get; set; }
+        public string OriginalName { get; }
 
         /// <summary>
         /// Decides that this <see cref="InputFile"/> is driverless or not.
@@ -42,6 +43,7 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         {
             ID = id;
             Name = name;
+            OriginalName = name;
             Channels = channels;
         }
 
@@ -53,6 +55,7 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         {
             ID = inputFile.ID;
             Name = inputFile.Name;
+            OriginalName = inputFile.Name;
             Channels = inputFile.Channels;
         }
         #endregion
@@ -63,6 +66,7 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         /// <param name="name">Findable <see cref="Channel"/>s name.</param>
         /// <returns>Returns a <see cref="Channel"/> whose name is <paramref name="name"/>.</returns>
         public Channel GetChannel(string name) => Channels.Find(x => x.Name.Equals(name));
+        public Channel GetChannel(int id) => Channels.Find(x => x.ID == id);
 
         /// <summary>
         /// Contains the required <see cref="Channel"/>s for this <see cref="InputFile"/>.

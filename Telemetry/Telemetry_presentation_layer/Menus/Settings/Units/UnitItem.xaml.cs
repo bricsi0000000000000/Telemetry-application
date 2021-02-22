@@ -13,6 +13,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Units
     public partial class UnitItem : UserControl
     {
         public Unit Unit { get; private set; }
+
         private bool isActive = false;
 
         public UnitItem(Unit unit)

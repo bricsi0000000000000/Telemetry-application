@@ -15,6 +15,8 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         public StandardInputFile(InputFile inputFile) : base(inputFile)
         {
             InitRequiredChannels();
+
+            Driverless = false;
         }
 
         private void InitRequiredChannels()

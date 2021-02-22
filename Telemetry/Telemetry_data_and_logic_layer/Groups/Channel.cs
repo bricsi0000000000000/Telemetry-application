@@ -39,7 +39,7 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// <summary>
         /// Name of the channel.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Data stored in the channel.

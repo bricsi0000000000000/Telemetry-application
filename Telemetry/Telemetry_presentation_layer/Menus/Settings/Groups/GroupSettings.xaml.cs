@@ -11,6 +11,7 @@ using Telemetry_data_and_logic_layer.InputFiles;
 using Telemetry_data_and_logic_layer.Texts;
 using Telemetry_presentation_layer.Converters;
 using Telemetry_presentation_layer.Menus.Driverless;
+using Telemetry_presentation_layer.Menus.Live;
 using Telemetry_presentation_layer.ValidationRules;
 
 namespace Telemetry_presentation_layer.Menus.Settings.Groups
@@ -57,6 +58,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             DataContext = fieldsViewModel;
             fieldsViewModel.AddGroupName = "";
             fieldsViewModel.AddAttributeName = "";
+            fieldsViewModel.AttributeName = "";
             AddAttributeLineWidthTextBox.Text = "1";
 
             if (GroupManager.Groups.Count > 0)
@@ -206,6 +208,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
                 if (attribute != null)
                 {
                     fieldsViewModel.LineWidth = attribute.LineWidth;
+                    fieldsViewModel.AttributeName = attribute.Name;
                     SelectedAttributeNameTextBox.Text = attribute.Name;
                     SelectedAttributeColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(attribute.Color);
 
@@ -451,18 +454,30 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         private void ChangeSelectedAttributeLineWidthCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             ChangeSelectedAttributeLineWidthCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
             Mouse.OverrideCursor = Cursors.Wait;
-            var activeAttribute = GroupManager.GetGroup(ActiveGroupID).GetAttribute(ActiveAttributeID);
-            activeAttribute.LineWidth = int.Parse(SelectedAttributeLineWidthTextBox.Text);
-            GroupManager.SaveGroups();
-            foreach (GroupSettingsAttribute item in AttributesStackPanel.Children)
+
+            if (int.TryParse(SelectedAttributeLineWidthTextBox.Text, out int lineWidth))
             {
-                if (item.ID == ActiveAttributeID)
+                if (lineWidth > 0)
                 {
-                    item.LineWidth = activeAttribute.LineWidth;
+                    var activeAttribute = GroupManager.GetGroup(ActiveGroupID).GetAttribute(ActiveAttributeID);
+                    if (activeAttribute.LineWidth != lineWidth)
+                    {
+                        activeAttribute.LineWidth = lineWidth;
+                        GroupManager.SaveGroups();
+                        foreach (GroupSettingsAttribute item in AttributesStackPanel.Children)
+                        {
+                            if (item.ID == ActiveAttributeID)
+                            {
+                                item.LineWidth = activeAttribute.LineWidth;
+                            }
+                        }
+                    }
                 }
             }
-            Mouse.OverrideCursor = Cursors.Hand;
+
+            Mouse.OverrideCursor = null;
         }
 
         private void ChangeSelectedAttributeLineWidthCardButton_MouseEnter(object sender, MouseEventArgs e)
@@ -486,20 +501,39 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         {
             DeleteAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
 
-            GroupManager.GetGroup(ActiveGroupID).RemoveAttribute(ActiveAttributeID);
-            var group = GroupManager.GetGroup(ActiveGroupID);
-            if (group.Attributes.Count > 0)
+            AddGroupGridBackground.Visibility = Visibility.Visible;
+
+            var changeLiveStatusWindow = new PopUpWindow($"You are about to delete '{GroupManager.GetGroup(ActiveGroupID).GetAttribute(ActiveAttributeID).Name}'\n" +
+                                                         $"Are you sure about that?",
+                                                         PopUpWindow.PopUpType.DeleteGroupAttribute);
+            changeLiveStatusWindow.ShowDialog();
+        }
+
+        public void DeleteAttribute(bool delete)
+        {
+            if (delete)
             {
-                ActiveAttributeID = group.Attributes.Last().ID;
-            }
-            else
-            {
-                ActiveAttributeID = -1;
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                GroupManager.GetGroup(ActiveGroupID).RemoveAttribute(ActiveAttributeID);
+                var group = GroupManager.GetGroup(ActiveGroupID);
+                if (group.Attributes.Count > 0)
+                {
+                    ActiveAttributeID = group.Attributes.Last().ID;
+                }
+                else
+                {
+                    ActiveAttributeID = -1;
+                }
+
+                GroupManager.SaveGroups();
+                InitGroups();
+                SelectInputFile();
+
+                Mouse.OverrideCursor = null;
             }
 
-            GroupManager.SaveGroups();
-            InitGroups();
-            SelectInputFile();
+            AddGroupGridBackground.Visibility = Visibility.Hidden;
         }
 
         private void DeleteAttributeCardButton_MouseEnter(object sender, MouseEventArgs e)
@@ -553,11 +587,32 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         {
             DeleteGroupCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary800));
 
-            GroupManager.RemoveGroup(ActiveGroupID);
-            ActiveGroupID = GroupManager.Groups[0].ID;
-            InitGroups();
+            AddGroupGridBackground.Visibility = Visibility.Visible;
 
-            GroupManager.SaveGroups();
+            var changeLiveStatusWindow = new PopUpWindow($"You are about to delete '{GroupManager.GetGroup(ActiveGroupID).Name}'\n" +
+                                                         $"Are you sure about that?",
+                                                         PopUpWindow.PopUpType.DeleteGroup);
+            changeLiveStatusWindow.ShowDialog();
+        }
+
+        public void DeleteGroup(bool delete)
+        {
+            if (delete)
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                GroupManager.RemoveGroup(ActiveGroupID);
+                ActiveGroupID = GroupManager.Groups[0].ID;
+                InitGroups();
+
+                GroupManager.SaveGroups();
+
+                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).InitializeGroupItems();
+
+                Mouse.OverrideCursor = null;
+            }
+
+            AddGroupGridBackground.Visibility = Visibility.Hidden;
         }
 
         private void DeleteGroupCardButton_MouseEnter(object sender, MouseEventArgs e)
@@ -656,7 +711,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
                 ActiveGroupID = group.ID;
                 AddGroupNameTextBox.Text = string.Empty;
                 InitGroups();
-
+                UpdateChannels();
+                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).InitializeGroupItems();
                 // ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
             }
 
@@ -780,6 +836,54 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         private void CancelAddGroupCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
             CancelAddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            Mouse.OverrideCursor = null;
+        }
+
+        private void ChangeSelectedAttributeNameCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ChangeSelectedAttributeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+        }
+
+        private void ChangeSelectedAttributeNameCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            ChangeSelectedAttributeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            if (!SelectedAttributeNameTextBox.Text.Equals(string.Empty))
+            {
+                string oldName = GroupManager.GetGroup(ActiveGroupID).GetAttribute(ActiveAttributeID).Name;
+                string newName = SelectedAttributeNameTextBox.Text;
+
+                if (!oldName.Equals(newName))
+                {
+                    GroupManager.GetGroup(ActiveGroupID).GetAttribute(ActiveAttributeID).Name = newName;
+                    GroupManager.SaveGroups();
+
+                    foreach (GroupSettingsAttribute item in AttributesStackPanel.Children)
+                    {
+                        if (item.AttributeName.Equals(oldName))
+                        {
+                            item.AttributeName = newName;
+                        }
+                    }
+
+                    //TODO update group charts
+                }
+            }
+
+            Mouse.OverrideCursor = null;
+        }
+
+        private void ChangeSelectedAttributeNameCardButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ChangeSelectedAttributeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void ChangeSelectedAttributeNameCardButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            ChangeSelectedAttributeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
             Mouse.OverrideCursor = null;
         }
     }
