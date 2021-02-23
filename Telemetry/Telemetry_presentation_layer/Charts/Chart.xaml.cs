@@ -9,6 +9,14 @@ using System.Linq;
 using Telemetry_presentation_layer.Errors;
 using Telemetry_data_and_logic_layer.Units;
 using Telemetry_data_and_logic_layer.InputFiles;
+using System.Diagnostics;
+using Telemetry_data_and_logic_layer.Texts;
+using Telemetry_presentation_layer.Menus;
+using Telemetry_presentation_layer.Menus.Driverless;
+using Telemetry_presentation_layer.Menus.Settings.Groups;
+using Telemetry_presentation_layer.Menus.Settings;
+using Telemetry_data_and_logic_layer.Colors;
+using System.Windows.Input;
 
 namespace Telemetry_presentation_layer.Charts
 {
@@ -75,10 +83,11 @@ namespace Telemetry_presentation_layer.Charts
         public void AddPlot(double[] xAxisValues,
                             double[] yAxisValues,
                             Color lineColor,
+                            int lineWidth,
                             string xAxisLabel = "x"
                             )
         {
-            plottableScatterHighlight = ScottPlotChart.plt.PlotScatterHighlight(xAxisValues, yAxisValues, markerShape: MarkerShape.none, color: lineColor);
+            plottableScatterHighlight = ScottPlotChart.plt.PlotScatterHighlight(xAxisValues, yAxisValues, markerShape: MarkerShape.none, color: lineColor, lineWidth: lineWidth);
 
             ScottPlotChart.plt.Style(chartStyle);
             ScottPlotChart.plt.Colorset(Colorset.OneHalfDark);
@@ -117,7 +126,7 @@ namespace Telemetry_presentation_layer.Charts
             if (ValuesStackPanel.Children.Count == 0)
             {
                 var unit = UnitOfMeasureManager.GetUnitOfMeasure(yAxisLabel);
-                ValuesStackPanel.Children.Add(new ChartValue("#4d4d4d", yAxisLabel, /*liveChartValues.Last(),*/ unit == null ? "" : unit.UnitOfMeasure, 0));
+                ValuesStackPanel.Children.Add(new ChartValue("#4d4d4d", yAxisLabel, /*liveChartValues.Last(),*/ unit == null ? "" : unit.UnitOfMeasure, 0, ""));
             }
             else
             {
@@ -164,10 +173,10 @@ namespace Telemetry_presentation_layer.Charts
                 unit = UnitOfMeasureManager.GetUnitOfMeasure(channelName.Replace("_", ""));
             }
 
-            ValuesStackPanel.Children.Add(new ChartValue("#ffffff", channelName, unit == null ? "" : unit.UnitOfMeasure, -1));
+            ValuesStackPanel.Children.Add(new ChartValue("#ffffff", channelName, unit == null ? "" : unit.UnitOfMeasure, -1, ChartName));
         }
 
-        public void UpdateSideValues(int inputFileID, string channelName, ref int dataIndex)
+        public void UpdateSideValues(int inputFileID, string channelName, ref int dataIndex, string color = "")
         {
             var channel = InputFileManager.GetInputFile(inputFileID).GetChannel(channelName);
 
@@ -175,11 +184,64 @@ namespace Telemetry_presentation_layer.Charts
             {
                 if (item.ChannelName.Equals(channelName))
                 {
+                    if (!color.Equals(string.Empty))
+                    {
+                        item.Set(color, inputFileID);
+                    }
+
                     double value = dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last();
                     item.SetChannelValue(value);
-                    item.Set(channel.Color, inputFileID);
                 }
             }
+        }
+
+        private void Grid_Drop(object sender, System.Windows.DragEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            string channelName = ((CheckBox)e.Data.GetData(typeof(CheckBox))).Content.ToString();
+
+            var group = GroupManager.GetGroup(ChartName);
+
+            if (group != null)
+            {
+                if (group.GetAttribute(channelName) == null)
+                {
+                    GroupManager.GetGroup(ChartName).AddAttribute(channelName, ColorManager.GetChartColor, 1);
+                }
+            }
+            else
+            {
+                if (!channelNames.Contains(channelName))
+                {
+                    channelNames.Add(channelName);
+
+                    string oldName = ChartName;
+
+                    var temporaryGroup = GroupManager.GetGroup($"Temporary{GroupManager.TemporaryGroupIndex}");
+
+                    while (temporaryGroup != null)
+                    {
+                        GroupManager.TemporaryGroupIndex++;
+                        temporaryGroup = GroupManager.GetGroup($"Temporary{GroupManager.TemporaryGroupIndex}");
+                    }
+
+                    ChartName = $"Temporary{GroupManager.TemporaryGroupIndex}";
+                    var newGroup = new Group(GroupManager.LastGroupID++, ChartName);
+                    foreach (var item in channelNames)
+                    {
+                        newGroup.AddAttribute(item, ColorManager.GetChartColor, 1);
+                    }
+                    GroupManager.AddGroup(newGroup);
+                    ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).ReplaceChannelWithTemporaryGroup(oldName, ChartName);
+                }
+            }
+
+            GroupManager.SaveGroups();
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
+
+            Mouse.OverrideCursor = null;
         }
     }
 }

@@ -17,6 +17,9 @@ using Telemetry_data_and_logic_layer;
 using System.Windows.Controls.Primitives;
 using System.Diagnostics;
 using Telemetry_data_and_logic_layer.Defaults;
+using System.Windows.Input;
+using Telemetry_data_and_logic_layer.Colors;
+using Telemetry_presentation_layer.Converters;
 
 namespace Telemetry_presentation_layer.Menus.Driverless
 {
@@ -93,7 +96,9 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                     Content = group.Name
                 };
 
-                checkBox.Click += GroupCheckBox_Click;
+                checkBox.IsChecked = selectedGroups.Contains(group.Name);
+                checkBox.Checked += GroupCheckBox_CheckedClick;
+                checkBox.Unchecked += GroupCheckBox_CheckedClick;
 
                 GroupsStackPanel.Children.Add(checkBox);
             }
@@ -106,7 +111,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void GroupCheckBox_Click(object sender, RoutedEventArgs e)
+        private void GroupCheckBox_CheckedClick(object sender, RoutedEventArgs e)
         {
             var checkBox = (CheckBox)sender;
             string content = checkBox.Content.ToString();
@@ -124,9 +129,35 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             ChangeChartHighlight((int)DataSlider.Value);
         }
 
-        /// <summary>
-        /// Clears all the children of <see cref="ChannelsStackPanel"/> and fill it with the newly created <see cref="Chart"/>s.
-        /// </summary>
+        private void BuildChartGrid(Group group, ref int rowIndex)
+        {
+            RowDefinition chartRow = new RowDefinition()
+            {
+                Height = new GridLength(200)
+            };
+            RowDefinition gridSplitterRow = new RowDefinition
+            {
+                Height = new GridLength(5)
+            };
+
+            ChartsGrid.RowDefinitions.Add(chartRow);
+            ChartsGrid.RowDefinitions.Add(gridSplitterRow);
+
+            GridSplitter splitter = new GridSplitter
+            {
+                ResizeDirection = GridResizeDirection.Rows,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100)
+            };
+            ChartsGrid.Children.Add(splitter);
+
+            var chart = BuildGroupChart(group);
+            ChartsGrid.Children.Add(chart);
+
+            Grid.SetRow(chart, rowIndex++);
+            Grid.SetRow(splitter, rowIndex++);
+        }
+
         public void UpdateCharts()
         {
             ChartsGrid.Children.Clear();
@@ -155,31 +186,15 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                     BuildChartGrid(group, ref rowIndex);
                 }
             }
-        }
 
-        private void BuildChartGrid(Group group, ref int rowIndex)
-        {
-            RowDefinition chartRow = new RowDefinition();
-            RowDefinition gridSplitterRow = new RowDefinition
+            RowDefinition chartRow = new RowDefinition()
             {
-                Height = new GridLength(5)
+                Height = new GridLength()
             };
 
             ChartsGrid.RowDefinitions.Add(chartRow);
-            ChartsGrid.RowDefinitions.Add(gridSplitterRow);
 
-            GridSplitter splitter = new GridSplitter
-            {
-                ResizeDirection = GridResizeDirection.Rows,
-                HorizontalAlignment = HorizontalAlignment.Stretch
-            };
-            ChartsGrid.Children.Add(splitter);
-
-            var chart = BuildGroupChart(group);
-            ChartsGrid.Children.Add(chart);
-
-            Grid.SetRow(chart, rowIndex++);
-            Grid.SetRow(splitter, rowIndex++);
+            Grid.SetRow(new Grid(), rowIndex++);
         }
 
         /// <summary>
@@ -212,17 +227,16 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                             horizontalAxisData = new List<double>(actHorizontalAxisData);
                         }
 
-                        var channelData = GetChannel(inputFileID, channelName.Item1);
+                        var channel = GetChannel(inputFileID, channelName.Item1);
 
-                        var channelDataPlotData = ConvertChannelDataToPlotData(channelData.Data.ToArray(), actHorizontalAxisData);
-                        double yValue = dataIndex < channelData.Data.Count ? channelData.Data[dataIndex] : channelData.Data.Last();
+                        var channelDataPlotData = ConvertChannelDataToPlotData(channel.Data.ToArray(), actHorizontalAxisData);
 
                         chart.AddPlot(xAxisValues: channelDataPlotData.Item1,
                                       yAxisValues: channelDataPlotData.Item2,
-                                      lineColor: ColorTranslator.FromHtml(channelData.Color));
+                                      lineWidth: channel.LineWidth,
+                                      lineColor: ColorTranslator.FromHtml(group.GetAttribute(channel.Name).Color));
 
-
-                        chart.UpdateSideValues(inputFileID, channelName.Item1, ref dataIndex);
+                        chart.UpdateSideValues(inputFileID, channelName.Item1, ref dataIndex, group.GetAttribute(channel.Name).Color);
                     }
                 }
             }
@@ -308,6 +322,27 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             }
 
             return InputFileManager.GetDriverlessInputFile(inputFileID).GetChannel(channelName);
+        }
+
+        public void ReplaceChannelWithTemporaryGroup(string channelName, string groupName)
+        {
+            foreach (CheckBox item in ChannelsStackPanel.Children)
+            {
+                if (item.Content.ToString().Equals(channelName))
+                {
+                    item.IsChecked = false;
+                }
+            }
+
+            InitializeGroupItems();
+
+            foreach (CheckBox item in GroupsStackPanel.Children)
+            {
+                if (item.Content.ToString().Equals(groupName))
+                {
+                    item.IsChecked = true;
+                }
+            }
         }
 
         /// <summary>
@@ -659,7 +694,9 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 };
                 checkBox.Checked += ChannelItem_Checked;
                 checkBox.Unchecked += ChannelItem_Checked;
-                //TODO drag and drop
+                checkBox.PreviewMouseRightButtonDown += ChannelCheckboc_PreviewMouseRightButtonDown;
+                checkBox.MouseEnter += CheckBox_MouseEnter;
+                checkBox.MouseLeave += CheckBox_MouseLeave;
 
                 if (item.Item2.Count == max)
                 {
@@ -676,6 +713,35 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 }
 
                 ChannelsStackPanel.Children.Add(checkBox);
+            }
+        }
+
+        private void CheckBox_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void CheckBox_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Mouse.OverrideCursor = null;
+        }
+
+        private void ChannelCheckboc_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            CheckBox checkBox = (CheckBox)sender;
+            object data = null;
+
+            foreach (CheckBox item in ChannelsStackPanel.Children)
+            {
+                if (item.Content.Equals(checkBox.Content))
+                {
+                    data = item;
+                }
+            }
+
+            if (data != null)
+            {
+                DragDrop.DoDragDrop(checkBox, data, DragDropEffects.Move);
             }
         }
 
@@ -759,6 +825,5 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 }
             }
         }
-
     }
 }

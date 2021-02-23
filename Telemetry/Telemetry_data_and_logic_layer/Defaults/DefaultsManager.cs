@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Telemetry_data_and_logic_layer.Texts;
 
 namespace Telemetry_data_and_logic_layer.Defaults
@@ -60,7 +59,6 @@ namespace Telemetry_data_and_logic_layer.Defaults
                         throw new Exception("Can't add default settings, because 'value' is empty!");
                     }
 
-
                     AddDefault(new Default(JSON[i].Name.ToString(), JSON[i].Value.ToString()));
                 }
             }
@@ -113,6 +111,5 @@ namespace Telemetry_data_and_logic_layer.Defaults
         /// </summary>
         /// <param name="name">Removable <see cref="Group"/>s name.</param>
         public static void RemoveDefault(string name) => Defaults.Remove(GetDefault(name));
-
     }
 }

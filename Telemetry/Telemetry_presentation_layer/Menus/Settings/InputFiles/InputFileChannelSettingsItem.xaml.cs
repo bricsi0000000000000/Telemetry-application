@@ -91,14 +91,14 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
                 colorCode = pickedColor.ToString();
                 ChangeColor(pickedColor);
 
-                foreach (var group in GroupManager.Groups)
+                /*foreach (var group in GroupManager.Groups)
                 {
                     var channel = group.GetAttribute(channelName);
                     if (channel != null)
                     {
                         channel.Color = pickedColor.ToString();
                     }
-                }
+                }*/
 
                 foreach (var inputFile in InputFileManager.InputFiles)
                 {
@@ -113,6 +113,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
 
                 GroupManager.SaveGroups();
                 ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitAttributes();
+                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).SelectInputFile();
 
                 //TODO if driverless, a driverlesseset updatelje ha nem akkor meg a másikat
                 ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();

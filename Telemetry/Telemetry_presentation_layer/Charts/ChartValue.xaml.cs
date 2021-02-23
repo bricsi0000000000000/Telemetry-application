@@ -21,6 +21,7 @@ namespace Telemetry_presentation_layer.Charts
     {
         private string colorCode;
         private int inputFileID;
+        private string groupName;
 
         /// <summary>
         /// Constructor
@@ -28,7 +29,7 @@ namespace Telemetry_presentation_layer.Charts
         /// <param name="color"><see cref="Color"/> of the channel.</param>
         /// <param name="channelName">Channel name.</param>
         /// <param name="value">Channel value.</param>
-        public ChartValue(string color, string channelName, string unitOfMeasure, int inputFileID)
+        public ChartValue(string color, string channelName, string unitOfMeasure, int inputFileID, string groupName)
         {
             InitializeComponent();
 
@@ -38,6 +39,7 @@ namespace Telemetry_presentation_layer.Charts
 
             colorCode = color;
             this.inputFileID = inputFileID;
+            this.groupName = groupName;
 
             ColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(color);
             ChannelName = channelName;
@@ -136,24 +138,34 @@ namespace Telemetry_presentation_layer.Charts
                     var pickedColor = pickColor.ColorPicker.Color;
                     ChangeColor(pickedColor);
 
-                    foreach (var group in GroupManager.Groups)
-                    {
-                        var channel = group.GetAttribute(ChannelName);
-                        if (channel != null)
-                        {
-                            channel.Color = pickedColor.ToString();
-                        }
-                    }
+                    var group = GroupManager.GetGroup(groupName);
 
-                    foreach (var inputFile in InputFileManager.InputFiles)
+                    if (group != null)
                     {
-                        if (inputFile.ID == inputFileID)
+                        foreach (var actGroup in GroupManager.Groups)
                         {
-                            foreach (var channel in inputFile.Channels)
+                            if (actGroup.Name.Equals(groupName))
                             {
-                                if (channel.Name.Equals(ChannelName))
+                                var channel = actGroup.GetAttribute(ChannelName);
+                                if (channel != null)
                                 {
                                     channel.Color = pickedColor.ToString();
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var inputFile in InputFileManager.InputFiles)
+                        {
+                            if (inputFile.ID == inputFileID)
+                            {
+                                foreach (var channel in inputFile.Channels)
+                                {
+                                    if (channel.Name.Equals(ChannelName))
+                                    {
+                                        channel.Color = pickedColor.ToString();
+                                    }
                                 }
                             }
                         }

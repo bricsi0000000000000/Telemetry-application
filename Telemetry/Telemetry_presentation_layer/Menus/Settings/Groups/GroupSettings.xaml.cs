@@ -302,6 +302,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             GroupManager.SaveGroups();
             InitGroups();
             SelectInputFile();
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
 
             Mouse.OverrideCursor = null;
         }
@@ -423,6 +424,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
                 var activeAttribute = GroupManager.GetGroup(ActiveGroupID).GetAttribute(ActiveAttributeID);
                 activeAttribute.Color = pickedColor.ToString();
                 GroupManager.SaveGroups();
+                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
 
                 foreach (GroupSettingsAttribute item in AttributesStackPanel.Children)
                 {
@@ -529,6 +531,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
                 GroupManager.SaveGroups();
                 InitGroups();
                 SelectInputFile();
+                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
 
                 Mouse.OverrideCursor = null;
             }
@@ -739,22 +742,25 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         private void AddAttributePopUpCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
-            Mouse.OverrideCursor = Cursors.Wait;
 
             if (AddAttributeNameTextBox.Text.Equals(string.Empty) ||
                 AddAttributeLineWidthTextBox.Text.Equals(string.Empty))
             {
-                Mouse.OverrideCursor = null;
-
                 return;
             }
 
             if (!int.TryParse(AddAttributeLineWidthTextBox.Text, out int lineWidth))
             {
-                Mouse.OverrideCursor = null;
 
                 return;
             }
+
+            if (lineWidth <= 0)
+            {
+                return;
+            }
+
+            Mouse.OverrideCursor = Cursors.Wait;
 
             AddGroupGridBackground.Visibility = Visibility.Hidden;
             AddAttributeGrid.Visibility = Visibility.Hidden;
@@ -766,10 +772,12 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             InitGroups();
             SelectInputFile();
 
-            Mouse.OverrideCursor = null;
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
 
             AddAttributeNameTextBox.Text = string.Empty;
             AddAttributeLineWidthTextBox.Text = "1";
+
+            Mouse.OverrideCursor = null;
         }
 
         private void AddAttributePopUpCardButton_MouseEnter(object sender, MouseEventArgs e)

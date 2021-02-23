@@ -109,6 +109,14 @@ namespace Telemetry_data_and_logic_layer.Groups
                     }
 
                 }
+
+                var temporaryGroup = GetGroup($"Temporary{TemporaryGroupIndex}");
+
+                while (temporaryGroup != null)
+                {
+                    TemporaryGroupIndex++;
+                    temporaryGroup = GetGroup($"Temporary{TemporaryGroupIndex}");
+                }
             }
             catch (JsonReaderException)
             {
@@ -161,5 +169,7 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// <param name="name">Removable <see cref="Group"/>s name.</param>
         public static void RemoveGroup(string name) => Groups.Remove(GetGroup(name));
         public static void RemoveGroup(int id) => Groups.Remove(GetGroup(id));
+
+        public static int TemporaryGroupIndex { get; set; }
     }
 }
