@@ -34,7 +34,7 @@
                                   VerticalScrollBarVisibility="Auto">
                         <StackPanel Margin="16"
                                     HorizontalAlignment="Center"
-                                    Name="ChannelsStackPanel" />
+                                    Name="SettingsStackPanel" />
                     </ScrollViewer>
 
                     <Grid x:Name="ChannelsGrid"

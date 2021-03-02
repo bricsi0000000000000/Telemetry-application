@@ -45,15 +45,14 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         /// <summary>
         /// The horizontal axis will be based on the <i>x</i> <see cref="Channel"/>.
         /// </summary>
-        private Channel HorizontalAxisData(int inputFileID) => GetChannel(inputFileID, DefaultsManager.GetDefault(TextManager.DriverlessHorizontalAxis).Value);
+        private Channel HorizontalAxis(int inputFileID) => GetChannel(inputFileID, DefaultsManager.GetDefault(TextManager.DriverlessHorizontalAxis).Value);
 
-        private readonly List<Tuple<string, List<int>>> ChannelNames = new List<Tuple<string, List<int>>>();
+        private readonly List<Tuple<string, List<Tuple<int, bool>>>> ChannelNames = new List<Tuple<string, List<Tuple<int, bool>>>>();
 
         private TrackChart trackChart;
 
-        /// <summary>
-        /// Constructor of the <see cref="DriverlessMenu"/> class.
-        /// </summary>
+        private List<double> horizontalAxisData = new List<double>();
+
         public DriverlessMenu()
         {
             InitializeComponent();
@@ -103,7 +102,14 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 GroupsStackPanel.Children.Add(checkBox);
             }
 
-            UpdateCharts();
+            BuildCharts();
+        }
+
+        public void AddRenamedGroupToSelectedGroups(string groupName)
+        {
+            selectedGroups.Add(groupName);
+
+            InitializeGroupItems();
         }
 
         /// <summary>
@@ -125,7 +131,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 selectedGroups.Remove(content);
             }
 
-            UpdateCharts();
+            BuildCharts();
             ChangeChartHighlight((int)DataSlider.Value);
         }
 
@@ -158,7 +164,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             Grid.SetRow(splitter, rowIndex++);
         }
 
-        public void UpdateCharts()
+        public void BuildCharts()
         {
             ChartsGrid.Children.Clear();
             ChartsGrid.RowDefinitions.Clear();
@@ -170,9 +176,9 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 {
                     var group = new Group(GroupManager.LastGroupID++, channelName.Item1);
 
-                    foreach (var inputFileID in channelName.Item2)
+                    foreach (var inputFile in channelName.Item2)
                     {
-                        group.AddAttribute(InputFileManager.GetDriverlessInputFile(inputFileID).GetChannel(channelName.Item1));
+                        group.AddAttribute(InputFileManager.GetDriverlessInputFile(inputFile.Item1).GetChannel(channelName.Item1));
                     }
 
                     BuildChartGrid(group, ref rowIndex);
@@ -197,6 +203,22 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             Grid.SetRow(new Grid(), rowIndex++);
         }
 
+        private void UpdateCharts()
+        {
+            if (horizontalAxisData.Count > 0)
+            {
+                int dataIndex = (int)DataSlider.Value;
+                double xValue = dataIndex < horizontalAxisData.Count ? horizontalAxisData[dataIndex] : horizontalAxisData.Last();
+                foreach (var item in ChartsGrid.Children)
+                {
+                    if (item is Chart chart)
+                    {
+                        chart.UpdatePlot(xValue);
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Builds one <see cref="Chart"/> with the <paramref name="group"/>s values.
         /// </summary>
@@ -206,50 +228,84 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         {
             var chart = new Chart(group.Name);
 
-            foreach (var attribute in group.Attributes)
-            {
-                chart.AddChannelName(attribute.Name);
-                chart.AddSideValue(attribute.Name);
-            }
-
-            List<double> horizontalAxisData = new List<double>();
             int dataIndex = (int)DataSlider.Value;
+
+            var addedChannelNames = new List<string>();
 
             foreach (var channelName in ChannelNames)
             {
-                if (chart.HasChannelName(channelName.Item1))
+                var attribute = group.GetAttribute(channelName.Item1);
+                if (attribute != null)
                 {
-                    foreach (var inputFileID in channelName.Item2)
+                    foreach (var inputFile in channelName.Item2)
                     {
-                        var actHorizontalAxisData = HorizontalAxisData(inputFileID).Data;
-                        if (actHorizontalAxisData.Count > horizontalAxisData.Count)
+                        int lineWidth = group.GetAttribute(channelName.Item1).LineWidth;
+                        var channel = GetChannel(inputFile.Item1, channelName.Item1);
+
+                        if (inputFile.Item2)
                         {
-                            horizontalAxisData = new List<double>(actHorizontalAxisData);
+                            var actHorizontalAxisData = HorizontalAxis(inputFile.Item1).Data;
+                            if (actHorizontalAxisData.Count > horizontalAxisData.Count)
+                            {
+                                horizontalAxisData = new List<double>(actHorizontalAxisData);
+                            }
+
+                            var channelDataPlotData = ConvertChannelDataToPlotData(channel.Data.ToArray(), actHorizontalAxisData);
+
+
+                            chart.AddPlot(xAxisValues: channelDataPlotData.Item1,
+                                          yAxisValues: channelDataPlotData.Item2,
+                                          lineWidth: lineWidth,
+                                          lineColor: ColorTranslator.FromHtml(group.GetAttribute(channel.Name).Color));
                         }
 
-                        var channel = GetChannel(inputFileID, channelName.Item1);
+                        chart.AddSideValue(inputFile.Item1, channelName.Item1, ref dataIndex, lineWidth, isActive: inputFile.Item2, group.GetAttribute(channel.Name).Color);
+                        chart.AddChannelName(channelName.Item1);
 
-                        var channelDataPlotData = ConvertChannelDataToPlotData(channel.Data.ToArray(), actHorizontalAxisData);
-
-                        chart.AddPlot(xAxisValues: channelDataPlotData.Item1,
-                                      yAxisValues: channelDataPlotData.Item2,
-                                      lineWidth: channel.LineWidth,
-                                      lineColor: ColorTranslator.FromHtml(group.GetAttribute(channel.Name).Color));
-
-                        chart.UpdateSideValues(inputFileID, channelName.Item1, ref dataIndex, group.GetAttribute(channel.Name).Color);
+                        addedChannelNames.Add(channelName.Item1);
                     }
+                }
+            }
+
+            foreach (var attribute in group.Attributes)
+            {
+                if (!addedChannelNames.Contains(attribute.Name))
+                {
+                    chart.AddChannelName(attribute.Name);
+                    chart.AddSideValue(attribute.Name);
                 }
             }
 
             if (horizontalAxisData.Count > 0)
             {
                 double xValue = dataIndex < horizontalAxisData.Count ? horizontalAxisData[dataIndex] : horizontalAxisData.Last();
-                chart.UpdateVLine(xValue, Color.Black);
+                chart.UpdatePlot(xValue/*, Color.Black*/);
             }
 
             chart.SetAxisLimitsToAuto();
 
             return chart;
+        }
+
+        public void SetChannelActivity(string channelName, int inputFileID, bool isActive)
+        {
+            bool found = false;
+            for (int index = 0; index < ChannelNames.Count && !found; index++)
+            {
+                if (ChannelNames[index].Item1.Equals(channelName))
+                {
+                    for (int i = 0; i < ChannelNames[index].Item2.Count && !found; i++)
+                    {
+                        if (ChannelNames[index].Item2[i].Item1 == inputFileID)
+                        {
+                            ChannelNames[index].Item2[i] = new Tuple<int, bool>(inputFileID, isActive);
+                            found = true;
+                        }
+                    }
+                }
+            }
+
+            BuildCharts();
         }
 
         /// <summary>
@@ -437,7 +493,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             selectedInputFileIDs = new List<int>(newSelectedInputFileIDs);
             UpdateChannelsList();
 
-            UpdateCharts();
+            BuildCharts();
 
             DisableNoInputFileAndChannelsGrids(InputFileManager.DriverlessInputFilesCount != 0);
         }
@@ -507,11 +563,11 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             int max = 0;
             foreach (var channelName in ChannelNames)
             {
-                foreach (var inputFileID in channelName.Item2)
+                foreach (var inputFile in channelName.Item2)
                 {
-                    if (selectedInputFileIDs.Contains(inputFileID))
+                    if (selectedInputFileIDs.Contains(inputFile.Item1))
                     {
-                        var channelDataCount = GetChannel(inputFileID, channelName.Item1).Data.Count;
+                        var channelDataCount = GetChannel(inputFile.Item1, channelName.Item1).Data.Count;
                         if (channelDataCount > max)
                         {
                             max = channelDataCount;
@@ -523,14 +579,8 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             DataSlider.Maximum = max;
         }
 
-        /// <summary>
-        /// Updates the Charts.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void DataSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            // TODO: ha nem kell a highlight karika, akkor a kikommentelt sor kell, az UpdateCharts(); pedig nem
             UpdateCharts();
             // UpdateTrack();
             //ChangeChartHighlight((int)((Slider)sender).Value);
@@ -595,7 +645,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                     return;
                 }
 
-                trackChart.AddTrackData(name, HorizontalAxisData(actInputFile.ID).Data.ToArray(), yChannel.Data.ToArray(), GetYawAngle(actInputFile.ID), (float)c0refChannel.Data.First());
+                trackChart.AddTrackData(name, HorizontalAxis(actInputFile.ID).Data.ToArray(), yChannel.Data.ToArray(), GetYawAngle(actInputFile.ID), (float)c0refChannel.Data.First());
             }
             else
             {
@@ -638,8 +688,8 @@ namespace Telemetry_presentation_layer.Menus.Driverless
               }*/
 
             UpdateChannelsList();
-            UpdateCharts();
             SetUpDataSlider();
+            BuildCharts();
             /*foreach (var item in Channels)
             {
                 Trace.Write(item.Item1.Name + "\t");
@@ -669,7 +719,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 selectedChannels.Remove(name);
             }
 
-            UpdateCharts();
+            BuildCharts();
         }
 
         private void UpdateChannelsList()
@@ -705,9 +755,9 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 else
                 {
                     string content = item.Item1 + " - ";
-                    foreach (var fileID in item.Item2)
+                    foreach (var inputFile in item.Item2)
                     {
-                        content += InputFileManager.GetInputFile(fileID).Name + ";";
+                        content += InputFileManager.GetInputFile(inputFile.Item1).Name + ";";
                     }
                     checkBox.Content = content[0..^1];
                 }
@@ -729,19 +779,19 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         private void ChannelCheckboc_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             CheckBox checkBox = (CheckBox)sender;
-            object data = null;
+            string channelName = "";
 
             foreach (CheckBox item in ChannelsStackPanel.Children)
             {
                 if (item.Content.Equals(checkBox.Content))
                 {
-                    data = item;
+                    channelName = item.Content.ToString();
                 }
             }
 
-            if (data != null)
+            if (!channelName.Equals(string.Empty))
             {
-                DragDrop.DoDragDrop(checkBox, data, DragDropEffects.Move);
+                DragDrop.DoDragDrop(checkBox, channelName, DragDropEffects.Move);
             }
         }
 
@@ -752,11 +802,11 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 var actChannel = ChannelNames.Find(x => x.Item1.Equals(channel.Name));
                 if (actChannel != null)
                 {
-                    actChannel.Item2.Add(inputFileID);
+                    actChannel.Item2.Add(new Tuple<int, bool>(inputFileID, true));
                 }
                 else
                 {
-                    ChannelNames.Add(new Tuple<string, List<int>>(channel.Name, new List<int>() { inputFileID }));
+                    ChannelNames.Add(new Tuple<string, List<Tuple<int, bool>>>(channel.Name, new List<Tuple<int, bool>>() { new Tuple<int, bool>(inputFileID, true) }));
                 }
             }
         }
@@ -768,7 +818,16 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 var actChannel = ChannelNames.Find(x => x.Item1.Equals(channel.Name));
                 if (actChannel != null)
                 {
-                    actChannel.Item2.Remove(inputFileID);
+                    int index = 0;
+                    foreach (var item in actChannel.Item2)
+                    {
+                        if (item.Item1 == inputFileID)
+                        {
+                            break;
+                        }
+                        index++;
+                    }
+                    actChannel.Item2.RemoveAt(index);
                     if (actChannel.Item2.Count == 0)
                     {
                         ChannelNames.Remove(actChannel);

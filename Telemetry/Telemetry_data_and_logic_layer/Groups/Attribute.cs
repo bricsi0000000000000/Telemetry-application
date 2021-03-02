@@ -20,6 +20,7 @@
         /// <see cref="Attribute"/>s line width.
         /// </summary>
         public int LineWidth { get; set; }
+        public bool IsActive { get; set; }
 
         /// <summary>
         /// Constructor
@@ -32,6 +33,7 @@
             Name = name.Trim();
             Color = color.Trim();
             LineWidth = lineWidth;
+            IsActive = true;
         }
     }
 }

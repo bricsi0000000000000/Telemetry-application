@@ -538,6 +538,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
                                 item.LineWidth = lineWidth;
                             }
                         }
+
+                        ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
                     }
                 }
             }

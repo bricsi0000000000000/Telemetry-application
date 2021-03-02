@@ -48,18 +48,15 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
 
         private readonly FieldsViewModel fieldsViewModel = new FieldsViewModel();
 
-        /// <summary>
-        /// Constructor for <see cref="GroupSettings"/>.
-        /// </summary>
         public GroupSettings()
         {
             InitializeComponent();
 
-            DataContext = fieldsViewModel;
             fieldsViewModel.AddGroupName = "";
             fieldsViewModel.AddAttributeName = "";
             fieldsViewModel.AttributeName = "";
-            AddAttributeLineWidthTextBox.Text = "1";
+            fieldsViewModel.AddAttributeLineWidth = 1;
+            DataContext = fieldsViewModel;
 
             if (GroupManager.Groups.Count > 0)
             {
@@ -99,7 +96,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
 
             InitGroups();
             GroupManager.SaveGroups();
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
         }
 
         /// <summary>
@@ -302,7 +299,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             GroupManager.SaveGroups();
             InitGroups();
             SelectInputFile();
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
 
             Mouse.OverrideCursor = null;
         }
@@ -424,7 +421,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
                 var activeAttribute = GroupManager.GetGroup(ActiveGroupID).GetAttribute(ActiveAttributeID);
                 activeAttribute.Color = pickedColor.ToString();
                 GroupManager.SaveGroups();
-                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
+                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
 
                 foreach (GroupSettingsAttribute item in AttributesStackPanel.Children)
                 {
@@ -475,6 +472,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
                                 item.LineWidth = activeAttribute.LineWidth;
                             }
                         }
+
+                        ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
                     }
                 }
             }
@@ -531,7 +530,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
                 GroupManager.SaveGroups();
                 InitGroups();
                 SelectInputFile();
-                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
+                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
 
                 Mouse.OverrideCursor = null;
             }
@@ -612,6 +611,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
 
                 ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).InitializeGroupItems();
 
+                SelectInputFile();
+
                 Mouse.OverrideCursor = null;
             }
 
@@ -637,17 +638,26 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
 
         private void ChangeSelectedGroupNameCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            ChangeSelectedGroupNameCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
             Mouse.OverrideCursor = Cursors.Wait;
-            GroupManager.GetGroup(ActiveGroupID).Name = SelectedGroupNameTextBox.Text;
-            GroupManager.SaveGroups();
-            foreach (GroupSettingsItem item in GroupsStackPanel.Children)
+
+            ChangeSelectedGroupNameCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+
+            string newName = SelectedGroupNameTextBox.Text;
+            if (!newName.Equals(string.Empty))
             {
-                if (item.ID == ActiveGroupID)
+                GroupManager.GetGroup(ActiveGroupID).Name = newName;
+                GroupManager.SaveGroups();
+                foreach (GroupSettingsItem item in GroupsStackPanel.Children)
                 {
-                    item.GroupName = SelectedGroupNameTextBox.Text;
+                    if (item.ID == ActiveGroupID)
+                    {
+                        item.GroupName = newName;
+                    }
                 }
+
+                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).AddRenamedGroupToSelectedGroups(newName);
             }
+
             Mouse.OverrideCursor = null;
         }
 
@@ -772,7 +782,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             InitGroups();
             SelectInputFile();
 
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
 
             AddAttributeNameTextBox.Text = string.Empty;
             AddAttributeLineWidthTextBox.Text = "1";
@@ -805,7 +815,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             AddAttributeGrid.Visibility = Visibility.Hidden;
 
             AddAttributeNameTextBox.Text = string.Empty;
-            AddAttributeLineWidthTextBox.Text = "1";
+            fieldsViewModel.AddAttributeLineWidth = 1;
+            //AddAttributeLineWidthTextBox.Text = "1";
         }
 
         private void CancelAddAttributeCardButton_MouseEnter(object sender, MouseEventArgs e)

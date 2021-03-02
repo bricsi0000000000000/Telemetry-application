@@ -22,9 +22,6 @@
                              materialDesign:ShadowAssist.ShadowDepth="Depth0"
                              Name="ColorCard"
                              Height="23"
-                             PreviewMouseUp="ColorCard_PreviewMouseUp"
-                             MouseEnter="ColorCard_MouseEnter"
-                             MouseLeave="ColorCard_MouseLeave"
                              >
                 
         </materialDesign:Card>

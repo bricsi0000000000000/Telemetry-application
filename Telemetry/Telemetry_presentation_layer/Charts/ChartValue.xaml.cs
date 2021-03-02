@@ -29,7 +29,7 @@ namespace Telemetry_presentation_layer.Charts
         /// <param name="color"><see cref="Color"/> of the channel.</param>
         /// <param name="channelName">Channel name.</param>
         /// <param name="value">Channel value.</param>
-        public ChartValue(string color, string channelName, string unitOfMeasure, int inputFileID, string groupName)
+        public ChartValue(string channelName, string unitOfMeasure, string groupName, string color = "#ffffff", int inputFileID = -1)
         {
             InitializeComponent();
 
@@ -97,95 +97,17 @@ namespace Telemetry_presentation_layer.Charts
             }
         }
 
-        public void Set(string color, int inputFileID)
+        public void SetUp(string color, int inputFileID)
         {
             ChannelNameLabel.Opacity = 1;
             ChannelValueLabel.Opacity = 1;
             UnitOfMeasureFormulaControl.Opacity = 1;
 
-            colorCode = color;
             this.inputFileID = inputFileID;
-
+            colorCode = color;
             ColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(color);
-            ChannelName = channelName;
-        }
 
-        private void ColorCard_MouseEnter(object sender, MouseEventArgs e)
-        {
-            if (inputFileID != -1)
-            {
-                Mouse.OverrideCursor = Cursors.Hand;
-            }
-        }
-
-        private void ColorCard_MouseLeave(object sender, MouseEventArgs e)
-        {
-            if (inputFileID != -1)
-            {
-                Mouse.OverrideCursor = null;
-            }
-        }
-
-        private void ColorCard_PreviewMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (inputFileID != -1)
-            {
-                PickColor pickColor = new PickColor(colorCode);
-                if (pickColor.ShowDialog() == true)
-                {
-                    Mouse.OverrideCursor = Cursors.Wait;
-
-                    var pickedColor = pickColor.ColorPicker.Color;
-                    ChangeColor(pickedColor);
-
-                    var group = GroupManager.GetGroup(groupName);
-
-                    if (group != null)
-                    {
-                        foreach (var actGroup in GroupManager.Groups)
-                        {
-                            if (actGroup.Name.Equals(groupName))
-                            {
-                                var channel = actGroup.GetAttribute(ChannelName);
-                                if (channel != null)
-                                {
-                                    channel.Color = pickedColor.ToString();
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (var inputFile in InputFileManager.InputFiles)
-                        {
-                            if (inputFile.ID == inputFileID)
-                            {
-                                foreach (var channel in inputFile.Channels)
-                                {
-                                    if (channel.Name.Equals(ChannelName))
-                                    {
-                                        channel.Color = pickedColor.ToString();
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    GroupManager.SaveGroups();
-                    ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitAttributes();
-                    ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).InitChannelItems();
-
-                    //TODO if driverless, a driverlesseset updatelje ha nem akkor meg a másikat
-                    ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
-
-                    Mouse.OverrideCursor = null;
-                }
-            }
-        }
-
-        private void ChangeColor(Color color)
-        {
-            ColorCard.Background = new SolidColorBrush(color);
+            SetChannelName(channelName);
         }
     }
 }

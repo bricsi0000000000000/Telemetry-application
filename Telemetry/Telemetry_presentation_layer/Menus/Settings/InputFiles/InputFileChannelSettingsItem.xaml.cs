@@ -116,7 +116,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
                 ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).SelectInputFile();
 
                 //TODO if driverless, a driverlesseset updatelje ha nem akkor meg a másikat
-                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
+                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
             }
         }
 

@@ -32,7 +32,9 @@
                           VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Auto"
                           >
-                <StackPanel x:Name="GroupsStackPanel"/>
+                <StackPanel x:Name="GroupsStackPanel"
+                            Margin="0,0,0,5"
+                            />
             </ScrollViewer>
 
             <Grid Grid.Row="1">
@@ -133,7 +135,9 @@
                             VerticalScrollBarVisibility="Auto"
                             HorizontalScrollBarVisibility="Auto"
                             >
-                <StackPanel x:Name="AttributesStackPanel"/>
+                <StackPanel x:Name="AttributesStackPanel"
+                            Margin="0,0,0,5"
+                            />
             </ScrollViewer>
 
             <Grid Grid.Row="2">
@@ -239,15 +243,14 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBox Name="SelectedAttributeLineWidthTextBox"
-                            VerticalAlignment="Stretch"
-                            HorizontalAlignment="Stretch"
-                            VerticalContentAlignment="Center"
-                            HorizontalContentAlignment="Left"
-                            materialDesign:HintAssist.Hint="Line width"
-                            materialDesign:HintAssist.IsFloating="True"
-                            Margin="5,0,0,15"
-                         
-                            >
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Left"
+                         materialDesign:HintAssist.Hint="Line width"
+                         materialDesign:HintAssist.IsFloating="True"
+                         Margin="5,0,0,15"
+                         >
                     <TextBox.Text>
                         <Binding Path="LineWidth"
                                     UpdateSourceTrigger="PropertyChanged">

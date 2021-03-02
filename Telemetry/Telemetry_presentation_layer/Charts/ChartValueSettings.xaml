@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="Telemetry_presentation_layer.Charts.ChartValueSettings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             d:DesignWidth="800"
+             Height="35">
+    <Grid Margin="5,5,5,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <CheckBox Name="IsVisibleCheckBox"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Center"
+                  Checked="IsVisibleCheckBox_Checked"
+                  Unchecked="IsVisibleCheckBox_Checked"
+                  />
+
+        <materialDesign:Card Grid.Column="1"
+                             UniformCornerRadius="3"
+                             materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                             Name="ColorCard"
+                             PreviewMouseUp="ColorCard_PreviewMouseUp"
+                             MouseEnter="ColorCard_MouseEnter"
+                             MouseLeave="ColorCard_MouseLeave"
+                             Margin="5">
+        </materialDesign:Card>
+
+        <Label Grid.Column="2"
+               Name="ChannelNameLabel"
+               VerticalContentAlignment="Center"
+               HorizontalContentAlignment="Left"
+               FontSize="12" />
+
+        <Label Grid.Column="3"
+               Name="LineWidthLabel"
+               VerticalContentAlignment="Center"
+               HorizontalContentAlignment="Left"
+               FontSize="12"
+               MouseEnter="LineWidthLabel_MouseEnter"
+               MouseLeave="LineWidthLabel_MouseLeave"
+               />
+    </Grid>
+</UserControl>

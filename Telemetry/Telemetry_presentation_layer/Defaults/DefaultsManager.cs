@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using Telemetry_data_and_logic_layer.Defaults;
 using Telemetry_data_and_logic_layer.Texts;
+using Telemetry_presentation_layer.Converters;
 
-namespace Telemetry_data_and_logic_layer.Defaults
+namespace Telemetry_presentation_layer.Defaults
 {
     public static class DefaultsManager
     {
@@ -113,6 +115,21 @@ namespace Telemetry_data_and_logic_layer.Defaults
         /// <param name="name">Removable <see cref="Group"/>s name.</param>
         public static void RemoveDefault(string name) => Defaults.Remove(GetDefault(name));
 
-        public static string DefaultChartHighlightColor => GetDefault("DefaultChartHighlightColor").Value;
+        public static Color DefaultChartHighlightColor
+        {
+            get
+            {
+                var defaultChartHighlightColor = GetDefault("DefaultChartHighlightColor");
+                if (defaultChartHighlightColor != null)
+                {
+                    var color = ConvertColor.ConvertStringColorToSolidColorBrush(defaultChartHighlightColor.Value).Color;
+                    return Color.FromArgb(color.A, color.R, color.G, color.B);
+                }
+                else
+                {
+                    return Color.Red;
+                }
+            }
+        }
     }
 }

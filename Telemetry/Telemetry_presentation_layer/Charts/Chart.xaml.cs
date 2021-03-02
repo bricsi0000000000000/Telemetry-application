@@ -17,6 +17,7 @@ using Telemetry_presentation_layer.Menus.Settings.Groups;
 using Telemetry_presentation_layer.Menus.Settings;
 using Telemetry_data_and_logic_layer.Colors;
 using System.Windows.Input;
+using Telemetry_presentation_layer.Defaults;
 
 namespace Telemetry_presentation_layer.Charts
 {
@@ -26,7 +27,6 @@ namespace Telemetry_presentation_layer.Charts
     public partial class Chart : UserControl
     {
         private PlottableScatterHighlight plottableScatterHighlight;
-        private PlottableVLine plottableVLine;
         private readonly Style chartStyle = ScottPlot.Style.Light1;
         private List<double> liveChartValues = new List<double>();
 
@@ -44,6 +44,8 @@ namespace Telemetry_presentation_layer.Charts
         /// It decides that this chart has only one VLine.
         /// </summary>
         public bool HasVLine { get; set; } = false;
+
+        private List<Tuple<double[], double[], Color, int>> values = new List<Tuple<double[], double[], Color, int>>();
 
         /// <summary>
         /// Represents a chart.
@@ -87,7 +89,9 @@ namespace Telemetry_presentation_layer.Charts
                             string xAxisLabel = "x"
                             )
         {
-            plottableScatterHighlight = ScottPlotChart.plt.PlotScatterHighlight(xAxisValues, yAxisValues, markerShape: MarkerShape.none, color: lineColor, lineWidth: lineWidth);
+            values.Add(new Tuple<double[], double[], Color, int>(xAxisValues, yAxisValues, lineColor, lineWidth));
+
+            UpdatePlot(xAxisValues[0]);
 
             ScottPlotChart.plt.Style(chartStyle);
             ScottPlotChart.plt.Colorset(Colorset.OneHalfDark);
@@ -96,11 +100,35 @@ namespace Telemetry_presentation_layer.Charts
             ScottPlotChart.Render();
         }
 
-        public void UpdateVLine(double xValue, Color vLineColor)
+        public void UpdatePlot(double xValue)
         {
-            plottableVLine = ScottPlotChart.plt.PlotVLine(xValue,
-                                                          lineStyle: LineStyle.Dash,
-                                                          color: vLineColor);
+            ScottPlotChart.plt.Clear();
+            foreach (var item in values)
+            {
+                plottableScatterHighlight = ScottPlotChart.plt.PlotScatterHighlight(item.Item1, item.Item2, markerShape: MarkerShape.none, color: item.Item3, lineWidth: item.Item4);
+            }
+
+            ScottPlotChart.plt.PlotVLine(xValue, lineStyle: LineStyle.Dash, color: DefaultsManager.DefaultChartHighlightColor);
+
+            /*plottableScatterHighlight.HighlightPointNearestX(xValue);
+            plottableScatterHighlight.highlightedColor = DefaultsManager.DefaultChartHighlightColor;
+            plottableScatterHighlight.highlightedShape = MarkerShape.filledCircle;*/
+            ScottPlotChart.Render();
+
+
+
+            // plottableScatterHighlight.HighlightClear();
+            //plottableScatterHighlight.HighlightPointNearestX(xValue);
+
+            /*ScottPlotChart.plt.PlotVLine(xValue,
+                                         lineStyle: LineStyle.Dash,
+                                         color: vLineColor);
+
+            plottableScatterHighlight.HighlightClear();
+
+            ScottPlotChart.plt.PlotVLine(xValue + 2,
+                                         lineStyle: LineStyle.DashDot,
+                                         color: vLineColor);*/
         }
 
         /// <summary>
@@ -126,7 +154,7 @@ namespace Telemetry_presentation_layer.Charts
             if (ValuesStackPanel.Children.Count == 0)
             {
                 var unit = UnitOfMeasureManager.GetUnitOfMeasure(yAxisLabel);
-                ValuesStackPanel.Children.Add(new ChartValue("#4d4d4d", yAxisLabel, /*liveChartValues.Last(),*/ unit == null ? "" : unit.UnitOfMeasure, 0, ""));
+                ValuesStackPanel.Children.Add(new ChartValue(yAxisLabel, /*liveChartValues.Last(),*/ unit == null ? "" : unit.UnitOfMeasure, "", "#4d4d4d", 0));
             }
             else
             {
@@ -173,33 +201,45 @@ namespace Telemetry_presentation_layer.Charts
                 unit = UnitOfMeasureManager.GetUnitOfMeasure(channelName.Replace("_", ""));
             }
 
-            ValuesStackPanel.Children.Add(new ChartValue("#ffffff", channelName, unit == null ? "" : unit.UnitOfMeasure, -1, ChartName));
+            ValuesStackPanel.Children.Add(new ChartValue(channelName, unit == null ? "" : unit.UnitOfMeasure, ChartName));
+            SettingsStackPanel.Children.Add(new ChartValueSettings(channelName, ChartName));
+
+            ChannelsGrid.Visibility = System.Windows.Visibility.Hidden;
         }
 
-        public void UpdateSideValues(int inputFileID, string channelName, ref int dataIndex, string color = "")
+        public void AddSideValue(int inputFileID, string channelName, ref int dataIndex, int lineWidth, bool isActive, string color = "")
         {
             var channel = InputFileManager.GetInputFile(inputFileID).GetChannel(channelName);
 
-            foreach (ChartValue item in ValuesStackPanel.Children)
+            var unit = UnitOfMeasureManager.GetUnitOfMeasure(channelName);
+            if (unit == null)
             {
-                if (item.ChannelName.Equals(channelName))
-                {
-                    if (!color.Equals(string.Empty))
-                    {
-                        item.Set(color, inputFileID);
-                    }
-
-                    double value = dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last();
-                    item.SetChannelValue(value);
-                }
+                unit = UnitOfMeasureManager.GetUnitOfMeasure(channelName.Replace("_", ""));
             }
+
+            var chartValue = new ChartValue(channelName, unit == null ? "" : unit.UnitOfMeasure, ChartName, color, inputFileID);
+            chartValue.SetUp(color, inputFileID);
+
+            double value = dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last();
+            chartValue.SetChannelValue(value);
+
+            ValuesStackPanel.Children.Add(chartValue);
+
+            SettingsStackPanel.Children.Add(new ChartValueSettings(channelName: channelName,
+                                                                   groupName: ChartName,
+                                                                   lineWidth: lineWidth,
+                                                                   color: color,
+                                                                   inputFileID: inputFileID,
+                                                                   isActive: isActive));
+
+            ChannelsGrid.Visibility = System.Windows.Visibility.Hidden;
         }
 
         private void Grid_Drop(object sender, System.Windows.DragEventArgs e)
         {
             Mouse.OverrideCursor = Cursors.Wait;
 
-            string channelName = ((CheckBox)e.Data.GetData(typeof(CheckBox))).Content.ToString();
+            string channelName = e.Data.GetData(typeof(string)).ToString();
 
             var group = GroupManager.GetGroup(ChartName);
 
@@ -228,9 +268,9 @@ namespace Telemetry_presentation_layer.Charts
 
                     ChartName = $"Temporary{GroupManager.TemporaryGroupIndex}";
                     var newGroup = new Group(GroupManager.LastGroupID++, ChartName);
-                    foreach (var item in channelNames)
+                    foreach (var name in channelNames)
                     {
-                        newGroup.AddAttribute(item, ColorManager.GetChartColor, 1);
+                        newGroup.AddAttribute(name, ColorManager.GetChartColor, 1);
                     }
                     GroupManager.AddGroup(newGroup);
                     ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).ReplaceChannelWithTemporaryGroup(oldName, ChartName);
@@ -239,7 +279,7 @@ namespace Telemetry_presentation_layer.Charts
 
             GroupManager.SaveGroups();
             ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
 
             Mouse.OverrideCursor = null;
         }
