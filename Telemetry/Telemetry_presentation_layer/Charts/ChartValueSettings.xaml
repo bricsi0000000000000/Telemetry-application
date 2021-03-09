@@ -46,6 +46,7 @@
                FontSize="12"
                MouseEnter="LineWidthLabel_MouseEnter"
                MouseLeave="LineWidthLabel_MouseLeave"
+               PreviewMouseLeftButtonUp="LineWidthLabel_PreviewMouseLeftButtonUp"
                />
     </Grid>
 </UserControl>

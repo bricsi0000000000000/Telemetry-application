@@ -19,6 +19,8 @@ namespace Telemetry_presentation_layer.ValidationRules
         private string? driverlessYChannel;
         private int lineWidth;
         private string? fileName;
+        private string? horizontalAxis;
+        private string? changeLineWidth;
 
         public string? Name
         {
@@ -92,11 +94,24 @@ namespace Telemetry_presentation_layer.ValidationRules
             set => this.MutateVerbose(ref lineWidth, value, RaisePropertyChanged());
         }
 
-        public string FileName
+        public string? FileName
         {
             get => fileName;
             set => this.MutateVerbose(ref fileName, value, RaisePropertyChanged());
         }
+
+        public string? HorizontalAxis
+        {
+            get => horizontalAxis;
+            set => this.MutateVerbose(ref horizontalAxis, value, RaisePropertyChanged());
+        }
+
+        public string? ChangeLineWidth
+        {
+            get => changeLineWidth;
+            set => this.MutateVerbose(ref changeLineWidth, value, RaisePropertyChanged());
+        }
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

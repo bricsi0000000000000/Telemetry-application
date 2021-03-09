@@ -56,6 +56,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             fieldsViewModel.AddAttributeName = "";
             fieldsViewModel.AttributeName = "";
             fieldsViewModel.AddAttributeLineWidth = 1;
+            fieldsViewModel.HorizontalAxis = "";
             DataContext = fieldsViewModel;
 
             if (GroupManager.Groups.Count > 0)
@@ -115,7 +116,8 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             }
 
             var activeGroup = GroupManager.GetGroup(ActiveGroupID);
-            SelectedGroupNameTextBox.Text = GroupManager.GetGroup(ActiveGroupID).Name;
+            SelectedGroupNameTextBox.Text = activeGroup.Name;
+            fieldsViewModel.HorizontalAxis = activeGroup.HorizontalAxis;
             if (activeGroup.Attributes.Count > 0)
             {
                 if (ActiveAttributeID == -1)
@@ -134,7 +136,9 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
             {
                 ActiveGroupID = groupID;
 
-                SelectedGroupNameTextBox.Text = GroupManager.GetGroup(ActiveGroupID).Name;
+                var group = GroupManager.GetGroup(ActiveGroupID);
+                SelectedGroupNameTextBox.Text = group.Name;
+                SelectedGroupHorizontalAxisTextBox.Text = group.HorizontalAxis;
 
                 foreach (GroupSettingsItem item in GroupsStackPanel.Children)
                 {
@@ -903,6 +907,41 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         private void ChangeSelectedAttributeNameCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
             ChangeSelectedAttributeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            Mouse.OverrideCursor = null;
+        }
+
+        private void ChangeSelectedGroupHorizontalAxisCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ChangeSelectedGroupHorizontalAxisCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+        }
+
+        private void ChangeSelectedGroupHorizontalAxisCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            ChangeSelectedGroupHorizontalAxisCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            string newHorizontalAxis = SelectedGroupHorizontalAxisTextBox.Text;
+            if (!newHorizontalAxis.Equals(string.Empty))
+            {
+                GroupManager.GetGroup(ActiveGroupID).HorizontalAxis = newHorizontalAxis;
+                GroupManager.SaveGroups();
+
+                //TODO update charts
+            }
+
+            Mouse.OverrideCursor = null;
+        }
+
+        private void ChangeSelectedGroupHorizontalAxisCardButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ChangeSelectedGroupHorizontalAxisCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void ChangeSelectedGroupHorizontalAxisCardButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            ChangeSelectedGroupHorizontalAxisCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
             Mouse.OverrideCursor = null;
         }
     }

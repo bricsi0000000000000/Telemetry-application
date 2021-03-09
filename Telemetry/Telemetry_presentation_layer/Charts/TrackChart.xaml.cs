@@ -26,7 +26,7 @@ namespace Telemetry_presentation_layer.Charts
 
         private GridLength expanderWidth = GridLength.Auto;
 
-        public struct TrackData
+        public class TrackData
         {
             public int ID { get; set; }
             public string Name { get; set; }
@@ -34,6 +34,7 @@ namespace Telemetry_presentation_layer.Charts
             public double[] YAxisValues { get; set; }
             public double[] IntegratedYawAngle { get; set; }
             public float C0refChannelFirstValue { get; set; }
+            public bool IsSelected { get; set; }
         }
 
         private List<TrackData> trackData = new List<TrackData>();
@@ -75,15 +76,15 @@ namespace Telemetry_presentation_layer.Charts
 
         private void UpdateTrackLayout()
         {
-            InitPlot(xAxisValues: leftSide.Item1,
+            AddPlot(xAxisValues: leftSide.Item1,
                                  yAxisValues: leftSide.Item2,
                                  color: Color.Black);
 
-            InitPlot(xAxisValues: rightSide.Item1,
+            AddPlot(xAxisValues: rightSide.Item1,
                                   yAxisValues: rightSide.Item2,
                                   color: Color.Black);
 
-            InitPlot(xAxisValues: centerSide.Item1,
+            AddPlot(xAxisValues: centerSide.Item1,
                                   yAxisValues: centerSide.Item2,
                                   color: Color.Black,
                                   lineStyle: LineStyle.Dash);
@@ -91,22 +92,26 @@ namespace Telemetry_presentation_layer.Charts
             SetAxisLimitsToAuto();
         }
 
-        public void AddTrackData(string name, double[] xAxisValues, double[] yAxisValues, double[] integratedYawAngle, float c0refChannelFirstValue)
+        public void AddTrackData(int id, string name, double[] xAxisValues, double[] yAxisValues, double[] integratedYawAngle, float c0refChannelFirstValue)
         {
             NoInputFilesGrid.Visibility = Visibility.Hidden;
 
-            trackData.Add(new TrackData()
+            if (trackData.Find(x => x.Name.Equals(name)) == null)
             {
-                ID = lastTrackDataID,
-                Name = name,
-                XAxisValues = xAxisValues,
-                YAxisValues = yAxisValues,
-                IntegratedYawAngle = integratedYawAngle,
-                C0refChannelFirstValue = c0refChannelFirstValue
-            });
+                trackData.Add(new TrackData()
+                {
+                    ID = id,
+                    Name = name,
+                    XAxisValues = xAxisValues,
+                    YAxisValues = yAxisValues,
+                    IntegratedYawAngle = integratedYawAngle,
+                    C0refChannelFirstValue = c0refChannelFirstValue,
+                    IsSelected = true
+                });
 
-            lastTrackDataID++;
-            AddInputFileItem(name);
+                lastTrackDataID++;
+                AddInputFileItem(name);
+            }
         }
 
         public void RemoveTrackData(int id)
@@ -126,6 +131,7 @@ namespace Telemetry_presentation_layer.Charts
             var checkBox = new CheckBox() { Content = name };
             checkBox.Checked += InputFileCheckBox_Click;
             checkBox.Unchecked += InputFileCheckBox_Click;
+            checkBox.IsChecked = true;
             InputFilesStackPanel.Children.Add(checkBox);
         }
 
@@ -160,42 +166,43 @@ namespace Telemetry_presentation_layer.Charts
             var checkBox = (CheckBox)sender;
             string content = checkBox.Content.ToString();
 
+            trackData.Find(x => x.Name.Equals(content)).IsSelected = (bool)checkBox.IsChecked;
 
-            if ((bool)checkBox.IsChecked)
-            {
-                Update(0);
-            }
-            else
-            {
-            }
+            Update(0);
         }
 
         public void Update(int dataIndex)
         {
             ScottPlotChart.plt.Clear();
+            UpdateTrackLayout();
 
             foreach (var item in trackData)
             {
-                var actTrackData = trackData.Find(x => x.Name.Equals(item.Name));
-
-                double xValue = 0;
-                double yValue = 0;
-                if (dataIndex < actTrackData.XAxisValues.Length)
+                if (item.IsSelected)
                 {
-                    xValue = actTrackData.YAxisValues[dataIndex];
-                    yValue = actTrackData.XAxisValues[dataIndex];
-                }
-                else
-                {
-                    xValue = actTrackData.YAxisValues.Last();
-                    yValue = actTrackData.XAxisValues.Last();
-                }
+                    var actTrackData = trackData.Find(x => x.Name.Equals(item.Name));
 
-                UpdateTrackLayout();
-                InitPlot(CreateOffset(actTrackData.YAxisValues, actTrackData.C0refChannelFirstValue).ToArray(), CreateOffset(actTrackData.XAxisValues, actTrackData.C0refChannelFirstValue).ToArray(), Color.Black);
-                PlotImage(xValue, yValue, CreateOffset(actTrackData.IntegratedYawAngle, actTrackData.C0refChannelFirstValue)[dataIndex]);
-                SetAxisLimitsToAuto();
+                    double xValue = 0;
+                    double yValue = 0;
+                    if (dataIndex < actTrackData.XAxisValues.Length)
+                    {
+                        xValue = actTrackData.YAxisValues[dataIndex];
+                        yValue = actTrackData.XAxisValues[dataIndex];
+                    }
+                    else
+                    {
+                        xValue = actTrackData.YAxisValues.Last();
+                        yValue = actTrackData.XAxisValues.Last();
+                    }
+
+                    AddPlot(CreateOffset(actTrackData.YAxisValues, actTrackData.C0refChannelFirstValue).ToArray(), CreateOffset(actTrackData.XAxisValues, actTrackData.C0refChannelFirstValue).ToArray(), Color.Black);
+
+                    var rotation = CreateOffset(actTrackData.IntegratedYawAngle, actTrackData.C0refChannelFirstValue);
+                    PlotImage(xValue - actTrackData.C0refChannelFirstValue, yValue - actTrackData.C0refChannelFirstValue, dataIndex < rotation.Count ? rotation[dataIndex] : rotation.Last());
+                }
             }
+
+            SetAxisLimitsToAuto();
         }
 
         /// <summary>
@@ -228,7 +235,7 @@ namespace Telemetry_presentation_layer.Charts
         /// <param name="lineWidth">Width of the line. Default is <c>3</c>.</param>
         /// <param name="lineStyle">Style of the line. Default is <see cref="LineStyle.Solid"/>.</param>
         /// <param name="enableLabel">If true, the label is enabled on the line.</param>
-        public void InitPlot(double[] xAxisValues,
+        public void AddPlot(double[] xAxisValues,
                              double[] yAxisValues,
                              Color color,
                              double xValue = 0,
@@ -288,6 +295,7 @@ namespace Telemetry_presentation_layer.Charts
         public void SetAxisLimitsToAuto()
         {
             ScottPlotChart.plt.AxisAuto();
+            ScottPlotChart.Render();
         }
 
         /// <summary>

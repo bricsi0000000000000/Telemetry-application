@@ -547,6 +547,56 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
             Mouse.OverrideCursor = null;
         }
 
+        public void ChangeLineWidth(string newLineWidth, int inputFileID, string channelName, bool isGroup, bool change = false)
+        {
+            if (change)
+            {
+                if (isGroup)
+                {
+                    if (int.TryParse(newLineWidth, out int lineWidth))
+                    {
+                        if (lineWidth > 0)
+                        {
+                            var activeAttribute = GroupManager.GetGroup(inputFileID).GetAttribute(channelName);
+                            if (activeAttribute.LineWidth != lineWidth)
+                            {
+                                activeAttribute.LineWidth = lineWidth;
+                                GroupManager.SaveGroups();
+                                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
+
+                                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (int.TryParse(newLineWidth, out int lineWidth))
+                    {
+                        if (lineWidth > 0)
+                        {
+                            var activeChannel = InputFileManager.GetInputFile(inputFileID).GetChannel(channelName);
+                            if (activeChannel.LineWidth != lineWidth)
+                            {
+                                activeChannel.LineWidth = lineWidth;
+                                foreach (InputFileChannelSettingsItem item in ChannelItemsStackPanel.Children)
+                                {
+                                    if (item.ChannelName.Equals(channelName))
+                                    {
+                                        item.LineWidth = lineWidth;
+                                    }
+                                }
+
+                                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                            }
+                        }
+                    }
+                }
+            }
+
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).SetLoadingGrid(visibility: false);
+        }
+
         private void ChangeSelectedChannelLineWidthCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
             ChangeSelectedChannelLineWidthCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);

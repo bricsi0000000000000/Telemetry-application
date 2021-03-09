@@ -229,15 +229,14 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBox Name="SelectedChannelLineWidthTextBox"
-                            VerticalAlignment="Stretch"
-                            HorizontalAlignment="Stretch"
-                            VerticalContentAlignment="Center"
-                            HorizontalContentAlignment="Left"
-                            materialDesign:HintAssist.Hint="Line width"
-                            materialDesign:HintAssist.IsFloating="True"
-                            Margin="5,0,0,15"
-                         
-                            >
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Left"
+                         materialDesign:HintAssist.Hint="Line width"
+                         materialDesign:HintAssist.IsFloating="True"
+                         Margin="5,0,0,15"
+                         >
                     <TextBox.Text>
                         <Binding Path="LineWidth"
                                     UpdateSourceTrigger="PropertyChanged">

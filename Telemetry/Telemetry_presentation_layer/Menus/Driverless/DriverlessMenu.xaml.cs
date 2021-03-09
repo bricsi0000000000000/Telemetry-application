@@ -20,6 +20,7 @@ using Telemetry_data_and_logic_layer.Defaults;
 using System.Windows.Input;
 using Telemetry_data_and_logic_layer.Colors;
 using Telemetry_presentation_layer.Converters;
+using System.Threading.Tasks;
 
 namespace Telemetry_presentation_layer.Menus.Driverless
 {
@@ -132,7 +133,6 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             }
 
             BuildCharts();
-            ChangeChartHighlight((int)DataSlider.Value);
         }
 
         private void BuildChartGrid(Group group, ref int rowIndex)
@@ -201,6 +201,8 @@ namespace Telemetry_presentation_layer.Menus.Driverless
             ChartsGrid.RowDefinitions.Add(chartRow);
 
             Grid.SetRow(new Grid(), rowIndex++);
+
+            UpdateCharts();
         }
 
         private void UpdateCharts()
@@ -213,7 +215,8 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 {
                     if (item is Chart chart)
                     {
-                        chart.UpdatePlot(xValue);
+                        chart.UpdateHighlight(xValue);
+                        chart.UpdateSideValues(ref dataIndex);
                     }
                 }
             }
@@ -227,7 +230,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         private Chart BuildGroupChart(Group group)
         {
             var chart = new Chart(group.Name);
-
+             
             int dataIndex = (int)DataSlider.Value;
 
             var addedChannelNames = new List<string>();
@@ -242,9 +245,14 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                         int lineWidth = group.GetAttribute(channelName.Item1).LineWidth;
                         var channel = GetChannel(inputFile.Item1, channelName.Item1);
 
-                        if (inputFile.Item2)
+                        if (inputFile.Item2) // aktiv e a channel
                         {
-                            var actHorizontalAxisData = HorizontalAxis(inputFile.Item1).Data;
+                            var actHorizontalAxisData = GetChannel(inputFile.Item1, group.HorizontalAxis).Data;
+                            if (actHorizontalAxisData == null)
+                            {
+                                ShowError.ShowErrorMessage($"Can't find '{group.HorizontalAxis}', so can't show diagram properly");
+                            }
+
                             if (actHorizontalAxisData.Count > horizontalAxisData.Count)
                             {
                                 horizontalAxisData = new List<double>(actHorizontalAxisData);
@@ -252,14 +260,26 @@ namespace Telemetry_presentation_layer.Menus.Driverless
 
                             var channelDataPlotData = ConvertChannelDataToPlotData(channel.Data.ToArray(), actHorizontalAxisData);
 
+                            var color = group.GetAttribute(channel.Name).Color;
 
                             chart.AddPlot(xAxisValues: channelDataPlotData.Item1,
                                           yAxisValues: channelDataPlotData.Item2,
                                           lineWidth: lineWidth,
-                                          lineColor: ColorTranslator.FromHtml(group.GetAttribute(channel.Name).Color));
+                                          lineColor: ColorTranslator.FromHtml(color),
+                                          xAxisLabel: group.HorizontalAxis);
+
+                            chart.AddSideValue(channelName: channelName.Item1,
+                                               xAxisValues: channelDataPlotData.Item2,
+                                               isActive: true,
+                                               inputFileID: inputFile.Item1,
+                                               color: color,
+                                               lineWidth: lineWidth);
+                        }
+                        else
+                        {
+                            chart.AddSideValue(channelName: channelName.Item1, xAxisValues: new double[0], inputFileID: inputFile.Item1);
                         }
 
-                        chart.AddSideValue(inputFile.Item1, channelName.Item1, ref dataIndex, lineWidth, isActive: inputFile.Item2, group.GetAttribute(channel.Name).Color);
                         chart.AddChannelName(channelName.Item1);
 
                         addedChannelNames.Add(channelName.Item1);
@@ -272,14 +292,14 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                 if (!addedChannelNames.Contains(attribute.Name))
                 {
                     chart.AddChannelName(attribute.Name);
-                    chart.AddSideValue(attribute.Name);
+                    chart.AddSideValue(channelName: attribute.Name, xAxisValues: new double[0]);
                 }
             }
 
             if (horizontalAxisData.Count > 0)
             {
                 double xValue = dataIndex < horizontalAxisData.Count ? horizontalAxisData[dataIndex] : horizontalAxisData.Last();
-                chart.UpdatePlot(xValue/*, Color.Black*/);
+                chart.UpdateHighlight(xValue);
             }
 
             chart.SetAxisLimitsToAuto();
@@ -437,15 +457,9 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         /// </summary>
         public void UpdateTrack()
         {
-            //TrackGrid.Children.Clear();
-            try
+            if (trackChart != null)
             {
-                //TrackGrid.Children.Add(BuildTrack());
                 trackChart.Update((int)DataSlider.Value);
-            }
-            catch (Exception e)
-            {
-                ShowError.ShowErrorMessage(e.Message);
             }
         }
 
@@ -516,7 +530,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
 
         private void AddInputFileItem(string fileName, int id)
         {
-            var checkbox = new CheckBox { Content = fileName };
+            var checkbox = new CheckBox { Content = $"{id} {fileName}" };
             checkbox.Checked += InputFileItem_Checked;
             checkbox.Unchecked += InputFileItem_Checked;
             checkbox.IsChecked = selectedInputFileIDs.Contains(id);
@@ -582,46 +596,19 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         private void DataSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             UpdateCharts();
-            // UpdateTrack();
-            //ChangeChartHighlight((int)((Slider)sender).Value);
-
+            UpdateTrack();
         }
-
-        /// <summary>
-        /// Changes the charts highlights, so the VLines.
-        /// </summary>
-        /// <param name="dataIndex">Index of the data on the horizontal axis.</param>
-        private void ChangeChartHighlight(int dataIndex)
-        {
-            /*foreach (Chart chart in ChartsStackPanel.Children)
-            {
-                double value = dataIndex < HorizontalAxisData.Data.Count ? HorizontalAxisData.Data[dataIndex] : HorizontalAxisData.Data.Last();
-                chart.RenderPlot(xValue: value,
-                                 vLineColor: Color.Black,
-                                 Channels,
-                                 dataIndex);
-            }*/
-        }
-
-        /// <summary>
-        /// Unselects all <see cref="Channel"/> in <see cref="ChannelNames"/>.
-        /// </summary>
-        private void UnselectAllChannel()
-        {
-            /*  if (Channels != null)
-              {
-                  foreach (var channel in Channels)
-                  {
-                      channel.IsActive = false;
-                  }
-              }*/
-        }
-
 
         private void InputFileItem_Checked(object sender, RoutedEventArgs e)
         {
             var checkBox = (CheckBox)sender;
-            string name = checkBox.Content.ToString();
+            var splittedName = checkBox.Content.ToString().Split(" ");
+            string name = "";
+            for (int i = 1; i < splittedName.Length; i++)
+            {
+                name += splittedName[i] + " ";
+            }
+            name = name[0..^1];
 
             var actInputFile = InputFileManager.GetDriverlessInputFile(name);
 
@@ -645,13 +632,15 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                     return;
                 }
 
-                trackChart.AddTrackData(name, HorizontalAxis(actInputFile.ID).Data.ToArray(), yChannel.Data.ToArray(), GetYawAngle(actInputFile.ID), (float)c0refChannel.Data.First());
+                trackChart.AddTrackData(actInputFile.ID, name, HorizontalAxis(actInputFile.ID).Data.ToArray(), yChannel.Data.ToArray(), GetYawAngle(actInputFile.ID), (float)c0refChannel.Data.First());
             }
             else
             {
                 selectedInputFileIDs.Remove(actInputFile.ID);
 
                 UnMergeChannelNames(actInputFile.Channels, actInputFile.ID);
+
+                trackChart.RemoveTrackData(actInputFile.ID);
             }
 
             var removableElements = new List<string>();
@@ -883,6 +872,13 @@ namespace Telemetry_presentation_layer.Menus.Driverless
                     ShowError.ShowErrorMessage(exception.Message);
                 }
             }
+        }
+
+        public void SetLoadingGrid(bool visibility)
+        {
+            ReadFileProgressBarGrid.Visibility = visibility ? Visibility.Visible : Visibility.Hidden;
+            ReadFileProgressBarLabel.Content = string.Empty;
+            ReadFileProgressBar.Visibility = visibility ? Visibility.Visible : Visibility.Hidden;
         }
     }
 }

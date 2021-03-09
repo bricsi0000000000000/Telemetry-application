@@ -7,6 +7,7 @@ using Telemetry_data_and_logic_layer.Texts;
 using Telemetry_presentation_layer.Converters;
 using Telemetry_presentation_layer.Menus;
 using Telemetry_presentation_layer.Menus.Driverless;
+using Telemetry_presentation_layer.Menus.Live;
 using Telemetry_presentation_layer.Menus.Settings;
 using Telemetry_presentation_layer.Menus.Settings.Groups;
 using Telemetry_presentation_layer.Menus.Settings.InputFiles;
@@ -23,16 +24,21 @@ namespace Telemetry_presentation_layer.Charts
         private string groupName;
         private bool isActive = false;
 
-        public ChartValueSettings(string channelName, string groupName, int lineWidth = 0, string color = "#ffffff", int inputFileID = -1, bool isActive = false)
+        public ChartValueSettings(string channelName, string groupName, int inputFileID, int lineWidth = 0, string color = "#ffffff", bool isActive = false)
         {
             InitializeComponent();
 
-            this.inputFileID = inputFileID;
-            this.groupName = groupName;
-            colorCode = color;
             ChannelName = channelName;
-            ColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(color);
+
+            this.groupName = groupName;
+
             LineWidthLabel.Content = $"{lineWidth} pt";
+
+            colorCode = color;
+            ColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(color);
+
+            this.inputFileID = inputFileID;
+
             this.isActive = isActive;
             IsVisibleCheckBox.IsChecked = isActive;
 
@@ -72,15 +78,13 @@ namespace Telemetry_presentation_layer.Charts
 
         public void SetUp(string color, int inputFileID)
         {
-            /*ChannelNameLabel.Opacity = 1;
-            ChannelValueLabel.Opacity = 1;
-            UnitOfMeasureFormulaControl.Opacity = 1;
+            ChannelNameLabel.Opacity = 1;
 
             this.inputFileID = inputFileID;
             colorCode = color;
             ColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(color);
 
-            SetChannelName(channelName);*/
+            SetChannelName(channelName);
         }
 
         private void ColorCard_MouseEnter(object sender, MouseEventArgs e)
@@ -185,6 +189,19 @@ namespace Telemetry_presentation_layer.Charts
                 isActive = newIsActive;
                 ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).SetChannelActivity(channelName, inputFileID, isActive);
             }
+        }
+
+        private void LineWidthLabel_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).SetLoadingGrid(visibility: true);
+
+            dynamic data = new System.Dynamic.ExpandoObject();
+            data.inputFileID = inputFileID;
+            data.channelName = channelName;
+            data.isGroup = GroupManager.GetGroup(groupName) != null;
+            data.lineWidth = LineWidthLabel.Content.ToString().Split(" ")[0];
+            var changeNameWindow = new PopUpEditWindow("Change line width", PopUpEditWindow.EditType.ChangeLineWidth, data);
+            changeNameWindow.ShowDialog();
         }
     }
 }

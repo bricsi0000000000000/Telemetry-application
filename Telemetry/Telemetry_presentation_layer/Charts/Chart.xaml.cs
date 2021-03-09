@@ -27,6 +27,7 @@ namespace Telemetry_presentation_layer.Charts
     public partial class Chart : UserControl
     {
         private PlottableScatterHighlight plottableScatterHighlight;
+        private PlottableVLine plottableVLine;
         private readonly Style chartStyle = ScottPlot.Style.Light1;
         private List<double> liveChartValues = new List<double>();
 
@@ -45,7 +46,7 @@ namespace Telemetry_presentation_layer.Charts
         /// </summary>
         public bool HasVLine { get; set; } = false;
 
-        private List<Tuple<double[], double[], Color, int>> values = new List<Tuple<double[], double[], Color, int>>();
+        private List<Tuple<string, double[]>> values = new List<Tuple<string, double[]>>();
 
         /// <summary>
         /// Represents a chart.
@@ -58,6 +59,8 @@ namespace Telemetry_presentation_layer.Charts
             ChartName = name;
             ScottPlotChart.Configure(enableScrollWheelZoom: false);
             ScottPlotChart.plt.YLabel(name);
+            ScottPlotChart.plt.Style(chartStyle);
+            ScottPlotChart.plt.Colorset(Colorset.OneHalfDark);
             ScottPlotChart.plt.Legend();
             ScottPlotChart.Render();
         }
@@ -86,49 +89,30 @@ namespace Telemetry_presentation_layer.Charts
                             double[] yAxisValues,
                             Color lineColor,
                             int lineWidth,
-                            string xAxisLabel = "x"
-                            )
+                            string xAxisLabel)
         {
-            values.Add(new Tuple<double[], double[], Color, int>(xAxisValues, yAxisValues, lineColor, lineWidth));
+            ScottPlotChart.plt.PlotScatter(xs: xAxisValues, ys: yAxisValues, markerShape: MarkerShape.none, color: lineColor, lineWidth: lineWidth);
 
-            UpdatePlot(xAxisValues[0]);
-
-            ScottPlotChart.plt.Style(chartStyle);
-            ScottPlotChart.plt.Colorset(Colorset.OneHalfDark);
-            ScottPlotChart.plt.XLabel(xAxisLabel);
+            ScottPlotChart.plt.XLabel(xAxisLabel, bold: true);
             ScottPlotChart.plt.Legend();
             ScottPlotChart.Render();
         }
 
-        public void UpdatePlot(double xValue)
+        public void UpdateHighlight(double xValue)
         {
-            ScottPlotChart.plt.Clear();
-            foreach (var item in values)
+            if (plottableScatterHighlight != null)
             {
-                plottableScatterHighlight = ScottPlotChart.plt.PlotScatterHighlight(item.Item1, item.Item2, markerShape: MarkerShape.none, color: item.Item3, lineWidth: item.Item4);
+                plottableScatterHighlight.HighlightClear();
             }
 
-            ScottPlotChart.plt.PlotVLine(xValue, lineStyle: LineStyle.Dash, color: DefaultsManager.DefaultChartHighlightColor);
+            if (plottableVLine != null)
+            {
+                ScottPlotChart.plt.Clear(plottableVLine);
+            }
 
-            /*plottableScatterHighlight.HighlightPointNearestX(xValue);
-            plottableScatterHighlight.highlightedColor = DefaultsManager.DefaultChartHighlightColor;
-            plottableScatterHighlight.highlightedShape = MarkerShape.filledCircle;*/
+            plottableVLine = ScottPlotChart.plt.PlotVLine(xValue, lineStyle: LineStyle.Dash, color: DefaultsManager.DefaultChartHighlightColor);
+
             ScottPlotChart.Render();
-
-
-
-            // plottableScatterHighlight.HighlightClear();
-            //plottableScatterHighlight.HighlightPointNearestX(xValue);
-
-            /*ScottPlotChart.plt.PlotVLine(xValue,
-                                         lineStyle: LineStyle.Dash,
-                                         color: vLineColor);
-
-            plottableScatterHighlight.HighlightClear();
-
-            ScottPlotChart.plt.PlotVLine(xValue + 2,
-                                         lineStyle: LineStyle.DashDot,
-                                         color: vLineColor);*/
         }
 
         /// <summary>
@@ -154,7 +138,7 @@ namespace Telemetry_presentation_layer.Charts
             if (ValuesStackPanel.Children.Count == 0)
             {
                 var unit = UnitOfMeasureManager.GetUnitOfMeasure(yAxisLabel);
-                ValuesStackPanel.Children.Add(new ChartValue(yAxisLabel, /*liveChartValues.Last(),*/ unit == null ? "" : unit.UnitOfMeasure, "", "#4d4d4d", 0));
+                ValuesStackPanel.Children.Add(new ChartValue(yAxisLabel, /*liveChartValues.Last(),*/ unit == null ? "" : unit.UnitOfMeasure, ""/*, "#4d4d4d", 0*/));
             }
             else
             {
@@ -193,44 +177,89 @@ namespace Telemetry_presentation_layer.Charts
             Console.WriteLine(plottableScatterHighlight.GetPointNearestX(mouseXPosition));*/
         }
 
-        public void AddSideValue(string channelName)
+        private ChartValue AddEmptySideValue(string channelName)
         {
+
             var unit = UnitOfMeasureManager.GetUnitOfMeasure(channelName);
             if (unit == null)
             {
                 unit = UnitOfMeasureManager.GetUnitOfMeasure(channelName.Replace("_", ""));
             }
 
-            ValuesStackPanel.Children.Add(new ChartValue(channelName, unit == null ? "" : unit.UnitOfMeasure, ChartName));
-            SettingsStackPanel.Children.Add(new ChartValueSettings(channelName, ChartName));
+            var chartValue = new ChartValue(channelName: channelName,
+                                            unitOfMeasure: unit == null ? "" : unit.UnitOfMeasure,
+                                            groupName: ChartName);
+
+            return chartValue;
+        }
+
+        public void AddSideValue(string channelName, double[] xAxisValues, bool isActive = false, int inputFileID = -1, string color = "", int lineWidth = 1)
+        {
+            values.Add(new Tuple<string, double[]>(channelName, xAxisValues));
+
+            var chartValue = AddEmptySideValue(channelName);
+
+            if (!color.Equals(string.Empty))
+            {
+                chartValue.SetUp(color: color, inputFileID: inputFileID);
+                SettingsStackPanel.Children.Add(new ChartValueSettings(channelName: channelName,
+                                                                       groupName: ChartName,
+                                                                       color: color,
+                                                                       lineWidth: lineWidth,
+                                                                       inputFileID: inputFileID,
+                                                                       isActive: isActive));
+            }
+            else
+            {
+                SettingsStackPanel.Children.Add(new ChartValueSettings(channelName, ChartName, inputFileID: inputFileID, isActive: isActive));
+            }
+
+            ValuesStackPanel.Children.Add(chartValue);
+
 
             ChannelsGrid.Visibility = System.Windows.Visibility.Hidden;
         }
 
-        public void AddSideValue(int inputFileID, string channelName, ref int dataIndex, int lineWidth, bool isActive, string color = "")
+        public void UpdateSideValues(ref int dataIndex)
         {
-            var channel = InputFileManager.GetInputFile(inputFileID).GetChannel(channelName);
+            //  var channel = InputFileManager.GetInputFile(inputFileID).GetChannel(channelName);
 
-            var unit = UnitOfMeasureManager.GetUnitOfMeasure(channelName);
+            /*var unit = UnitOfMeasureManager.GetUnitOfMeasure(channelName);
             if (unit == null)
             {
                 unit = UnitOfMeasureManager.GetUnitOfMeasure(channelName.Replace("_", ""));
+            }*/
+
+            //var chartValue = new ChartValue(channelName, unit == null ? "" : unit.UnitOfMeasure, ChartName, color, inputFileID);
+            //chartValue.SetUp(color, inputFileID);
+
+            // double value = dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last();
+
+            foreach (var item in ValuesStackPanel.Children)
+            {
+                if (item is ChartValue chartValue)
+                {
+                    var currentValues = values.Find(x => x.Item1.Equals(chartValue.ChannelName));
+                    if (currentValues != null)
+                    {
+                        if (currentValues.Item2.Length > 0)
+                        {
+                            double currentValue = dataIndex < currentValues.Item2.Length ? currentValues.Item2[dataIndex] : currentValues.Item2.Last();
+                            chartValue.SetChannelValue(currentValue);
+                        }
+                    }
+                }
             }
+            // chartValue.SetChannelValue(value);
 
-            var chartValue = new ChartValue(channelName, unit == null ? "" : unit.UnitOfMeasure, ChartName, color, inputFileID);
-            chartValue.SetUp(color, inputFileID);
+            // ValuesStackPanel.Children.Add(chartValue);
 
-            double value = dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last();
-            chartValue.SetChannelValue(value);
-
-            ValuesStackPanel.Children.Add(chartValue);
-
-            SettingsStackPanel.Children.Add(new ChartValueSettings(channelName: channelName,
+            /*SettingsStackPanel.Children.Add(new ChartValueSettings(channelName: channelName,
                                                                    groupName: ChartName,
                                                                    lineWidth: lineWidth,
                                                                    color: color,
                                                                    inputFileID: inputFileID,
-                                                                   isActive: isActive));
+                                                                   isActive: isActive));*/
 
             ChannelsGrid.Visibility = System.Windows.Visibility.Hidden;
         }

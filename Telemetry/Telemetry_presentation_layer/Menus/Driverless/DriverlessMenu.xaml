@@ -128,8 +128,8 @@
                     Margin="5,0"
                     ValueChanged="DataSlider_ValueChanged"
                     IsSnapToTickEnabled="True"
-                    TickFrequency="1"
                     VerticalAlignment="Center"
+                     IsMoveToPointEnabled="True"
                     />
         </Grid>
 

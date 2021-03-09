@@ -14,6 +14,8 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// </summary>
         public string Name { get; set; }
 
+        public string HorizontalAxis { get; set; }
+
         /// <summary>
         /// <see cref="Attribute"/>s used by this <see cref="Group"/>.
         /// </summary>
@@ -29,6 +31,7 @@ namespace Telemetry_data_and_logic_layer.Groups
         {
             ID = id;
             Name = name.Trim();
+            HorizontalAxis = "x";
         }
 
         /// <summary>

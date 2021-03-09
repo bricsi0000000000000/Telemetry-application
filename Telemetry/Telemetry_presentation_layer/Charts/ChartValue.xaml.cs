@@ -29,7 +29,7 @@ namespace Telemetry_presentation_layer.Charts
         /// <param name="color"><see cref="Color"/> of the channel.</param>
         /// <param name="channelName">Channel name.</param>
         /// <param name="value">Channel value.</param>
-        public ChartValue(string channelName, string unitOfMeasure, string groupName, string color = "#ffffff", int inputFileID = -1)
+        public ChartValue(string channelName, string unitOfMeasure, string groupName/*, string color = "#ffffff", int inputFileID = -1*/)
         {
             InitializeComponent();
 
@@ -37,11 +37,11 @@ namespace Telemetry_presentation_layer.Charts
             ChannelValueLabel.Opacity = .4f;
             UnitOfMeasureFormulaControl.Opacity = .4f;
 
-            colorCode = color;
-            this.inputFileID = inputFileID;
+            //colorCode = color;
+           // this.inputFileID = inputFileID;
             this.groupName = groupName;
 
-            ColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(color);
+            //ColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(color);
             ChannelName = channelName;
             SetChannelValue(0);
             var formula = @"\color[HTML]{" + ColorManager.Secondary900[1..] + "}{" + unitOfMeasure + "}";
@@ -77,7 +77,7 @@ namespace Telemetry_presentation_layer.Charts
         {
             if (inputFileID != -1)
             {
-                ChannelNameLabel.Content = $"{channelName}_{inputFileID}";
+                ChannelNameLabel.Content = $"{channelName} {inputFileID}";
             }
             else
             {

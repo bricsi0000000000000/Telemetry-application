@@ -84,6 +84,7 @@
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="65"/>
+                <RowDefinition Height="65"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="45"/>
             </Grid.RowDefinitions>
@@ -130,7 +131,49 @@
                 </materialDesign:Card>
             </Grid>
 
-            <ScrollViewer Grid.Row="1" 
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Name="SelectedGroupHorizontalAxisTextBox"
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Left"
+                         materialDesign:HintAssist.Hint="Horizontal axis"
+                         materialDesign:HintAssist.IsFloating="True"
+                         Margin="5,0,0,15"
+                         >
+                    <TextBox.Text>
+                        <Binding Path="HorizontalAxis"
+                                 UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <materialDesign:Card Name="ChangeSelectedGroupHorizontalAxisCardButton"
+                                     Grid.Column="1"
+                                     Margin="5,10"
+                                     UniformCornerRadius="5"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                     PreviewMouseLeftButtonDown="ChangeSelectedGroupHorizontalAxisCardButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="ChangeSelectedGroupHorizontalAxisCardButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="ChangeSelectedGroupHorizontalAxisCardButton_MouseEnter"
+                                     MouseLeave="ChangeSelectedGroupHorizontalAxisCardButton_MouseLeave"
+                                     >
+                    <materialDesign:PackIcon Kind="ContentSave"
+                                                VerticalAlignment="Stretch"
+                                                HorizontalAlignment="Stretch"
+                                                />
+                </materialDesign:Card>
+            </Grid>
+
+            <ScrollViewer Grid.Row="2" 
                             Margin="0,5,0,5"
                             VerticalScrollBarVisibility="Auto"
                             HorizontalScrollBarVisibility="Auto"
@@ -140,7 +183,7 @@
                             />
             </ScrollViewer>
 
-            <Grid Grid.Row="2">
+            <Grid Grid.Row="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*"/>
                     <ColumnDefinition Width="*"/>
@@ -253,7 +296,7 @@
                          >
                     <TextBox.Text>
                         <Binding Path="LineWidth"
-                                    UpdateSourceTrigger="PropertyChanged">
+                                 UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
                                 <validation:IsNumberValidationRule ValidatesOnTargetUpdated="True"/>
                             </Binding.ValidationRules>
@@ -262,15 +305,15 @@
                 </TextBox>
 
                 <materialDesign:Card Name="ChangeSelectedAttributeLineWidthCardButton"
-                                        Grid.Column="1"
-                                        Margin="5,10"
-                                        UniformCornerRadius="5"
-                                        materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                        PreviewMouseLeftButtonDown="ChangeSelectedAttributeLineWidthCardButton_PreviewMouseLeftButtonDown"
-                                        PreviewMouseLeftButtonUp="ChangeSelectedAttributeLineWidthCardButton_PreviewMouseLeftButtonUp"
-                                        MouseEnter="ChangeSelectedAttributeLineWidthCardButton_MouseEnter"
-                                        MouseLeave="ChangeSelectedAttributeLineWidthCardButton_MouseLeave"
-                                        >
+                                     Grid.Column="1"
+                                     Margin="5,10"
+                                     UniformCornerRadius="5"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                     PreviewMouseLeftButtonDown="ChangeSelectedAttributeLineWidthCardButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="ChangeSelectedAttributeLineWidthCardButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="ChangeSelectedAttributeLineWidthCardButton_MouseEnter"
+                                     MouseLeave="ChangeSelectedAttributeLineWidthCardButton_MouseLeave"
+                                     >
                     <materialDesign:PackIcon Kind="ContentSave"
                                                 VerticalAlignment="Stretch"
                                                 HorizontalAlignment="Stretch"

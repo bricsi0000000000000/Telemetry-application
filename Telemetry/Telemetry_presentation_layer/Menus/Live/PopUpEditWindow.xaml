@@ -8,7 +8,7 @@
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontSize="14"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Height="210"
+        Height="250"
         Width="280"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen" 
@@ -17,7 +17,10 @@
         ShowInTaskbar="False" 
         Topmost="True"
         Background="Transparent"
-        AllowsTransparency="True">
+        AllowsTransparency="True"
+        xmlns:validation="clr-namespace:Telemetry_presentation_layer.ValidationRules"
+        d:DataContext="{d:DesignInstance validation:FieldsViewModel, IsDesignTimeCreatable=False}"
+        >
 
     <materialDesign:Card Margin="50"
                          materialDesign:ShadowAssist.ShadowDepth="Depth5"
@@ -38,12 +41,25 @@
                        />
             
             <TextBox Name="ChaneNameTextBox"
+                     VerticalAlignment="Stretch"
                      HorizontalAlignment="Stretch"
-                     VerticalContentAlignment="Bottom"
-                     Margin="5"
+                     VerticalContentAlignment="Center"
+                     HorizontalContentAlignment="Left"
+                     materialDesign:HintAssist.Hint="Change file name"
+                     materialDesign:HintAssist.IsFloating="True"
+                     Margin="5,0,0,15"
                      Grid.Row="1"
-                     />
-            
+                     >
+                <TextBox.Text>
+                    <Binding Path="ChangeLineWidth"
+                             UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
