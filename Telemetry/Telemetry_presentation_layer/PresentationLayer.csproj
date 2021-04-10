@@ -18,10 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Telemetry_data_and_logic_layer\Telemetry_data_and_logic_layer.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Images\art_banner.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -32,6 +28,10 @@
 
   <ItemGroup>
     <Folder Include="Menus\Settings\Live\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LogicLayer\LogicLayer.csproj" />
   </ItemGroup>
 
 </Project>

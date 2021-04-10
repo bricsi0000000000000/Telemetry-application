@@ -5,12 +5,13 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_data_and_logic_layer.InputFiles;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Menus.Driverless;
+using DataLayer.InputFiles;
+using LocigLayer.Colors;
+using LocigLayer.InputFiles;
+using LocigLayer.Texts;
+using PresentationLayer.Menus.Driverless;
 
-namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
+namespace PresentationLayer.Menus.Settings.InputFiles
 {
     /// <summary>
     /// Interaction logic for InputFileSettingsItem.xaml

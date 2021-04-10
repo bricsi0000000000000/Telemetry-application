@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace Telemetry_presentation_layer.ValidationRules
+namespace PresentationLayer.ValidationRules
 {
     public class FieldsViewModel : INotifyPropertyChanged
     {

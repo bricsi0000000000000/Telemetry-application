@@ -1,1 +1,314 @@
-[{"ID":0,"Name":"EngineBase","Attributes":[{"ID":0,"Name":"rev","Color":"#FF1E604E","LineWidth":1},{"ID":1,"Name":"rev_b","Color":"#FFFCE705","LineWidth":1},{"ID":2,"Name":"gear","Color":"#FF80FC05","LineWidth":1},{"ID":3,"Name":"batt_u","Color":"#FF05FCF4","LineWidth":1},{"ID":4,"Name":"OilPress","Color":"#FF8005FC","LineWidth":1},{"ID":5,"Name":"FuelPress","Color":"#FFFC0505","LineWidth":1},{"ID":6,"Name":"mappos","Color":"#FFFC7C05","LineWidth":1},{"ID":7,"Name":"traj0","Color":"#FFFCE705","LineWidth":1},{"ID":8,"Name":"traj2","Color":"#fce705","LineWidth":1}]},{"ID":1,"Name":"Gearbox","Attributes":[{"ID":0,"Name":"rev","Color":"#FF4D4D4D","LineWidth":1},{"ID":1,"Name":"gear","Color":"#FF80FC05","LineWidth":1},{"ID":2,"Name":"upInput","Color":"#FF05FCF4","LineWidth":1},{"ID":3,"Name":"upRqe","Color":"#FF8005FC","LineWidth":1},{"ID":4,"Name":"upGoing","Color":"#FFFC0505","LineWidth":1},{"ID":5,"Name":"shiftCnt","Color":"#FFFC7C05","LineWidth":1},{"ID":6,"Name":"neutral_In","Color":"#FFFCE705","LineWidth":1},{"ID":7,"Name":"clutchGoing","Color":"#FF80FC05","LineWidth":1}]},{"ID":2,"Name":"Temperatures","Attributes":[{"ID":0,"Name":"tmot","Color":"#FF05FCF4","LineWidth":1},{"ID":1,"Name":"toil","Color":"#FF8005FC","LineWidth":1},{"ID":2,"Name":"tfuel","Color":"#FFFC0505","LineWidth":1},{"ID":3,"Name":"IAT","Color":"#FFFC7C05","LineWidth":1},{"ID":4,"Name":"CoolerIn","Color":"#FFFCE705","LineWidth":1},{"ID":5,"Name":"CoolerOut","Color":"#FF80FC05","LineWidth":1}]},{"ID":3,"Name":"Driver","Attributes":[{"ID":0,"Name":"speed","Color":"#FF05FCF4","LineWidth":1},{"ID":1,"Name":"gear","Color":"#FF8005FC","LineWidth":1},{"ID":2,"Name":"ath","Color":"#FFFFABEE","LineWidth":1},{"ID":3,"Name":"Brake_F","Color":"#FFFC7C05","LineWidth":1},{"ID":4,"Name":"Steering","Color":"#FFFCE705","LineWidth":1}]},{"ID":4,"Name":"LaunchControl","Attributes":[{"ID":0,"Name":"speed","Color":"#FF80FC05","LineWidth":1},{"ID":1,"Name":"gear","Color":"#FF05FCF4","LineWidth":1},{"ID":2,"Name":"ath","Color":"#FFFFABEE","LineWidth":1},{"ID":3,"Name":"AUS_STATE","Color":"#FFFC0505","LineWidth":1},{"ID":4,"Name":"neutral_In","Color":"#FFFC7C05","LineWidth":1},{"ID":5,"Name":"ign_1","Color":"#FF80FC05","LineWidth":1}]},{"ID":5,"Name":"Driverless1","Attributes":[{"ID":0,"Name":"traj0","Color":"#FFFCE705","LineWidth":1},{"ID":1,"Name":"traj1","Color":"#FF8B51C6","LineWidth":1},{"ID":2,"Name":"yloc","Color":"#FFFC0591","LineWidth":1},{"ID":3,"Name":"s_end","Color":"#FF8005FC","LineWidth":1},{"ID":4,"Name":"vx","Color":"#FF612172","LineWidth":1},{"ID":5,"Name":"c3ref","Color":"#FF05FCF4","LineWidth":1}]},{"ID":6,"Name":"Driverless2","Attributes":[{"ID":0,"Name":"vx","Color":"#FF612172","LineWidth":1},{"ID":1,"Name":"vy","Color":"#FF9E2F2F","LineWidth":1},{"ID":2,"Name":"yawrate","Color":"#FFFC0505","LineWidth":1},{"ID":3,"Name":"xloc","Color":"#FFFC7C05","LineWidth":1},{"ID":4,"Name":"e_y","Color":"#FF6A850C","LineWidth":1}]}]
+[
+    {
+        "ID": 0,
+        "Name": "EngineBase",
+        "Attributes": [
+            {
+                "ID": 0,
+                "Name": "rev",
+                "Color": "#FF1E604E",
+                "LineWidth": 1
+            },
+            {
+                "ID": 1,
+                "Name": "rev_b",
+                "Color": "#FFFCE705",
+                "LineWidth": 1
+            },
+            {
+                "ID": 2,
+                "Name": "gear",
+                "Color": "#FF80FC05",
+                "LineWidth": 1
+            },
+            {
+                "ID": 3,
+                "Name": "batt_u",
+                "Color": "#FF05FCF4",
+                "LineWidth": 1
+            },
+            {
+                "ID": 4,
+                "Name": "OilPress",
+                "Color": "#FF8005FC",
+                "LineWidth": 1
+            },
+            {
+                "ID": 5,
+                "Name": "FuelPress",
+                "Color": "#FFFC0505",
+                "LineWidth": 1
+            },
+            {
+                "ID": 6,
+                "Name": "mappos",
+                "Color": "#FFFC7C05",
+                "LineWidth": 1
+            },
+            {
+                "ID": 7,
+                "Name": "traj0",
+                "Color": "#FFFCE705",
+                "LineWidth": 1
+            },
+            {
+                "ID": 8,
+                "Name": "traj2",
+                "Color": "#fce705",
+                "LineWidth": 1
+            }
+        ]
+    },
+    {
+        "ID": 1,
+        "Name": "Gearbox",
+        "Attributes": [
+            {
+                "ID": 0,
+                "Name": "rev",
+                "Color": "#FF4D4D4D",
+                "LineWidth": 1
+            },
+            {
+                "ID": 1,
+                "Name": "gear",
+                "Color": "#FF80FC05",
+                "LineWidth": 1
+            },
+            {
+                "ID": 2,
+                "Name": "upInput",
+                "Color": "#FF05FCF4",
+                "LineWidth": 1
+            },
+            {
+                "ID": 3,
+                "Name": "upRqe",
+                "Color": "#FF8005FC",
+                "LineWidth": 1
+            },
+            {
+                "ID": 4,
+                "Name": "upGoing",
+                "Color": "#FFFC0505",
+                "LineWidth": 1
+            },
+            {
+                "ID": 5,
+                "Name": "shiftCnt",
+                "Color": "#FFFC7C05",
+                "LineWidth": 1
+            },
+            {
+                "ID": 6,
+                "Name": "neutral_In",
+                "Color": "#FFFCE705",
+                "LineWidth": 1
+            },
+            {
+                "ID": 7,
+                "Name": "clutchGoing",
+                "Color": "#FF80FC05",
+                "LineWidth": 1
+            }
+        ]
+    },
+    {
+        "ID": 2,
+        "Name": "Temperatures",
+        "Attributes": [
+            {
+                "ID": 0,
+                "Name": "tmot",
+                "Color": "#FF05FCF4",
+                "LineWidth": 1
+            },
+            {
+                "ID": 1,
+                "Name": "toil",
+                "Color": "#FF8005FC",
+                "LineWidth": 1
+            },
+            {
+                "ID": 2,
+                "Name": "tfuel",
+                "Color": "#FFFC0505",
+                "LineWidth": 1
+            },
+            {
+                "ID": 3,
+                "Name": "IAT",
+                "Color": "#FFFC7C05",
+                "LineWidth": 1
+            },
+            {
+                "ID": 4,
+                "Name": "CoolerIn",
+                "Color": "#FFFCE705",
+                "LineWidth": 1
+            },
+            {
+                "ID": 5,
+                "Name": "CoolerOut",
+                "Color": "#FF80FC05",
+                "LineWidth": 1
+            }
+        ]
+    },
+    {
+        "ID": 3,
+        "Name": "Driver",
+        "Attributes": [
+            {
+                "ID": 0,
+                "Name": "speed",
+                "Color": "#FF05FCF4",
+                "LineWidth": 1
+            },
+            {
+                "ID": 1,
+                "Name": "gear",
+                "Color": "#FF8005FC",
+                "LineWidth": 1
+            },
+            {
+                "ID": 2,
+                "Name": "ath",
+                "Color": "#FFFFABEE",
+                "LineWidth": 1
+            },
+            {
+                "ID": 3,
+                "Name": "Brake_F",
+                "Color": "#FFFC7C05",
+                "LineWidth": 1
+            },
+            {
+                "ID": 4,
+                "Name": "Steering",
+                "Color": "#FFFCE705",
+                "LineWidth": 1
+            }
+        ]
+    },
+    {
+        "ID": 4,
+        "Name": "LaunchControl",
+        "Attributes": [
+            {
+                "ID": 0,
+                "Name": "speed",
+                "Color": "#FF80FC05",
+                "LineWidth": 1
+            },
+            {
+                "ID": 1,
+                "Name": "gear",
+                "Color": "#FF05FCF4",
+                "LineWidth": 1
+            },
+            {
+                "ID": 2,
+                "Name": "ath",
+                "Color": "#FFFFABEE",
+                "LineWidth": 1
+            },
+            {
+                "ID": 3,
+                "Name": "AUS_STATE",
+                "Color": "#FFFC0505",
+                "LineWidth": 1
+            },
+            {
+                "ID": 4,
+                "Name": "neutral_In",
+                "Color": "#FFFC7C05",
+                "LineWidth": 1
+            },
+            {
+                "ID": 5,
+                "Name": "ign_1",
+                "Color": "#FF80FC05",
+                "LineWidth": 1
+            }
+        ]
+    },
+    {
+        "ID": 5,
+        "Name": "Driverless1",
+        "Attributes": [
+            {
+                "ID": 0,
+                "Name": "traj0",
+                "Color": "#FFFCE705",
+                "LineWidth": 1
+            },
+            {
+                "ID": 1,
+                "Name": "traj1",
+                "Color": "#FF8B51C6",
+                "LineWidth": 1
+            },
+            {
+                "ID": 2,
+                "Name": "yloc",
+                "Color": "#FFFC0591",
+                "LineWidth": 1
+            },
+            {
+                "ID": 3,
+                "Name": "s_end",
+                "Color": "#FF8005FC",
+                "LineWidth": 1
+            },
+            {
+                "ID": 4,
+                "Name": "vx",
+                "Color": "#FF612172",
+                "LineWidth": 1
+            },
+            {
+                "ID": 5,
+                "Name": "c3ref",
+                "Color": "#FF05FCF4",
+                "LineWidth": 1
+            }
+        ]
+    },
+    {
+        "ID": 6,
+        "Name": "Driverless2",
+        "Attributes": [
+            {
+                "ID": 0,
+                "Name": "vx",
+                "Color": "#FF612172",
+                "LineWidth": 1
+            },
+            {
+                "ID": 1,
+                "Name": "vy",
+                "Color": "#FF9E2F2F",
+                "LineWidth": 1
+            },
+            {
+                "ID": 2,
+                "Name": "yawrate",
+                "Color": "#FFFC0505",
+                "LineWidth": 1
+            },
+            {
+                "ID": 3,
+                "Name": "xloc",
+                "Color": "#FFFC7C05",
+                "LineWidth": 1
+            },
+            {
+                "ID": 4,
+                "Name": "e_y",
+                "Color": "#FF6A850C",
+                "LineWidth": 1
+            }
+        ]
+    }
+]

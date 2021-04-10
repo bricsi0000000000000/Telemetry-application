@@ -2,10 +2,10 @@
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_presentation_layer.Errors;
+using LocigLayer.Colors;
+using PresentationLayer.Errors;
 
-namespace Telemetry_presentation_layer.Menus.Settings.Groups
+namespace PresentationLayer.Menus.Settings.Groups
 {
     /// <summary>
     /// Interaction logic for PickColor.xaml

@@ -2,13 +2,13 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_data_and_logic_layer.Defaults;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Converters;
-using Telemetry_presentation_layer.ValidationRules;
+using LocigLayer.Colors;
+using LocigLayer.Defaults;
+using LocigLayer.Texts;
+using PresentationLayer.Converters;
+using PresentationLayer.ValidationRules;
 
-namespace Telemetry_presentation_layer.Menus.Settings.Default
+namespace PresentationLayer.Menus.Settings.Default
 {
     /// <summary>
     /// Interaction logic for DefaultSettings.xaml

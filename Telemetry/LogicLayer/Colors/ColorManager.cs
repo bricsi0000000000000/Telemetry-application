@@ -1,4 +1,4 @@
-﻿namespace Telemetry_data_and_logic_layer.Colors
+﻿namespace LocigLayer.Colors
 {
     /// <summary>
     /// Stores colors.

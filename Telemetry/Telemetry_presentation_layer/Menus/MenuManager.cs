@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Windows.Controls;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Menus.Driverless;
-using Telemetry_presentation_layer.Menus.Live;
-using Telemetry_presentation_layer.Menus.Settings;
+using LocigLayer.Texts;
+using PresentationLayer.Menus.Driverless;
+using PresentationLayer.Menus.Live;
+using PresentationLayer.Menus.Settings;
 
-namespace Telemetry_presentation_layer.Menus
+namespace PresentationLayer.Menus
 {
     /// <summary>
     /// Manages menus.

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Controls;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Menus.Settings.Live;
+using LocigLayer.Texts;
+using PresentationLayer.Menus.Settings.Live;
 
-namespace Telemetry_presentation_layer.Menus.Live
+namespace PresentationLayer.Menus.Live
 {
     public partial class LiveMenu : UserControl
     {

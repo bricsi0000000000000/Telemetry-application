@@ -1,4 +1,4 @@
-﻿namespace Telemetry_data_and_logic_layer.Defaults
+﻿namespace DataLayer.Defaults
 {
     public class Default
     {

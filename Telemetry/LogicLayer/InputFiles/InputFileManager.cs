@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using DataLayer.InputFiles;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace Telemetry_data_and_logic_layer.InputFiles
+namespace LocigLayer.InputFiles
 {
     /// <summary>
     /// Manages <see cref="InputFile"/>s.

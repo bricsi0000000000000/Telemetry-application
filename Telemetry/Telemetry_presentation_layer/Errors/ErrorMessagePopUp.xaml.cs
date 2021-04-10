@@ -1,9 +1,9 @@
-﻿using System.Windows;
+﻿using LocigLayer.Colors;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Telemetry_data_and_logic_layer.Colors;
 
-namespace Telemetry_presentation_layer.Errors
+namespace PresentationLayer.Errors
 {
     /// <summary>
     /// Interaction logic for ErrorMessagePopUp.xaml

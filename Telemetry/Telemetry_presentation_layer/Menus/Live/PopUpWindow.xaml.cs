@@ -1,15 +1,15 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Converters;
-using Telemetry_presentation_layer.Menus.Settings;
-using Telemetry_presentation_layer.Menus.Settings.Groups;
-using Telemetry_presentation_layer.Menus.Settings.InputFiles;
-using Telemetry_presentation_layer.Menus.Settings.Live;
-using Telemetry_presentation_layer.Menus.Settings.Units;
+using LocigLayer.Colors;
+using LocigLayer.Texts;
+using PresentationLayer.Converters;
+using PresentationLayer.Menus.Settings;
+using PresentationLayer.Menus.Settings.Groups;
+using PresentationLayer.Menus.Settings.InputFiles;
+using PresentationLayer.Menus.Settings.Live;
+using PresentationLayer.Menus.Settings.Units;
 
-namespace Telemetry_presentation_layer.Menus.Live
+namespace PresentationLayer.Menus.Live
 {
     /// <summary>
     /// Interaction logic for ChangeLiveStatusWindow.xaml

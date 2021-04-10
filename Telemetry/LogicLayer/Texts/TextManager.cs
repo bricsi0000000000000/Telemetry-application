@@ -1,4 +1,4 @@
-﻿namespace Telemetry_data_and_logic_layer.Texts
+﻿namespace LocigLayer.Texts
 {
     /// <summary>
     /// Stores default values for texts.

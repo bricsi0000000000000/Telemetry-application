@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Windows;
-using Telemetry_data_and_logic_layer.Groups;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_data_and_logic_layer.Tracks;
-using Telemetry_data_and_logic_layer.Units;
-using Telemetry_presentation_layer.Errors;
-using Telemetry_presentation_layer.Menus;
-using Telemetry_presentation_layer.Menus.Live;
+using LocigLayer.Groups;
+using LocigLayer.Texts;
+using LocigLayer.Tracks;
+using LocigLayer.Units;
+using PresentationLayer.Errors;
+using PresentationLayer.Menus;
+using PresentationLayer.Menus.Live;
 
-namespace Telemetry_presentation_layer
+namespace PresentationLayer
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -27,6 +27,7 @@ namespace Telemetry_presentation_layer
             {
                 ShowError.ShowErrorMessage(exception.Message);
             }
+
             try
             {
                 DriverlessTrackManager.LoadTracks();
@@ -35,6 +36,7 @@ namespace Telemetry_presentation_layer
             {
                 ShowError.ShowErrorMessage(exception.Message);
             }
+
             try
             {
                 GroupManager.InitGroups(TextManager.GroupsFileName);
@@ -43,6 +45,7 @@ namespace Telemetry_presentation_layer
             {
                 ShowError.ShowErrorMessage(exception.Message);
             }
+
             try
             {
                 MenuManager.InitMainMenuTabs(MainMenuTabControl);

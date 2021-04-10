@@ -1,18 +1,19 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Telemetry_data_and_logic_layer.Groups;
-using Telemetry_data_and_logic_layer.InputFiles;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Converters;
-using Telemetry_presentation_layer.Menus;
-using Telemetry_presentation_layer.Menus.Driverless;
-using Telemetry_presentation_layer.Menus.Live;
-using Telemetry_presentation_layer.Menus.Settings;
-using Telemetry_presentation_layer.Menus.Settings.Groups;
-using Telemetry_presentation_layer.Menus.Settings.InputFiles;
+using DataLayer.Groups;
+using LocigLayer.Groups;
+using LocigLayer.InputFiles;
+using LocigLayer.Texts;
+using PresentationLayer.Converters;
+using PresentationLayer.Menus;
+using PresentationLayer.Menus.Driverless;
+using PresentationLayer.Menus.Live;
+using PresentationLayer.Menus.Settings;
+using PresentationLayer.Menus.Settings.Groups;
+using PresentationLayer.Menus.Settings.InputFiles;
 
-namespace Telemetry_presentation_layer.Charts
+namespace PresentationLayer.Charts
 {
     /// <summary>
     /// Interaction logic for ChartValueSettings.xaml

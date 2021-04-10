@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows.Controls;
 
-namespace Telemetry_presentation_layer.ValidationRules
+namespace PresentationLayer.ValidationRules
 {
     public class IsNumberValidationRule : ValidationRule
     {

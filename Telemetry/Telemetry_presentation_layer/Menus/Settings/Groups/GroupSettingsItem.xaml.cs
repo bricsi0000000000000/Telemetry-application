@@ -1,17 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_data_and_logic_layer.Groups;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Errors;
-using Telemetry_presentation_layer.Menus.Driverless;
+using DataLayer.Groups;
+using LocigLayer.Colors;
+using LocigLayer.Texts;
 
-namespace Telemetry_presentation_layer.Menus.Settings.Groups
+namespace PresentationLayer.Menus.Settings.Groups
 {
     /// <summary>
     /// Represents a <see cref="Group"/> settings item in <see cref="GroupSettings"/>.

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Telemetry_presentation_layer.ValidationRules
+namespace PresentationLayer.ValidationRules
 {
     public static class NotifyPropertyChangedExtension
     {

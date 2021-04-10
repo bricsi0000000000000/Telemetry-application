@@ -1,7 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
 
-namespace Telemetry_presentation_layer.Errors
+namespace PresentationLayer.Errors
 {
     /// <summary>
     /// Show error messages.

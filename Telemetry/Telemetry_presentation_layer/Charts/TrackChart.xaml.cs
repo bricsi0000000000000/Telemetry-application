@@ -6,9 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Telemetry_data_and_logic_layer.Groups;
 
-namespace Telemetry_presentation_layer.Charts
+namespace PresentationLayer.Charts
 {
     /// <summary>
     /// Represents a driverless track.
@@ -25,6 +24,8 @@ namespace Telemetry_presentation_layer.Charts
         private static int lastTrackDataID = 0;
 
         private GridLength expanderWidth = GridLength.Auto;
+
+        private const string CAR_IMAGE_NAME = "Images/car_top_game.png";
 
         public class TrackData
         {
@@ -50,7 +51,14 @@ namespace Telemetry_presentation_layer.Charts
         {
             InitializeComponent();
 
-            carImage = new Bitmap("Images/car_top_game.png");
+            try
+            {
+                carImage = new Bitmap(CAR_IMAGE_NAME);
+            }
+            catch (Exception)
+            {
+                throw new Exception($"{CAR_IMAGE_NAME} found");
+            }
 
             ScottPlotChart.plt.Frame(false);
             ScottPlotChart.plt.Style(ScottPlot.Style.Light1);

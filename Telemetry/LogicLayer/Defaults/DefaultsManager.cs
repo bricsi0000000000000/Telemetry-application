@@ -3,9 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using Telemetry_data_and_logic_layer.Texts;
+using DataLayer.Defaults;
+using LocigLayer.Texts;
 
-namespace Telemetry_data_and_logic_layer.Defaults
+namespace LocigLayer.Defaults
 {
     public static class DefaultsManager
     {

@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_data_and_logic_layer.Units;
-using Telemetry_presentation_layer.Converters;
-using Telemetry_presentation_layer.ValidationRules;
+using DataLayer.Units;
+using LocigLayer.Colors;
+using LocigLayer.Texts;
+using LocigLayer.Units;
+using PresentationLayer.Converters;
+using PresentationLayer.ValidationRules;
 
-namespace Telemetry_presentation_layer.Menus.Settings.Units
+namespace PresentationLayer.Menus.Settings.Units
 {
     /// <summary>
     /// Interaction logic for AddUnitOfMeasureWindow.xaml

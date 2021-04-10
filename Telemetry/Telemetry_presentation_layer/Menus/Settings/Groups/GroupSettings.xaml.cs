@@ -1,20 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_data_and_logic_layer.Groups;
-using Telemetry_data_and_logic_layer.InputFiles;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Converters;
-using Telemetry_presentation_layer.Menus.Driverless;
-using Telemetry_presentation_layer.Menus.Live;
-using Telemetry_presentation_layer.ValidationRules;
+using DataLayer.Groups;
+using DataLayer.InputFiles;
+using LocigLayer.Colors;
+using LocigLayer.Groups;
+using LocigLayer.InputFiles;
+using LocigLayer.Texts;
+using PresentationLayer.Converters;
+using PresentationLayer.Menus.Driverless;
+using PresentationLayer.Menus.Live;
+using PresentationLayer.ValidationRules;
 
-namespace Telemetry_presentation_layer.Menus.Settings.Groups
+namespace PresentationLayer.Menus.Settings.Groups
 {
     /// <summary>
     /// Represents the content of the group settings in settings menu.

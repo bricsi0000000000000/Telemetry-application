@@ -4,25 +4,22 @@ using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Telemetry_data_and_logic_layer.Groups;
-using Telemetry_data_and_logic_layer.InputFiles;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Charts;
-using Telemetry_presentation_layer.Menus.Settings;
-using Telemetry_presentation_layer.Menus.Settings.Groups;
-using Telemetry_data_and_logic_layer.Tracks;
-using Telemetry_presentation_layer.Errors;
+using DataLayer.Groups;
+using PresentationLayer.Charts;
+using DataLayer.Tracks;
+using PresentationLayer.Errors;
 using Microsoft.Win32;
-using Telemetry_data_and_logic_layer;
-using System.Windows.Controls.Primitives;
-using System.Diagnostics;
-using Telemetry_data_and_logic_layer.Defaults;
+using DataLayer;
 using System.Windows.Input;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_presentation_layer.Converters;
-using System.Threading.Tasks;
+using PresentationLayer.Converters;
+using LocigLayer.Defaults;
+using LocigLayer.Texts;
+using LocigLayer.Tracks;
+using LocigLayer.Groups;
+using LocigLayer.Colors;
+using LocigLayer.InputFiles;
 
-namespace Telemetry_presentation_layer.Menus.Driverless
+namespace PresentationLayer.Menus.Driverless
 {
     /// <summary>
     /// Represents the content of the driverless main menu.
@@ -371,7 +368,7 @@ namespace Telemetry_presentation_layer.Menus.Driverless
         /// </summary>
         /// <param name="points">Convertable list of <see cref="Point"/>-s.</param>
         /// <returns>Converted plot data.</returns>
-        private Tuple<double[], double[]> ConvertChannelDataToPlotData(List<Telemetry_data_and_logic_layer.Point> points)
+        private Tuple<double[], double[]> ConvertChannelDataToPlotData(List<DataLayer.Point> points)
         {
             var x = new List<double>();
             var y = new List<double>();

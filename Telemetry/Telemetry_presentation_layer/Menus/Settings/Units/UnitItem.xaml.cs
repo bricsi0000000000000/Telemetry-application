@@ -1,11 +1,11 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_data_and_logic_layer.Units;
-using Telemetry_presentation_layer.Converters;
+using DataLayer.Units;
+using LocigLayer.Colors;
+using LocigLayer.Texts;
+using PresentationLayer.Converters;
 
-namespace Telemetry_presentation_layer.Menus.Settings.Units
+namespace PresentationLayer.Menus.Settings.Units
 {
     /// <summary>
     /// Interaction logic for UnitItem.xaml

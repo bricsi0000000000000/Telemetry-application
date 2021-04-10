@@ -9,16 +9,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Media;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_data_and_logic_layer.Groups;
-using Telemetry_data_and_logic_layer.Models;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Charts;
-using Telemetry_presentation_layer.Menus.Settings.Live;
+using DataLayer.Groups;
+using DataLayer.Models;
+using PresentationLayer.Charts;
+using PresentationLayer.Menus.Settings.Live;
+using LocigLayer.Groups;
+using LocigLayer.Texts;
+using LocigLayer.Colors;
 
-namespace Telemetry_presentation_layer.Menus.Live
+namespace PresentationLayer.Menus.Live
 {
     /// <summary>
     /// Interaction logic for LiveTelemetry.xaml

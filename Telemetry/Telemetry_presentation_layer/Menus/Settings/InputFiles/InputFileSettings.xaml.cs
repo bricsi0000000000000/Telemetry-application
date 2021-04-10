@@ -5,20 +5,21 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using Telemetry_data_and_logic_layer;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_data_and_logic_layer.Groups;
-using Telemetry_data_and_logic_layer.InputFiles;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Converters;
-using Telemetry_presentation_layer.Errors;
-using Telemetry_presentation_layer.Menus.Driverless;
-using Telemetry_presentation_layer.Menus.Live;
-using Telemetry_presentation_layer.Menus.Settings.Groups;
-using Telemetry_presentation_layer.ValidationRules;
+using DataLayer;
+using DataLayer.Groups;
+using DataLayer.InputFiles;
+using PresentationLayer.Converters;
+using PresentationLayer.Errors;
+using PresentationLayer.Menus.Driverless;
+using PresentationLayer.Menus.Live;
+using PresentationLayer.Menus.Settings.Groups;
+using PresentationLayer.ValidationRules;
+using LocigLayer.InputFiles;
+using LocigLayer.Colors;
+using LocigLayer.Texts;
+using LocigLayer.Groups;
 
-namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
+namespace PresentationLayer.Menus.Settings.InputFiles
 {
     /// <summary>
     /// Represents the <see cref="InputFile"/>s settigns in settings menu.

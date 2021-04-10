@@ -1,4 +1,4 @@
-﻿namespace Telemetry_data_and_logic_layer.Groups
+﻿namespace DataLayer.Groups
 {
     /// <summary>
     /// Represents an <see cref="Attribute"/> in a <see cref="Group"/>.

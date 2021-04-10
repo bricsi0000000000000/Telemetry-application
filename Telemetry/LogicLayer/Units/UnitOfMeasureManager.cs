@@ -2,9 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Telemetry_data_and_logic_layer.Texts;
+using DataLayer.Units;
+using LocigLayer.Texts;
 
-namespace Telemetry_data_and_logic_layer.Units
+namespace LocigLayer.Units
 {
     public static class UnitOfMeasureManager
     {
@@ -54,12 +55,12 @@ namespace Telemetry_data_and_logic_layer.Units
                         throw new Exception("Can't add unit of measure, because 'description' is null!");
                     }
 
-                    if (unitOfMeasuresJSON[i].UnitOfMeasure == null)
+                    if (unitOfMeasuresJSON[i].Unit== null)
                     {
                         throw new Exception("Can't add unit of measure, because 'unit of measure' is null!");
                     }
 
-                    if (unitOfMeasuresJSON[i].UnitOfMeasure.ToString().Equals(string.Empty))
+                    if (unitOfMeasuresJSON[i].Unit.ToString().Equals(string.Empty))
                     {
                         throw new Exception("Can't add unit of measure, because 'unit of measure' is empty!");
                     }
@@ -67,7 +68,7 @@ namespace Telemetry_data_and_logic_layer.Units
                     AddUnitOfMeasure(new Unit(i,
                                               unitOfMeasuresJSON[i].Name.ToString(),
                                               unitOfMeasuresJSON[i].Description.ToString(),
-                                              unitOfMeasuresJSON[i].UnitOfMeasure.ToString()));
+                                              unitOfMeasuresJSON[i].Unit.ToString()));
                 }
             }
             catch (JsonReaderException)

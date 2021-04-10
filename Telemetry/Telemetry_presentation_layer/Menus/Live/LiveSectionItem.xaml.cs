@@ -1,14 +1,12 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_data_and_logic_layer.Models;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Converters;
-using Telemetry_presentation_layer.Menus.Settings;
-using Telemetry_presentation_layer.Menus.Settings.Live;
+using DataLayer.Models;
+using LocigLayer.Colors;
+using LocigLayer.Texts;
+using PresentationLayer.Converters;
+using PresentationLayer.Menus.Settings.Live;
 
-namespace Telemetry_presentation_layer.Menus.Live
+namespace PresentationLayer.Menus.Live
 {
     /// <summary>
     /// Interaction logic for LiveSectionItem.xaml

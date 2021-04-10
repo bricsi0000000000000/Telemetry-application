@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Telemetry_data_and_logic_layer.Groups;
+using DataLayer.Groups;
 
-namespace Telemetry_data_and_logic_layer.InputFiles
+namespace DataLayer.InputFiles
 {
     public class StandardInputFile : InputFile
     {

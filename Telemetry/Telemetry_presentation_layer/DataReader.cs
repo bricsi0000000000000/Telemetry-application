@@ -7,18 +7,21 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using Telemetry_data_and_logic_layer;
-using Telemetry_data_and_logic_layer.Groups;
-using Telemetry_data_and_logic_layer.InputFiles;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Errors;
-using Telemetry_presentation_layer.Menus;
-using Telemetry_presentation_layer.Menus.Driverless;
-using Telemetry_presentation_layer.Menus.Settings;
-using Telemetry_presentation_layer.Menus.Settings.Groups;
-using Telemetry_presentation_layer.Menus.Settings.InputFiles;
+using DataLayer;
+using DataLayer.Groups;
+using DataLayer.InputFiles;
+using LocigLayer.Colors;
+using LocigLayer.Groups;
+using LocigLayer.InputFiles;
+using LocigLayer.Texts;
+using PresentationLayer.Errors;
+using PresentationLayer.Menus;
+using PresentationLayer.Menus.Driverless;
+using PresentationLayer.Menus.Settings;
+using PresentationLayer.Menus.Settings.Groups;
+using PresentationLayer.Menus.Settings.InputFiles;
 
-namespace Telemetry_presentation_layer
+namespace PresentationLayer
 {
     /// <summary>
     /// Reads a files content.
@@ -95,7 +98,7 @@ namespace Telemetry_presentation_layer
                     throw new Exception($"Channels name is empty in {fileName}");
                 }
 
-                var channel = new Channel(lastChannelID, channelName);
+                var channel = new Channel(lastChannelID, channelName, ColorManager.GetChartColor);
                 lastChannelID++;
 
                 foreach (var group in GroupManager.Groups)

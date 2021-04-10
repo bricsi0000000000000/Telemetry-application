@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Controls;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Menus.Settings.Default;
-using Telemetry_presentation_layer.Menus.Settings.Groups;
-using Telemetry_presentation_layer.Menus.Settings.InputFiles;
-using Telemetry_presentation_layer.Menus.Settings.Live;
-using Telemetry_presentation_layer.Menus.Settings.Units;
+using LocigLayer.Texts;
+using PresentationLayer.Menus.Settings.Default;
+using PresentationLayer.Menus.Settings.Groups;
+using PresentationLayer.Menus.Settings.InputFiles;
+using PresentationLayer.Menus.Settings.Units;
 
-namespace Telemetry_presentation_layer.Menus.Settings
+namespace PresentationLayer.Menus.Settings
 {
     /// <summary>
     /// Represents the content of the main settings menu.

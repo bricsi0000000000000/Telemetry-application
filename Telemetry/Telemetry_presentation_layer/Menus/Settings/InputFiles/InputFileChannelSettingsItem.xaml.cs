@@ -2,15 +2,16 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_data_and_logic_layer.Groups;
-using Telemetry_data_and_logic_layer.InputFiles;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_data_and_logic_layer.Units;
-using Telemetry_presentation_layer.Menus.Driverless;
-using Telemetry_presentation_layer.Menus.Settings.Groups;
+using DataLayer.Groups;
+using LocigLayer.Colors;
+using LocigLayer.Groups;
+using LocigLayer.InputFiles;
+using LocigLayer.Texts;
+using LocigLayer.Units;
+using PresentationLayer.Menus.Driverless;
+using PresentationLayer.Menus.Settings.Groups;
 
-namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
+namespace PresentationLayer.Menus.Settings.InputFiles
 {
     /// <summary>
     /// Interaction logic for InputFileChannelSettingsItem.xaml

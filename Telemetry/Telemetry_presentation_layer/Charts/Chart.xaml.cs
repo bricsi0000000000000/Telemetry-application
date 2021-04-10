@@ -4,22 +4,20 @@ using System;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using Telemetry_data_and_logic_layer.Groups;
+using DataLayer.Groups;
 using System.Linq;
-using Telemetry_presentation_layer.Errors;
-using Telemetry_data_and_logic_layer.Units;
-using Telemetry_data_and_logic_layer.InputFiles;
-using System.Diagnostics;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Menus;
-using Telemetry_presentation_layer.Menus.Driverless;
-using Telemetry_presentation_layer.Menus.Settings.Groups;
-using Telemetry_presentation_layer.Menus.Settings;
-using Telemetry_data_and_logic_layer.Colors;
+using PresentationLayer.Menus;
+using PresentationLayer.Menus.Driverless;
+using PresentationLayer.Menus.Settings.Groups;
+using PresentationLayer.Menus.Settings;
 using System.Windows.Input;
-using Telemetry_presentation_layer.Defaults;
+using PresentationLayer.Defaults;
+using LocigLayer.Units;
+using LocigLayer.Groups;
+using LocigLayer.Colors;
+using LocigLayer.Texts;
 
-namespace Telemetry_presentation_layer.Charts
+namespace PresentationLayer.Charts
 {
     /// <summary>
     /// Represents a <see cref="Chart"/> based on <see cref="ScottPlot"/>.

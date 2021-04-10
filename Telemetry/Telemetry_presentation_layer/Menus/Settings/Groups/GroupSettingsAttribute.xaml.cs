@@ -1,16 +1,17 @@
-﻿using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_data_and_logic_layer.Groups;
-using Telemetry_data_and_logic_layer.InputFiles;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Menus.Driverless;
-using Telemetry_presentation_layer.Menus.Settings.InputFiles;
+using DataLayer.Groups;
+using DataLayer.InputFiles;
+using LocigLayer.Colors;
+using LocigLayer.Groups;
+using LocigLayer.InputFiles;
+using LocigLayer.Texts;
+using PresentationLayer.Menus.Driverless;
+using PresentationLayer.Menus.Settings.InputFiles;
 
-namespace Telemetry_presentation_layer.Menus.Settings.Groups
+namespace PresentationLayer.Menus.Settings.Groups
 {
     /// <summary>
     /// Represents one <see cref="Group"/> <see cref="Attribute"/> int <see cref="GroupSettings"/>.

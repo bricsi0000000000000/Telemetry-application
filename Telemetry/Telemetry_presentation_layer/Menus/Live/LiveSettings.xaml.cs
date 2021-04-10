@@ -6,23 +6,19 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Windows.Media;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_presentation_layer.Menus.Live;
-using Telemetry_data_and_logic_layer.Models;
+using PresentationLayer.Menus.Live;
+using DataLayer.Models;
 using System.Windows.Controls;
 using System.Windows;
-using Telemetry_data_and_logic_layer.Texts;
 using System.Threading.Tasks;
-using Telemetry_presentation_layer.Converters;
+using PresentationLayer.Converters;
 using System.Windows.Input;
-using System.Diagnostics;
 using System.Linq;
+using LocigLayer.Texts;
+using LocigLayer.Colors;
 
-namespace Telemetry_presentation_layer.Menus.Settings.Live
+namespace PresentationLayer.Menus.Settings.Live
 {
-    /// <summary>
-    /// Interaction logic for LiveSettings.xaml
-    /// </summary>
     public partial class LiveSettings : UserControl
     {
         private static HttpClient client = new HttpClient();

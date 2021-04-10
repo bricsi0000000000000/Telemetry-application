@@ -2,9 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Telemetry_data_and_logic_layer.Texts;
+using DataLayer.Groups;
+using LocigLayer.Texts;
 
-namespace Telemetry_data_and_logic_layer.Groups
+namespace LocigLayer.Groups
 {
     /// <summary>
     /// Stores all <see cref="Group"/>s.

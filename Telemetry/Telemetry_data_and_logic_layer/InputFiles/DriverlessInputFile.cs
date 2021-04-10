@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Telemetry_data_and_logic_layer.Groups;
+using DataLayer.Groups;
 
-namespace Telemetry_data_and_logic_layer.InputFiles
+namespace DataLayer.InputFiles
 {
     public class DriverlessInputFile : InputFile
     {
