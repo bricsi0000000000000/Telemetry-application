@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Telemetry_data_and_logic_layer.Groups;
+using DataLayer.Groups;
 
-namespace Telemetry_data_and_logic_layer.InputFiles
+namespace DataLayer.InputFiles
 {
     /// <summary>
     /// Represents an <see cref="InputFile"/>.
     /// </summary>
     public abstract class InputFile
     {
+        public int ID { get; set; }
+
         /// <summary>
         /// <see cref="InputFile"/>s name.
         /// </summary>
         public string Name { get; set; }
+        public string OriginalName { get; }
 
         /// <summary>
         /// Decides that this <see cref="InputFile"/> is driverless or not.
@@ -36,9 +39,11 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         /// </summary>
         /// <param name="name"><see cref="InputFile"/>s name.</param>
         /// <param name="channels"><see cref="InputFile"/>s channels</param>
-        public InputFile(string name, List<Channel> channels)
+        public InputFile(int id, string name, List<Channel> channels)
         {
+            ID = id;
             Name = name;
+            OriginalName = name;
             Channels = channels;
         }
 
@@ -48,7 +53,9 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         /// <param name="driverlessInputFile">An <see cref="InputFile"/> which will be created the <see cref="InputFile"/>.</param>
         public InputFile(InputFile inputFile)
         {
+            ID = inputFile.ID;
             Name = inputFile.Name;
+            OriginalName = inputFile.Name;
             Channels = inputFile.Channels;
         }
         #endregion
@@ -59,6 +66,7 @@ namespace Telemetry_data_and_logic_layer.InputFiles
         /// <param name="name">Findable <see cref="Channel"/>s name.</param>
         /// <returns>Returns a <see cref="Channel"/> whose name is <paramref name="name"/>.</returns>
         public Channel GetChannel(string name) => Channels.Find(x => x.Name.Equals(name));
+        public Channel GetChannel(int id) => Channels.Find(x => x.ID == id);
 
         /// <summary>
         /// Contains the required <see cref="Channel"/>s for this <see cref="InputFile"/>.

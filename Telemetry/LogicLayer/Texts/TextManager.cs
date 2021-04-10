@@ -1,4 +1,4 @@
-﻿namespace Telemetry_data_and_logic_layer.Texts
+﻿namespace LocigLayer.Texts
 {
     /// <summary>
     /// Stores default values for texts.
@@ -19,6 +19,12 @@
         /// "Settings"
         /// </summary>
         public static string SettingsMenuName { get; private set; } = "Settings";
+
+        /// <summary>
+        /// Name of the live menu.
+        /// "Live"
+        /// </summary>
+        public static string LiveMenuName { get; private set; } = "Live";
 
         /// <summary>
         /// Name of the diagrams menu.
@@ -52,6 +58,18 @@
         /// "Groups"
         /// </summary>
         public static string GroupsSettingsName { get; private set; } = "Groups";
+
+        /// <summary>
+        /// Name of the group unit of measures.
+        /// "Units"
+        /// </summary>
+        public static string UnitsSettingsName { get; private set; } = "Units";
+
+        /// <summary>
+        /// Name of default settings.
+        /// "Default"
+        /// </summary>
+        public static string DefaultSettingsName { get; private set; } = "Default";
 
         /// <summary>
         /// Name of the file settings menu.
@@ -112,6 +130,18 @@
         /// "groups.json"
         /// </summary>
         public static string GroupsFileName { get; private set; } = "groups.json";
+
+        /// <summary>
+        /// Name of the default settings file.
+        /// "default.json"
+        /// </summary>
+        public static string DefaultFileName { get; private set; } = "default.json";
+
+        /// <summary>
+        /// Name of the unit of measures file.
+        /// "unit_of_measures.json"
+        /// </summary>
+        public static string UnitOfMeasuresFileName { get; private set; } = "unit_of_measures.json";
         #endregion
 
         #region input file default channel names
@@ -150,6 +180,28 @@
         /// "yawrate"
         /// </summary>
         public static string DefaultYawRateChannelName { get; private set; } = "yawrate";
+        #endregion
+
+        #region default settings names
+
+        /// <summary>
+        /// Default driverless horizontal axis name.
+        /// "DriverlessHorizontalAxis"
+        /// </summary>
+        public static string DriverlessHorizontalAxis { get; private set; } = "DriverlessHorizontalAxis";
+
+        /// <summary>
+        /// Default driverless c0ref channel name.
+        /// "DriverlessC0refChannel"
+        /// </summary>
+        public static string DriverlessC0refChannel { get; private set; } = "DriverlessC0refChannel";
+
+        /// <summary>
+        /// Default driverless y channel name.
+        /// "DriverlessYChannel"
+        /// </summary>
+        public static string DriverlessYChannel { get; private set; } = "DriverlessYChannel";
+
         #endregion
     }
 }

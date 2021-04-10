@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Telemetry_presentation_layer.Menus.Settings.Groups.GroupSettings"
+﻿<UserControl x:Class="PresentationLayer.Menus.Settings.Groups.GroupSettings"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,142 +7,568 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              Background="{DynamicResource MaterialDesignPaper}"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             xmlns:validation="clr-namespace:PresentationLayer.ValidationRules"
+             d:DataContext="{d:DesignInstance validation:FieldsViewModel, IsDesignTimeCreatable=False}"
+             >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <Grid>
-            <materialDesign:DialogHost HorizontalAlignment="Stretch"
-                                       VerticalAlignment="Stretch"
-                                       CloseOnClickAway="True"
-                                       >
-                <materialDesign:DialogHost.DialogContent>
-                    <StackPanel Margin="16">
-                        <TextBlock Text="Add new group"/>
-                        <TextBox Margin="0 8 0 0"
-                                 Name="AddGroupTxtBox"
-                                 HorizontalAlignment="Stretch"
-                                 />
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Right"
-                                    >
-                            <Button Style="{StaticResource MaterialDesignFlatButton}"
-                                    IsDefault="True"
-                                    Margin="0 8 8 0"
-                                    Command="materialDesign:DialogHost.CloseDialogCommand"
-                                    Content="Add"
-                                    Click="AddGroup_Click"
-                                    >
-                            </Button>
-                            <Button Style="{StaticResource MaterialDesignFlatButton}"
-                                    IsCancel="True"
-                                    Margin="0 8 8 0"
-                                    Command="materialDesign:DialogHost.CloseDialogCommand"
-                                    Content="Cancel"
-                                    >
-                            </Button>
-                        </StackPanel>
-                    </StackPanel>
-                </materialDesign:DialogHost.DialogContent>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="45"/>
+            </Grid.RowDefinitions>
 
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="50"/>
-                    </Grid.RowDefinitions>
+            <ScrollViewer Margin="5,5,0,5"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Auto"
+                          >
+                <StackPanel x:Name="GroupsStackPanel"
+                            Margin="0,0,0,5"
+                            />
+            </ScrollViewer>
 
-                    <ScrollViewer Margin="2.5 5">
-                        <StackPanel x:Name="GroupsStackPanel"
-                                    />
-                    </ScrollViewer>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                    <Button Grid.Row="1"
-                            Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
-                            Name="AddGroupBtn"
-                            Margin="10 5"
-                            Content="Add group"
-                            >
-                    </Button>
-                </Grid>
-            </materialDesign:DialogHost>
+                <materialDesign:Card Margin="5,5,2.5,5"
+                                 UniformCornerRadius="5"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                 Name="AddGroupCardButton"
+                                 PreviewMouseLeftButtonDown="AddGroupCardButton_PreviewMouseLeftButtonDown"
+                                 PreviewMouseLeftButtonUp="AddGroupCardButton_PreviewMouseLeftButtonUp"
+                                 MouseEnter="AddGroupCardButton_MouseEnter"
+                                 MouseLeave="AddGroupCardButton_MouseLeave"
+                                 >
+                    <materialDesign:PackIcon Kind="GroupAddOutline"
+                                         Foreground="{DynamicResource Secondary}"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch"
+                                         />
+                </materialDesign:Card>
+
+                <materialDesign:Card Grid.Column="1"
+                                    Margin="2.5,5,5,5"
+                                    UniformCornerRadius="5"
+                                    materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                    Background="{DynamicResource Delete}"
+                                    Name="DeleteGroupCardButton"
+                                    MouseEnter="DeleteGroupCardButton_MouseEnter"
+                                    MouseLeave="DeleteGroupCardButton_MouseLeave"
+                                    PreviewMouseLeftButtonDown="DeleteGroupCardButton_PreviewMouseLeftButtonDown"
+                                    PreviewMouseLeftButtonUp="DeleteGroupCardButton_PreviewMouseLeftButtonUp"
+                                    >
+                    <materialDesign:PackIcon Kind="Delete"
+                                            Foreground="White"
+                                            VerticalAlignment="Stretch"
+                                            HorizontalAlignment="Stretch"
+                                            />
+                </materialDesign:Card>
+            </Grid>
         </Grid>
 
-        <Grid Grid.Column="1">
-            <materialDesign:DialogHost HorizontalAlignment="Stretch"
-                                       VerticalAlignment="Stretch"
-                                       CloseOnClickAway="True"
-                                       >
-                <materialDesign:DialogHost.DialogContent>
-                    <StackPanel Margin="16">
-                        <TextBlock Text="Add attribute"/>
-                        <TextBox Margin="0 8 0 0"
-                                 Name="AddAttributeTxtBox"
-                                 HorizontalAlignment="Stretch"
-                                 />
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Right"
-                                    >
-                            <Button Style="{StaticResource MaterialDesignFlatButton}"
-                                    IsDefault="True"
-                                    Margin="0 8 8 0"
-                                    Command="materialDesign:DialogHost.CloseDialogCommand"
-                                    Content="Add"
-                                    Click="AddAttribute_Click"
-                                    >
-                            </Button>
-                            <Button Style="{StaticResource MaterialDesignFlatButton}"
-                                    IsCancel="True"
-                                    Margin="0 8 8 0"
-                                    Command="materialDesign:DialogHost.CloseDialogCommand"
-                                    Content="Cancel"
-                                    >
-                            </Button>
-                        </StackPanel>
-                    </StackPanel>
-                </materialDesign:DialogHost.DialogContent>
-
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="50"/>
-                    </Grid.RowDefinitions>
-
-                    <ScrollViewer Margin="2.5 5"
-                                  >
-                        <StackPanel x:Name="AttributesStackPanel"
-                                    />
-                    </ScrollViewer>
-
-                    <Button Grid.Row="1"
-                            Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
-                            Name="AddAttributeBtn"
-                            Margin="10 5"
-                            Content="Add attribute"
-                            Visibility="Hidden"
-                            >
-                    </Button>
-                </Grid>
-            </materialDesign:DialogHost>
-        </Grid>
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}"/>
 
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
+                <RowDefinition Height="65"/>
+                <RowDefinition Height="65"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="45"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Name="SelectedGroupNameTextBox"
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Stretch"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Left"
+                            materialDesign:HintAssist.Hint="Group name"
+                            materialDesign:HintAssist.IsFloating="True"
+                            Margin="5,0,0,15"
+                            >
+                    <TextBox.Text>
+                        <Binding Path="GroupName"
+                                    UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <materialDesign:Card Name="ChangeSelectedGroupNameCardButton"
+                                        Grid.Column="1"
+                                        Margin="5,10"
+                                        UniformCornerRadius="5"
+                                        materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                        PreviewMouseLeftButtonDown="ChangeSelectedGroupNameCardButton_PreviewMouseLeftButtonDown"
+                                        PreviewMouseLeftButtonUp="ChangeSelectedGroupNameCardButton_PreviewMouseLeftButtonUp"
+                                        MouseEnter="ChangeSelectedGroupNameCardButton_MouseEnter"
+                                        MouseLeave="ChangeSelectedGroupNameCardButton_MouseLeave"
+                                        >
+                    <materialDesign:PackIcon Kind="ContentSave"
+                                                VerticalAlignment="Stretch"
+                                                HorizontalAlignment="Stretch"
+                                                />
+                </materialDesign:Card>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Name="SelectedGroupHorizontalAxisTextBox"
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Left"
+                         materialDesign:HintAssist.Hint="Horizontal axis"
+                         materialDesign:HintAssist.IsFloating="True"
+                         Margin="5,0,0,15"
+                         >
+                    <TextBox.Text>
+                        <Binding Path="HorizontalAxis"
+                                 UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <materialDesign:Card Name="ChangeSelectedGroupHorizontalAxisCardButton"
+                                     Grid.Column="1"
+                                     Margin="5,10"
+                                     UniformCornerRadius="5"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                     PreviewMouseLeftButtonDown="ChangeSelectedGroupHorizontalAxisCardButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="ChangeSelectedGroupHorizontalAxisCardButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="ChangeSelectedGroupHorizontalAxisCardButton_MouseEnter"
+                                     MouseLeave="ChangeSelectedGroupHorizontalAxisCardButton_MouseLeave"
+                                     >
+                    <materialDesign:PackIcon Kind="ContentSave"
+                                                VerticalAlignment="Stretch"
+                                                HorizontalAlignment="Stretch"
+                                                />
+                </materialDesign:Card>
+            </Grid>
+
+            <ScrollViewer Grid.Row="2" 
+                            Margin="0,5,0,5"
+                            VerticalScrollBarVisibility="Auto"
+                            HorizontalScrollBarVisibility="Auto"
+                            >
+                <StackPanel x:Name="AttributesStackPanel"
+                            Margin="0,0,0,5"
+                            />
+            </ScrollViewer>
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <materialDesign:Card Grid.Column="0"
+                                     Margin="5,5,2.5,5"
+                                     UniformCornerRadius="5"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                     Name="AddAttributeCardButton"
+                                     PreviewMouseLeftButtonDown="AddAttributeCardButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="AddAttributeCardButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="AddAttributeCardButton_MouseEnter"
+                                     MouseLeave="AddAttributeCardButton_MouseLeave"
+                                     >
+                    <materialDesign:PackIcon Kind="PlaylistAdd"
+                                             Foreground="{DynamicResource Secondary}"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             />
+                </materialDesign:Card>
+
+
+                <materialDesign:Card Grid.Column="1"
+                                    Margin="2.5,5,5,5"
+                                    UniformCornerRadius="5"
+                                    materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                    Background="{DynamicResource Delete}"
+                                    Name="DeleteAttributeCardButton"
+                                    PreviewMouseLeftButtonDown="DeleteAttributeCardButton_PreviewMouseLeftButtonDown"
+                                    PreviewMouseLeftButtonUp="DeleteAttributeCardButton_PreviewMouseLeftButtonUp"
+                                    MouseEnter="DeleteAttributeCardButton_MouseEnter"
+                                    MouseLeave="DeleteAttributeCardButton_MouseLeave"
+                                    >
+                    <materialDesign:PackIcon Kind="Delete"
+                                            Foreground="White"
+                                            VerticalAlignment="Stretch"
+                                            HorizontalAlignment="Stretch"
+                                            />
+                </materialDesign:Card>
+            </Grid>
+        </Grid>
+
+        <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}"/>
+
+        <Grid Grid.Column="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="65"/>
+                <RowDefinition Height="65"/>
+                <RowDefinition Height="50"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <ComboBox Name="InputFilesComboBox"
-                      Margin="5,0"
-                      SelectionChanged="InputFilesComboBox_SelectionChanged"/>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Row="1"
-                        Margin="5"
-                        Name="GroupChannelsStackPanel"/>
+                <TextBox Name="SelectedAttributeNameTextBox"
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Left"
+                         materialDesign:HintAssist.Hint="Channel name"
+                         materialDesign:HintAssist.IsFloating="True"
+                         Margin="5,0,0,15"
+                         >
+                <TextBox.Text>
+                        <Binding Path="AttributeName"
+                                 UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
 
+                <materialDesign:Card Name="ChangeSelectedAttributeNameCardButton"
+                                     Grid.Column="1"
+                                     Margin="5,10"
+                                     UniformCornerRadius="5"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                     PreviewMouseLeftButtonDown="ChangeSelectedAttributeNameCardButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="ChangeSelectedAttributeNameCardButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="ChangeSelectedAttributeNameCardButton_MouseEnter"
+                                     MouseLeave="ChangeSelectedAttributeNameCardButton_MouseLeave"
+                                     >
+                    <materialDesign:PackIcon Kind="ContentSave"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             />
+                </materialDesign:Card>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Name="SelectedAttributeLineWidthTextBox"
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Left"
+                         materialDesign:HintAssist.Hint="Line width"
+                         materialDesign:HintAssist.IsFloating="True"
+                         Margin="5,0,0,15"
+                         >
+                    <TextBox.Text>
+                        <Binding Path="LineWidth"
+                                 UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validation:IsNumberValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <materialDesign:Card Name="ChangeSelectedAttributeLineWidthCardButton"
+                                     Grid.Column="1"
+                                     Margin="5,10"
+                                     UniformCornerRadius="5"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                     PreviewMouseLeftButtonDown="ChangeSelectedAttributeLineWidthCardButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="ChangeSelectedAttributeLineWidthCardButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="ChangeSelectedAttributeLineWidthCardButton_MouseEnter"
+                                     MouseLeave="ChangeSelectedAttributeLineWidthCardButton_MouseLeave"
+                                     >
+                    <materialDesign:PackIcon Kind="ContentSave"
+                                                VerticalAlignment="Stretch"
+                                                HorizontalAlignment="Stretch"
+                                                />
+                </materialDesign:Card>
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
+
+                <materialDesign:Card Margin="5,5,0,5"
+                                        UniformCornerRadius="5"
+                                        materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                        Name="SelectedAttributeColorCard"
+                                        PreviewMouseLeftButtonUp="SelectedAttributeColorCard_PreviewMouseLeftButtonUp"
+                                        MouseEnter="SelectedAttributeColorCard_MouseEnter"
+                                        MouseLeave="SelectedAttributeColorCard_MouseLeave"
+                                        />
+            </Grid>
+
+            <Grid Background="White"
+                  Name="NoAttributesGrid"
+                  Grid.RowSpan="5"
+                  >
+                <materialDesign:PackIcon Kind="FormatListBulleted"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch"
+                                         Opacity=".2"
+                                         />
+            </Grid>
+        </Grid>
+
+        <GridSplitter Grid.Column="5" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}"/>
+
+        <Grid Grid.Column="6"
+                Margin="5,0,5,5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="3*"/>
+            </Grid.RowDefinitions>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Auto"
+                          Margin="5"
+                          >
+                <StackPanel x:Name="InputFilesStackPanel"/>
+            </ScrollViewer>
+
+            <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}"/>
+
+            <ScrollViewer Grid.Row="2"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Auto"
+                          Margin="5"
+                          >
+                <StackPanel x:Name="ChannelsStackPanel"/>
+            </ScrollViewer>
+        </Grid>
+
+        <Grid Background="White"
+                Name="NoInputFilesGrid"
+                Grid.Column="6"
+                >
+            <materialDesign:PackIcon Kind="FileMultiple"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalAlignment="Stretch"
+                                        Opacity=".2"
+                                        />
+        </Grid>
+
+        <Grid Name="AddGroupGridBackground"
+              Background="{DynamicResource MaterialDesignBody}"
+              Grid.ColumnSpan="7"
+              Opacity=".9"
+              Visibility="Hidden"
+              >
+        </Grid>
+
+        <Grid Name="AddGroupGrid"
+              Grid.ColumnSpan="7"
+              Visibility="Hidden"
+              >
+            <materialDesign:Card Width="160"
+                                 Height="120"
+                                 UniformCornerRadius="5"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth5"
+                                 >
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="65"/>
+                        <RowDefinition Height="45"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox Name="AddGroupNameTextBox"
+                             VerticalAlignment="Stretch"
+                             HorizontalAlignment="Stretch"
+                             VerticalContentAlignment="Center"
+                             HorizontalContentAlignment="Left"
+                             materialDesign:HintAssist.Hint="Group name"
+                             materialDesign:HintAssist.IsFloating="True"
+                             Margin="5,0,0,15"
+                             >
+                        <TextBox.Text>
+                            <Binding Path="AddGroupName"
+                                     UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <materialDesign:Card Margin="5"
+                                             UniformCornerRadius="5"
+                                             materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                             Name="AddGroupPopUpCardButton"
+                                             PreviewMouseLeftButtonDown="AddGroupPopUpCardButton_PreviewMouseLeftButtonDown"
+                                             PreviewMouseLeftButtonUp="AddGroupPopUpCardButton_PreviewMouseLeftButtonUp"
+                                             MouseEnter="AddGroupPopUpCardButton_MouseEnter"
+                                             MouseLeave="AddGroupPopUpCardButton_MouseLeave"
+                                             >
+                            <Label Content="Add"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontWeight="Bold"
+                                   />
+                        </materialDesign:Card>
+
+                        <materialDesign:Card Grid.Column="1"
+                                             Margin="5"
+                                             UniformCornerRadius="5"
+                                             materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                             Name="CancelAddGroupCardButton"
+                                             PreviewMouseLeftButtonDown="CancelAddGroupCardButton_PreviewMouseLeftButtonDown"
+                                             PreviewMouseLeftButtonUp="CancelAddGroupCardButton_PreviewMouseLeftButtonUp"
+                                             MouseEnter="CancelAddGroupCardButton_MouseEnter"
+                                             MouseLeave="CancelAddGroupCardButton_MouseLeave"
+                                             >
+                            <Label Content="Cancel"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontWeight="Bold"
+                                   />
+                        </materialDesign:Card>
+                    </Grid>
+                </Grid>
+            </materialDesign:Card>
+        </Grid>
+
+        <Grid Name="AddAttributeGrid"
+              Grid.ColumnSpan="7"
+              Visibility="Hidden"
+              >
+            <materialDesign:Card Width="160"
+                                 Height="185"
+                                 UniformCornerRadius="5"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth5"
+                                 >
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="65"/>
+                        <RowDefinition Height="65"/>
+                        <RowDefinition Height="45"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox Name="AddAttributeNameTextBox"
+                             VerticalAlignment="Stretch"
+                             HorizontalAlignment="Stretch"
+                             VerticalContentAlignment="Center"
+                             HorizontalContentAlignment="Left"
+                             materialDesign:HintAssist.Hint="Channel name"
+                             materialDesign:HintAssist.IsFloating="True"
+                             Margin="5,0,0,15"
+                             >
+                        <TextBox.Text>
+                            <Binding Path="AddAttributeName"
+                                     UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <TextBox Grid.Row="1"
+                             Name="AddAttributeLineWidthTextBox"
+                             VerticalAlignment="Stretch"
+                             HorizontalAlignment="Stretch"
+                             VerticalContentAlignment="Center"
+                             HorizontalContentAlignment="Left"
+                             materialDesign:HintAssist.Hint="Line width"
+                             materialDesign:HintAssist.IsFloating="True"
+                             Margin="5,0,0,15"
+                             >
+                        <TextBox.Text>
+                            <Binding Path="AddAttributeLineWidth"
+                                     UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:IsNumberValidationRule ValidatesOnTargetUpdated="True"/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <materialDesign:Card Margin="5"
+                                             UniformCornerRadius="5"
+                                             materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                             Name="AddAttributePopUpCardButton"
+                                             PreviewMouseLeftButtonDown="AddAttributePopUpCardButton_PreviewMouseLeftButtonDown"
+                                             PreviewMouseLeftButtonUp="AddAttributePopUpCardButton_PreviewMouseLeftButtonUp"
+                                             MouseEnter="AddAttributePopUpCardButton_MouseEnter"
+                                             MouseLeave="AddAttributePopUpCardButton_MouseLeave"
+                                             >
+                            <Label Content="Add"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontWeight="Black"
+                                   />
+                        </materialDesign:Card>
+
+                        <materialDesign:Card Grid.Column="1"
+                                             Margin="5"
+                                             UniformCornerRadius="5"
+                                             materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                             Name="CancelAddAttributeCardButton"
+                                             PreviewMouseLeftButtonDown="CancelAddAttributeCardButton_PreviewMouseLeftButtonDown"
+                                             PreviewMouseLeftButtonUp="CancelAddAttributeCardButton_PreviewMouseLeftButtonUp"
+                                             MouseEnter="CancelAddAttributeCardButton_MouseEnter"
+                                             MouseLeave="CancelAddAttributeCardButton_MouseLeave"
+                                             >
+                            <Label Content="Cancel"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontWeight="Black"
+                                   />
+                        </materialDesign:Card>
+                    </Grid>
+                </Grid>
+            </materialDesign:Card>
         </Grid>
 
         <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"

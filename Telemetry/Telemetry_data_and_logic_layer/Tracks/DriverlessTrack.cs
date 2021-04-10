@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 
-namespace Telemetry_data_and_logic_layer.Tracks
+namespace DataLayer.Tracks
 {
     /// <summary>
     /// Represents a track for the <see cref="Driverless"/> section.

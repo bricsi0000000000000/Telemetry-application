@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using Telemetry_data_and_logic_layer.Colors;
 
-namespace Telemetry_data_and_logic_layer.Groups
+namespace DataLayer.Groups
 {
     /// <summary>
     /// Represents a channel that is a column in an <seealso cref="InputFile"/>.
@@ -26,17 +25,20 @@ namespace Telemetry_data_and_logic_layer.Groups
         ///</list>
         /// </summary>
         /// <param name="name">Channel name.</param>
-        public Channel(string name)
+        public Channel(int id, string name, string chartColor)
         {
+            ID = id;
             Name = name;
             Data = new List<double>();
-            Color = ColorManager.GetChartColor;
+            Color = chartColor;
         }
+
+        public int ID { get; set; }
 
         /// <summary>
         /// Name of the channel.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Data stored in the channel.
@@ -53,6 +55,11 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// Color of the channel represented in string.
         /// </summary>
         public string Color { get; set; }
+
+        /// <summary>
+        /// Line width of the channel.
+        /// </summary>
+        public int LineWidth { get; set; } = 1;
 
         /// <summary>
         /// Add <paramref name="value"/> to the channel.

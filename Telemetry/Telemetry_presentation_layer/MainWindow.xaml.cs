@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Windows;
-using Telemetry_data_and_logic_layer.Groups;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_data_and_logic_layer.Tracks;
-using Telemetry_presentation_layer.Errors;
-using Telemetry_presentation_layer.Menus;
+using LocigLayer.Groups;
+using LocigLayer.Texts;
+using LocigLayer.Tracks;
+using LocigLayer.Units;
+using PresentationLayer.Errors;
+using PresentationLayer.Menus;
+using PresentationLayer.Menus.Live;
 
-namespace Telemetry_presentation_layer
+namespace PresentationLayer
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -19,13 +21,51 @@ namespace Telemetry_presentation_layer
 
             try
             {
-                GroupManager.InitGroups(TextManager.GroupsFileName);
-                MenuManager.InitMainMenuTabs(MainMenuTabControl);
+                UnitOfMeasureManager.InitializeUnitOfMeasures(TextManager.UnitOfMeasuresFileName);
+            }
+            catch (Exception exception)
+            {
+                ShowError.ShowErrorMessage(exception.Message);
+            }
+
+            try
+            {
                 DriverlessTrackManager.LoadTracks();
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                ShowError.ShowErrorMessage(ref ErrorSnackbar, e.Message, 4);
+                ShowError.ShowErrorMessage(exception.Message);
+            }
+
+            try
+            {
+                GroupManager.InitGroups(TextManager.GroupsFileName);
+            }
+            catch (Exception exception)
+            {
+                ShowError.ShowErrorMessage(exception.Message);
+            }
+
+            try
+            {
+                MenuManager.InitMainMenuTabs(MainMenuTabControl);
+            }
+            catch (Exception exception)
+            {
+                ShowError.ShowErrorMessage(exception.Message);
+            }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var liveMenuTab = MenuManager.GetTab(TextManager.LiveMenuName);
+            if (liveMenuTab != null)
+            {
+                var liveMenuTab1 = ((LiveMenu)liveMenuTab.Content).GetTab(TextManager.LiveMenuName);
+                if (liveMenuTab1 != null)
+                {
+                    ((LiveTelemetry)liveMenuTab1.Content).Stop();
+                }
             }
         }
     }

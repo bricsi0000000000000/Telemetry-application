@@ -1,46 +1,50 @@
-﻿<UserControl x:Class="Telemetry_presentation_layer.Menus.Settings.Groups.GroupSettingsAttribute"
+﻿<UserControl x:Class="PresentationLayer.Menus.Settings.Groups.GroupSettingsAttribute"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Telemetry_presentation_layer.Menus.Settings.Groups"
+             xmlns:local="clr-namespace:PresentationLayer.Menus.Settings.Groups"
              mc:Ignorable="d" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="{DynamicResource MaterialDesignPaper}"
-             d:DesignHeight="60" d:DesignWidth="800">
-    <materialDesign:ColorZone CornerRadius="5"
-                              Margin="5 2.5"
-                              Mode="Dark"
-                              Name="ColorZone"
+             Height="55"
+             d:DesignWidth="800">
+    <materialDesign:Card UniformCornerRadius="5"
+                         Name="BackgroundColor"
+                         materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                         Margin="5,5,5,0"
+                         PreviewMouseLeftButtonDown="BackgroundColor_PreviewMouseLeftButtonDown"
+                         PreviewMouseLeftButtonUp="BackgroundColor_PreviewMouseLeftButtonUp"
+                         MouseEnter="BackgroundColor_MouseEnter"
+                         MouseLeave="BackgroundColor_MouseLeave"
                          >
         <Grid Margin="5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="65"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="65"/>
             </Grid.ColumnDefinitions>
 
-            <Label Name="AttributeLbl"
+            <materialDesign:Card Grid.Column="0"
+                                 Margin="5"
+                                 UniformCornerRadius="5"
+                                 Name="ColorCard"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                 BorderThickness="0"
+                                 />
+            
+            <Label Grid.Column="1"
+                   Name="AttributeLabel"
                    VerticalContentAlignment="Center"
-                   HorizontalContentAlignment="Center"
+                   HorizontalContentAlignment="Left"
                    />
 
-            <Button Grid.Column="1"
-                    Click="ChangeColorBtn_Click"
-                    Margin="5"
-                    Name="ChangeColorBtn"
-                    BorderThickness="0"
-                    />
-
-            <Button Grid.Column="2"
-                    Click="DeleteAttribute_Click"
-                    Margin="5"
-                    Name="DeleteAttributeBtn"
-                    >
-                <materialDesign:PackIcon Kind="Delete"
-                                         />
-            </Button>
+            <Label Grid.Column="2"
+                   Name="LineWidthLabel"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Left"
+                   />
         </Grid>
-    </materialDesign:ColorZone>
+    </materialDesign:Card>
 </UserControl>

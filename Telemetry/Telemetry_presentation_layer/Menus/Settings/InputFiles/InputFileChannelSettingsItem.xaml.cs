@@ -2,76 +2,110 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Telemetry_data_and_logic_layer.Groups;
-using Telemetry_data_and_logic_layer.InputFiles;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Menus.Driverless;
-using Telemetry_presentation_layer.Menus.Settings.Groups;
+using DataLayer.Groups;
+using LocigLayer.Colors;
+using LocigLayer.Groups;
+using LocigLayer.InputFiles;
+using LocigLayer.Texts;
+using LocigLayer.Units;
+using PresentationLayer.Menus.Driverless;
+using PresentationLayer.Menus.Settings.Groups;
 
-namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
+namespace PresentationLayer.Menus.Settings.InputFiles
 {
     /// <summary>
     /// Interaction logic for InputFileChannelSettingsItem.xaml
     /// </summary>
     public partial class InputFileChannelSettingsItem : UserControl
     {
-        public string ChannelName { get; set; }
+        public int ID { get; set; }
 
-        private readonly string inputFileName;
+        public int ChannelID;
 
-        public InputFileChannelSettingsItem(string channelName, string inputFileName, string color)
+        private string colorCode;
+
+        private int lineWidth;
+        public int LineWidth
+        {
+            get
+            {
+                return lineWidth;
+            }
+            set
+            {
+                lineWidth = value;
+                LineWidthLabel.Content = $"{lineWidth} pt";
+            }
+        }
+
+        private string channelName;
+        public string ChannelName
+        {
+            get
+            {
+                return channelName;
+            }
+            set
+            {
+                channelName = value;
+                AttributeLabel.Content = channelName;
+            }
+        }
+
+        private bool isSelected = false;
+
+        private string unitOfMeasureFormula;
+
+        public InputFileChannelSettingsItem(Channel channel, int inputFileID)
         {
             InitializeComponent();
 
-            ChannelName = channelName;
-            this.inputFileName = inputFileName;
-            AttributeLbl.Content = channelName;
-            ChangeColor((Color)ColorConverter.ConvertFromString(color));
-            // InitImportantChannelsComboBox();
+            channelName = channel.Name;
+            ChannelID = channel.ID;
+            ID = inputFileID;
+            colorCode = channel.Color;
+            ChangeColor((Color)ColorConverter.ConvertFromString(colorCode));
+            ChannelName = channel.Name;
+
+            var unitOfMeasure = UnitOfMeasureManager.GetUnitOfMeasure(channel.Name);
+            if (unitOfMeasure != null)
+            {
+                unitOfMeasureFormula = unitOfMeasure.UnitOfMeasure;
+                var formula = @"\color[HTML]{" + ColorManager.Secondary900[1..] + "}{" + unitOfMeasure.UnitOfMeasure + "}";
+                UnitOfMeasureFormulaControl.Formula = formula;
+            }
+
+            LineWidth = channel.LineWidth;
         }
 
-        private void ChangeColor(Color color)
+        public void ChangeColor(Color color)
         {
             ChangeColorBtn.Background = new SolidColorBrush(color);
         }
 
         private void ChangeColorBtn_Click(object sender, RoutedEventArgs e)
         {
-            PickColor pickColor = new PickColor();
+            PickColor pickColor = new PickColor(colorCode);
             if (pickColor.ShowDialog() == true)
             {
                 var pickedColor = pickColor.ColorPicker.Color;
+                colorCode = pickedColor.ToString();
                 ChangeColor(pickedColor);
-                /* var driverlessInputFile = DriverlessInputFileManager.Instance.GetInputFile(inputFileName);
-                 if (driverlessInputFile != null)
-                 {
-                     driverlessInputFile.GetChannel(ChannelName).Color = pickedColor;
-                 }
-                 else
-                 {
-                     var standardInputFile = StandardInputFileManager.Instance.GetInputFile(inputFileName);
-                     if (standardInputFile != null)
-                     {
-                         standardInputFile.GetChannel(ChannelName).Color = pickedColor;
-                     }
-                 }*/
 
-                //((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).InitInputFileSettingsItems();
-
-                foreach (var group in GroupManager.Groups)
+                /*foreach (var group in GroupManager.Groups)
                 {
-                    var channel = group.GetAttribute(ChannelName);
+                    var channel = group.GetAttribute(channelName);
                     if (channel != null)
                     {
                         channel.Color = pickedColor.ToString();
                     }
-                }
+                }*/
 
                 foreach (var inputFile in InputFileManager.InputFiles)
                 {
                     foreach (var channel in inputFile.Channels)
                     {
-                        if (channel.Name.Equals(ChannelName))
+                        if (channel.Name.Equals(channelName))
                         {
                             channel.Color = pickedColor.ToString();
                         }
@@ -80,37 +114,72 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
 
                 GroupManager.SaveGroups();
                 ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitAttributes();
+                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).SelectInputFile();
 
                 //TODO if driverless, a driverlesseset updatelje ha nem akkor meg a másikat
-                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
+                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
             }
         }
 
-        private void InitImportantChannelsComboBox()
+        private void ChangeColorBtn_MouseEnter(object sender, MouseEventArgs e)
         {
-            ImportantChannelsComboBox.Items.Clear();
-
-            var comboBoxItem = new ComboBoxItem() { Content = "", IsSelected = true };
-            comboBoxItem.PreviewMouseLeftButtonDown += ChooseInputFileComboBox_PreviewMouseRightButtonUp;
-            ImportantChannelsComboBox.Items.Add(comboBoxItem);
-
-            var inputFile = InputFileManager.GetInputFile(inputFileName);
-
-            foreach (var item in ImportantChannels.DriverlessImportantChannelNames)
-            {
-                bool found = item.Equals(ChannelName);
-
-                inputFile.ChangeRequiredChannelSatisfaction(item, found);
-
-                comboBoxItem = new ComboBoxItem() { Content = item, IsSelected = found };
-                comboBoxItem.PreviewMouseLeftButtonDown += ChooseInputFileComboBox_PreviewMouseRightButtonUp;
-                ImportantChannelsComboBox.Items.Add(comboBoxItem);
-            }
+            Mouse.OverrideCursor = Cursors.Hand;
         }
 
-        private void ChooseInputFileComboBox_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        private void ChangeColorBtn_MouseLeave(object sender, MouseEventArgs e)
         {
+            Mouse.OverrideCursor = null;
+        }
 
+        public void ChangeColorMode(bool selected)
+        {
+            isSelected = selected;
+
+            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+
+            AttributeLabel.Foreground = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50)) :
+                                                         new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
+
+            LineWidthLabel.Foreground = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50)) :
+                                                         new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
+
+            var formula = @"\color[HTML]{" + (isSelected ? ColorManager.Secondary50[1..] : ColorManager.Secondary900[1..]) + "}{" + unitOfMeasureFormula + "}";
+            UnitOfMeasureFormulaControl.Formula = formula;
+        }
+
+        private void BackgroundCard_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary700)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
+        }
+
+        private void BackgroundCard_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+
+            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeActiveChannelSettingsItem(ChannelID);
+
+            Mouse.OverrideCursor = null;
+        }
+
+        private void BackgroundCard_MouseEnter(object sender, MouseEventArgs e)
+        {
+            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void BackgroundCard_MouseLeave(object sender, MouseEventArgs e)
+        {
+            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+
+            Mouse.OverrideCursor = null;
         }
     }
 }

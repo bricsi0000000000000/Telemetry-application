@@ -1,10 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using DataLayer;
+using DataLayer.Tracks;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Telemetry_data_and_logic_layer.Exceptions;
 
-namespace Telemetry_data_and_logic_layer.Tracks
+namespace LocigLayer.Tracks
 {
     /// <summary>
     /// Manages driverless tracks.
@@ -39,7 +40,7 @@ namespace Telemetry_data_and_logic_layer.Tracks
             }
             else
             {
-                throw new ErrorException("Straight track can't be loaded because something is missing.");
+                throw new Exception("Straight track can't be loaded because something is missing.");
             }
         }
 
@@ -57,7 +58,7 @@ namespace Telemetry_data_and_logic_layer.Tracks
             {
                 if (new FileInfo(fileName).Length == 0)
                 {
-                    throw new ErrorException($"{fileName} is empty");
+                    throw new Exception($"{fileName} is empty");
                 }
 
                 using var reader = new StreamReader(fileName);
@@ -70,72 +71,72 @@ namespace Telemetry_data_and_logic_layer.Tracks
                 }
                 catch (JsonReaderException)
                 {
-                    throw new ErrorException($"Can't deserialize {fileName}");
+                    throw new Exception($"Can't deserialize {fileName}");
                 }
 
                 if (trackJSON.track == null)
                 {
-                    throw new ErrorException("Track is null");
+                    throw new Exception("Track is null");
                 }
 
                 if (trackJSON.track.name == null)
                 {
-                    throw new ErrorException("Track name is null");
+                    throw new Exception("Track name is null");
                 }
 
                 if (trackJSON.track.width == null)
                 {
-                    throw new ErrorException("Track width is null");
+                    throw new Exception("Track width is null");
                 }
 
                 if (trackJSON.track.length == null)
                 {
-                    throw new ErrorException("Track length is null");
+                    throw new Exception("Track length is null");
                 }
 
                 if (trackJSON.track.leftSide == null)
                 {
-                    throw new ErrorException($"In track '{track.Name}' left side is empty!");
+                    throw new Exception($"In track '{track.Name}' left side is empty!");
                 }
 
                 if (trackJSON.track.centerSide == null)
                 {
-                    throw new ErrorException($"In track '{track.Name}' center is empty!");
+                    throw new Exception($"In track '{track.Name}' center is empty!");
                 }
 
                 if (trackJSON.track.rightSide == null)
                 {
-                    throw new ErrorException($"In track '{track.Name}' right side is empty!");
+                    throw new Exception($"In track '{track.Name}' right side is empty!");
                 }
 
                 if (trackJSON.track.name.ToString().Equals(string.Empty))
                 {
-                    throw new ErrorException("Track name is empty");
+                    throw new Exception("Track name is empty");
                 }
 
                 if (!float.TryParse(trackJSON.track.width.ToString(), out float width))
                 {
-                    throw new ErrorException($"In track '{track.Name}' couldn't convert '{trackJSON.track.width}' to a number");
+                    throw new Exception($"In track '{track.Name}' couldn't convert '{trackJSON.track.width}' to a number");
                 }
 
                 if (!float.TryParse(trackJSON.track.length.ToString(), out float length))
                 {
-                    throw new ErrorException($"In track '{track.Name}' couldn't convert '{trackJSON.track.length}' to a number");
+                    throw new Exception($"In track '{track.Name}' couldn't convert '{trackJSON.track.length}' to a number");
                 }
 
                 if (trackJSON.track.rightSide.Count == 0)
                 {
-                    throw new ErrorException("Track right side is empty");
+                    throw new Exception("Track right side is empty");
                 }
 
                 if (trackJSON.track.leftSide.Count == 0)
                 {
-                    throw new ErrorException("Track left side is empty");
+                    throw new Exception("Track left side is empty");
                 }
 
                 if (trackJSON.track.centerSide.Count == 0)
                 {
-                    throw new ErrorException("Track center is empty");
+                    throw new Exception("Track center is empty");
                 }
 
                 track.Name = trackJSON.track.name;
@@ -146,12 +147,12 @@ namespace Telemetry_data_and_logic_layer.Tracks
                 {
                     if (trackJSON.track.rightSide[i].x == null)
                     {
-                        throw new ErrorException("Track right side x value is empty");
+                        throw new Exception("Track right side x value is empty");
                     }
 
                     if (trackJSON.track.rightSide[i].y == null)
                     {
-                        throw new ErrorException("Track right side y value is empty");
+                        throw new Exception("Track right side y value is empty");
                     }
 
                     track.RightSide.Add(ParsePoint(trackJSON.track.rightSide[i].x.ToString(), trackJSON.track.rightSide[i].y.ToString(), ref track));
@@ -161,12 +162,12 @@ namespace Telemetry_data_and_logic_layer.Tracks
                 {
                     if (trackJSON.track.leftSide[i].x == null)
                     {
-                        throw new ErrorException("Track left side x value is empty");
+                        throw new Exception("Track left side x value is empty");
                     }
 
                     if (trackJSON.track.leftSide[i].y == null)
                     {
-                        throw new ErrorException("Track left side y value is empty");
+                        throw new Exception("Track left side y value is empty");
                     }
 
                     track.LeftSide.Add(ParsePoint(trackJSON.track.leftSide[i].x.ToString(), trackJSON.track.leftSide[i].y.ToString(), ref track));
@@ -176,12 +177,12 @@ namespace Telemetry_data_and_logic_layer.Tracks
                 {
                     if (trackJSON.track.leftSide[i].x == null)
                     {
-                        throw new ErrorException("Track center x value is empty");
+                        throw new Exception("Track center x value is empty");
                     }
 
                     if (trackJSON.track.leftSide[i].y == null)
                     {
-                        throw new ErrorException("Track center y value is empty");
+                        throw new Exception("Track center y value is empty");
                     }
 
                     track.Center.Add(ParsePoint(trackJSON.track.centerSide[i].x.ToString(), trackJSON.track.centerSide[i].y.ToString(), ref track));
@@ -189,7 +190,7 @@ namespace Telemetry_data_and_logic_layer.Tracks
             }
             else
             {
-                throw new ErrorException($"Can't find '{fileName}'");
+                throw new Exception($"Can't find '{fileName}'");
             }
 
             return track;
@@ -228,7 +229,7 @@ namespace Telemetry_data_and_logic_layer.Tracks
             }
             else
             {
-                throw new ErrorException($"In track \"{track.Name}\" couldn't convert x coordinate \"{coordinateX}\" to a number");
+                throw new Exception($"In track \"{track.Name}\" couldn't convert x coordinate \"{coordinateX}\" to a number");
             }
 
             if (double.TryParse(coordinateY, out double y))
@@ -237,7 +238,7 @@ namespace Telemetry_data_and_logic_layer.Tracks
             }
             else
             {
-                throw new ErrorException($"In track \"{track.Name}\" couldn't convert y coordinate \"{coordinateY}\" to a number");
+                throw new Exception($"In track \"{track.Name}\" couldn't convert y coordinate \"{coordinateY}\" to a number");
             }
 
             return point;

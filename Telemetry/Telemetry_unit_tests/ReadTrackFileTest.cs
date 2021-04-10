@@ -1,9 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Telemetry_data_and_logic_layer.Exceptions;
-using Telemetry_data_and_logic_layer.Tracks;
+using DataLayer.Tracks;
 
 namespace Telemetry_unit_tests
 {
@@ -47,7 +44,7 @@ namespace Telemetry_unit_tests
         [TestCase("../../../test_track_input_files/string_y_value1.json")]
         public void ProcessFile(string fileName)
         {
-            Assert.Throws<ErrorException>(() => DriverlessTrackManager.LoadTrack(fileName));
+            Assert.Throws<Exception>(() => DriverlessTrackManager.LoadTrack(fileName));
         }
     }
 }

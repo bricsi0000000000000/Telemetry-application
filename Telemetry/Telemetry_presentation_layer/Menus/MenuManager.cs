@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Windows.Controls;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Menus.Driverless;
-using Telemetry_presentation_layer.Menus.Settings;
+using LocigLayer.Texts;
+using PresentationLayer.Menus.Driverless;
+using PresentationLayer.Menus.Live;
+using PresentationLayer.Menus.Settings;
 
-namespace Telemetry_presentation_layer.Menus
+namespace PresentationLayer.Menus
 {
     /// <summary>
     /// Manages menus.
@@ -22,12 +23,12 @@ namespace Telemetry_presentation_layer.Menus
         /// <param name="tabControl"><see cref="TabControl"/>, where the tabs will created.</param>
         public static void InitMainMenuTabs(TabControl tabControl)
         {
-            AddTab(TextManager.DriverlessMenuName, new DriverlessMenu(), "driverlessMenuTab", tabControl, selected: true);
             AddTab(TextManager.SettingsMenuName, new SettingsMenu(), "settingsMenuTab", tabControl);
-            //  AddTab(TextManager.DriversMenuName, new DriversMenu(), "driversMenuTab", tabControl, false);
-            // AddTab(TextManager.DiagramsMenuName, new Diagrams(), "diagramsMenuTab", tabControl, false);
-            //  AddTab(TextManager.DiagramsSettingsMenuName, new SelectDriversAndInputFiles(), "diagramsSettingsMenuTab", tabControl, false);
-            //AddTab("test", new Experimental(), "test", tabControl);
+            AddTab(TextManager.DriverlessMenuName, new DriverlessMenu(), "driverlessMenuTab", tabControl, selected: true);
+            AddTab(TextManager.LiveMenuName, new LiveMenu(), "liveMenuTab", tabControl);
+          //  AddTab(TextManager.DriversMenuName, new DriversMenu(), "driversMenuTab", tabControl, false);
+           // AddTab(TextManager.DiagramsMenuName, new Diagrams(), "diagramsMenuTab", tabControl, false);
+          //  AddTab(TextManager.DiagramsSettingsMenuName, new SelectDriversAndInputFiles(), "diagramsSettingsMenuTab", tabControl, false);
         }
 
         /// <summary>

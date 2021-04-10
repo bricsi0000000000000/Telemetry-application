@@ -6,12 +6,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Telemetry_presentation_layer
+namespace PresentationLayer
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
     {
+    
     }
 }

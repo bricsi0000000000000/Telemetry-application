@@ -1,0 +1,93 @@
+﻿<Window x:Class="PresentationLayer.Menus.Live.PopUpEditDateWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PresentationLayer.Menus.Live"
+        mc:Ignorable="d"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontSize="14"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Height="230"
+        Width="280"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen" 
+        WindowState="Normal"
+        WindowStyle="None"
+        ShowInTaskbar="False" 
+        Topmost="True"
+        Background="Transparent"
+        AllowsTransparency="True">
+
+    <materialDesign:Card Margin="50"
+                         materialDesign:ShadowAssist.ShadowDepth="Depth5"
+                         UniformCornerRadius="5"
+                         >
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Change date"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       FontWeight="Bold"
+                       Name="TitleTextBlock"
+                       />
+
+            <DatePicker Grid.Row="1"
+                        Name="PickDateDatePicker"
+                        />
+            
+            <materialDesign:TimePicker Grid.Row="2"
+                                       Name="PickTimeTimePicker"
+                                       />
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <materialDesign:Card Margin="0,5,2.5,0"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                     UniformCornerRadius="5"
+                                     Name="OkCardButton"
+                                     PreviewMouseLeftButtonDown="OkCardButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="OkCardButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="OkCardButton_MouseEnter"
+                                     MouseLeave="OkCardButton_MouseLeave"
+                                     >
+                    <materialDesign:PackIcon Kind="Done"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             VerticalContentAlignment="Center"
+                                             HorizontalContentAlignment="Center"
+                                             />
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="2.5,5,0,0"
+                                     Grid.Column="1"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                     UniformCornerRadius="5"
+                                     Name="CancelCardButton"
+                                     PreviewMouseLeftButtonDown="CancelCardButton_PreviewMouseLeftButtonDown"
+                                     PreviewMouseLeftButtonUp="CancelCardButton_PreviewMouseLeftButtonUp"
+                                     MouseEnter="CancelCardButton_MouseEnter"
+                                     MouseLeave="CancelCardButton_MouseLeave"
+                                     >
+                    <materialDesign:PackIcon Kind="No"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             VerticalContentAlignment="Center"
+                                             HorizontalContentAlignment="Center"
+                                             Foreground="{DynamicResource Delete}"
+                                             />
+                </materialDesign:Card>
+            </Grid>
+        </Grid>
+    </materialDesign:Card>
+</Window>

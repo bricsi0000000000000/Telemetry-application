@@ -5,29 +5,47 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Telemetry_data_and_logic_layer.InputFiles;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Menus.Driverless;
+using DataLayer.InputFiles;
+using LocigLayer.Colors;
+using LocigLayer.InputFiles;
+using LocigLayer.Texts;
+using PresentationLayer.Menus.Driverless;
 
-namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
+namespace PresentationLayer.Menus.Settings.InputFiles
 {
     /// <summary>
     /// Interaction logic for InputFileSettingsItem.xaml
     /// </summary>
     public partial class InputFileSettingsItem : UserControl
     {
-        public string InputFileName { get; set; }
+        public int ID { get; set; }
 
         private bool driverless;
 
-        public InputFileSettingsItem(string inputFileName, bool driverless = false)
+        private string inputFileName;
+        public string InputFileName
+        {
+            get
+            {
+                return inputFileName;
+            }
+            set
+            {
+                inputFileName = value;
+                InputFileNameLabel.Content = inputFileName;
+            }
+        }
+
+        private bool isSelected = false;
+
+        public InputFileSettingsItem(InputFile inputFile)
         {
             InitializeComponent();
 
-            InputFileName = inputFileName;
-            this.driverless = driverless;
+            ID = inputFile.ID;
+            driverless = inputFile.Driverless;
 
-            InputFileNameLbl.Content = inputFileName;
+            InputFileName = inputFile.Name;
 
             ChangeTypeImage();
         }
@@ -59,54 +77,82 @@ namespace Telemetry_presentation_layer.Menus.Settings.InputFiles
             InputFileTypeImage.Source = logo;
         }
 
-        private void DeleteInputFile_Click(object sender, RoutedEventArgs e)
-        {
-            InputFileManager.RemoveInputFile(InputFileName);
-
-            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).RemoveSingleInputFileSettingsItem(InputFileName);
-        }
-
         public void ChangeColorMode(bool selected)
         {
-            var converter = new BrushConverter();
-            ColorZone.BorderBrush = selected ? Brushes.White : (Brush)converter.ConvertFromString("#FF303030");
-        }
+            isSelected = selected;
 
-        private void Grid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeActiveInputFileSettingsItem(InputFileName);
-            ChangeColorMode(selected: true);
+            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+
+            InputFileNameLabel.Foreground = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50)) :
+                                                         new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
         }
 
         private void ChangeGroupItemType_Click(object sender, RoutedEventArgs e)
         {
-            var inputFile = InputFileManager.GetInputFile(InputFileName);
+            var inputFile = InputFileManager.GetInputFile(ID);
             if (inputFile != null)
             {
+                InputFileManager.RemoveInputFile(ID);
+
                 if (inputFile is DriverlessInputFile)
                 {
-                    InputFileManager.RemoveInputFile(InputFileName);
-                    InputFileManager.AddInputFile(new StandardInputFile(inputFile)
-                    {
-                        Driverless = false
-                    });
+                    InputFileManager.AddInputFile(new StandardInputFile(inputFile));
                     driverless = false;
                 }
                 else
                 {
-                    InputFileManager.RemoveInputFile(InputFileName);
-                    InputFileManager.AddInputFile(new StandardInputFile(inputFile)
-                    {
-                        Driverless = true
-                    });
+                    InputFileManager.AddInputFile(new DriverlessInputFile(inputFile));
                     driverless = true;
-                    //TODO Biztos jo ez igy? mert mindketto helyen standardet hoz letre
                 }
             }
 
             ChangeTypeImage();
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
-            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).UpdateRequiredChannels();
+            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterFileTypeChanges();
+        }
+
+        private void ChangeGroupItemType_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ChangeGroupItemType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary300));
+        }
+
+        private void ChangeGroupItemType_MouseLeave(object sender, MouseEventArgs e)
+        {
+            ChangeGroupItemType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+        }
+
+        private void BackgroundCard_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary700)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
+        }
+
+        private void BackgroundCard_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+
+            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeActiveInputFileSettingsItem(ID);
+
+            Mouse.OverrideCursor = null;
+        }
+
+        private void BackgroundCard_MouseEnter(object sender, MouseEventArgs e)
+        {
+            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void BackgroundCard_MouseLeave(object sender, MouseEventArgs e)
+        {
+            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+
+            Mouse.OverrideCursor = null;
         }
     }
 }
