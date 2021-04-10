@@ -25,7 +25,7 @@ namespace PresentationLayer.Charts
 
         private GridLength expanderWidth = GridLength.Auto;
 
-        private const string CAR_IMAGE_NAME = "Images/car_top_game.png";
+        private const string CAR_IMAGE_NAME = @"..\..\..\..\..\default_files\images\car_top_game.png";
 
         public class TrackData
         {

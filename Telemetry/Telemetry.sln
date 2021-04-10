@@ -3,23 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLayer", "Telemetry_data_and_logic_layer\DataLayer.csproj", "{0418E6C8-DD40-437E-8184-73AEFC462DEF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telemetry_unit_tests", "Telemetry_unit_tests\Telemetry_unit_tests.csproj", "{C4B46EF9-1FA8-4F74-8BE3-0135A4FB2887}"
-	ProjectSection(ProjectDependencies) = postProject
-		{C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB} = {C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB}
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PresentationLayer", "Telemetry_presentation_layer\PresentationLayer.csproj", "{1A043651-AAD8-4466-B055-572B04FB309A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB} = {C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB}
 	EndProjectSection
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Telemetry_setup", "Telemetry_setup\Telemetry_setup.vdproj", "{7C07C698-6A1B-4B52-814F-C9A0942CDE50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicLayer", "LogicLayer\LogicLayer.csproj", "{C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicLayer", "LogicLayer\LogicLayer.csproj", "{C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB}"
 	ProjectSection(ProjectDependencies) = postProject
-		{0418E6C8-DD40-437E-8184-73AEFC462DEF} = {0418E6C8-DD40-437E-8184-73AEFC462DEF}
+		{304A38B1-D1B5-4118-9705-72C12AF3B8F7} = {304A38B1-D1B5-4118-9705-72C12AF3B8F7}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayer", "DataLayer\DataLayer.csproj", "{304A38B1-D1B5-4118-9705-72C12AF3B8F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PresentationLayer", "PresentationLayer\PresentationLayer.csproj", "{901534FC-9EAC-45D9-ACAA-E352527D7363}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB} = {C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB}
 	EndProjectSection
 EndProject
 Global
@@ -28,24 +28,24 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0418E6C8-DD40-437E-8184-73AEFC462DEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0418E6C8-DD40-437E-8184-73AEFC462DEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0418E6C8-DD40-437E-8184-73AEFC462DEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0418E6C8-DD40-437E-8184-73AEFC462DEF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C4B46EF9-1FA8-4F74-8BE3-0135A4FB2887}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C4B46EF9-1FA8-4F74-8BE3-0135A4FB2887}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4B46EF9-1FA8-4F74-8BE3-0135A4FB2887}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4B46EF9-1FA8-4F74-8BE3-0135A4FB2887}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1A043651-AAD8-4466-B055-572B04FB309A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A043651-AAD8-4466-B055-572B04FB309A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A043651-AAD8-4466-B055-572B04FB309A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A043651-AAD8-4466-B055-572B04FB309A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7C07C698-6A1B-4B52-814F-C9A0942CDE50}.Debug|Any CPU.ActiveCfg = Debug
 		{7C07C698-6A1B-4B52-814F-C9A0942CDE50}.Release|Any CPU.ActiveCfg = Release
 		{C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{304A38B1-D1B5-4118-9705-72C12AF3B8F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{304A38B1-D1B5-4118-9705-72C12AF3B8F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{304A38B1-D1B5-4118-9705-72C12AF3B8F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{304A38B1-D1B5-4118-9705-72C12AF3B8F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{901534FC-9EAC-45D9-ACAA-E352527D7363}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{901534FC-9EAC-45D9-ACAA-E352527D7363}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{901534FC-9EAC-45D9-ACAA-E352527D7363}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{901534FC-9EAC-45D9-ACAA-E352527D7363}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

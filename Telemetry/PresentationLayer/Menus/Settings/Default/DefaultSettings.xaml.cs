@@ -21,7 +21,6 @@ namespace PresentationLayer.Menus.Settings.Default
         {
             InitializeComponent();
 
-            DefaultsManager.LoadDefaults(TextManager.DefaultFileName);
             InitializeDefaults();
 
             DataContext = fieldsViewModel;

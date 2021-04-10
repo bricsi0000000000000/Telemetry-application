@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using DataLayer.Groups;
 using LocigLayer.Texts;
+using LocigLayer.Colors;
 
 namespace LocigLayer.Groups
 {
@@ -155,6 +156,17 @@ namespace LocigLayer.Groups
         /// </summary>
         /// <param name="group">The group that you want to add to <see cref="Groups"/>.</param>
         public static void AddGroup(Group group) => Groups.Add(group);
+
+        public static Group MakeGroupWirhAttributes(string chartName, List<string> channelNames)
+        {
+            var newGroup = new Group(LastGroupID++, chartName);
+            foreach (var name in channelNames)
+            {
+                newGroup.AddAttribute(name, ColorManager.GetChartColor, 1);
+            }
+
+            return newGroup;
+        }
 
         /// <summary>
         /// Finds a <see cref="Group"/> based on <paramref name="name"/>.

@@ -4,7 +4,6 @@ using System;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using DataLayer.Groups;
 using System.Linq;
 using PresentationLayer.Menus;
 using PresentationLayer.Menus.Driverless;
@@ -294,12 +293,8 @@ namespace PresentationLayer.Charts
                     }
 
                     ChartName = $"Temporary{GroupManager.TemporaryGroupIndex}";
-                    var newGroup = new Group(GroupManager.LastGroupID++, ChartName);
-                    foreach (var name in channelNames)
-                    {
-                        newGroup.AddAttribute(name, ColorManager.GetChartColor, 1);
-                    }
-                    GroupManager.AddGroup(newGroup);
+                   
+                    GroupManager.AddGroup(GroupManager.MakeGroupWirhAttributes(ChartName, channelNames));
                     ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).ReplaceChannelWithTemporaryGroup(oldName, ChartName);
                 }
             }

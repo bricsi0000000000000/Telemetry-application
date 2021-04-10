@@ -22,9 +22,12 @@ namespace LocigLayer.Tracks
         /// Should be called in <see cref="MainWindow"/>.
         /// </summary>
         /// <param name="errorSnackbar"><see cref="Snackbar"/> that shows erro message.</param>
-        public static void LoadTracks()
+        public static void LoadTracks(string folder)
         {
-            AddTrack(LoadTrack("straight_track.json"));
+            foreach (var fileName in Directory.GetFiles(folder))
+            {
+                AddTrack(LoadTrack(fileName));
+            }
         }
 
         /// <summary>

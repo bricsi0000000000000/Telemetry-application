@@ -58,7 +58,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
             if (driverless)
             {
                 string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                string imageRelativePath = "Images/daisy.png";
+                string imageRelativePath = @"..\..\..\..\..\default_files\images\daisy.png";
                 string imagePath = Path.Combine(baseDirectory, imageRelativePath);
 
                 logo.UriSource = new Uri(imagePath);
@@ -66,7 +66,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
             else
             {
                 string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                string imageRelativePath = "Images/art_banner.png";
+                string imageRelativePath = @"..\..\..\..\..\default_files\images\art_banner.png";
                 string imagePath = Path.Combine(baseDirectory, imageRelativePath);
 
                 logo.UriSource = new Uri(imagePath);

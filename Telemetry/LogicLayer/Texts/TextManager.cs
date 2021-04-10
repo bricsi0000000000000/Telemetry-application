@@ -142,6 +142,18 @@
         /// "unit_of_measures.json"
         /// </summary>
         public static string UnitOfMeasuresFileName { get; private set; } = "unit_of_measures.json";
+
+        /// <summary>
+        /// Name of the configuration file.
+        /// "configuration.json"
+        /// </summary>
+        public static string ConfigurationFileName { get; private set; } = "configuration.json";
+
+        /// <summary>
+        /// Name of the driverless tracks folder.
+        /// "driverless_tracks"
+        /// </summary>
+        public static string DriverlessTracksFolderName { get; private set; } = "driverless_tracks";
         #endregion
 
         #region input file default channel names
