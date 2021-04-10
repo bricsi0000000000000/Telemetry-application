@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Telemetry_data_and_logic_layer\Telemetry_data_and_logic_layer.csproj" />
-    <ProjectReference Include="..\Telemetry_presentation_layer\Telemetry_presentation_layer.csproj" />
+    <ProjectReference Include="..\Telemetry_data_and_logic_layer\DataLayer.csproj" />
+    <ProjectReference Include="..\Telemetry_presentation_layer\PresentationLayer.csproj" />
   </ItemGroup>
 
 </Project>

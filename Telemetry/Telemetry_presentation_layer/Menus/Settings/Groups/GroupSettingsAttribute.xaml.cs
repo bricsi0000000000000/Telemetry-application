@@ -1,25 +1,41 @@
-﻿using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_data_and_logic_layer.Groups;
-using Telemetry_data_and_logic_layer.InputFiles;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Menus.Driverless;
-using Telemetry_presentation_layer.Menus.Settings.InputFiles;
+using DataLayer.Groups;
+using DataLayer.InputFiles;
+using LocigLayer.Colors;
+using LocigLayer.Groups;
+using LocigLayer.InputFiles;
+using LocigLayer.Texts;
+using PresentationLayer.Menus.Driverless;
+using PresentationLayer.Menus.Settings.InputFiles;
 
-namespace Telemetry_presentation_layer.Menus.Settings.Groups
+namespace PresentationLayer.Menus.Settings.Groups
 {
     /// <summary>
     /// Represents one <see cref="Group"/> <see cref="Attribute"/> int <see cref="GroupSettings"/>.
     /// </summary>
     public partial class GroupSettingsAttribute : UserControl
     {
+        public int ID { get; private set; }
         /// <summary>
         /// <see cref="Attribute"/>s name.
         /// </summary>
-        public string AttributeName { get; set; }
+
+        private string attributeName;
+        public string AttributeName
+        {
+            get
+            {
+                return attributeName;
+            }
+            set
+            {
+                attributeName = value;
+                AttributeLabel.Content = attributeName;
+            }
+        }
 
         /// <summary>
         /// <see cref="Group"/>s name.
@@ -27,19 +43,43 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         private readonly string groupName;
 
         /// <summary>
+        /// Hex code of the channels color.
+        /// </summary>
+        private readonly string colorCode;
+
+        private bool isSelected = false;
+
+        private int lineWidth;
+
+        public int LineWidth
+        {
+            get
+            {
+                return lineWidth;
+            }
+            set
+            {
+                lineWidth = value;
+                LineWidthLabel.Content = $"{lineWidth} pt";
+            }
+        }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="channelName"><see cref="Channel"/>s name.</param>
         /// <param name="groupName"><see cref="Group"/>s name.</param>
         /// <param name="color"><see cref="Attribute"/>s color.</param>
-        public GroupSettingsAttribute(string channelName, string groupName, string color)
+        public GroupSettingsAttribute(string groupName, Attribute attribute)
         {
             InitializeComponent();
 
-            AttributeName = channelName;
+            ID = attribute.ID;
+            AttributeName = attribute.Name;
             this.groupName = groupName;
-            AttributeLbl.Content = channelName;
-            ChangeColorBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
+            colorCode = attribute.Color;
+            LineWidth = attribute.LineWidth;
+            ChangeColor(colorCode);
         }
 
         /// <summary>
@@ -49,7 +89,7 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         /// <param name="e"></param>
         private void ChangeColorBtn_Click(object sender, RoutedEventArgs e)
         {
-            PickColor pickColor = new PickColor();
+            PickColor pickColor = new PickColor(colorCode);
             if (pickColor.ShowDialog() == true)
             {
                 var pickedColor = pickColor.ColorPicker.Color;
@@ -75,39 +115,68 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
 
                 GroupManager.SaveGroups();
                 ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitAttributes();
-                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
+                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
                 ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).InitInputFileSettingsItems();
             }
         }
 
-        private void DeleteAttributeBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+
+        /*  GroupManager.GetGroup(groupName).RemoveAttribute(AttributeName);
+          if (GroupManager.Groups.Count > 0)
+          {
+              ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ActiveAttribute = GroupManager.Groups.First().Attributes.First();
+          }
+          ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
+          ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitActiveChannelSelectableAttributes();
+          ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
+          GroupManager.SaveGroups();
+        */
+
+        public void ChangeColor(string colorCode)
         {
-            DeleteAttributeBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary500));
+            ColorCard.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colorCode));
         }
 
-        private void DeleteAttributeBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        public void ChangeColorMode(bool selected)
         {
-            DeleteAttributeBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary900));
+            isSelected = selected;
+            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
+                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+
+            AttributeLabel.Foreground = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
+
+            LineWidthLabel.Foreground = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50)) :
+                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
         }
 
-        private void DeleteAttributeBtn_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void BackgroundColor_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            DeleteAttributeBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary300));
+            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary700)) :
+                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
         }
 
-        private void DeleteAttributeBtn_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void BackgroundColor_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            DeleteAttributeBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary500));
+            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
+                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
 
-            GroupManager.GetGroup(groupName).RemoveAttribute(AttributeName);
-            if (GroupManager.Groups.Count > 0)
-            {
-                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ActiveAttribute = GroupManager.Groups.First().Attributes.First();
-            }
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitActiveChannelSelectableAttributes();
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateCharts();
-            GroupManager.SaveGroups();
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ChangeActiveAttributeItem(ID);
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).SelectInputFile();
+        }
+
+        private void BackgroundColor_MouseEnter(object sender, MouseEventArgs e)
+        {
+            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
+                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void BackgroundColor_MouseLeave(object sender, MouseEventArgs e)
+        {
+            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
+                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+            Mouse.OverrideCursor = null;
         }
     }
 }

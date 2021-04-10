@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Telemetry_data_and_logic_layer.Groups
+namespace DataLayer.Groups
 {
     public static class ImportantChannels
     {

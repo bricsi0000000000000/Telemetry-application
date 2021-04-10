@@ -1,70 +1,28 @@
-﻿<UserControl x:Class="Telemetry_presentation_layer.Menus.Settings.Groups.GroupSettingsItem"
+﻿<UserControl x:Class="PresentationLayer.Menus.Settings.Groups.GroupSettingsItem"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Telemetry_presentation_layer.Menus.Settings.Groups"
+             xmlns:local="clr-namespace:PresentationLayer.Menus.Settings.Groups"
              mc:Ignorable="d" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             d:DesignHeight="60" d:DesignWidth="800">
+             Height="55" d:DesignWidth="800">
 
     <materialDesign:Card UniformCornerRadius="5"
-                         Margin="5 2.5"
+                         Margin="5,5,5,0"
                          Name="BackgroundColor"
                          BorderThickness="0"
                          materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                         PreviewMouseLeftButtonDown="BackgroundColor_PreviewMouseLeftButtonDown"
+                         PreviewMouseLeftButtonUp="BackgroundColor_PreviewMouseLeftButtonUp"
+                         MouseEnter="BackgroundColor_MouseEnter"
+                         MouseLeave="BackgroundColor_MouseLeave"
                          >
-        <Grid PreviewMouseLeftButtonUp="Grid_PreviewMouseLeftButtonUp"
-              Margin="5"
-              >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="65"/>
-                <ColumnDefinition Width="65"/>
-            </Grid.ColumnDefinitions>
-
-            <Label Name="GroupLbl"
+            <Label Name="GroupLabel"
                    VerticalContentAlignment="Center"
-                   HorizontalContentAlignment="Center"
+                   HorizontalContentAlignment="Left"
+                   Margin="5"
                    />
-
-            <materialDesign:Card Grid.Column="1"
-                                 Name="ChangeGroupItemType"
-                                 Background="White"
-                                 UniformCornerRadius="5"
-                                 Margin="5"
-                                 MouseEnter="ChangeGroupItemType_MouseEnter"
-                                 MouseLeave="ChangeGroupItemType_MouseLeave"
-                                 PreviewMouseLeftButtonDown="ChangeGroupItemType_PreviewMouseLeftButtonDown"
-                                 PreviewMouseLeftButtonUp="ChangeGroupItemType_PreviewMouseLeftButtonUp"
-                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                 BorderThickness="0">
-                <Image x:Name="GroupTypeImage"/>
-            </materialDesign:Card>
-
-
-            <materialDesign:Card Grid.Column="2"
-                                 Margin="5"
-                                 Name="DeleteGroupBtn"
-                                 MouseEnter="DeleteGroupBtn_MouseEnter"
-                                 MouseLeave="DeleteGroupBtn_MouseLeave"
-                                 PreviewMouseLeftButtonDown="DeleteGroupBtn_PreviewMouseLeftButtonDown"
-                                 PreviewMouseLeftButtonUp="DeleteGroupBtn_PreviewMouseLeftButtonUp"
-                                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                 BorderThickness="0"
-                                 UniformCornerRadius="5"
-                                 Background="{DynamicResource Delete}"
-                                 VerticalAlignment="Stretch"
-                                 HorizontalAlignment="Stretch"
-                    >
-                <materialDesign:PackIcon Kind="Delete"
-                                         VerticalAlignment="Center"
-                                         HorizontalAlignment="Center"
-                                         Foreground="White"
-                                         Margin="0,8"
-                                         />
-            </materialDesign:Card>
-        </Grid>
     </materialDesign:Card>
 </UserControl>

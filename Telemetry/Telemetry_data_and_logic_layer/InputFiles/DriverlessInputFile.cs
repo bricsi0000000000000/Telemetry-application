@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Telemetry_data_and_logic_layer.Groups;
+using DataLayer.Groups;
 
-namespace Telemetry_data_and_logic_layer.InputFiles
+namespace DataLayer.InputFiles
 {
     public class DriverlessInputFile : InputFile
     {
-        public DriverlessInputFile(string name, List<Channel> channels) : base(name, channels)
+        public DriverlessInputFile(int id, string name, List<Channel> channels) : base(id, name, channels)
         {
             InitRequiredChannels();
+            Driverless = true;
         }
 
         public DriverlessInputFile(InputFile inputFile) : base(inputFile)
         {
             InitRequiredChannels();
+            Driverless = true;
         }
 
         private void InitRequiredChannels()

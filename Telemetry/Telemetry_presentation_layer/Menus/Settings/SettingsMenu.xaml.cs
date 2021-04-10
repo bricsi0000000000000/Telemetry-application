@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Controls;
-using Telemetry_data_and_logic_layer.Texts;
-using Telemetry_presentation_layer.Menus.Settings.Groups;
-using Telemetry_presentation_layer.Menus.Settings.InputFiles;
+using LocigLayer.Texts;
+using PresentationLayer.Menus.Settings.Default;
+using PresentationLayer.Menus.Settings.Groups;
+using PresentationLayer.Menus.Settings.InputFiles;
+using PresentationLayer.Menus.Settings.Units;
 
-namespace Telemetry_presentation_layer.Menus.Settings
+namespace PresentationLayer.Menus.Settings
 {
     /// <summary>
     /// Represents the content of the main settings menu.
@@ -34,6 +36,8 @@ namespace Telemetry_presentation_layer.Menus.Settings
 
             AddSettingsTab(TextManager.FilesSettingsName, new InputFilesSettings(), selected: true);
             AddSettingsTab(TextManager.GroupsSettingsName, new GroupSettings());
+            AddSettingsTab(TextManager.UnitsSettingsName, new UnitsMenu());
+            AddSettingsTab(TextManager.DefaultSettingsName, new DefaultSettings());
             //   AddSettingsTab(TextManager.TracksSettingsName, new TrackSettings());
 
             /*  AddSettingsTab(new TabItem

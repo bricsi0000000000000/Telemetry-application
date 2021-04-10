@@ -1,9 +1,10 @@
-﻿using System;
+﻿using DataLayer.Drivers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Telemetry_data_and_logic_layer.Drivers
+namespace LocigLayer.Drivers
 {
     public static class DriverManager
     {

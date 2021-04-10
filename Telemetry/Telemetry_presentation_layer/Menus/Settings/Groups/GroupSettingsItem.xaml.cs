@@ -1,87 +1,51 @@
-﻿using System;
-using System.IO;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using Telemetry_data_and_logic_layer.Colors;
-using Telemetry_data_and_logic_layer.Groups;
-using Telemetry_data_and_logic_layer.Texts;
+using DataLayer.Groups;
+using LocigLayer.Colors;
+using LocigLayer.Texts;
 
-namespace Telemetry_presentation_layer.Menus.Settings.Groups
+namespace PresentationLayer.Menus.Settings.Groups
 {
     /// <summary>
     /// Represents a <see cref="Group"/> settings item in <see cref="GroupSettings"/>.
     /// </summary>
     public partial class GroupSettingsItem : UserControl
     {
+        private string groupName;
         /// <summary>
         /// The <see cref="Group"/>s name that is represented in this <see cref="GroupSettingsItem"/>.
         /// </summary>
-        public string GroupName { get; set; }
+        public string GroupName
+        {
+            get
+            {
+                return groupName;
+            }
+            set
+            {
+                groupName = value;
+                GroupLabel.Content = groupName;
+            }
+        }
 
-        /// <summary>
-        /// Decides that the <see cref="Group"/> is driverless or not.
-        /// </summary>
-        private bool driverless;
+        private bool isSelected = false;
+
+        public int ID { get; private set; }
 
         /// <summary>
         /// Constructor for <see cref="GroupSettingsItem"/>.
         /// </summary>
         /// <param name="groupName"><see cref="Group"/>s name which is represented by this <see cref="GroupSettingsItem"/>.</param>
-        /// <param name="driverless">
         /// If true, this <see cref="GroupSettingsItem"/> is driverless.
         /// Otherwise it's not.
         /// </param>
-        public GroupSettingsItem(string groupName, bool driverless = false)
+        public GroupSettingsItem(Group group)
         {
             InitializeComponent();
 
-            GroupName = groupName;
-            GroupLbl.Content = groupName;
-            this.driverless = driverless;
-            ChangeTypeImage();
-        }
-
-        /// <summary>
-        /// Changes the <see cref="GroupTypeImage"/>es image based on <see cref="driverless"/>.
-        /// </summary>
-        private void ChangeTypeImage()
-        {
-            var logo = new BitmapImage();
-            logo.BeginInit();
-
-            if (driverless)
-            {
-                string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                string imageRelativePath = "Images/daisy.png";
-                string imagePath = Path.Combine(baseDirectory, imageRelativePath);
-
-                logo.UriSource = new Uri(imagePath);
-            }
-            else
-            {
-                string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                string imageRelativePath = "Images/art_banner.png";
-                string imagePath = Path.Combine(baseDirectory, imageRelativePath);
-
-                logo.UriSource = new Uri(imagePath);
-            }
-
-            logo.EndInit();
-
-            GroupTypeImage.Source = logo;
-        }
-
-        /// <summary>
-        /// Deletes this <see cref="GroupSettingsItem"/> than updates ActiveGroupName and initializes groups in <see cref="GroupSettings"/>.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DeleteGroup_Click(object sender, RoutedEventArgs e)
-        {
-           
+            ID = group.ID;
+            GroupName = group.Name;
         }
 
         /// <summary>
@@ -100,90 +64,44 @@ namespace Telemetry_presentation_layer.Menus.Settings.Groups
         /// <param name="change"></param>
         public void ChangeColorMode(bool change)
         {
-            var converter = new BrushConverter();
-            BackgroundColor.Background = change ? (Brush)converter.ConvertFromString("#3c3c3c") : Brushes.White;
-            GroupLbl.Foreground = !change ? (Brush)converter.ConvertFromString("#3c3c3c") : Brushes.White;
+            isSelected = change;
+
+            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
+                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+
+            GroupLabel.Foreground = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50)) :
+                                                 new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
         }
 
-        /// <summary>
-        /// Changes that this <see cref="GroupSettingsItem"/> is driverless or not.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ChangeGroupItemType_Click(object sender, RoutedEventArgs e)
+        private void BackgroundColor_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            
+            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary700)) :
+                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
         }
 
-        private void DeleteGroupBtn_MouseEnter(object sender, MouseEventArgs e)
+        private void BackgroundColor_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            DeleteGroupBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary500));
+            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
+                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ChangeActiveGroupItem(ID);
+            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).SelectInputFile();
         }
 
-        private void DeleteGroupBtn_MouseLeave(object sender, MouseEventArgs e)
+        private void BackgroundColor_MouseEnter(object sender, MouseEventArgs e)
         {
-            DeleteGroupBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary900));
+            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
+                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+
+            Mouse.OverrideCursor = Cursors.Hand;
         }
 
-        private void DeleteGroupBtn_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void BackgroundColor_MouseLeave(object sender, MouseEventArgs e)
         {
-            DeleteGroupBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary300));
-        }
+            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
+                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
 
-        private void DeleteGroupBtn_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            DeleteGroupBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary500));
-
-            GroupManager.RemoveGroup(GroupName);
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ActiveGroupName = GroupManager.Groups[0].Name;
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
-
-            GroupManager.SaveGroups();
-
-            // ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
-        }
-
-        private void ChangeGroupItemType_MouseEnter(object sender, MouseEventArgs e)
-        {
-            ChangeGroupItemType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
-        }
-
-        private void ChangeGroupItemType_MouseLeave(object sender, MouseEventArgs e)
-        {
-            ChangeGroupItemType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
-        }
-
-        private void ChangeGroupItemType_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            ChangeGroupItemType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary400));
-        }
-
-        private void ChangeGroupItemType_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            ChangeGroupItemType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
-
-            var group = GroupManager.GetGroup(GroupName);
-            if (group == null)
-            {
-                throw new Exception($"Group {GroupName} is empty!");
-            }
-
-            group.Driverless = !group.Driverless;
-            driverless = group.Driverless;
-            GroupManager.SaveGroups();
-            // ChangeTypeImage();
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
-
-            if (group.Driverless)
-            {
-                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitActiveChannelSelectableAttributes();
-            }
-            else
-            {
-                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).DestroyAllActiveChannelSelectableAttributes();
-            }
-
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitInputFilesComboBox();
+            Mouse.OverrideCursor = null;
         }
     }
 }

@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Telemetry_data_and_logic_layer.Exceptions;
-using Telemetry_data_and_logic_layer.Texts;
+using DataLayer.Groups;
+using LocigLayer.Texts;
 
-namespace Telemetry_data_and_logic_layer.Groups
+namespace LocigLayer.Groups
 {
     /// <summary>
     /// Stores all <see cref="Group"/>s.
@@ -17,6 +17,8 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// </summary>
         public static List<Group> Groups { get; } = new List<Group>();
 
+        public static int LastGroupID = 0;
+
         /// <summary>
         /// Initializes groups from file.
         /// </summary>
@@ -25,7 +27,12 @@ namespace Telemetry_data_and_logic_layer.Groups
         {
             if (!File.Exists(fileName))
             {
-                throw new ErrorException($"Couldn't load groups, because file '{fileName}' not found!");
+                throw new Exception($"Couldn't load groups, because file '{fileName}' not found!");
+            }
+
+            if (new FileInfo(fileName).Length == 0)
+            {
+                throw new Exception($"'{fileName}' is empty");
             }
 
             ReadGroups(fileName);
@@ -37,11 +44,6 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// <param name="fileName">File name from read groups.</param>
         private static void ReadGroups(string fileName)
         {
-            if (new FileInfo(fileName).Length == 0)
-            {
-                throw new ErrorException($"{fileName} is empty");
-            }
-
             using var reader = new StreamReader(fileName);
 
             try
@@ -52,58 +54,55 @@ namespace Telemetry_data_and_logic_layer.Groups
                 {
                     if (groupsJSON[i].Name == null)
                     {
-                        throw new ErrorException("Can't add group, because the name is null!");
+                        throw new Exception("Can't add group, because 'name' is null!");
                     }
 
                     if (groupsJSON[i].Name.ToString().Equals(string.Empty))
                     {
-                        throw new ErrorException("Can't add group, because the name is empty!");
-                    }
-
-                    if (groupsJSON[i].Driverless == null)
-                    {
-                        throw new ErrorException("Can't add group, because driverless is null!");
-                    }
-
-                    if (groupsJSON[i].Customizable == null)
-                    {
-                        throw new ErrorException("Can't add group, because customizable is null!");
+                        throw new Exception("Can't add group, because 'name' is empty!");
                     }
 
                     if (groupsJSON[i].Attributes == null)
                     {
-                        throw new ErrorException("Can't add group, because attributes are null!");
+                        throw new Exception("Can't add group, because 'attributes' are null!");
                     }
                     else
                     {
-                        var group = new Group(groupsJSON[i].Name.ToString())
-                        {
-                            Driverless = groupsJSON[i].Driverless,
-                            Customizable = groupsJSON[i].Customizable
-                        };
+                        var group = new Group(LastGroupID++, groupsJSON[i].Name.ToString());
 
                         for (int j = 0; j < groupsJSON[i].Attributes.Count; j++)
                         {
                             string attributeName = "";
                             string attributeColor = "";
+                            int attributeLineWidth = 0;
 
                             if (groupsJSON[i].Attributes[j].Name == null)
                             {
-                                throw new ErrorException("Can't add attribute, because name is null!");
+                                throw new Exception("Can't add attribute, because 'name' is null!");
                             }
 
                             if (groupsJSON[i].Attributes[j].Color == null)
                             {
-                                throw new ErrorException("Can't add attribute, because color is null!");
+                                throw new Exception("Can't add attribute, because 'color' is null!");
+                            }
+
+                            if (groupsJSON[i].Attributes[j].LineWidth == null)
+                            {
+                                throw new Exception("Can't add attribute, because 'line width' is null!");
                             }
 
                             attributeName = groupsJSON[i].Attributes[j].Name.ToString();
                             attributeColor = groupsJSON[i].Attributes[j].Color.ToString();
+                            attributeLineWidth = int.Parse(groupsJSON[i].Attributes[j].LineWidth.ToString());
 
                             if (!attributeName.Equals(string.Empty) &&
                                 !attributeColor.Equals(string.Empty))
                             {
-                                group.AddAttribute(attributeName, attributeColor);
+                                group.AddAttribute(attributeName, attributeColor, attributeLineWidth);
+                            }
+                            else
+                            {
+                                throw new Exception("Can't add attribute, because 'name' or/and 'color' are empty!");
                             }
                         }
 
@@ -111,10 +110,18 @@ namespace Telemetry_data_and_logic_layer.Groups
                     }
 
                 }
+
+                var temporaryGroup = GetGroup($"Temporary{TemporaryGroupIndex}");
+
+                while (temporaryGroup != null)
+                {
+                    TemporaryGroupIndex++;
+                    temporaryGroup = GetGroup($"Temporary{TemporaryGroupIndex}");
+                }
             }
             catch (JsonReaderException)
             {
-                throw new ErrorException($"There was a problem reading {TextManager.GroupsFileName}");
+                throw new Exception($"There was a problem reading '{TextManager.GroupsFileName}'");
             }
         }
 
@@ -126,7 +133,7 @@ namespace Telemetry_data_and_logic_layer.Groups
             string groupsFileName = TextManager.GroupsFileName;
             if (!File.Exists(groupsFileName))
             {
-                throw new ErrorException($"Can't save groups because {TextManager.GroupsFileName} not found!");
+                throw new Exception($"Can't save groups because '{TextManager.GroupsFileName}' not found!");
             }
 
             using var writer = new StreamWriter(groupsFileName);
@@ -139,7 +146,7 @@ namespace Telemetry_data_and_logic_layer.Groups
             }
             catch (Exception)
             {
-                throw new ErrorException($"Can't save file!");
+                throw new Exception("Can't save file!");
             }
         }
 
@@ -155,11 +162,15 @@ namespace Telemetry_data_and_logic_layer.Groups
         /// <param name="name">Findable <see cref="Group"/>s name.</param>
         /// <returns>A <see cref="Group"/>.</returns>
         public static Group GetGroup(string name) => Groups.Find(x => x.Name.Equals(name));
+        public static Group GetGroup(int id) => Groups.Find(x => x.ID == id);
 
         /// <summary>
         /// Removes a <see cref="Group"/> from <see cref="Groups"/>.
         /// </summary>
         /// <param name="name">Removable <see cref="Group"/>s name.</param>
         public static void RemoveGroup(string name) => Groups.Remove(GetGroup(name));
+        public static void RemoveGroup(int id) => Groups.Remove(GetGroup(id));
+
+        public static int TemporaryGroupIndex { get; set; }
     }
 }

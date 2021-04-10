@@ -10,19 +10,11 @@
 
   <ItemGroup>
     <PackageReference Include="Dragablz" Version="0.0.3.223" />
-    <PackageReference Include="MaterialDesignColors" Version="1.2.7" />
-    <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
+    <PackageReference Include="MaterialDesignColors" Version="2.0.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
-    <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
     <PackageReference Include="ScottPlot.WPF" Version="4.0.48" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Telemetry_data_and_logic_layer\Telemetry_data_and_logic_layer.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Errors\" />
+    <PackageReference Include="WpfMath" Version="0.9.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +24,14 @@
     <None Update="Images\daisy.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Menus\Settings\Live\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LogicLayer\LogicLayer.csproj" />
   </ItemGroup>
 
 </Project>

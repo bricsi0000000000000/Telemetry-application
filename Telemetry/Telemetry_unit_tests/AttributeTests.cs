@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using Telemetry_data_and_logic_layer.Groups;
+using DataLayer.Groups;
 
 namespace Telemetry_unit_tests
 {
