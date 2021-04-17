@@ -8,7 +8,6 @@ using System.Windows.Input;
 using DataLayer;
 using DataLayer.Groups;
 using DataLayer.InputFiles;
-using PresentationLayer.Converters;
 using PresentationLayer.Errors;
 using PresentationLayer.Menus.Driverless;
 using PresentationLayer.Menus.Live;
@@ -18,6 +17,7 @@ using LocigLayer.InputFiles;
 using LocigLayer.Colors;
 using LocigLayer.Texts;
 using LocigLayer.Groups;
+using PresentationLayer.Extensions;
 
 namespace PresentationLayer.Menus.Settings.InputFiles
 {
@@ -289,11 +289,11 @@ namespace PresentationLayer.Menus.Settings.InputFiles
 
         private void ChangeAvailabilityOfInputFileButtons()
         {
-            DeleteFileCardButton.Background = isAnyInputFile ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900) :
-                                                               ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary400);
+            DeleteFileCardButton.Background = isAnyInputFile ? ColorManager.Primary900.ConvertBrush() :
+                                                               ColorManager.Primary400.ConvertBrush();
 
-            ChangeSelectedInputFileNameIcon.Foreground = isAnyInputFile ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
-                                                                          ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary400);
+            ChangeSelectedInputFileNameIcon.Foreground = isAnyInputFile ? ColorManager.Secondary900.ConvertBrush() :
+                                                                          ColorManager.Secondary400.ConvertBrush();
 
             if (!isAnyInputFile)
             {
@@ -305,7 +305,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
         {
             if (isAnyInputFile)
             {
-                ChangeSelectedInputFileNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+                ChangeSelectedInputFileNameCardButton.Background = ColorManager.Secondary200.ConvertBrush();
             }
         }
 
@@ -313,7 +313,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
         {
             if (isAnyInputFile)
             {
-                ChangeSelectedInputFileNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+                ChangeSelectedInputFileNameCardButton.Background = ColorManager.Secondary100.ConvertBrush();
                 string newName = SelectedInputFileNameTextBox.Text;
                 if (!newName.Equals(string.Empty))
                 {
@@ -328,8 +328,8 @@ namespace PresentationLayer.Menus.Settings.InputFiles
                             }
                         }
 
-                    ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterFileRename(newName);
-                        ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).UpdateAfterReadFile(SelectedInputFileNameTextBox.Text);
+                    ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).UpdateAfterFileRename(newName);
+                        ((GroupSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).UpdateAfterReadFile(SelectedInputFileNameTextBox.Text);
                     }
                 }
             }
@@ -339,7 +339,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
         {
             if (isAnyInputFile)
             {
-                ChangeSelectedInputFileNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+                ChangeSelectedInputFileNameCardButton.Background = ColorManager.Secondary100.ConvertBrush();
                 Mouse.OverrideCursor = Cursors.Hand;
             }
         }
@@ -348,31 +348,31 @@ namespace PresentationLayer.Menus.Settings.InputFiles
         {
             if (isAnyInputFile)
             {
-                ChangeSelectedInputFileNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+                ChangeSelectedInputFileNameCardButton.Background = ColorManager.Secondary50.ConvertBrush();
                 Mouse.OverrideCursor = null;
             }
         }
 
         private void ReadFileCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ReadFileCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            ReadFileCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void ReadFileCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ReadFileCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ReadFileCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             ReadInputFile();
         }
 
         private void ReadFileCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ReadFileCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ReadFileCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void ReadFileCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ReadFileCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            ReadFileCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
@@ -380,7 +380,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
         {
             if (isAnyInputFile)
             {
-                DeleteFileCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
+                DeleteFileCardButton.Background = ColorManager.Primary700.ConvertBrush();
             }
         }
 
@@ -388,7 +388,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
         {
             if (isAnyInputFile)
             {
-                DeleteFileCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+                DeleteFileCardButton.Background = ColorManager.Primary800.ConvertBrush();
 
                 LoadingGrid.Visibility = Visibility.Visible;
 
@@ -436,8 +436,8 @@ namespace PresentationLayer.Menus.Settings.InputFiles
 
                 InitChannelItems();
 
-                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).RemoveInputFileItem(inputFileName);
-                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).UpdateAfterDeleteFile(inputFileName);
+                ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).RemoveInputFileItem(inputFileName);
+                ((GroupSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).UpdateAfterDeleteFile(inputFileName);
 
                 isAnyInputFile = InputFileManager.InputFiles.Count > 0;
 
@@ -453,7 +453,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
         {
             if (isAnyInputFile)
             {
-                DeleteFileCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+                DeleteFileCardButton.Background = ColorManager.Primary800.ConvertBrush();
                 Mouse.OverrideCursor = Cursors.Hand;
             }
         }
@@ -462,19 +462,19 @@ namespace PresentationLayer.Menus.Settings.InputFiles
         {
             if (isAnyInputFile)
             {
-                DeleteFileCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+                DeleteFileCardButton.Background = ColorManager.Primary900.ConvertBrush();
                 Mouse.OverrideCursor = null;
             }
         }
 
         private void ChangeSelectedChannelNameCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ChangeSelectedChannelNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            ChangeSelectedChannelNameCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void ChangeSelectedChannelNameCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            ChangeSelectedChannelNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeSelectedChannelNameCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             Mouse.OverrideCursor = Cursors.Wait;
 
@@ -501,26 +501,26 @@ namespace PresentationLayer.Menus.Settings.InputFiles
 
         private void ChangeSelectedChannelNameCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            ChangeSelectedChannelNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeSelectedChannelNameCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void ChangeSelectedChannelNameCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            ChangeSelectedChannelNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            ChangeSelectedChannelNameCardButton.Background = ColorManager.Secondary50.ConvertBrush();
 
             Mouse.OverrideCursor = null;
         }
 
         private void ChangeSelectedChannelLineWidthCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ChangeSelectedChannelLineWidthCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            ChangeSelectedChannelLineWidthCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void ChangeSelectedChannelLineWidthCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            ChangeSelectedChannelLineWidthCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeSelectedChannelLineWidthCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             Mouse.OverrideCursor = Cursors.Wait;
 
@@ -540,7 +540,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
                             }
                         }
 
-                        ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                        ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
                     }
                 }
             }
@@ -563,9 +563,9 @@ namespace PresentationLayer.Menus.Settings.InputFiles
                             {
                                 activeAttribute.LineWidth = lineWidth;
                                 GroupManager.SaveGroups();
-                                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
+                                ((GroupSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
 
-                                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                                ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
                             }
                         }
                     }
@@ -588,25 +588,25 @@ namespace PresentationLayer.Menus.Settings.InputFiles
                                     }
                                 }
 
-                                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                                ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
                             }
                         }
                     }
                 }
             }
 
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).SetLoadingGrid(visibility: false);
+            ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).SetLoadingGrid(visibility: false);
         }
 
         private void ChangeSelectedChannelLineWidthCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            ChangeSelectedChannelLineWidthCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeSelectedChannelLineWidthCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void ChangeSelectedChannelLineWidthCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            ChangeSelectedChannelLineWidthCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            ChangeSelectedChannelLineWidthCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
     }

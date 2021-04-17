@@ -6,7 +6,7 @@ using DataLayer.Units;
 using LocigLayer.Colors;
 using LocigLayer.Texts;
 using LocigLayer.Units;
-using PresentationLayer.Converters;
+using PresentationLayer.Extensions;
 using PresentationLayer.ValidationRules;
 
 namespace PresentationLayer.Menus.Settings.Units
@@ -45,18 +45,18 @@ namespace PresentationLayer.Menus.Settings.Units
 
         private void OkCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            OkCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void OkCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            OkCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             if (!NameTextBox.Text.Equals(string.Empty) && !FormulaTextBox.Text.Equals(string.Empty))
             {
                 var unit = new Unit(UnitOfMeasureManager.UnitOfMeasures.Last().ID + 1, NameTextBox.Text, DescriptionTextBox.Text, FormulaTextBox.Text);
 
-                ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).AddUnit(unit, add: true);
+                ((UnitsMenu)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).AddUnit(unit, add: true);
 
                 Close();
             }
@@ -64,39 +64,39 @@ namespace PresentationLayer.Menus.Settings.Units
 
         private void OkCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            OkCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void OkCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            OkCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void CancelCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            CancelCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void CancelCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            CancelCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
-            ((UnitsMenu)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).AddUnit(null, add: false);
+            ((UnitsMenu)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.UnitsSettingsName).Content).AddUnit(null, add: false);
 
             Close();
         }
 
         private void CancelCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            CancelCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void CancelCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            CancelCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
     }

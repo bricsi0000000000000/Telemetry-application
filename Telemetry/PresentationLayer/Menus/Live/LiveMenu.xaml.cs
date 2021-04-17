@@ -21,20 +21,28 @@ namespace PresentationLayer.Menus.Live
 
         private void InitializeTabs()
         {
-            AddTab(TextManager.SettingsMenuName, new LiveSettings(), "liveSettingsTab", selected: true);
-            AddTab(TextManager.LiveMenuName, new LiveTelemetry(), "liveTelemetryTab");
+            TabItem liveSettingsTab = MakeTab(TextManager.SettingsMenuName, new LiveSettings(), "liveSettingsTab", selected: true);
+            MenuManager.LiveSettings = (LiveSettings)liveSettingsTab.Content;
+            AddTab(liveSettingsTab);
+
+            TabItem liveTelemetryTab = MakeTab(TextManager.LiveMenuName, new LiveTelemetry(), "liveTelemetryTab", selected: true);
+            MenuManager.LiveTelemetry = (LiveTelemetry)liveTelemetryTab.Content;
+            AddTab(liveTelemetryTab);
         }
 
-        private void AddTab(string header, object content, string name, bool selected = false)
+        private TabItem MakeTab(string header, object content, string name, bool selected = false)
         {
-            TabItem tab = new TabItem
+            return new TabItem
             {
                 Header = header,
                 Content = content,
                 Name = name,
                 IsSelected = selected
             };
+        }
 
+        private void AddTab(TabItem tab)
+        {
             tabs.Add(tab);
             TabsTabControl.Items.Add(tab);
         }

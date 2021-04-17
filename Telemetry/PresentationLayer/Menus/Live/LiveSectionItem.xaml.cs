@@ -2,9 +2,7 @@
 using System.Windows.Input;
 using DataLayer.Models;
 using LocigLayer.Colors;
-using LocigLayer.Texts;
-using PresentationLayer.Converters;
-using PresentationLayer.Menus.Settings.Live;
+using PresentationLayer.Extensions;
 
 namespace PresentationLayer.Menus.Live
 {
@@ -15,9 +13,8 @@ namespace PresentationLayer.Menus.Live
     {
         public int SectionID => section.ID;
 
-        private Section section;
+        private readonly Section section;
         private bool isActive = false;
-        private bool status = false;
 
         public LiveSectionItem(Section section)
         {
@@ -29,8 +26,8 @@ namespace PresentationLayer.Menus.Live
             NameLabel.Content = section.Name;
             ChangeStausIcon(section.IsLive);
 
-            IsLiveIcon.Foreground = section.IsLive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
-                                                     ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+            IsLiveIcon.Foreground = section.IsLive ? ColorManager.Secondary900.ConvertBrush() :
+                                                     ColorManager.Primary900.ConvertBrush();
         }
 
         private void ChangeStausIcon(bool isLive)
@@ -42,82 +39,81 @@ namespace PresentationLayer.Menus.Live
         {
             this.isActive = isActive;
 
-            BackgroundCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
-                                                   ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
-            StatusCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
-                                               ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
-            DateLabel.Foreground = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50) :
-                                              ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900);
-            NameLabel.Foreground = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50) :
-                                              ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900);
+            BackgroundCard.Background = isActive ? ColorManager.Secondary900.ConvertBrush() :
+                                                   ColorManager.Secondary50.ConvertBrush();
+            StatusCard.Background = isActive ? ColorManager.Secondary900.ConvertBrush() :
+                                               ColorManager.Secondary50.ConvertBrush();
+            DateLabel.Foreground = isActive ? ColorManager.Secondary50.ConvertBrush() :
+                                              ColorManager.Secondary900.ConvertBrush();
+            NameLabel.Foreground = isActive ? ColorManager.Secondary50.ConvertBrush() :
+                                              ColorManager.Secondary900.ConvertBrush();
 
             if (isActive)
             {
-                IsLiveIcon.Foreground = section.IsLive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50) :
-                                                         ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+                IsLiveIcon.Foreground = section.IsLive ? ColorManager.Secondary50.ConvertBrush() :
+                                                         ColorManager.Primary900.ConvertBrush();
             }
             else
             {
-                IsLiveIcon.Foreground = section.IsLive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
-                                                         ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+                IsLiveIcon.Foreground = section.IsLive ? ColorManager.Secondary900.ConvertBrush() :
+                                                         ColorManager.Primary900.ConvertBrush();
             }
         }
 
         public void ChangeStatus(bool status)
         {
-            this.status = status;
             ChangeStausIcon(status);
 
             if (isActive)
             {
-                IsLiveIcon.Foreground = status ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50) :
-                                                 ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+                IsLiveIcon.Foreground = status ? ColorManager.Secondary50.ConvertBrush() :
+                                                 ColorManager.Primary900.ConvertBrush();
             }
             else
             {
-                IsLiveIcon.Foreground = status ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
-                                                 ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+                IsLiveIcon.Foreground = status ? ColorManager.Secondary900.ConvertBrush() :
+                                                 ColorManager.Primary900.ConvertBrush();
             }
         }
 
         private void BackgroundCard_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            BackgroundCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary700) :
-                                                   ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            BackgroundCard.Background = isActive ? ColorManager.Secondary700.ConvertBrush() :
+                                                   ColorManager.Secondary200.ConvertBrush();
 
-            StatusCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary700) :
-                                               ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            StatusCard.Background = isActive ? ColorManager.Secondary700.ConvertBrush() :
+                                               ColorManager.Secondary200.ConvertBrush();
         }
 
         private void BackgroundCard_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            BackgroundCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary800) :
-                                                   ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            BackgroundCard.Background = isActive ? ColorManager.Secondary800.ConvertBrush() :
+                                                   ColorManager.Secondary100.ConvertBrush();
 
-            StatusCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary800) :
-                                              ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            StatusCard.Background = isActive ? ColorManager.Secondary800.ConvertBrush() :
+                                               ColorManager.Secondary100.ConvertBrush();
 
-            ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).SelectSection(SectionID);
+            MenuManager.LiveSettings.SelectSection(SectionID);
         }
 
         private void BackgroundCard_MouseEnter(object sender, MouseEventArgs e)
         {
-            BackgroundCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary800) :
-                                                   ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            BackgroundCard.Background = isActive ? ColorManager.Secondary800.ConvertBrush() :
+                                                   ColorManager.Secondary100.ConvertBrush();
 
-            StatusCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary800) :
-                                               ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            StatusCard.Background = isActive ? ColorManager.Secondary800.ConvertBrush() :
+                                               ColorManager.Secondary100.ConvertBrush();
 
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void BackgroundCard_MouseLeave(object sender, MouseEventArgs e)
         {
-            BackgroundCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
-                                                   ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            BackgroundCard.Background = isActive ? ColorManager.Secondary900.ConvertBrush() :
+                                                   ColorManager.Secondary50.ConvertBrush();
 
-            StatusCard.Background = isActive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
-                                               ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            StatusCard.Background = isActive ? ColorManager.Secondary900.ConvertBrush() :
+                                               ColorManager.Secondary50.ConvertBrush();
 
             Mouse.OverrideCursor = null;
         }

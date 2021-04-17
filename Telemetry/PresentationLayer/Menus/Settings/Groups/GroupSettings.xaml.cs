@@ -10,7 +10,7 @@ using LocigLayer.Colors;
 using LocigLayer.Groups;
 using LocigLayer.InputFiles;
 using LocigLayer.Texts;
-using PresentationLayer.Converters;
+using PresentationLayer.Extensions;
 using PresentationLayer.Menus.Driverless;
 using PresentationLayer.Menus.Live;
 using PresentationLayer.ValidationRules;
@@ -98,7 +98,7 @@ namespace PresentationLayer.Menus.Settings.Groups
 
             InitGroups();
             GroupManager.SaveGroups();
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+            ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
         }
 
         /// <summary>
@@ -212,7 +212,7 @@ namespace PresentationLayer.Menus.Settings.Groups
                     fieldsViewModel.LineWidth = attribute.LineWidth;
                     fieldsViewModel.AttributeName = attribute.Name;
                     SelectedAttributeNameTextBox.Text = attribute.Name;
-                    SelectedAttributeColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(attribute.Color);
+                    SelectedAttributeColorCard.Background = attribute.ColorText.ConvertBrush();
 
                     UpdateInputFiles();
                 }
@@ -304,7 +304,7 @@ namespace PresentationLayer.Menus.Settings.Groups
             GroupManager.SaveGroups();
             InitGroups();
             SelectInputFile();
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+            ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
 
             Mouse.OverrideCursor = null;
         }
@@ -417,16 +417,16 @@ namespace PresentationLayer.Menus.Settings.Groups
         private void SelectedAttributeColorCard_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            PickColor pickColor = new PickColor(GroupManager.GetGroup(ActiveGroupID).GetAttribute(ActiveAttributeID).Color);
+            PickColor pickColor = new PickColor(GroupManager.GetGroup(ActiveGroupID).GetAttribute(ActiveAttributeID).ColorText);
             if (pickColor.ShowDialog() == true)
             {
                 var pickedColor = pickColor.ColorPicker.Color;
                 SelectedAttributeColorCard.Background = new SolidColorBrush(pickedColor);
 
                 var activeAttribute = GroupManager.GetGroup(ActiveGroupID).GetAttribute(ActiveAttributeID);
-                activeAttribute.Color = pickedColor.ToString();
+                activeAttribute.ColorText = pickedColor.ToString();
                 GroupManager.SaveGroups();
-                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
 
                 foreach (GroupSettingsAttribute item in AttributesStackPanel.Children)
                 {
@@ -452,12 +452,12 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void ChangeSelectedAttributeLineWidthCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ChangeSelectedAttributeLineWidthCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            ChangeSelectedAttributeLineWidthCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void ChangeSelectedAttributeLineWidthCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            ChangeSelectedAttributeLineWidthCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeSelectedAttributeLineWidthCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             Mouse.OverrideCursor = Cursors.Wait;
 
@@ -478,7 +478,7 @@ namespace PresentationLayer.Menus.Settings.Groups
                             }
                         }
 
-                        ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                        ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
                     }
                 }
             }
@@ -488,24 +488,24 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void ChangeSelectedAttributeLineWidthCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            ChangeSelectedAttributeLineWidthCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeSelectedAttributeLineWidthCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void ChangeSelectedAttributeLineWidthCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            ChangeSelectedAttributeLineWidthCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            ChangeSelectedAttributeLineWidthCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void DeleteAttributeCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            DeleteAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
+            DeleteAttributeCardButton.Background = ColorManager.Primary700.ConvertBrush();
         }
 
         private void DeleteAttributeCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            DeleteAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+            DeleteAttributeCardButton.Background = ColorManager.Primary800.ConvertBrush();
 
             AddGroupGridBackground.Visibility = Visibility.Visible;
 
@@ -535,7 +535,7 @@ namespace PresentationLayer.Menus.Settings.Groups
                 GroupManager.SaveGroups();
                 InitGroups();
                 SelectInputFile();
-                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
 
                 Mouse.OverrideCursor = null;
             }
@@ -545,24 +545,24 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void DeleteAttributeCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            DeleteAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+            DeleteAttributeCardButton.Background = ColorManager.Primary800.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void DeleteAttributeCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            DeleteAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+            DeleteAttributeCardButton.Background = ColorManager.Primary900.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void AddAttributeCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AddAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            AddAttributeCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void AddAttributeCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            AddAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            AddAttributeCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             Mouse.OverrideCursor = Cursors.Wait;
 
@@ -575,13 +575,13 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void AddAttributeCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            AddAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            AddAttributeCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void AddAttributeCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            AddAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            AddAttributeCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
@@ -614,7 +614,7 @@ namespace PresentationLayer.Menus.Settings.Groups
 
                 GroupManager.SaveGroups();
 
-                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).InitializeGroupItems();
+                ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).InitializeGroupItems();
 
                 SelectInputFile();
 
@@ -660,7 +660,7 @@ namespace PresentationLayer.Menus.Settings.Groups
                     }
                 }
 
-                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).AddRenamedGroupToSelectedGroups(newName);
+                ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).AddRenamedGroupToSelectedGroups(newName);
             }
 
             Mouse.OverrideCursor = null;
@@ -680,12 +680,12 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void AddGroupCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            AddGroupCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void AddGroupCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            AddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            AddGroupCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Wait;
 
             AddGroupGridBackground.Visibility = Visibility.Visible;
@@ -697,24 +697,24 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void AddGroupCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            AddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            AddGroupCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void AddGroupCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            AddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            AddGroupCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void AddGroupPopUpCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            AddGroupPopUpCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void AddGroupPopUpCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            AddGroupPopUpCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             Mouse.OverrideCursor = Cursors.Wait;
 
@@ -730,7 +730,7 @@ namespace PresentationLayer.Menus.Settings.Groups
                 AddGroupNameTextBox.Text = string.Empty;
                 InitGroups();
                 UpdateChannels();
-                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).InitializeGroupItems();
+                ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).InitializeGroupItems();
                 // ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
             }
 
@@ -739,24 +739,24 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void AddGroupPopUpCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            AddGroupPopUpCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void AddGroupPopUpCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            AddGroupPopUpCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void AddAttributePopUpCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            AddGroupPopUpCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void AddAttributePopUpCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            AddGroupPopUpCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             if (AddAttributeNameTextBox.Text.Equals(string.Empty) ||
                 AddAttributeLineWidthTextBox.Text.Equals(string.Empty))
@@ -787,7 +787,7 @@ namespace PresentationLayer.Menus.Settings.Groups
             InitGroups();
             SelectInputFile();
 
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+            ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
 
             AddAttributeNameTextBox.Text = string.Empty;
             AddAttributeLineWidthTextBox.Text = "1";
@@ -797,24 +797,24 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void AddAttributePopUpCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            AddGroupPopUpCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void AddAttributePopUpCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            AddGroupPopUpCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            AddGroupPopUpCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void CancelAddAttributeCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            CancelAddAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            CancelAddAttributeCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void CancelAddAttributeCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            CancelAddAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            CancelAddAttributeCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             AddGroupGridBackground.Visibility = Visibility.Hidden;
             AddAttributeGrid.Visibility = Visibility.Hidden;
@@ -826,24 +826,24 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void CancelAddAttributeCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            CancelAddAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            CancelAddAttributeCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void CancelAddAttributeCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            CancelAddAttributeCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            CancelAddAttributeCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void CancelAddGroupCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            CancelAddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            CancelAddGroupCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void CancelAddGroupCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            CancelAddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            CancelAddGroupCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             AddGroupGridBackground.Visibility = Visibility.Hidden;
             AddGroupGrid.Visibility = Visibility.Hidden;
@@ -853,24 +853,24 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void CancelAddGroupCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            CancelAddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            CancelAddGroupCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void CancelAddGroupCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            CancelAddGroupCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            CancelAddGroupCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void ChangeSelectedAttributeNameCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ChangeSelectedAttributeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            ChangeSelectedAttributeNameCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void ChangeSelectedAttributeNameCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            ChangeSelectedAttributeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeSelectedAttributeNameCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             Mouse.OverrideCursor = Cursors.Wait;
 
@@ -901,24 +901,24 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void ChangeSelectedAttributeNameCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            ChangeSelectedAttributeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeSelectedAttributeNameCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void ChangeSelectedAttributeNameCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            ChangeSelectedAttributeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            ChangeSelectedAttributeNameCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void ChangeSelectedGroupHorizontalAxisCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ChangeSelectedGroupHorizontalAxisCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            ChangeSelectedGroupHorizontalAxisCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void ChangeSelectedGroupHorizontalAxisCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            ChangeSelectedGroupHorizontalAxisCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeSelectedGroupHorizontalAxisCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             Mouse.OverrideCursor = Cursors.Wait;
 
@@ -936,13 +936,13 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void ChangeSelectedGroupHorizontalAxisCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            ChangeSelectedGroupHorizontalAxisCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeSelectedGroupHorizontalAxisCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void ChangeSelectedGroupHorizontalAxisCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            ChangeSelectedGroupHorizontalAxisCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            ChangeSelectedGroupHorizontalAxisCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
     }

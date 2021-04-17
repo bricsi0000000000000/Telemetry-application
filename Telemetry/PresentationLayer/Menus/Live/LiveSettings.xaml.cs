@@ -5,17 +5,16 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Windows.Media;
 using PresentationLayer.Menus.Live;
 using DataLayer.Models;
 using System.Windows.Controls;
 using System.Windows;
-using System.Threading.Tasks;
-using PresentationLayer.Converters;
 using System.Windows.Input;
 using System.Linq;
-using LocigLayer.Texts;
 using LocigLayer.Colors;
+using LogicLayer.Configurations;
+using PresentationLayer.Extensions;
+using PresentationLayer.ValidationRules;
 
 namespace PresentationLayer.Menus.Settings.Live
 {
@@ -26,33 +25,41 @@ namespace PresentationLayer.Menus.Settings.Live
         private Section activeSection;
         private bool sectionSelected = false;
 
+        private readonly FieldsViewModel fieldsViewModel = new FieldsViewModel();
+
         public LiveSettings()
         {
             InitializeComponent();
 
+            fieldsViewModel.SectionName = "a";
+            fieldsViewModel.SectionDate = "a";
+            DataContext = fieldsViewModel;
+
             InitilaizeHttpClient();
             UpdateSelectedSectionButtons();
             UpdateCarStatus(new List<TimeSpan>(), -1);
+            UpdateConfigurationCard();
         }
 
         private void InitilaizeHttpClient()
         {
-            ServicePointManager.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
+            //  ServicePointManager.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
 
             client = new HttpClient
             {
                 Timeout = TimeSpan.FromMinutes(1),
-                BaseAddress = new Uri("http://192.168.1.33:5000")
+                BaseAddress = new Uri(ConfigurationManager.Address)
             };
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        private async void GetAllSectionsAsync()
+        #region async methods
+        private async void GetAllSectionsAsync(int? selectedSectionID = null)
         {
             try
             {
-                var response = await client.GetAsync("/api/Section").ConfigureAwait(false);
+                var response = await client.GetAsync(ConfigurationManager.AllLiveSectionsAPICall).ConfigureAwait(false);
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 string resultString = result.GetAwaiter().GetResult();
                 sections = JsonConvert.DeserializeObject<List<Section>>(resultString);
@@ -64,12 +71,22 @@ namespace PresentationLayer.Menus.Settings.Live
                         if (FillSectionsStackPanel(sections))
                         {
                             ChangeSectionColors();
-                            SelectSection(activeSection.ID, firstTime: true);
+                            int selectSectionID;
+                            if (selectedSectionID == null || !sections.FindAll(x => x.ID == (int)selectedSectionID).Any())
+                            {
+                                selectSectionID = sections.First().ID;
+                            }
+                            else
+                            {
+                                selectSectionID = (int)selectedSectionID;
+                            }
+
+                            SelectSection(selectSectionID, firstTime: true);
                         }
                     }
                     catch (Exception)
                     {
-                        ShowErrorMessage("An error occured while getting the sections");
+                        ShowSnackbarMessage("An error occurred while getting the sections");
                     }
                 });
 
@@ -78,35 +95,258 @@ namespace PresentationLayer.Menus.Settings.Live
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    ShowErrorMessage("Couldn't connect to the sever");
+                    ShowSnackbarMessage("Couldn't connect to the sever");
                 });
             }
 
             Application.Current.Dispatcher.Invoke(() =>
             {
-                SetLoadingGrid(visibility: false);
+                UpdateLoadingGrid(visibility: false);
             });
         }
 
+        private async void PostNewSectionAsync(string sectionName)
+        {
+            try
+            {
+                var response = await client.PostAsJsonAsync(ConfigurationManager.PostNewSectionAPICall, new Section { Date = DateTime.Now, Name = sectionName }).ConfigureAwait(false);
+                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                int resultCode = int.Parse(result.GetAwaiter().GetResult());
+                if (resultCode == (int)HttpStatusCode.OK)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        GetAllSectionsAsync(selectedSectionID: activeSection.ID);
+                        UpdateLoadingGrid(visibility: false);
+                    });
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        UpdateLoadingGrid(visibility: false);
+                        ShowSnackbarMessage($"Couldn't add {sectionName}");
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    UpdateLoadingGrid(visibility: false);
+                    ShowSnackbarMessage($"Can't add {sectionName} because can't connect to the server");
+                });
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="change">True if the status should changed, false if not.</param>
+        public async void ChangeStatusResultAsync(bool change)
+        {
+            UpdateLoadingGrid(visibility: false);
+
+            if (!change)
+            {
+                return;
+            }
+
+            try
+            {
+                HttpResponseMessage response;
+
+                if (activeSection.IsLive) // change to offline
+                {
+                    response = await client.PutAsJsonAsync(ConfigurationManager.ChangeSectionToOfflineAPICall, activeSection.ID).ConfigureAwait(false);
+                }
+                else //change to live
+                {
+                    response = await client.PutAsJsonAsync(ConfigurationManager.ChangeSectionToLiveAPICall, activeSection.ID).ConfigureAwait(false);
+                }
+
+                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                int resultCode = int.Parse(result.GetAwaiter().GetResult());
+                if (resultCode == (int)HttpStatusCode.OK)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        activeSection.IsLive = !activeSection.IsLive;
+                        ChangeSectionStatus(activeSection.ID, activeSection.IsLive);
+                        UpdateLoadingGrid(visibility: false);
+                        SelectedSectionStatusIcon.Kind = activeSection.IsLive ? PackIconKind.AccessPoint : PackIconKind.AccessPointOff;
+                        SelectedSectionStatusIcon.Foreground = activeSection.IsLive ? ColorManager.Secondary900.ConvertBrush() :
+                                                                                      ColorManager.Primary900.ConvertBrush();
+                    });
+                }
+                else if (resultCode == (int)HttpStatusCode.Conflict)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        UpdateLoadingGrid(visibility: false);
+                        ShowSnackbarMessage($"Only one live section can be at a time!");
+                    });
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        UpdateLoadingGrid(visibility: false);
+                        ShowSnackbarMessage($"Couldn't update {activeSection.Name}'s status from " +
+                                            $"{(activeSection.IsLive ? "live" : "offline")} to " +
+                                            $"{(!activeSection.IsLive ? "live" : "offline")}");
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    UpdateLoadingGrid(visibility: false);
+                    ShowSnackbarMessage($"There was an error updating {activeSection.Name}");
+                });
+            }
+        }
+
+        private async void DeleteSectionAsync(int id)
+        {
+            UpdateLoadingGrid(visibility: true, "Deleting section..");
+
+            try
+            {
+                var response = await client.DeleteAsync($"{ConfigurationManager.DeleteSectionAPICall}?sectionID={id}").ConfigureAwait(false);
+                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                int resultCode = int.Parse(result.GetAwaiter().GetResult());
+                if (resultCode == (int)HttpStatusCode.OK)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        UpdateLoadingGrid(visibility: false);
+                        GetAllSectionsAsync();
+                    });
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        UpdateLoadingGrid(visibility: false);
+                        ShowSnackbarMessage("Couldn't delete section");
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    UpdateLoadingGrid(visibility: false);
+                    ShowSnackbarMessage("Can't delete section because can't connect to the server");
+                });
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name">New name</param>
+        private async void ChangeSectionNameAsync(int id, string name)
+        {
+            UpdateLoadingGrid(visibility: true, "Updating section..");
+
+            try
+            {
+                var response = await client.PutAsJsonAsync(ConfigurationManager.ChangeSectionNameAPICall, new Section() { ID = id, Name = name }).ConfigureAwait(false);
+                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                int resultCode = int.Parse(result.GetAwaiter().GetResult());
+                if (resultCode == (int)HttpStatusCode.OK)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        UpdateLoadingGrid(visibility: false);
+                        GetAllSectionsAsync(selectedSectionID: activeSection.ID);
+                    });
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        UpdateLoadingGrid(visibility: false);
+                        ShowSnackbarMessage("Couldn't update section");
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    UpdateLoadingGrid(visibility: false);
+                    ShowSnackbarMessage("Can't update section because can't connect to the server");
+                });
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name">New name</param>
+        private async void ChangeSectionDateAsync(int id, DateTime newDate)
+        {
+            UpdateLoadingGrid(visibility: true, "Updating section..");
+
+            try
+            {
+                var response = await client.PutAsJsonAsync(ConfigurationManager.ChangeSectionDateAPICall, new Section() { ID = id, Name = "a", Date = newDate }).ConfigureAwait(false); // it doesn't work without Name="a", because name is required in api side
+                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                int resultCode = int.Parse(result.GetAwaiter().GetResult());
+                if (resultCode == (int)HttpStatusCode.OK)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        UpdateLoadingGrid(visibility: false);
+                        GetAllSectionsAsync(selectedSectionID: activeSection.ID);
+                    });
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        UpdateLoadingGrid(visibility: false);
+                        ShowSnackbarMessage("Couldn't update section");
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    UpdateLoadingGrid(visibility: false);
+                    ShowSnackbarMessage("Can't update section because can't connect to the server");
+                });
+            }
+        }
+
+        #endregion
+
         private bool FillSectionsStackPanel(List<Section> sections)
         {
+            SectionsCoverGridGrid.Visibility = Visibility.Visible;
             SectionsStackPanel.Children.Clear();
-            NoSectionsGrid.Visibility = Visibility.Visible;
 
-            if (sections.Count <= 0)
+            if (!sections.Any())
             {
-                ShowErrorMessage("There are no sections on the server", error: false);
+                ShowSnackbarMessage("There are no sections on the server", error: false);
                 return false;
             }
 
-            NoSectionsGrid.Visibility = Visibility.Hidden;
-
             sections.Reverse();
-            activeSection = sections[0];
+            activeSection = sections.First();
             foreach (var section in sections)
             {
                 SectionsStackPanel.Children.Add(new LiveSectionItem(section));
             }
+
+            SectionsCoverGridGrid.Visibility = Visibility.Hidden;
 
             return true;
         }
@@ -114,20 +354,21 @@ namespace PresentationLayer.Menus.Settings.Live
         /// <summary>
         /// Calls if a section is selected.
         /// </summary>
-        /// <param name="id">Selected sections ID.</param>
+        /// <param name="sectionID">Selected sections ID.</param>
         /// <param name="firstTime">If true, it will update the section in <see cref="LiveTelemetry"/>, no matter what.</param>
-        public void SelectSection(int id, bool firstTime = false)
+        public void SelectSection(int sectionID, bool firstTime = false)
         {
-            if (activeSection.ID != id || firstTime)
+            if (activeSection.ID != sectionID || firstTime)
             {
-                activeSection = GetSection(id);
+                activeSection = GetSection(sectionID);
                 ChangeSectionColors();
-                var channelNames = GetActiveChannelsAsync(id).Result;
-                ((LiveTelemetry)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.LiveMenuName).Content).UpdateSection(activeSection, channelNames);
+                var channelNames = activeSection.SensorNames.Split(';').ToList();
+                // ((LiveTelemetry)((LiveMenu)MenuManager.GetMenuTab(TextManager.LiveMenuName).Content).GetTab(TextManager.LiveMenuName).Content).UpdateSection(activeSection, channelNames);
+                MenuManager.LiveTelemetry.UpdateSection(activeSection, channelNames);
                 UpdateSelectedSectionInfo(channelNames);
                 SelectedSectionStatusIcon.Kind = activeSection.IsLive ? PackIconKind.AccessPoint : PackIconKind.AccessPointOff;
-                SelectedSectionStatusIcon.Foreground = activeSection.IsLive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
-                                                                              ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+                SelectedSectionStatusIcon.Foreground = activeSection.IsLive ? ColorManager.Secondary900.ConvertBrush() :
+                                                                              ColorManager.Primary900.ConvertBrush();
             }
         }
 
@@ -135,11 +376,11 @@ namespace PresentationLayer.Menus.Settings.Live
         {
             if (activeSection != null)
             {
-                NoActiveSectionGrid.Visibility = Visibility.Hidden;
+                SectionDataGridCover.Visibility = Visibility.Hidden;
                 sectionSelected = true;
 
-                SelectedSectionNameTextBox.Text = activeSection.Name;
-                SelectedSectionDateLabel.Text = activeSection.Date.ToString();
+                fieldsViewModel.SectionName = activeSection.Name;
+                fieldsViewModel.SectionDate = activeSection.Date.ToString();
                 SelectedSectionChannelsStackPanel.Children.Clear();
 
                 NoChannelsGrid.Visibility = channelNames.Count == 0 ? Visibility.Visible : Visibility.Hidden;
@@ -153,7 +394,7 @@ namespace PresentationLayer.Menus.Settings.Live
             }
             else
             {
-                NoActiveSectionGrid.Visibility = Visibility.Visible;
+                SectionDataGridCover.Visibility = Visibility.Visible;
                 sectionSelected = false;
             }
 
@@ -162,44 +403,17 @@ namespace PresentationLayer.Menus.Settings.Live
 
         private void UpdateSelectedSectionButtons()
         {
-            ChangeSectionStatusCardButton.Foreground = sectionSelected ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
-                                                                         ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary400);
-            DeleteSectionCardButton.Background = sectionSelected ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900) :
-                                                                   ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary200);
-        }
-
-        private async Task<List<string>> GetActiveChannelsAsync(int sectionID)
-        {
-            var channelNames = new List<string>();
-
-            try
-            {
-                var response = await client.GetAsync($"/api/Section/channel_names?sectionID={sectionID}").ConfigureAwait(false);
-                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                string resultString = result.GetAwaiter().GetResult();
-                dynamic data = JsonConvert.DeserializeObject(resultString);
-                for (int i = 0; i < data.Count; i++)
-                {
-                    var a = data[i];
-                    channelNames.Add(data[i].ToString());
-                }
-            }
-            catch (Exception)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    ShowErrorMessage("Couldn't connect to the sever");
-                });
-            }
-
-            return channelNames;
+            ChangeSectionStatusCardButton.Foreground = sectionSelected ? ColorManager.Secondary900.ConvertBrush() :
+                                                                         ColorManager.Secondary400.ConvertBrush();
+            DeleteSectionCardButton.Background = sectionSelected ? ColorManager.Primary900.ConvertBrush() :
+                                                                   ColorManager.Primary200.ConvertBrush();
         }
 
         public void ChangeStatus(int id)
         {
             SelectSection(id);
 
-            SetLoadingGrid(visibility: true, progressBarVisibility: false);
+            UpdateLoadingGrid(visibility: true, progressBarVisibility: false);
 
             var changeLiveStatusWindow = new PopUpWindow($"You are about to change {activeSection.Name}'s status from " +
                                                          $"{(activeSection.IsLive ? "live" : "offline")} to " +
@@ -207,72 +421,6 @@ namespace PresentationLayer.Menus.Settings.Live
                                                          $"Are you sure about that?",
                                                          PopUpWindow.PopUpType.ChangeLiveStatus);
             changeLiveStatusWindow.ShowDialog();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="change">True if the status should changed, false if not.</param>
-        public async void ChangeStatusResultAsync(bool change)
-        {
-            SetLoadingGrid(visibility: false);
-
-            if (!change)
-            {
-                return;
-            }
-
-            var updatedSection = new Section
-            {
-                ID = activeSection.ID,
-                Date = activeSection.Date,
-                Name = activeSection.Name,
-                IsLive = !activeSection.IsLive
-            };
-            try
-            {
-                var response = await client.PutAsJsonAsync($"/api/Section", updatedSection).ConfigureAwait(false);
-                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                string resultString = result.GetAwaiter().GetResult();
-                if (resultString.Equals("200"))
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        activeSection.IsLive = updatedSection.IsLive;
-                        ChangeSectionStatus(activeSection.ID, activeSection.IsLive);
-                        SetLoadingGrid(visibility: false);
-                        SelectedSectionStatusIcon.Kind = activeSection.IsLive ? PackIconKind.AccessPoint : PackIconKind.AccessPointOff;
-                        SelectedSectionStatusIcon.Foreground = activeSection.IsLive ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary900) :
-                                                                                      ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
-                    });
-                }
-                else if (resultString.Equals("409"))
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SetLoadingGrid(visibility: false);
-                        ShowErrorMessage($"Only one live section can be at the time!");
-                    });
-                }
-                else
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SetLoadingGrid(visibility: false);
-                        ShowErrorMessage($"Couldn't update {activeSection.Name}'s status from " +
-                                         $"{(activeSection.IsLive ? "live" : "offline")} to " +
-                                         $"{(!activeSection.IsLive ? "live" : "offline")}");
-                    });
-                }
-            }
-            catch (Exception)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SetLoadingGrid(visibility: false);
-                    ShowErrorMessage($"There was an error updating {activeSection.Name}");
-                });
-            }
         }
 
         private void ChangeSectionColors()
@@ -298,45 +446,11 @@ namespace PresentationLayer.Menus.Settings.Live
 
         private void AddLiveSection_Click(object sender, RoutedEventArgs e)
         {
-            SetLoadingGrid(visibility: true, "Adding new section..");
+            UpdateLoadingGrid(visibility: true, "Adding new section..");
 
             PostNewSectionAsync(AddLiveSectionNameTextBox.Text);
 
             AddLiveSectionNameTextBox.Text = string.Empty;
-        }
-
-        private async void PostNewSectionAsync(string sectionName)
-        {
-            try
-            {
-                var response = await client.PostAsJsonAsync($"/api/Section", new Section { Date = DateTime.Now, Name = sectionName }).ConfigureAwait(false);
-                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                string resultString = result.GetAwaiter().GetResult();
-                if (resultString.Equals("200"))
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        GetAllSectionsAsync();
-                        SetLoadingGrid(visibility: false);
-                    });
-                }
-                else
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SetLoadingGrid(visibility: false);
-                        ShowErrorMessage($"Couldn't add {sectionName}");
-                    });
-                }
-            }
-            catch (Exception)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SetLoadingGrid(visibility: false);
-                    ShowErrorMessage($"Can't add {sectionName} because can't connect to the server");
-                });
-            }
         }
 
         /// <summary>
@@ -345,15 +459,15 @@ namespace PresentationLayer.Menus.Settings.Live
         /// <param name="message"></param>
         /// <param name="error">If true, it's an error message, if not, it's a regular one.</param>
         /// <param name="time"></param>
-        private void ShowErrorMessage(string message, bool error = true, double time = 3)
+        private void ShowSnackbarMessage(string message, bool error = true, double time = 3)
         {
-            ErrorSnackbar.Foreground = error ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary500)) :
-                                               new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+            ErrorSnackbar.Foreground = error ? ColorManager.Primary500.ConvertBrush() :
+                                               ColorManager.Secondary50.ConvertBrush();
 
             ErrorSnackbar.MessageQueue.Enqueue(message, null, null, null, false, true, TimeSpan.FromSeconds(time));
         }
 
-        private void SetLoadingGrid(bool visibility, string message = "", bool progressBarVisibility = true, bool cancelButtonVisibility = false)
+        private void UpdateLoadingGrid(bool visibility, string message = "", bool progressBarVisibility = true, bool cancelButtonVisibility = false)
         {
             LoadingGrid.Visibility = visibility ? Visibility.Visible : Visibility.Hidden;
             LoadingLabel.Content = message;
@@ -363,16 +477,24 @@ namespace PresentationLayer.Menus.Settings.Live
 
         private void RefreshSectionsButton_Click(object sender, RoutedEventArgs e)
         {
-            RefreshSectionsButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
-            SetLoadingGrid(visibility: true, "Loading sections..");
-            GetAllSectionsAsync();
+            RefreshSectionsButton.Background = ColorManager.Secondary100.ConvertBrush();
+            UpdateLoadingGrid(visibility: true, "Loading sections..");
+
+            int? selectedSectionID = null;
+
+            if (activeSection != null)
+            {
+                selectedSectionID = activeSection.ID;
+            }
+
+            GetAllSectionsAsync(selectedSectionID: selectedSectionID);
         }
 
         private void DeleteSectionCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (sectionSelected)
             {
-                DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
+                DeleteSectionCardButton.Background = ColorManager.Primary700.ConvertBrush();
             }
         }
 
@@ -380,9 +502,9 @@ namespace PresentationLayer.Menus.Settings.Live
         {
             if (sectionSelected)
             {
-                DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+                DeleteSectionCardButton.Background = ColorManager.Primary800.ConvertBrush();
 
-                SetLoadingGrid(visibility: true, progressBarVisibility: false);
+                UpdateLoadingGrid(visibility: true, progressBarVisibility: false);
 
                 var deleteSectionWindow = new PopUpWindow($"You are about to delete {activeSection.Name}\n" +
                                                           $"Are you sure about that?",
@@ -395,7 +517,7 @@ namespace PresentationLayer.Menus.Settings.Live
         {
             if (sectionSelected)
             {
-                DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+                DeleteSectionCardButton.Background = ColorManager.Primary800.ConvertBrush();
                 Mouse.OverrideCursor = Cursors.Hand;
             }
         }
@@ -404,7 +526,7 @@ namespace PresentationLayer.Menus.Settings.Live
         {
             if (sectionSelected)
             {
-                DeleteSectionCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+                DeleteSectionCardButton.Background = ColorManager.Primary900.ConvertBrush();
                 Mouse.OverrideCursor = null;
             }
         }
@@ -417,150 +539,18 @@ namespace PresentationLayer.Menus.Settings.Live
             }
             else
             {
-                SetLoadingGrid(visibility: false);
+                UpdateLoadingGrid(visibility: false);
             }
         }
 
-        private async void DeleteSectionAsync(int id)
+        public void ChangeName(string newName)
         {
-            SetLoadingGrid(visibility: true, "Deleting section..");
-
-            try
-            {
-                var response = await client.DeleteAsync($"/api/Section/{id}").ConfigureAwait(false);
-                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                string resultString = result.GetAwaiter().GetResult();
-                if (resultString.Equals("200"))
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SetLoadingGrid(visibility: false);
-                        GetAllSectionsAsync();
-                    });
-                }
-                else
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SetLoadingGrid(visibility: false);
-                        ShowErrorMessage("Couldn't delete section");
-                    });
-                }
-            }
-            catch (Exception)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SetLoadingGrid(visibility: false);
-                    ShowErrorMessage("Can't delete section because can't connect to the server");
-                });
-            }
+            ChangeSectionNameAsync(activeSection.ID, newName);
         }
 
-        public void ChangeName(bool change, string newName = "")
+        public void ChangeDate(DateTime newDate)
         {
-            if (change)
-            {
-                ChangeSectionNameAsync(activeSection.ID, newName);
-            }
-            else
-            {
-                SetLoadingGrid(visibility: false);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="name">New name</param>
-        private async void ChangeSectionNameAsync(int id, string name)
-        {
-            SetLoadingGrid(visibility: true, "Updating section..");
-
-            try
-            {
-                var response = await client.PutAsJsonAsync("/api/Section/change_name", new Section() { ID = id, Name = name }).ConfigureAwait(false);
-                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                string resultString = result.GetAwaiter().GetResult();
-                if (resultString.Equals("200"))
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SetLoadingGrid(visibility: false);
-                        GetAllSectionsAsync();
-                    });
-                }
-                else
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SetLoadingGrid(visibility: false);
-                        ShowErrorMessage("Couldn't update section");
-                    });
-                }
-            }
-            catch (Exception)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SetLoadingGrid(visibility: false);
-                    ShowErrorMessage("Can't update section because can't connect to the server");
-                });
-            }
-        }
-
-        public void ChangeDate(bool change, DateTime newDate = new DateTime())
-        {
-            if (change)
-            {
-                ChangeSectionDateAsync(activeSection.ID, newDate);
-            }
-            else
-            {
-                SetLoadingGrid(visibility: false);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="name">New name</param>
-        private async void ChangeSectionDateAsync(int id, DateTime newDate)
-        {
-            SetLoadingGrid(visibility: true, "Updating section..");
-
-            try
-            {
-                var response = await client.PutAsJsonAsync("/api/Section/change_date", new Section() { ID = id, Date = newDate }).ConfigureAwait(false);
-                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                string resultString = result.GetAwaiter().GetResult();
-                if (resultString.Equals("200"))
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SetLoadingGrid(visibility: false);
-                        GetAllSectionsAsync();
-                    });
-                }
-                else
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SetLoadingGrid(visibility: false);
-                        ShowErrorMessage("Couldn't update section");
-                    });
-                }
-            }
-            catch (Exception)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SetLoadingGrid(visibility: false);
-                    ShowErrorMessage("Can't update section because can't connect to the server");
-                });
-            }
+            ChangeSectionDateAsync(activeSection.ID, newDate);
         }
 
         public void UpdateCarStatus(List<TimeSpan> carTimes, long appTimes)
@@ -590,13 +580,19 @@ namespace PresentationLayer.Menus.Settings.Live
             }
         }
 
+        public void UpdateConfigurationCard()
+        {
+            URLLabel.Content = ConfigurationManager.URL;
+            PortLabel.Content = ConfigurationManager.Port.ToString();
+        }
+
         #region cards
 
         private void ChangeSectionStatusCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (sectionSelected)
             {
-                ChangeSectionStatusCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+                ChangeSectionStatusCardButton.Background = ColorManager.Secondary200.ConvertBrush();
             }
         }
 
@@ -604,7 +600,7 @@ namespace PresentationLayer.Menus.Settings.Live
         {
             if (sectionSelected)
             {
-                ChangeSectionStatusCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+                ChangeSectionStatusCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
                 ChangeStatus(activeSection.ID);
             }
@@ -614,7 +610,7 @@ namespace PresentationLayer.Menus.Settings.Live
         {
             if (sectionSelected)
             {
-                ChangeSectionStatusCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+                ChangeSectionStatusCardButton.Background = ColorManager.Secondary100.ConvertBrush();
                 Mouse.OverrideCursor = Cursors.Hand;
             }
         }
@@ -623,7 +619,7 @@ namespace PresentationLayer.Menus.Settings.Live
         {
             if (sectionSelected)
             {
-                ChangeSectionStatusCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+                ChangeSectionStatusCardButton.Background = ColorManager.Secondary50.ConvertBrush();
                 Mouse.OverrideCursor = null;
             }
         }
@@ -631,77 +627,87 @@ namespace PresentationLayer.Menus.Settings.Live
 
         private void ChangeSectionNameCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ChangeSectionNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            ChangeSectionNameCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void ChangeSectionNameCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ChangeSectionNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeSectionNameCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
-            SetLoadingGrid(visibility: true, progressBarVisibility: false);
+            UpdateLoadingGrid(visibility: true, progressBarVisibility: false);
 
-            var changeNameWindow = new PopUpEditWindow("Change name", PopUpEditWindow.EditType.ChangeSectionName);
-            changeNameWindow.ShowDialog();
+            string newName = SelectedSectionNameTextBox.Text;
+            if (!newName.Equals(string.Empty) && !newName.Equals(activeSection.Name))
+            {
+                MenuManager.LiveSettings.ChangeName(newName);
+            }
         }
 
         private void ChangeSectionNameCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ChangeSectionNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeSectionNameCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void ChangeSectionNameCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ChangeSectionNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            ChangeSectionNameCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void ChangeSectionDateCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ChangeSectionDateCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            ChangeSectionDateCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void ChangeSectionDateCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ChangeSectionDateCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeSectionDateCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
-            SetLoadingGrid(visibility: true, progressBarVisibility: false);
+            UpdateLoadingGrid(visibility: true, progressBarVisibility: false);
 
-            var changeDateWindow = new PopUpEditDateWindow("Change date");
-            changeDateWindow.ShowDialog();
+            string newDateText = SelectedSectionDateLabel.Text;
+            if (!newDateText.Equals(string.Empty))
+            {
+                DateTime newDate = Convert.ToDateTime(newDateText);
+                if (newDate != activeSection.Date)
+                {
+                    MenuManager.LiveSettings.ChangeDate(newDate);
+                }
+            }
         }
 
         private void ChangeSectionDateCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ChangeSectionDateCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeSectionDateCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void ChangeSectionDateCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ChangeSectionDateCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            ChangeSectionDateCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void LoadingCancelButtonCard_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            LoadingCancelButtonCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
+            LoadingCancelButtonCard.Background = ColorManager.Primary700.ConvertBrush();
         }
 
         private void LoadingCancelButtonCard_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            LoadingCancelButtonCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+            LoadingCancelButtonCard.Background = ColorManager.Primary800.ConvertBrush();
         }
 
         private void LoadingCancelButtonCard_MouseEnter(object sender, MouseEventArgs e)
         {
-            LoadingCancelButtonCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+            LoadingCancelButtonCard.Background = ColorManager.Primary800.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void LoadingCancelButtonCard_MouseLeave(object sender, MouseEventArgs e)
         {
-            LoadingCancelButtonCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+            LoadingCancelButtonCard.Background = ColorManager.Primary900.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
         #endregion

@@ -9,6 +9,8 @@
              Background="{DynamicResource MaterialDesignPaper}"
              TextElement.FontSize="14"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:validation="clr-namespace:PresentationLayer.ValidationRules"
+             d:DataContext="{d:DesignInstance validation:FieldsViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="450" d:DesignWidth="800">
     <materialDesign:DialogHost HorizontalAlignment="Stretch"
                                VerticalAlignment="Stretch"
@@ -61,7 +63,7 @@
                     <StackPanel Name="SectionsStackPanel"
                                 Margin="0,2.5,0,0"/>
                 </ScrollViewer>
-                <Grid x:Name="NoSectionsGrid"
+                <Grid x:Name="SectionsCoverGridGrid"
                         Background="White">
                     <materialDesign:PackIcon Kind="CardsVariant"
                                                 Opacity=".2"
@@ -87,9 +89,9 @@
                                  >
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="40"/>
-                                <RowDefinition Height="40"/>
-                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="65"/>
+                                <RowDefinition Height="65"/>
+                                <RowDefinition Height="65"/>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="45"/>
                             </Grid.RowDefinitions>
@@ -112,16 +114,24 @@
 
                                 <TextBox Name="SelectedSectionNameTextBox"
                                          Grid.Column="1"
-                                         TextWrapping="Wrap"
                                          VerticalAlignment="Stretch"
                                          HorizontalAlignment="Stretch"
                                          VerticalContentAlignment="Center"
                                          HorizontalContentAlignment="Left"
-                                         IsReadOnly="True"
-                                         materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                                         materialDesign:HintAssist.Hint="Section name"
+                                         materialDesign:HintAssist.IsFloating="True"
                                          BorderThickness="0"
-                                         Text="Section name"
-                                         />
+                                         Margin="5,0,0,15"
+                                         >
+                                    <TextBox.Text>
+                                        <Binding Path="SectionName"
+                                                 UpdateSourceTrigger="PropertyChanged">
+                                            <Binding.ValidationRules>
+                                                <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
 
                                 <materialDesign:Card Name="ChangeSectionNameCardButton"
                                                      Grid.Column="2"
@@ -133,7 +143,7 @@
                                                      MouseEnter="ChangeSectionNameCardButton_MouseEnter"
                                                      MouseLeave="ChangeSectionNameCardButton_MouseLeave"
                                                      >
-                                    <materialDesign:PackIcon Kind="Pencil"
+                                    <materialDesign:PackIcon Kind="ContentSave"
                                                              VerticalAlignment="Stretch"
                                                              HorizontalAlignment="Stretch"
                                                              />
@@ -158,16 +168,24 @@
 
                             <TextBox Name="SelectedSectionDateLabel"
                                      Grid.Column="1"
-                                     TextWrapping="Wrap"
                                      VerticalAlignment="Stretch"
                                      HorizontalAlignment="Stretch"
                                      VerticalContentAlignment="Center"
                                      HorizontalContentAlignment="Left"
-                                     IsReadOnly="True"
-                                     materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
                                      BorderThickness="0"
-                                     Text="1/12/2021"
-                                     />
+                                     materialDesign:HintAssist.Hint="Section date"
+                                     materialDesign:HintAssist.IsFloating="True"
+                                     Margin="5,0,0,15"
+                                     >
+                                    <TextBox.Text>
+                                        <Binding Path="SectionDate"
+                                                 UpdateSourceTrigger="PropertyChanged">
+                                            <Binding.ValidationRules>
+                                                <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
 
                              <materialDesign:Card Name="ChangeSectionDateCardButton"
                                                   Grid.Column="2"
@@ -179,7 +197,7 @@
                                                   MouseEnter="ChangeSectionDateCardButton_MouseEnter"
                                                   MouseLeave="ChangeSectionDateCardButton_MouseLeave"
                                                   >
-                                    <materialDesign:PackIcon Kind="Pencil"
+                                    <materialDesign:PackIcon Kind="ContentSave"
                                                              VerticalAlignment="Stretch"
                                                              HorizontalAlignment="Stretch"
                                                              />
@@ -239,9 +257,10 @@
                                 </Grid>
                             </Grid>
 
-                            <Grid x:Name="NoActiveSectionGrid"
+                            <Grid x:Name="SectionDataGridCover"
                                   Background="White"
                                   Grid.RowSpan="5"
+                                  Visibility="Hidden"
                                   >
                                 <materialDesign:PackIcon Kind="CardText"
                                                          Opacity=".2"
@@ -300,6 +319,8 @@
 
             <Grid Grid.Column="4">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="5"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="5"/>
                     <RowDefinition Height="3*"/>
@@ -368,6 +389,54 @@
                 </materialDesign:Card>
 
                 <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
+
+                <materialDesign:Card UniformCornerRadius="5"
+                                     Margin="0,0,5,0"
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                                     Grid.Row="2"
+                                     >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="URL"
+                               VerticalAlignment="Center"
+                               FontWeight="Bold"
+                               Margin="5,0,0,0"
+                               />
+
+                        <Label Name="URLLabel"
+                               VerticalAlignment="Center"
+                               Margin="5,0,0,0"
+                               Grid.Column="1"
+                               />
+
+                        <Label Content="Port"
+                               VerticalAlignment="Center"
+                               FontWeight="Bold"
+                               Margin="5,0,0,0"
+                               Grid.Row="1"
+                               />
+
+                        <Label Name="PortLabel"
+                               VerticalAlignment="Center"
+                               Margin="5,0,0,0"
+                               Grid.Column="1"
+                               Grid.Row="1"
+                               />
+                    </Grid>
+                </materialDesign:Card>
+
+                <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" Background="{DynamicResource GridSplitter}" />
+
             </Grid>
             
             <Button Grid.ColumnSpan="5"

@@ -17,12 +17,10 @@ using PresentationLayer.Menus.Settings.Live;
 using LocigLayer.Groups;
 using LocigLayer.Texts;
 using LocigLayer.Colors;
+using LogicLayer.Configurations;
 
 namespace PresentationLayer.Menus.Live
 {
-    /// <summary>
-    /// Interaction logic for LiveTelemetry.xaml
-    /// </summary>
     public partial class LiveTelemetry : UserControl
     {
         private Section activeSection;
@@ -40,10 +38,10 @@ namespace PresentationLayer.Menus.Live
         private object getDataLock = new object();
         private AutoResetEvent getDataSignal = new AutoResetEvent(false);
 
-        /// <summary>
-        /// In milliseconds
-        /// </summary>
-        private const int waitBetweenCollectData = 5000;
+        private const int WAIT_BETWEEN_COLLECT_DATA_IN_MS = 5000;
+
+        private const int NO_OPACITY_VALUE = 1;
+        private const float LITTLE_OPACITY_VALUE = .2f;
 
         public LiveTelemetry()
         {
@@ -53,16 +51,17 @@ namespace PresentationLayer.Menus.Live
             UpdateSectionTitle();
             UpdateCanRecieveDataStatus();
             InitilaizeHttpClient();
-            UpdateNoGrids();
+
+            UpdateCoverGridsVisibilities();
         }
 
-        private void UpdateNoGrids()
+        private void UpdateCoverGridsVisibilities()
         {
             NoSectionGrid.Visibility = isActiveSection ? Visibility.Hidden : Visibility.Visible;
             NoChannelsGrid.Visibility = isActiveSection ? Visibility.Hidden : Visibility.Visible;
             NoGroupsGrid.Visibility = isActiveSection ? Visibility.Hidden : Visibility.Visible;
             NoChartsGrid.Visibility = isActiveSection ? Visibility.Hidden : Visibility.Visible;
-            RecieveDataStatusIcon.Opacity = isActiveSection ? 1 : .2f;
+            RecieveDataStatusIcon.Opacity = isActiveSection ? NO_OPACITY_VALUE : LITTLE_OPACITY_VALUE;
         }
 
         private void InitilaizeHttpClient()
@@ -72,7 +71,7 @@ namespace PresentationLayer.Menus.Live
             client = new HttpClient
             {
                 Timeout = TimeSpan.FromMinutes(1),
-                BaseAddress = new Uri("http://192.168.1.33:5000")
+                BaseAddress = new Uri(ConfigurationManager.Address)
             };
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -94,6 +93,7 @@ namespace PresentationLayer.Menus.Live
         private void InitializeGroups()
         {
             GroupsStackPanel.Children.Clear();
+
             foreach (var group in GroupManager.Groups)
             {
                 var checkBox = new CheckBox()
@@ -148,6 +148,7 @@ namespace PresentationLayer.Menus.Live
         {
             var checkBox = (CheckBox)sender;
             string content = checkBox.Content.ToString();
+
             if ((bool)checkBox.IsChecked)
             {
                 activeChannelNames.Add(content);
@@ -170,7 +171,7 @@ namespace PresentationLayer.Menus.Live
 
             isActiveSection = true;
 
-            UpdateNoGrids();
+            UpdateCoverGridsVisibilities();
 
             this.channelNames = channelNames;
             activeChannelNames.Clear();
@@ -244,7 +245,7 @@ namespace PresentationLayer.Menus.Live
                         {
                             times.Add(item.Item2);
                         }
-                        ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).UpdateCarStatus(times, stopwatch.ElapsedMilliseconds);
+                        ((LiveSettings)((LiveMenu)MenuManager.GetMenuTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).UpdateCarStatus(times, stopwatch.ElapsedMilliseconds);
                     });
                 }
                 else
@@ -256,7 +257,7 @@ namespace PresentationLayer.Menus.Live
                     });
                 }
 
-                Thread.Sleep(waitBetweenCollectData);
+                Thread.Sleep(WAIT_BETWEEN_COLLECT_DATA_IN_MS);
             }
         }
 
@@ -290,7 +291,7 @@ namespace PresentationLayer.Menus.Live
                         });
                     }
 
-                    Thread.Sleep(waitBetweenCollectData);
+                    Thread.Sleep(WAIT_BETWEEN_COLLECT_DATA_IN_MS);
                 }
             }
         }
@@ -411,7 +412,7 @@ namespace PresentationLayer.Menus.Live
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).UpdateCarStatus(new List<TimeSpan>(), -1);
+                        ((LiveSettings)((LiveMenu)MenuManager.GetMenuTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).UpdateCarStatus(new List<TimeSpan>(), -1);
                     });
                 }
             }

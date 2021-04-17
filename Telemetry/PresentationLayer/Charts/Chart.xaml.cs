@@ -198,10 +198,10 @@ namespace PresentationLayer.Charts
 
             if (!color.Equals(string.Empty))
             {
-                chartValue.SetUp(color: color, inputFileID: inputFileID);
+                chartValue.SetUp(colorText: color, inputFileID: inputFileID);
                 SettingsStackPanel.Children.Add(new ChartValueSettings(channelName: channelName,
                                                                        groupName: ChartName,
-                                                                       color: color,
+                                                                       colorText: color,
                                                                        lineWidth: lineWidth,
                                                                        inputFileID: inputFileID,
                                                                        isActive: isActive));
@@ -295,13 +295,13 @@ namespace PresentationLayer.Charts
                     ChartName = $"Temporary{GroupManager.TemporaryGroupIndex}";
                    
                     GroupManager.AddGroup(GroupManager.MakeGroupWirhAttributes(ChartName, channelNames));
-                    ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).ReplaceChannelWithTemporaryGroup(oldName, ChartName);
+                    ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).ReplaceChannelWithTemporaryGroup(oldName, ChartName);
                 }
             }
 
             GroupManager.SaveGroups();
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+            ((GroupSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
+            ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
 
             Mouse.OverrideCursor = null;
         }

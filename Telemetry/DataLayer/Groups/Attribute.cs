@@ -14,7 +14,7 @@
         /// <summary>
         /// <see cref="Attribute"/>s color.
         /// </summary>
-        public string Color { get; set; }
+        public string ColorText { get; set; }
 
         /// <summary>
         /// <see cref="Attribute"/>s line width.
@@ -31,7 +31,7 @@
         {
             ID = id;
             Name = name.Trim();
-            Color = color.Trim();
+            ColorText = color.Trim();
             LineWidth = lineWidth;
             IsActive = true;
         }

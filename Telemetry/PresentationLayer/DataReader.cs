@@ -107,7 +107,7 @@ namespace PresentationLayer
                     {
                         if (attribute.Name.Equals(channel.Name))
                         {
-                            channel.Color = attribute.Color;
+                            channel.Color = attribute.ColorText;
                             channel.LineWidth = attribute.LineWidth;
                         }
                     }
@@ -220,9 +220,9 @@ namespace PresentationLayer
 
                 InputFileManager.AddInputFile(inputFile);
                 InputFileManager.ActiveInputFileName = FileNameWithoutPath;
-                ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).AddInputFileSettingsItem(inputFile);
-                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
-                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).UpdateAfterReadFile(FileNameWithoutPath);
+                ((InputFilesSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).AddInputFileSettingsItem(inputFile);
+                ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();
+                ((GroupSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).UpdateAfterReadFile(FileNameWithoutPath);
             }
         }
     }

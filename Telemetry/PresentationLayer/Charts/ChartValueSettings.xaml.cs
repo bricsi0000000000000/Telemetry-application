@@ -5,7 +5,7 @@ using DataLayer.Groups;
 using LocigLayer.Groups;
 using LocigLayer.InputFiles;
 using LocigLayer.Texts;
-using PresentationLayer.Converters;
+using PresentationLayer.Extensions;
 using PresentationLayer.Menus;
 using PresentationLayer.Menus.Driverless;
 using PresentationLayer.Menus.Live;
@@ -25,7 +25,7 @@ namespace PresentationLayer.Charts
         private string groupName;
         private bool isActive = false;
 
-        public ChartValueSettings(string channelName, string groupName, int inputFileID, int lineWidth = 0, string color = "#ffffff", bool isActive = false)
+        public ChartValueSettings(string channelName, string groupName, int inputFileID, int lineWidth = 0, string colorText = "#ffffff", bool isActive = false)
         {
             InitializeComponent();
 
@@ -35,8 +35,8 @@ namespace PresentationLayer.Charts
 
             LineWidthLabel.Content = $"{lineWidth} pt";
 
-            colorCode = color;
-            ColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(color);
+            colorCode = colorText;
+            ColorCard.Background = colorText.ConvertBrush();
 
             this.inputFileID = inputFileID;
 
@@ -77,13 +77,13 @@ namespace PresentationLayer.Charts
             }
         }
 
-        public void SetUp(string color, int inputFileID)
+        public void SetUp(string colorText, int inputFileID)
         {
             ChannelNameLabel.Opacity = 1;
 
             this.inputFileID = inputFileID;
-            colorCode = color;
-            ColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(color);
+            colorCode = colorText;
+            ColorCard.Background = colorText.ConvertBrush();
 
             SetChannelName(channelName);
         }
@@ -127,7 +127,7 @@ namespace PresentationLayer.Charts
                                 var channel = actGroup.GetAttribute(ChannelName);
                                 if (channel != null)
                                 {
-                                    channel.Color = pickedColor.ToString();
+                                    channel.ColorText = pickedColor.ToString();
                                 }
                             }
                         }
@@ -150,11 +150,11 @@ namespace PresentationLayer.Charts
                     }
 
                     GroupManager.SaveGroups();
-                    ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitAttributes();
-                    ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).InitChannelItems();
+                    ((GroupSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitAttributes();
+                    ((InputFilesSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).InitChannelItems();
 
                     //TODO if driverless, a driverlesseset updatelje ha nem akkor meg a másikat
-                    ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                    ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
 
                     Mouse.OverrideCursor = null;
                 }
@@ -188,13 +188,13 @@ namespace PresentationLayer.Charts
             if (newIsActive != isActive)
             {
                 isActive = newIsActive;
-                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).SetChannelActivity(channelName, inputFileID, isActive);
+                ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).SetChannelActivity(channelName, inputFileID, isActive);
             }
         }
 
         private void LineWidthLabel_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).SetLoadingGrid(visibility: true);
+            ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).SetLoadingGrid(visibility: true);
 
             dynamic data = new System.Dynamic.ExpandoObject();
             data.inputFileID = inputFileID;
