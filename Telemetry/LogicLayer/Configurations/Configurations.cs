@@ -6,7 +6,7 @@ using System.Text;
 
 namespace LogicLayer.Configurations
 {
-    public static class ConfigurationManager
+    public static class Configurations
     {
         #region version
 

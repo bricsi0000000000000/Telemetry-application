@@ -17,6 +17,9 @@ using LocigLayer.Colors;
 using LogicLayer.Configurations;
 using PresentationLayer.Extensions;
 using System.Linq;
+using LocigLayer.InputFiles;
+using PresentationLayer.Errors;
+using System.Drawing;
 
 namespace PresentationLayer.Menus.Live
 {
@@ -24,18 +27,22 @@ namespace PresentationLayer.Menus.Live
     {
         private Section activeSection;
         private bool isActiveSection = false;
-        private List<string> channelNames = new List<string>();
-        private List<string> activeChannelNames = new List<string>();
         private List<Group> activeGroups = new List<Group>();
         private List<Chart> charts = new List<Chart>();
         private bool canUpdateCharts = false;
         private static HttpClient client = new HttpClient();
         private const int getDataAmount = 5;
-        private int yawAngleLastIndex = 0;
+
+
+
+        private List<Tuple<string, bool>> channelNames = new List<Tuple<string, bool>>();
+        private readonly List<string> selectedGroups = new List<string>();
+        private readonly List<string> selectedChannels = new List<string>();
+        private List<double> horizontalAxisData = new List<double>();
 
         private Package currentPackage = new Package();
-        private object getDataLock = new object();
-        private AutoResetEvent getDataSignal = new AutoResetEvent(false);
+        private readonly object getDataLock = new object();
+        private readonly AutoResetEvent getDataSignal = new AutoResetEvent(false);
 
         private const int NO_OPACITY_VALUE = 1;
         private const float LITTLE_OPACITY_VALUE = .2f;
@@ -46,7 +53,7 @@ namespace PresentationLayer.Menus.Live
         {
             InitializeComponent();
 
-            InitializeGroups();
+            InitializeGroupItems(initCall: true);
             UpdateSectionTitle();
             UpdateCanRecieveDataStatus();
             InitilaizeHttpClient();
@@ -70,7 +77,7 @@ namespace PresentationLayer.Menus.Live
             client = new HttpClient
             {
                 Timeout = TimeSpan.FromMinutes(1),
-                BaseAddress = new Uri(ConfigurationManager.Address)
+                BaseAddress = new Uri(Configurations.Address)
             };
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -89,7 +96,7 @@ namespace PresentationLayer.Menus.Live
             }
         }
 
-        private void InitializeGroups()
+        private void InitializeGroupItems(bool initCall = false)
         {
             GroupsStackPanel.Children.Clear();
 
@@ -99,35 +106,235 @@ namespace PresentationLayer.Menus.Live
                 {
                     Content = group.Name
                 };
-                checkBox.Click += GroupCheckBox_Click;
+                checkBox.IsChecked = selectedGroups.Contains(group.Name);
+                checkBox.Checked += GroupCheckBox_CheckedClick;
+                checkBox.Unchecked += GroupCheckBox_CheckedClick;
 
                 GroupsStackPanel.Children.Add(checkBox);
             }
+
+            if (!initCall)
+            {
+                BuildCharts();
+            }
         }
 
-        private void GroupCheckBox_Click(object sender, RoutedEventArgs e)
+        private void GroupCheckBox_CheckedClick(object sender, RoutedEventArgs e)
         {
             var checkBox = (CheckBox)sender;
             string content = checkBox.Content.ToString();
-            var group = GroupManager.GetGroup(content);
-            if (group == null)
-            {
-                ShowErrorMessage($"Can't find group '{content}'");
-            }
 
             if ((bool)checkBox.IsChecked)
             {
-                activeGroups.Add(group);
+                selectedGroups.Add(content);
             }
             else
             {
-                activeGroups.Remove(group);
+                selectedGroups.Remove(content);
             }
 
-            InitializeCharts();
+            BuildCharts();
         }
 
-        private void InitializeChannels()
+        public void BuildCharts()
+        {
+            ChartsGrid.Children.Clear();
+            ChartsGrid.RowDefinitions.Clear();
+
+            int rowIndex = 0;
+            foreach (var channelName in channelNames)
+            {
+                if (selectedChannels.Contains(channelName.Item1))
+                {
+                    var group = new Group(GroupManager.LastGroupID++, channelName.Item1);
+
+                    group.AddAttribute(InputFileManager.GetLiveFile(activeSection.Name).GetChannel(channelName.Item1));
+
+                    BuildChartGrid(group, ref rowIndex);
+                }
+            }
+
+            foreach (var group in GroupManager.Groups)
+            {
+                if (selectedGroups.Contains(group.Name))
+                {
+                    BuildChartGrid(group, ref rowIndex);
+                }
+            }
+
+            RowDefinition chartRow = new RowDefinition()
+            {
+                Height = new GridLength()
+            };
+
+            ChartsGrid.RowDefinitions.Add(chartRow);
+
+            Grid.SetRow(new Grid(), rowIndex++);
+
+            UpdateCharts1();
+        }
+
+        private void UpdateCharts1()
+        {
+            if (horizontalAxisData.Count > 0)
+            {
+                int dataIndex = (int)DataSlider.Value;
+                double xValue = dataIndex < horizontalAxisData.Count ? horizontalAxisData[dataIndex] : horizontalAxisData.Last();
+                foreach (var item in ChartsGrid.Children)
+                {
+                    if (item is Chart chart)
+                    {
+                        chart.UpdateHighlight(xValue);
+                        chart.UpdateSideValues(ref dataIndex);
+                    }
+                }
+            }
+        }
+
+        private void BuildChartGrid(Group group, ref int rowIndex)
+        {
+            RowDefinition chartRow = new RowDefinition()
+            {
+                Height = new GridLength(200)
+            };
+            RowDefinition gridSplitterRow = new RowDefinition
+            {
+                Height = new GridLength(5)
+            };
+
+            ChartsGrid.RowDefinitions.Add(chartRow);
+            ChartsGrid.RowDefinitions.Add(gridSplitterRow);
+
+            GridSplitter splitter = new GridSplitter
+            {
+                ResizeDirection = GridResizeDirection.Rows,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Background = ColorManager.Secondary100.ConvertBrush()
+            };
+            ChartsGrid.Children.Add(splitter);
+
+            var chart = BuildGroupChart(group);
+            ChartsGrid.Children.Add(chart);
+
+            Grid.SetRow(chart, rowIndex++);
+            Grid.SetRow(splitter, rowIndex++);
+        }
+
+        /// <summary>
+        /// Builds one <see cref="Chart"/> with the <paramref name="group"/>s values.
+        /// </summary>
+        /// <param name="group"><see cref="Group"/> that will shown on the <see cref="Chart"/></param>
+        /// <returns>A <see cref="Chart"/> with the <paramref name="group"/>s values.</returns>
+        private Chart BuildGroupChart(Group group)
+        {
+            var chart = new Chart(group.Name);
+
+            int dataIndex = (int)DataSlider.Value;
+
+            var addedChannelNames = new List<string>();
+
+            foreach (var channelName in channelNames)
+            {
+                var attribute = group.GetAttribute(channelName.Item1);
+                if (attribute != null)
+                {
+                    int lineWidth = group.GetAttribute(channelName.Item1).LineWidth;
+                    var channel = GetChannel(channelName.Item1);
+
+                    if (channelName.Item2) // aktiv e a channel
+                    {
+                        var color = group.GetAttribute(channel.Name).ColorText;
+
+                        if (charts.Find(x => x.ChartName.Equals(group.Name)) == null)
+                        {
+                            charts.Add(chart);
+                        }
+                        /*var data = GetSensorData(channelName.Item1);
+                        if (data.Any())
+                        {
+                            chart.PlotLive(data: data,
+                                           yAxisLabel: channelName.Item1);
+                        }*/
+
+                        /*chart.AddPlot(xAxisValues: channelDataPlotData.Item1,
+                                      yAxisValues: channel.Data.ToArray(),
+                                      lineWidth: lineWidth,
+                                      lineColor: ColorTranslator.FromHtml(color),
+                                      xAxisLabel: group.HorizontalAxis);
+
+                        chart.AddSideValue(channelName: channelName.Item1,
+                                            xAxisValues: channelDataPlotData.Item2,
+                                            isActive: true,
+                                            inputFileID: inputFile.Item1,
+                                            color: color,
+                                            lineWidth: lineWidth);*/
+                    }
+                    else
+                    {
+                        chart.AddSideValue(channelName: channelName.Item1, xAxisValues: new double[0]/*, inputFileID: inputFile.Item1*/);
+                    }
+
+                    chart.AddChannelName(channelName.Item1);
+
+                    addedChannelNames.Add(channelName.Item1);
+                }
+            }
+
+            foreach (var attribute in group.Attributes)
+            {
+                if (!addedChannelNames.Contains(attribute.Name))
+                {
+                    chart.AddChannelName(attribute.Name);
+                    chart.AddSideValue(channelName: attribute.Name, xAxisValues: new double[0]);
+                }
+            }
+
+            if (horizontalAxisData.Count > 0)
+            {
+                double xValue = dataIndex < horizontalAxisData.Count ? horizontalAxisData[dataIndex] : horizontalAxisData.Last();
+                chart.UpdateHighlight(xValue);
+            }
+
+            chart.SetAxisLimitsToAuto();
+
+            return chart;
+        }
+
+        private Channel GetChannel(string channelName)
+        {
+            var liveFile = InputFileManager.GetLiveFile(activeSection.Name);
+            if (liveFile == null)
+            {
+                return null;
+            }
+
+            return liveFile.GetChannel(channelName);
+        }
+
+        private double[] GetSensorData(string sensorName)
+        {
+            double[] returnData = new double[0];
+            switch (sensorName)
+            {
+                case nameof(Time):
+                    returnData = new double[currentPackage.Times.Count];
+                    for (int i = 0; i < returnData.Length; i++)
+                    {
+                        returnData[i] = currentPackage.Times[i].Value;
+                    }
+                    return returnData;
+                case nameof(Speed):
+                    returnData = new double[currentPackage.Speeds.Count];
+                    for (int i = 0; i < returnData.Length; i++)
+                    {
+                        returnData[i] = currentPackage.Speeds[i].Value;
+                    }
+                    return returnData;
+            }
+            return returnData;
+        }
+
+        private void InitializeChannelItems()
         {
             ChannelsStackPanel.Children.Clear();
 
@@ -135,11 +342,16 @@ namespace PresentationLayer.Menus.Live
             {
                 var checkBox = new CheckBox()
                 {
-                    Content = channelName
+                    Content = channelName.Item1
                 };
                 checkBox.Click += ChannelCheckBox_Click;
 
                 ChannelsStackPanel.Children.Add(checkBox);
+            }
+
+            if (selectedChannels.Any())
+            {
+                BuildCharts();
             }
         }
 
@@ -147,17 +359,21 @@ namespace PresentationLayer.Menus.Live
         {
             var checkBox = (CheckBox)sender;
             string content = checkBox.Content.ToString();
+            bool isChecked = (bool)checkBox.IsChecked;
 
-            if ((bool)checkBox.IsChecked)
+            if (isChecked)
             {
-                activeChannelNames.Add(content);
+                selectedChannels.Add(content);
             }
             else
             {
-                activeChannelNames.Remove(content);
+                selectedChannels.Remove(content);
             }
 
-            InitializeCharts();
+            int index = channelNames.FindIndex(x => x.Item1.Equals(content));
+            channelNames[index] = new Tuple<string, bool>(content, isChecked);
+
+            BuildCharts();
         }
 
         /// <summary>
@@ -172,8 +388,7 @@ namespace PresentationLayer.Menus.Live
 
             UpdateCoverGridsVisibilities();
 
-            this.channelNames = channelNames;
-            activeChannelNames.Clear();
+            selectedChannels.Clear();
             activeGroups.Clear();
             charts.Clear();
 
@@ -182,38 +397,17 @@ namespace PresentationLayer.Menus.Live
                 item.IsChecked = false;
             }
 
-            yawAngleLastIndex = 0;
             Stop(); //TODO biztos?
-                    //  currentPackage.Clear();
             canUpdateCharts = false;
 
             UpdateSectionTitle();
-            InitializeChannels();
-            InitializeCharts();
-        }
 
-        private void InitializeCharts()
-        {
-            ChartsStackPanel.Children.Clear();
-
-            foreach (var channelName in activeChannelNames)
+            this.channelNames = new List<Tuple<string, bool>>();
+            foreach (var name in channelNames)
             {
-                var chart = new Chart(channelName);
-                chart.AddChannelName(channelName);
-                charts.Add(chart);
-                ChartsStackPanel.Children.Add(chart);
+                this.channelNames.Add(new Tuple<string, bool>(name, false));
             }
-
-            foreach (var group in activeGroups)
-            {
-                var chart = new Chart(group.Name);
-                foreach (var attribute in group.Attributes)
-                {
-                    chart.AddChannelName(attribute.Name);
-                }
-                charts.Add(chart);
-                ChartsStackPanel.Children.Add(chart);
-            }
+            InitializeChannelItems();
         }
 
         private void CollectData()
@@ -251,7 +445,7 @@ namespace PresentationLayer.Menus.Live
                     }
                 }
 
-                Thread.Sleep(ConfigurationManager.WaitBetweenCollectData);
+                Thread.Sleep(Configurations.WaitBetweenCollectData);
             }
         }
 
@@ -270,6 +464,16 @@ namespace PresentationLayer.Menus.Live
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
+                        foreach (Chart chart in charts)
+                        {
+                            foreach (var name in selectedChannels)
+                            {
+                                if (chart.HasChannelName(name))
+                                {
+                                    chart.PlotLive(GetSensorData(name), name);
+                                }
+                            }
+                        }
                         /*var yawAngleChannel = GetChart("yaw_angle");
                         if (yawAngleChannel != null)
                         {
@@ -282,7 +486,7 @@ namespace PresentationLayer.Menus.Live
                         }*/
                     });
 
-                    Thread.Sleep(ConfigurationManager.WaitBetweenCollectData);
+                    Thread.Sleep(Configurations.WaitBetweenCollectData);
                 }
             }
         }
@@ -293,7 +497,7 @@ namespace PresentationLayer.Menus.Live
         {
             try
             {
-                var response = await client.GetAsync($"{ConfigurationManager.GetPackageByIDAPICall}{packageID}").ConfigureAwait(false);
+                var response = await client.GetAsync($"{Configurations.GetPackageByIDAPICall}{packageID}").ConfigureAwait(false);
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 string resultString = result.GetAwaiter().GetResult();
                 dynamic package = JsonConvert.DeserializeObject(resultString);
@@ -324,25 +528,6 @@ namespace PresentationLayer.Menus.Live
                     Times = times,
                     SentTime = TimeSpan.FromTicks((long)package.sentTime)
                 };
-
-                /*for (int i = 0; i < data.Count; i++)
-                {
-                    double actualValue = double.Parse(data[i].value.ToString());
-                    string actualDateString = data[i].ellapsedTime.ToString();
-                    TimeSpan actualTime = new TimeSpan(long.Parse(actualDateString));
-                    returnData.Add(new Tuple<double, TimeSpan>(actualValue, actualTime));
-                }*/
-
-                // yawAngleLastIndex += data.Count;
-
-                /* if (yawAngleLastIndex == 0)
-                 {
-                     yawAngleLastIndex += data.Count;
-                 }
-                 else
-                 {
-                     yawAngleLastIndex += bufferAmount;
-                 }*/
             }
             catch (Exception e)
             {

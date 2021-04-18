@@ -83,7 +83,7 @@ namespace PresentationLayer.Menus.Settings.Groups
 
             if ((bool)checkBox.IsChecked)
             {
-                var inputFile = InputFileManager.GetInputFile(SelectedInputFileName);
+                var inputFile = InputFileManager.Get(SelectedInputFileName);
                 GroupManager.GetGroup(ActiveGroupID).AddAttribute(inputFile.GetChannel(attributeName));
                 ActiveAttributeID = GroupManager.GetGroup(ActiveGroupID).Attributes.Last().ID;
             }
@@ -250,7 +250,7 @@ namespace PresentationLayer.Menus.Settings.Groups
         {
             ChannelsStackPanel.Children.Clear();
 
-            var inputFile = InputFileManager.GetInputFile(activeInputFileID);
+            var inputFile = InputFileManager.Get(activeInputFileID);
 
             if (inputFile != null)
             {
@@ -272,7 +272,7 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void InputFile_Checked(object sender, RoutedEventArgs e)
         {
-            activeInputFileID = InputFileManager.GetInputFile(((RadioButton)sender).Content.ToString()).ID;
+            activeInputFileID = InputFileManager.Get(((RadioButton)sender).Content.ToString()).ID;
             UpdateChannels();
         }
 
@@ -284,7 +284,7 @@ namespace PresentationLayer.Menus.Settings.Groups
 
             if ((bool)((CheckBox)sender).IsChecked)
             {
-                GroupManager.GetGroup(ActiveGroupID).AddAttribute(InputFileManager.GetInputFile(activeInputFileID).GetChannel(content));
+                GroupManager.GetGroup(ActiveGroupID).AddAttribute(InputFileManager.Get(activeInputFileID).GetChannel(content));
                 ActiveAttributeID = GroupManager.GetGroup(ActiveGroupID).GetAttribute(content).ID;
             }
             else
@@ -378,11 +378,11 @@ namespace PresentationLayer.Menus.Settings.Groups
             InputFile inputFile;
             if (fileName.Equals(string.Empty))
             {
-                inputFile = InputFileManager.GetInputFile(activeInputFileID);
+                inputFile = InputFileManager.Get(activeInputFileID);
             }
             else
             {
-                inputFile = InputFileManager.GetInputFile(fileName);
+                inputFile = InputFileManager.Get(fileName);
             }
 
 
@@ -402,7 +402,7 @@ namespace PresentationLayer.Menus.Settings.Groups
                 }
             }
 
-            inputFile = InputFileManager.GetInputFile(activeInputFileID);
+            inputFile = InputFileManager.Get(activeInputFileID);
             if (inputFile != null)
             {
                 foreach (RadioButton item in InputFilesStackPanel.Children)

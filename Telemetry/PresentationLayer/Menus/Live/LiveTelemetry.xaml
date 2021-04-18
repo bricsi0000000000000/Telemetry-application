@@ -51,6 +51,7 @@
                              materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
                              BorderThickness="0"
                              Text="No section selected"
+                             FontWeight="Bold"
                              />
 
                     <TextBox Name="SectionDateLabel"
@@ -154,8 +155,14 @@
                 <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
 
-            <ScrollViewer>
-                <StackPanel x:Name="ChartsStackPanel"/>
+            <ScrollViewer Grid.Row="0"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto">
+                <Grid x:Name="ChartsGrid" 
+                      Margin="0,5,0,0"
+                      VerticalAlignment="Stretch"
+                      HorizontalAlignment="Stretch"
+                      />
             </ScrollViewer>
 
             <Slider Grid.Row="1"

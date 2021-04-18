@@ -10,13 +10,13 @@ namespace DataLayer.InputFiles
         public DriverlessInputFile(int id, string name, List<Channel> channels) : base(id, name, channels)
         {
             InitRequiredChannels();
-            Driverless = true;
+            InputFileType = InputFileTypes.driverless;
         }
 
         public DriverlessInputFile(InputFile inputFile) : base(inputFile)
         {
             InitRequiredChannels();
-            Driverless = true;
+            InputFileType = InputFileTypes.driverless;
         }
 
         private void InitRequiredChannels()
@@ -28,21 +28,6 @@ namespace DataLayer.InputFiles
                 RequiredChannels.Add(item, false);
             }
         }
-
-        /*    public override Dictionary<string, bool> RequiredChannels
-            {
-                get
-                {
-                    requiredChannels = new Dictionary<string, bool>();
-
-                    foreach (var item in ImportantChannels.DriverlessImportantChannelNames)
-                    {
-                        requiredChannels.Add(item, false);
-                    }
-
-                    return requiredChannels;
-                }
-            }*/
     }
 }
 

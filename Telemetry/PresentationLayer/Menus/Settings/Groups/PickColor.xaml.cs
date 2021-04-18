@@ -79,7 +79,7 @@ namespace PresentationLayer.Menus.Settings.Groups
                     }
                     catch (Exception exception)
                     {
-                        ShowError.ShowErrorMessage(exception.Message);
+                        ShowError.ShowErrorMessage(exception.Message, nameof(PickColor));
                     }
                 }
                 else

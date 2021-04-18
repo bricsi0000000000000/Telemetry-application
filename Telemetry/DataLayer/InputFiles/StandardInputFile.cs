@@ -9,14 +9,14 @@ namespace DataLayer.InputFiles
         {
             InitRequiredChannels();
 
-            Driverless = false;
+            InputFileType = InputFileTypes.standard;
         }
 
         public StandardInputFile(InputFile inputFile) : base(inputFile)
         {
             InitRequiredChannels();
 
-            Driverless = false;
+            InputFileType = InputFileTypes.standard;
         }
 
         private void InitRequiredChannels()

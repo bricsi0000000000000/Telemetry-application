@@ -20,7 +20,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
     {
         public int ID { get; set; }
 
-        private bool driverless;
+        private bool isDriverless;
 
         private string inputFileName;
         public string InputFileName
@@ -43,7 +43,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
             InitializeComponent();
 
             ID = inputFile.ID;
-            driverless = inputFile.Driverless;
+            isDriverless = inputFile.InputFileType == InputFileTypes.driverless;
 
             InputFileName = inputFile.Name;
 
@@ -55,7 +55,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
             var logo = new BitmapImage();
             logo.BeginInit();
 
-            if (driverless)
+            if (isDriverless)
             {
                 string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 string imageRelativePath = @"..\..\..\..\..\default_files\images\daisy.png";
@@ -90,20 +90,20 @@ namespace PresentationLayer.Menus.Settings.InputFiles
 
         private void ChangeGroupItemType_Click(object sender, RoutedEventArgs e)
         {
-            var inputFile = InputFileManager.GetInputFile(ID);
+            var inputFile = InputFileManager.Get(ID);
             if (inputFile != null)
             {
-                InputFileManager.RemoveInputFile(ID);
+                InputFileManager.Remove(ID);
 
                 if (inputFile is DriverlessInputFile)
                 {
-                    InputFileManager.AddInputFile(new StandardInputFile(inputFile));
-                    driverless = false;
+                    InputFileManager.Add(new StandardInputFile(inputFile));
+                    isDriverless = false;
                 }
                 else
                 {
-                    InputFileManager.AddInputFile(new DriverlessInputFile(inputFile));
-                    driverless = true;
+                    InputFileManager.Add(new DriverlessInputFile(inputFile));
+                    isDriverless = true;
                 }
             }
 

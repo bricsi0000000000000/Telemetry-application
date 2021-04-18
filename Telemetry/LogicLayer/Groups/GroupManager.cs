@@ -85,7 +85,7 @@ namespace LocigLayer.Groups
                                 throw new Exception("Can't add attribute, because 'name' is null!");
                             }
 
-                            if (groupsJSON[i].Attributes[j].Color == null)
+                            if (groupsJSON[i].Attributes[j].ColorText == null)
                             {
                                 throw new Exception("Can't add attribute, because 'color' is null!");
                             }
@@ -96,7 +96,7 @@ namespace LocigLayer.Groups
                             }
 
                             attributeName = groupsJSON[i].Attributes[j].Name.ToString();
-                            attributeColor = groupsJSON[i].Attributes[j].Color.ToString();
+                            attributeColor = groupsJSON[i].Attributes[j].ColorText.ToString();
                             attributeLineWidth = int.Parse(groupsJSON[i].Attributes[j].LineWidth.ToString());
 
                             if (!attributeName.Equals(string.Empty) &&

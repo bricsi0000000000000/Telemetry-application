@@ -31,7 +31,7 @@ namespace PresentationLayer.Menus.Driverless
         /// </summary>
         private readonly List<string> selectedGroups = new List<string>();
 
-        private List<string> selectedChannels = new List<string>();
+        private readonly List<string> selectedChannels = new List<string>();
         private List<int> selectedInputFileIDs = new List<int>();
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace PresentationLayer.Menus.Driverless
         /// </summary>
         private Channel HorizontalAxis(int inputFileID) => GetChannel(inputFileID, DefaultsManager.GetDefault(TextManager.DriverlessHorizontalAxis).Value);
 
-        private readonly List<Tuple<string, List<Tuple<int, bool>>>> ChannelNames = new List<Tuple<string, List<Tuple<int, bool>>>>();
+        private readonly List<Tuple<string, List<Tuple<int, bool>>>> channelNames = new List<Tuple<string, List<Tuple<int, bool>>>>();
 
         private TrackChart trackChart;
 
@@ -167,7 +167,7 @@ namespace PresentationLayer.Menus.Driverless
             ChartsGrid.RowDefinitions.Clear();
 
             int rowIndex = 0;
-            foreach (var channelName in ChannelNames)
+            foreach (var channelName in channelNames)
             {
                 if (selectedChannels.Contains(channelName.Item1))
                 {
@@ -175,7 +175,7 @@ namespace PresentationLayer.Menus.Driverless
 
                     foreach (var inputFile in channelName.Item2)
                     {
-                        group.AddAttribute(InputFileManager.GetDriverlessInputFile(inputFile.Item1).GetChannel(channelName.Item1));
+                        group.AddAttribute(InputFileManager.GetDriverlessFile(inputFile.Item1).GetChannel(channelName.Item1));
                     }
 
                     BuildChartGrid(group, ref rowIndex);
@@ -232,7 +232,7 @@ namespace PresentationLayer.Menus.Driverless
 
             var addedChannelNames = new List<string>();
 
-            foreach (var channelName in ChannelNames)
+            foreach (var channelName in channelNames)
             {
                 var attribute = group.GetAttribute(channelName.Item1);
                 if (attribute != null)
@@ -244,18 +244,18 @@ namespace PresentationLayer.Menus.Driverless
 
                         if (inputFile.Item2) // aktiv e a channel
                         {
-                            var actHorizontalAxisData = GetChannel(inputFile.Item1, group.HorizontalAxis).Data;
-                            if (actHorizontalAxisData == null)
+                            var currentHorizontalAxisData = GetChannel(inputFile.Item1, group.HorizontalAxis).Data;
+                            if (currentHorizontalAxisData == null)
                             {
-                                ShowError.ShowErrorMessage($"Can't find '{group.HorizontalAxis}', so can't show diagram properly");
+                                ShowError.ShowErrorMessage($"Can't find '{group.HorizontalAxis}', so can't show diagram properly", nameof(DriverlessMenu));
                             }
 
-                            if (actHorizontalAxisData.Count > horizontalAxisData.Count)
+                            if (currentHorizontalAxisData.Count > horizontalAxisData.Count)
                             {
-                                horizontalAxisData = new List<double>(actHorizontalAxisData);
+                                horizontalAxisData = new List<double>(currentHorizontalAxisData);
                             }
 
-                            var channelDataPlotData = ConvertChannelDataToPlotData(channel.Data.ToArray(), actHorizontalAxisData);
+                            var channelDataPlotData = ConvertChannelDataToPlotData(channel.Data.ToArray(), currentHorizontalAxisData);
 
                             var color = group.GetAttribute(channel.Name).ColorText;
 
@@ -307,15 +307,15 @@ namespace PresentationLayer.Menus.Driverless
         public void SetChannelActivity(string channelName, int inputFileID, bool isActive)
         {
             bool found = false;
-            for (int index = 0; index < ChannelNames.Count && !found; index++)
+            for (int index = 0; index < channelNames.Count && !found; index++)
             {
-                if (ChannelNames[index].Item1.Equals(channelName))
+                if (channelNames[index].Item1.Equals(channelName))
                 {
-                    for (int i = 0; i < ChannelNames[index].Item2.Count && !found; i++)
+                    for (int i = 0; i < channelNames[index].Item2.Count && !found; i++)
                     {
-                        if (ChannelNames[index].Item2[i].Item1 == inputFileID)
+                        if (channelNames[index].Item2[i].Item1 == inputFileID)
                         {
-                            ChannelNames[index].Item2[i] = new Tuple<int, bool>(inputFileID, isActive);
+                            channelNames[index].Item2[i] = new Tuple<int, bool>(inputFileID, isActive);
                             found = true;
                         }
                     }
@@ -394,7 +394,7 @@ namespace PresentationLayer.Menus.Driverless
                 return null;
             }
 
-            return InputFileManager.GetDriverlessInputFile(inputFileID).GetChannel(channelName);
+            return InputFileManager.GetDriverlessFile(inputFileID).GetChannel(channelName);
         }
 
         public void ReplaceChannelWithTemporaryGroup(string channelName, string groupName)
@@ -476,8 +476,8 @@ namespace PresentationLayer.Menus.Driverless
             DisableNoInputFileAndChannelsGrids();
             if (InputFileManager.InputFiles.Count > 0)
             {
-                InputFileManager.ActiveDriverlessInputFileID = InputFileManager.GetLastDriverlessInputFile.ID;
-                AddInputFileItem(InputFileManager.GetLastDriverlessInputFile.Name, InputFileManager.GetLastDriverlessInputFile.ID);
+                InputFileManager.ActiveDriverlessInputFileID = InputFileManager.GetLastDriverlessFile.ID;
+                AddInputFileItem(InputFileManager.GetLastDriverlessFile.Name, InputFileManager.GetLastDriverlessFile.ID);
             }
 
             // UpdateAfterInputFileChoose();
@@ -487,14 +487,14 @@ namespace PresentationLayer.Menus.Driverless
         public void UpdateAfterFileTypeChanges()
         {
             selectedChannels.Clear();
-            ChannelNames.Clear();
+            channelNames.Clear();
 
             var newSelectedInputFileIDs = new List<int>();
 
             InputFilesStackPanel.Children.Clear();
             foreach (var inputFile in InputFileManager.InputFiles)
             {
-                if (inputFile.Driverless)
+                if (inputFile.InputFileType == DataLayer.InputFiles.InputFileTypes.driverless)
                 {
                     AddInputFileItem(inputFile.Name, inputFile.ID);
                     newSelectedInputFileIDs.Add(inputFile.ID);
@@ -513,7 +513,7 @@ namespace PresentationLayer.Menus.Driverless
         {
             foreach (CheckBox item in InputFilesStackPanel.Children)
             {
-                if (InputFileManager.GetInputFile(item.Content.ToString()) == null)
+                if (InputFileManager.Get(item.Content.ToString()) == null)
                 {
                     item.Content = newName;
                 }
@@ -567,12 +567,12 @@ namespace PresentationLayer.Menus.Driverless
         }
 
         /// <summary>
-        /// Sets the <see cref="DataSlider"/>s maximum value based on the <see cref="ChannelNames"/> first <see cref="Channel.Data"/>-s count.
+        /// Sets the <see cref="DataSlider"/>s maximum value based on the <see cref="channelNames"/> first <see cref="Channel.Data"/>-s count.
         /// </summary>
         private void SetUpDataSlider()
         {
             int max = 0;
-            foreach (var channelName in ChannelNames)
+            foreach (var channelName in channelNames)
             {
                 foreach (var inputFile in channelName.Item2)
                 {
@@ -607,7 +607,7 @@ namespace PresentationLayer.Menus.Driverless
             }
             name = name[0..^1];
 
-            var actInputFile = InputFileManager.GetDriverlessInputFile(name);
+            var actInputFile = InputFileManager.GetDriverlessFile(name);
 
             if ((bool)checkBox.IsChecked)
             {
@@ -618,14 +618,14 @@ namespace PresentationLayer.Menus.Driverless
                 var yChannel = GetChannel(actInputFile.ID, DefaultsManager.GetDefault(TextManager.DriverlessYChannel).Value);
                 if (yChannel == null)
                 {
-                    ShowError.ShowErrorMessage($"Can't find '{DefaultsManager.GetDefault(TextManager.DriverlessYChannel).Value}', so can't build track");
+                    ShowError.ShowErrorMessage($"Can't find '{DefaultsManager.GetDefault(TextManager.DriverlessYChannel).Value}', so can't build track", nameof(DriverlessMenu));
                     return;
                 }
 
                 var c0refChannel = GetChannel(actInputFile.ID, DefaultsManager.GetDefault(TextManager.DriverlessC0refChannel).Value);
                 if (c0refChannel == null)
                 {
-                    ShowError.ShowErrorMessage($"Can't find '{DefaultsManager.GetDefault(TextManager.DriverlessC0refChannel).Value}', so can't build track");
+                    ShowError.ShowErrorMessage($"Can't find '{DefaultsManager.GetDefault(TextManager.DriverlessC0refChannel).Value}', so can't build track", nameof(DriverlessMenu));
                     return;
                 }
 
@@ -646,9 +646,9 @@ namespace PresentationLayer.Menus.Driverless
             {
                 bool found = false;
                 int index = 0;
-                while (index < ChannelNames.Count && !found)
+                while (index < channelNames.Count && !found)
                 {
-                    if (selectedChannel.Equals(ChannelNames[index].Item1))
+                    if (selectedChannel.Equals(channelNames[index].Item1))
                     {
                         found = true;
                     }
@@ -714,7 +714,7 @@ namespace PresentationLayer.Menus.Driverless
 
             int max = 0;
 
-            foreach (var item in ChannelNames)
+            foreach (var item in channelNames)
             {
                 if (item.Item2.Count > max)
                 {
@@ -722,7 +722,7 @@ namespace PresentationLayer.Menus.Driverless
                 }
             }
 
-            foreach (var item in ChannelNames)
+            foreach (var item in channelNames)
             {
                 var checkBox = new CheckBox
                 {
@@ -743,7 +743,7 @@ namespace PresentationLayer.Menus.Driverless
                     string content = item.Item1 + " - ";
                     foreach (var inputFile in item.Item2)
                     {
-                        content += InputFileManager.GetInputFile(inputFile.Item1).Name + ";";
+                        content += InputFileManager.Get(inputFile.Item1).Name + ";";
                     }
                     checkBox.Content = content[0..^1];
                 }
@@ -785,14 +785,14 @@ namespace PresentationLayer.Menus.Driverless
         {
             foreach (var channel in channels)
             {
-                var actChannel = ChannelNames.Find(x => x.Item1.Equals(channel.Name));
+                var actChannel = channelNames.Find(x => x.Item1.Equals(channel.Name));
                 if (actChannel != null)
                 {
                     actChannel.Item2.Add(new Tuple<int, bool>(inputFileID, true));
                 }
                 else
                 {
-                    ChannelNames.Add(new Tuple<string, List<Tuple<int, bool>>>(channel.Name, new List<Tuple<int, bool>>() { new Tuple<int, bool>(inputFileID, true) }));
+                    channelNames.Add(new Tuple<string, List<Tuple<int, bool>>>(channel.Name, new List<Tuple<int, bool>>() { new Tuple<int, bool>(inputFileID, true) }));
                 }
             }
         }
@@ -801,7 +801,7 @@ namespace PresentationLayer.Menus.Driverless
         {
             foreach (var channel in channels)
             {
-                var actChannel = ChannelNames.Find(x => x.Item1.Equals(channel.Name));
+                var actChannel = channelNames.Find(x => x.Item1.Equals(channel.Name));
                 if (actChannel != null)
                 {
                     int index = 0;
@@ -816,7 +816,7 @@ namespace PresentationLayer.Menus.Driverless
                     actChannel.Item2.RemoveAt(index);
                     if (actChannel.Item2.Count == 0)
                     {
-                        ChannelNames.Remove(actChannel);
+                        channelNames.Remove(actChannel);
                     }
                 }
             }
@@ -866,7 +866,7 @@ namespace PresentationLayer.Menus.Driverless
                 }
                 catch (Exception exception)
                 {
-                    ShowError.ShowErrorMessage(exception.Message);
+                    ShowError.ShowErrorMessage(exception.Message, nameof(DriverlessMenu));
                 }
             }
         }

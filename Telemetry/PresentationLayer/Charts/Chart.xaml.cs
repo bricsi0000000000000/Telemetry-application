@@ -23,7 +23,7 @@ namespace PresentationLayer.Charts
     /// </summary>
     public partial class Chart : UserControl
     {
-        private PlottableScatterHighlight plottableScatterHighlight;
+        private readonly PlottableScatterHighlight plottableScatterHighlight;
         private PlottableVLine plottableVLine;
         private readonly Style chartStyle = ScottPlot.Style.Light1;
         private List<double> liveChartValues = new List<double>();
@@ -115,8 +115,8 @@ namespace PresentationLayer.Charts
         /// <summary>
         /// Updates the plot with new data.
         /// </summary>
-        /// <param name="data"></param>
-        public void Update(double[] data, string xAxisLabel, string yAxisLabel)
+        /// <param name="data">New package sensor data</param>
+        public void PlotLive(double[] data, string yAxisLabel)
         {
             liveChartValues.AddRange(data);
 
@@ -126,7 +126,6 @@ namespace PresentationLayer.Charts
             ScottPlotChart.plt.Style(chartStyle);
             ScottPlotChart.plt.Colorset(Colorset.Category10);
             ScottPlotChart.plt.YLabel(yAxisLabel);
-            ScottPlotChart.plt.XLabel(xAxisLabel);
             ScottPlotChart.plt.Legend();
             ScottPlotChart.Render();
 

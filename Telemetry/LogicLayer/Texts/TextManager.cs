@@ -5,6 +5,14 @@
     /// </summary>
     public static class TextManager
     {
+        public static string RootDirectory { get; private set; } = @"..\..\..\..\..\";
+
+        /// <summary>
+        /// Name of the error messages log file.
+        /// "error_messages.log"
+        /// </summary>
+        public static string ErrorMessagesLogFileName { get; private set; } = "error_messages.log";
+
         #region menu names
 
         #region main menu

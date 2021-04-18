@@ -8,6 +8,7 @@ using LocigLayer.Tracks;
 using LocigLayer.Units;
 using LogicLayer.Configurations;
 using PresentationLayer.Errors;
+using PresentationLayer.Extensions;
 using PresentationLayer.Menus;
 using PresentationLayer.Menus.Live;
 
@@ -18,10 +19,6 @@ namespace PresentationLayer
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const string ROOT_DIRECTORY = @"..\..\..\..\..\";
-
-        private string MakeDirectoryPath(string folder) => $"{ROOT_DIRECTORY}/{folder}";
-
         public MainWindow()
         {
             InitializeComponent();
@@ -29,49 +26,49 @@ namespace PresentationLayer
 
             try
             {
-                ConfigurationManager.LoadConfigurations(Path.Combine(MakeDirectoryPath("configuration_files"), TextManager.ConfigurationFileName));
-                Title = $"Telemetry {ConfigurationManager.Version}";
+                Configurations.LoadConfigurations(TextManager.ConfigurationFileName.MakePath("configuration_files"));
+                Title = $"Telemetry {Configurations.Version}";
             }
             catch (Exception exception)
             {
-                ShowError.ShowErrorMessage(exception.Message);
+                ShowError.ShowErrorMessage(exception.Message, nameof(MainWindow));
             }
 
             try
             {
-                UnitOfMeasureManager.InitializeUnitOfMeasures(Path.Combine(MakeDirectoryPath("default_files"), TextManager.UnitOfMeasuresFileName));
+                UnitOfMeasureManager.InitializeUnitOfMeasures(TextManager.UnitOfMeasuresFileName.MakePath("default_files"));
             }
             catch (Exception exception)
             {
-                ShowError.ShowErrorMessage(exception.Message);
+                ShowError.ShowErrorMessage(exception.Message, nameof(MainWindow));
             }
 
             try
             {
-                DriverlessTrackManager.LoadTracks(Path.Combine(MakeDirectoryPath("default_files"), TextManager.DriverlessTracksFolderName));
+                DriverlessTrackManager.LoadTracks(TextManager.DriverlessTracksFolderName.MakePath("default_files"));
             }
             catch (Exception exception)
             {
-                ShowError.ShowErrorMessage(exception.Message);
+                ShowError.ShowErrorMessage(exception.Message, nameof(MainWindow));
             }
 
             try
             {
-                GroupManager.InitGroups(Path.Combine(MakeDirectoryPath("default_files"), TextManager.GroupsFileName));
+                GroupManager.InitGroups(TextManager.GroupsFileName.MakePath("default_files"));
             }
             catch (Exception exception)
             {
-                ShowError.ShowErrorMessage(exception.Message);
+                ShowError.ShowErrorMessage(exception.Message, nameof(MainWindow));
             }
 
 
             try
             {
-                DefaultsManager.LoadDefaults(Path.Combine(MakeDirectoryPath("default_files"), TextManager.DefaultFileName));
+                DefaultsManager.LoadDefaults(TextManager.DefaultFileName.MakePath("default_files"));
             }
             catch (Exception exception)
             {
-                ShowError.ShowErrorMessage(exception.Message);
+                ShowError.ShowErrorMessage(exception.Message, nameof(MainWindow));
             }
 
             try
@@ -80,7 +77,7 @@ namespace PresentationLayer
             }
             catch (Exception exception)
             {
-                ShowError.ShowErrorMessage(exception.Message);
+                ShowError.ShowErrorMessage(exception.Message, nameof(MainWindow));
             }
         }
 
