@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using DataLayer.Defaults;
-using PresentationLayer.Converters;
 using LocigLayer.Texts;
+using PresentationLayer.Extensions;
 
 namespace PresentationLayer.Defaults
 {
@@ -122,7 +122,7 @@ namespace PresentationLayer.Defaults
                 var defaultChartHighlightColor = GetDefault("DefaultChartHighlightColor");
                 if (defaultChartHighlightColor != null)
                 {
-                    var color = ConvertColor.ConvertStringColorToSolidColorBrush(defaultChartHighlightColor.Value).Color;
+                    var color = defaultChartHighlightColor.Value.ConvertColor();
                     return Color.FromArgb(color.A, color.R, color.G, color.B);
                 }
                 else

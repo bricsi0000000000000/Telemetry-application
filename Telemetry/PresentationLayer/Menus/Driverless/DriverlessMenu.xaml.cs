@@ -11,13 +11,13 @@ using PresentationLayer.Errors;
 using Microsoft.Win32;
 using DataLayer;
 using System.Windows.Input;
-using PresentationLayer.Converters;
 using LocigLayer.Defaults;
 using LocigLayer.Texts;
 using LocigLayer.Tracks;
 using LocigLayer.Groups;
 using LocigLayer.Colors;
 using LocigLayer.InputFiles;
+using PresentationLayer.Extensions;
 
 namespace PresentationLayer.Menus.Driverless
 {
@@ -150,7 +150,7 @@ namespace PresentationLayer.Menus.Driverless
             {
                 ResizeDirection = GridResizeDirection.Rows,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100)
+                Background = ColorManager.Secondary100.ConvertBrush()
             };
             ChartsGrid.Children.Add(splitter);
 
@@ -257,7 +257,7 @@ namespace PresentationLayer.Menus.Driverless
 
                             var channelDataPlotData = ConvertChannelDataToPlotData(channel.Data.ToArray(), actHorizontalAxisData);
 
-                            var color = group.GetAttribute(channel.Name).Color;
+                            var color = group.GetAttribute(channel.Name).ColorText;
 
                             chart.AddPlot(xAxisValues: channelDataPlotData.Item1,
                                           yAxisValues: channelDataPlotData.Item2,

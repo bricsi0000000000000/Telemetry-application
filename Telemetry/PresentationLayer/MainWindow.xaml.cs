@@ -18,7 +18,7 @@ namespace PresentationLayer
     /// </summary>
     public partial class MainWindow : Window
     {
-        const string ROOT_DIRECTORY = @"..\..\..\..\..\";
+        private const string ROOT_DIRECTORY = @"..\..\..\..\..\";
 
         private string MakeDirectoryPath(string folder) => $"{ROOT_DIRECTORY}/{folder}";
 
@@ -86,7 +86,7 @@ namespace PresentationLayer
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            var liveMenuTab = MenuManager.GetTab(TextManager.LiveMenuName);
+            var liveMenuTab = MenuManager.GetMenuTab(TextManager.LiveMenuName);
             if (liveMenuTab != null)
             {
                 var liveMenuTab1 = ((LiveMenu)liveMenuTab.Content).GetTab(TextManager.LiveMenuName);

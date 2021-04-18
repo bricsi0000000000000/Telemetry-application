@@ -7,7 +7,7 @@ using System.Windows.Media;
 using DataLayer.Units;
 using LocigLayer.Colors;
 using LocigLayer.Units;
-using PresentationLayer.Converters;
+using PresentationLayer.Extensions;
 using PresentationLayer.Menus.Live;
 using PresentationLayer.ValidationRules;
 
@@ -39,8 +39,8 @@ namespace PresentationLayer.Menus.Settings.Units
 
         private void UpdateSelectedSectionButtons()
         {
-            DeleteUnitCardButton.Background = isUnitSelected ? ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900) :
-                                                                  ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary200);
+            DeleteUnitCardButton.Background = isUnitSelected ? ColorManager.Primary900.ConvertBrush() :
+                                                                  ColorManager.Primary200.ConvertBrush();
 
             NoUnitSelectedGrid.Visibility = isUnitSelected ? Visibility.Hidden : Visibility.Visible;
         }
@@ -168,7 +168,7 @@ namespace PresentationLayer.Menus.Settings.Units
         {
             if (isUnitSelected)
             {
-                DeleteUnitCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary700);
+                DeleteUnitCardButton.Background = ColorManager.Primary700.ConvertBrush();
             }
         }
 
@@ -176,7 +176,7 @@ namespace PresentationLayer.Menus.Settings.Units
         {
             if (isUnitSelected)
             {
-                DeleteUnitCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+                DeleteUnitCardButton.Background = ColorManager.Primary800.ConvertBrush();
 
                 SetLoadingGrid(visibility: true);
                 var deleteSectionWindow = new PopUpWindow($"You are about to delete '{activeUnit.Name}'\n" +
@@ -190,7 +190,7 @@ namespace PresentationLayer.Menus.Settings.Units
         {
             if (isUnitSelected)
             {
-                DeleteUnitCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary800);
+                DeleteUnitCardButton.Background = ColorManager.Primary800.ConvertBrush();
                 Mouse.OverrideCursor = Cursors.Hand;
             }
         }
@@ -199,56 +199,56 @@ namespace PresentationLayer.Menus.Settings.Units
         {
             if (isUnitSelected)
             {
-                DeleteUnitCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Primary900);
+                DeleteUnitCardButton.Background = ColorManager.Primary900.ConvertBrush();
                 Mouse.OverrideCursor = null;
             }
         }
 
         private void ChangeNameCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ChangeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            ChangeNameCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void ChangeNameCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ChangeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeNameCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             ChangeUnitName(SelectedUnitNameTextBox.Text);
         }
 
         private void ChangeNameCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ChangeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeNameCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void ChangeNameCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ChangeNameCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            ChangeNameCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void ChangeSectionFormulaCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ChangeUnitFormulaCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            ChangeUnitFormulaCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void ChangeSectionFormulaCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ChangeUnitFormulaCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeUnitFormulaCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             ChangeUnitFormula(SelectedUnitFormulaTextBox.Text);
         }
 
         private void ChangeSectionFormulaCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ChangeUnitFormulaCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            ChangeUnitFormulaCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void ChangeSectionFormulaCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ChangeUnitFormulaCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            ChangeUnitFormulaCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
@@ -271,12 +271,12 @@ namespace PresentationLayer.Menus.Settings.Units
 
         private void AddUnitCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AddUnitCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            AddUnitCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void AddUnitCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            AddUnitCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            AddUnitCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             SetLoadingGrid(visibility: true);
             var addUnitOfMeasureWindow = new AddUnitOfMeasureWindow();
@@ -285,13 +285,13 @@ namespace PresentationLayer.Menus.Settings.Units
 
         private void AddUnitCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            AddUnitCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            AddUnitCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void AddUnitCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            AddUnitCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            AddUnitCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
     }

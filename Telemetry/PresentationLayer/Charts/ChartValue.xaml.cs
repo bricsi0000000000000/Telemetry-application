@@ -2,7 +2,7 @@
 using System.Windows.Media;
 using DataLayer.Groups;
 using LocigLayer.Colors;
-using PresentationLayer.Converters;
+using PresentationLayer.Extensions;
 
 namespace PresentationLayer.Charts
 {
@@ -89,15 +89,15 @@ namespace PresentationLayer.Charts
             }
         }
 
-        public void SetUp(string color, int inputFileID)
+        public void SetUp(string colorText, int inputFileID)
         {
             ChannelNameLabel.Opacity = 1;
             ChannelValueLabel.Opacity = 1;
             UnitOfMeasureFormulaControl.Opacity = 1;
 
             this.inputFileID = inputFileID;
-            colorCode = color;
-            ColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(color);
+            colorCode = colorText;
+            ColorCard.Background = colorText.ConvertBrush();
 
             SetChannelName(channelName);
         }

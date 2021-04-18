@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using LocigLayer.Colors;
 using LocigLayer.Texts;
-using PresentationLayer.Converters;
+using PresentationLayer.Extensions;
 using PresentationLayer.Menus.Settings;
 using PresentationLayer.Menus.Settings.InputFiles;
 using PresentationLayer.Menus.Settings.Live;
@@ -22,7 +22,7 @@ namespace PresentationLayer.Menus.Live
 
         private dynamic data;
 
-        public PopUpEditWindow(string title, EditType editType, dynamic data = null)
+        public PopUpEditWindow(string windowTitle, EditType editType, dynamic data = null)
         {
             InitializeComponent();
 
@@ -30,35 +30,32 @@ namespace PresentationLayer.Menus.Live
             {
                 fieldsViewModel.ChangeLineWidth = data.lineWidth;
             }
-            else
-            {
-            }
+
             DataContext = fieldsViewModel;
 
             this.editType = editType;
             this.data = data;
 
-            TitleTextBlock.Text = title;
+            TitleTextBlock.Text = windowTitle;
 
             ChaneNameTextBox.Focus();
         }
 
         private void OkCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            OkCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void OkCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            OkCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             switch (editType)
             {
                 case EditType.ChangeSectionName:
-                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeName(change: true, ChaneNameTextBox.Text);
                     break;
                 case EditType.ChangeLineWidth:
-                    ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeLineWidth(newLineWidth: ChaneNameTextBox.Text,
+                    ((InputFilesSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeLineWidth(newLineWidth: ChaneNameTextBox.Text,
                                                                                                                                                                                  inputFileID: data.inputFileID,
                                                                                                                                                                                  channelName: data.channelName,
                                                                                                                                                                                  isGroup: data.isGroup,
@@ -71,32 +68,31 @@ namespace PresentationLayer.Menus.Live
 
         private void OkCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            OkCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void OkCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            OkCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void CancelCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            CancelCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void CancelCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            CancelCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             switch (editType)
             {
                 case EditType.ChangeSectionName:
-                    ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeName(change: false);
                     break;
                 case EditType.ChangeLineWidth:
-                    ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeLineWidth(newLineWidth: ChaneNameTextBox.Text,
+                    ((InputFilesSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeLineWidth(newLineWidth: ChaneNameTextBox.Text,
                                                                                                                                                                                  inputFileID: data.inputFileID,
                                                                                                                                                                                  channelName: data.channelName,
                                                                                                                                                                                  isGroup: data.isGroup,
@@ -109,13 +105,13 @@ namespace PresentationLayer.Menus.Live
 
         private void CancelCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            CancelCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void CancelCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            CancelCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
     }

@@ -77,7 +77,7 @@ namespace PresentationLayer.Menus.Settings.Groups
             ID = attribute.ID;
             AttributeName = attribute.Name;
             this.groupName = groupName;
-            colorCode = attribute.Color;
+            colorCode = attribute.ColorText;
             LineWidth = attribute.LineWidth;
             ChangeColor(colorCode);
         }
@@ -93,7 +93,7 @@ namespace PresentationLayer.Menus.Settings.Groups
             if (pickColor.ShowDialog() == true)
             {
                 var pickedColor = pickColor.ColorPicker.Color;
-                GroupManager.GetGroup(groupName).GetAttribute(AttributeName).Color = pickedColor.ToString();
+                GroupManager.GetGroup(groupName).GetAttribute(AttributeName).ColorText = pickedColor.ToString();
 
                 foreach (var inputFile in InputFileManager.InputFiles)
                 {
@@ -109,14 +109,14 @@ namespace PresentationLayer.Menus.Settings.Groups
                     var channel = group.GetAttribute(AttributeName);
                     if (channel != null)
                     {
-                        channel.Color = pickedColor.ToString();
+                        channel.ColorText = pickedColor.ToString();
                     }
                 }
 
                 GroupManager.SaveGroups();
-                ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitAttributes();
-                ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).BuildCharts();
-                ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).InitInputFileSettingsItems();
+                ((GroupSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitAttributes();
+                ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                ((InputFilesSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).InitInputFileSettingsItems();
             }
         }
 
@@ -161,8 +161,8 @@ namespace PresentationLayer.Menus.Settings.Groups
             BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
                                                       new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
 
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ChangeActiveAttributeItem(ID);
-            ((GroupSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).SelectInputFile();
+            ((GroupSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ChangeActiveAttributeItem(ID);
+            ((GroupSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).SelectInputFile();
         }
 
         private void BackgroundColor_MouseEnter(object sender, MouseEventArgs e)

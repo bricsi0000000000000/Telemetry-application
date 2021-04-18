@@ -108,7 +108,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
             }
 
             ChangeTypeImage();
-            ((DriverlessMenu)MenuManager.GetTab(TextManager.DriverlessMenuName).Content).UpdateAfterFileTypeChanges();
+            ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).UpdateAfterFileTypeChanges();
         }
 
         private void ChangeGroupItemType_MouseEnter(object sender, MouseEventArgs e)
@@ -134,7 +134,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
             BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
 
-            ((InputFilesSettings)((SettingsMenu)MenuManager.GetTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeActiveInputFileSettingsItem(ID);
+            ((InputFilesSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeActiveInputFileSettingsItem(ID);
 
             Mouse.OverrideCursor = null;
         }

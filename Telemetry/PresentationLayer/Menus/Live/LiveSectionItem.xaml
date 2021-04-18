@@ -31,15 +31,15 @@
                     </Grid.RowDefinitions>
 
                     <Label Name="NameLabel"
-                        Grid.Row="0"
-                        FontWeight="Bold"
-                        VerticalAlignment="Stretch"
-                        HorizontalAlignment="Stretch"
-                        VerticalContentAlignment="Center"
-                        HorizontalContentAlignment="Left"
-                        Margin="5,0,0,0"
-                        FontSize="16"
-                        />
+                           Grid.Row="0"
+                           FontWeight="Bold"
+                           VerticalAlignment="Stretch"
+                           HorizontalAlignment="Stretch"
+                           VerticalContentAlignment="Center"
+                           HorizontalContentAlignment="Left"
+                           Margin="5,0,0,0"
+                           FontSize="16"
+                           />
                     
                     <Label Name="DateLabel"
                             Grid.Row="1"

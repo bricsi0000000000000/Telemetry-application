@@ -4,31 +4,26 @@ using LocigLayer.Texts;
 using PresentationLayer.Menus.Driverless;
 using PresentationLayer.Menus.Live;
 using PresentationLayer.Menus.Settings;
+using PresentationLayer.Menus.Settings.Live;
 
 namespace PresentationLayer.Menus
 {
-    /// <summary>
-    /// Manages menus.
-    /// </summary>
     public static class MenuManager
     {
-        /// <summary>
-        /// Menu items.
-        /// </summary>
         private readonly static List<TabItem> menuItems = new List<TabItem>();
+        public static LiveSettings LiveSettings { get; set; }
+        public static LiveTelemetry LiveTelemetry { get; set; }
 
-        /// <summary>
-        /// Initializes main menu tabs.
-        /// </summary>
+
         /// <param name="tabControl"><see cref="TabControl"/>, where the tabs will created.</param>
         public static void InitMainMenuTabs(TabControl tabControl)
         {
-            AddTab(TextManager.SettingsMenuName, new SettingsMenu(), "settingsMenuTab", tabControl);
-            AddTab(TextManager.DriverlessMenuName, new DriverlessMenu(), "driverlessMenuTab", tabControl, selected: true);
-            AddTab(TextManager.LiveMenuName, new LiveMenu(), "liveMenuTab", tabControl);
-          //  AddTab(TextManager.DriversMenuName, new DriversMenu(), "driversMenuTab", tabControl, false);
-           // AddTab(TextManager.DiagramsMenuName, new Diagrams(), "diagramsMenuTab", tabControl, false);
-          //  AddTab(TextManager.DiagramsSettingsMenuName, new SelectDriversAndInputFiles(), "diagramsSettingsMenuTab", tabControl, false);
+            AddMenuTab(TextManager.SettingsMenuName, new SettingsMenu(), "settingsMenuTab", tabControl);
+            AddMenuTab(TextManager.DriverlessMenuName, new DriverlessMenu(), "driverlessMenuTab", tabControl);
+            AddMenuTab(TextManager.LiveMenuName, new LiveMenu(), "liveMenuTab", tabControl, selected: true);
+            //  AddTab(TextManager.DriversMenuName, new DriversMenu(), "driversMenuTab", tabControl, false);
+            // AddTab(TextManager.DiagramsMenuName, new Diagrams(), "diagramsMenuTab", tabControl, false);
+            //  AddTab(TextManager.DiagramsSettingsMenuName, new SelectDriversAndInputFiles(), "diagramsSettingsMenuTab", tabControl, false);
         }
 
         /// <summary>
@@ -46,7 +41,7 @@ namespace PresentationLayer.Menus
         /// If false, the <see cref="TabItem"/> will not be selected.
         /// Default is false.
         /// </param>
-        private static void AddTab(string header, object content, string name, TabControl tabControl, bool selected = false)
+        private static void AddMenuTab(string header, object content, string name, TabControl tabControl, bool selected = false)
         {
             TabItem tab = new TabItem
             {
@@ -65,6 +60,7 @@ namespace PresentationLayer.Menus
         /// </summary>
         /// <param name="name">Findable <see cref="TabItem"/>s name.</param>
         /// <returns>A <see cref="TabItem"/> whose name is <paramref name="name"/>.</returns>
-        public static TabItem GetTab(string name) => menuItems.Find(x => x.Header.Equals(name));
+        public static TabItem GetMenuTab(string name) => menuItems.Find(x => x.Header.Equals(name));
+
     }
 }

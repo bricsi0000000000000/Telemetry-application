@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using LocigLayer.Colors;
 using LocigLayer.Texts;
-using PresentationLayer.Converters;
+using PresentationLayer.Extensions;
 using PresentationLayer.Menus.Settings.Live;
 
 namespace PresentationLayer.Menus.Live
@@ -25,55 +25,53 @@ namespace PresentationLayer.Menus.Live
 
         private void OkCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            OkCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void OkCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            OkCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             var date = (DateTime)PickDateDatePicker.SelectedDate;
             var time = (DateTime)PickTimeTimePicker.SelectedTime;
             var newDate = new DateTime(date.Year, date.Month, date.Day, time.Hour, time.Minute, time.Second);
-            ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeDate(change: true, newDate);
 
             Close();
         }
 
         private void OkCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            OkCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void OkCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            OkCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            OkCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void CancelCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            CancelCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void CancelCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            CancelCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
-            ((LiveSettings)((LiveMenu)MenuManager.GetTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeDate(change: false);
             Close();
         }
 
         private void CancelCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            CancelCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void CancelCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            CancelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            CancelCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
     }

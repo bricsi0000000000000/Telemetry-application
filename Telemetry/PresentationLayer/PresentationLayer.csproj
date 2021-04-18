@@ -7,7 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Menus\Settings\Live\" />
+    <Compile Remove="Menus\Settings\Live\**" />
+    <EmbeddedResource Remove="Menus\Settings\Live\**" />
+    <None Remove="Menus\Settings\Live\**" />
+    <Page Remove="Menus\Settings\Live\**" />
   </ItemGroup>
 
   <ItemGroup>

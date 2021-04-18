@@ -21,6 +21,8 @@ namespace PresentationLayer.ValidationRules
         private string? fileName;
         private string? horizontalAxis;
         private string? changeLineWidth;
+        private string? sectionName;
+        private string? sectionDate;
 
         public string? Name
         {
@@ -110,6 +112,18 @@ namespace PresentationLayer.ValidationRules
         {
             get => changeLineWidth;
             set => this.MutateVerbose(ref changeLineWidth, value, RaisePropertyChanged());
+        }
+
+        public string? SectionName
+        {
+            get => sectionName;
+            set => this.MutateVerbose(ref sectionName, value, RaisePropertyChanged());
+        }
+
+        public string? SectionDate
+        {
+            get => sectionDate;
+            set => this.MutateVerbose(ref sectionDate, value, RaisePropertyChanged());
         }
 
 

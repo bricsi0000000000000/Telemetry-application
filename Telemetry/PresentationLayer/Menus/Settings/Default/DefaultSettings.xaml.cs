@@ -5,7 +5,7 @@ using System.Windows.Media;
 using LocigLayer.Colors;
 using LocigLayer.Defaults;
 using LocigLayer.Texts;
-using PresentationLayer.Converters;
+using PresentationLayer.Extensions;
 using PresentationLayer.ValidationRules;
 
 namespace PresentationLayer.Menus.Settings.Default
@@ -15,7 +15,7 @@ namespace PresentationLayer.Menus.Settings.Default
     /// </summary>
     public partial class DefaultSettings : UserControl
     {
-        FieldsViewModel fieldsViewModel = new FieldsViewModel();
+        private FieldsViewModel fieldsViewModel = new FieldsViewModel();
 
         public DefaultSettings()
         {
@@ -49,12 +49,12 @@ namespace PresentationLayer.Menus.Settings.Default
 
         private void DriverlessHorizontalAxisCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            DriverlessHorizontalAxisCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            DriverlessHorizontalAxisCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void DriverlessHorizontalAxisCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            DriverlessHorizontalAxisCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            DriverlessHorizontalAxisCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             try
             {
@@ -71,24 +71,24 @@ namespace PresentationLayer.Menus.Settings.Default
 
         private void DriverlessHorizontalAxisCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            DriverlessHorizontalAxisCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            DriverlessHorizontalAxisCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void DriverlessHorizontalAxisCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            DriverlessHorizontalAxisCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            DriverlessHorizontalAxisCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void DriverlessC0refCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            DriverlessC0refCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            DriverlessC0refCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void DriverlessC0refCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            DriverlessC0refCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            DriverlessC0refCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             try
             {
@@ -104,24 +104,24 @@ namespace PresentationLayer.Menus.Settings.Default
 
         private void DriverlessC0refCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            DriverlessC0refCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            DriverlessC0refCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void DriverlessC0refCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            DriverlessC0refCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            DriverlessC0refCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void DriverlessYChannelCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            DriverlessYChannelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary200);
+            DriverlessYChannelCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void DriverlessYChannelCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            DriverlessYChannelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            DriverlessYChannelCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             try
             {
@@ -137,13 +137,13 @@ namespace PresentationLayer.Menus.Settings.Default
 
         private void DriverlessYChannelCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            DriverlessYChannelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary100);
+            DriverlessYChannelCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void DriverlessYChannelCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            DriverlessYChannelCardButton.Background = ConvertColor.ConvertStringColorToSolidColorBrush(ColorManager.Secondary50);
+            DriverlessYChannelCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
     }
