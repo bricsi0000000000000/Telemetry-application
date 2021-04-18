@@ -260,7 +260,7 @@
                             <Grid x:Name="SectionDataGridCover"
                                   Background="White"
                                   Grid.RowSpan="5"
-                                  Visibility="Hidden"
+                                  Visibility="Visible"
                                   >
                                 <materialDesign:PackIcon Kind="CardText"
                                                          Opacity=".2"

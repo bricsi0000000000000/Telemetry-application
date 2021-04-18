@@ -20,6 +20,8 @@ namespace LocigLayer.Groups
 
         public static int LastGroupID = 0;
 
+        private static string groupsFileNameWithPath;
+
         /// <summary>
         /// Initializes groups from file.
         /// </summary>
@@ -36,7 +38,8 @@ namespace LocigLayer.Groups
                 throw new Exception($"'{fileName}' is empty");
             }
 
-            ReadGroups(fileName);
+            groupsFileNameWithPath = fileName;
+            ReadGroups(groupsFileNameWithPath);
         }
 
         /// <summary>
@@ -131,13 +134,12 @@ namespace LocigLayer.Groups
         /// </summary>
         public static void SaveGroups()
         {
-            string groupsFileName = TextManager.GroupsFileName;
-            if (!File.Exists(groupsFileName))
+            if (!File.Exists(groupsFileNameWithPath))
             {
                 throw new Exception($"Can't save groups because '{TextManager.GroupsFileName}' not found!");
             }
 
-            using var writer = new StreamWriter(groupsFileName);
+            using var writer = new StreamWriter(groupsFileNameWithPath);
 
             var serializer = new JsonSerializer();
 

@@ -37,7 +37,7 @@ namespace PresentationLayer.Menus.Settings.Live
 
             InitilaizeHttpClient();
             UpdateSelectedSectionButtons();
-            UpdateCarStatus(new List<TimeSpan>(), -1);
+            UpdateCarStatus();
             UpdateConfigurationCard();
         }
 
@@ -116,7 +116,7 @@ namespace PresentationLayer.Menus.Settings.Live
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        GetAllSectionsAsync(selectedSectionID: activeSection.ID);
+                        GetAllSectionsAsync();
                         UpdateLoadingGrid(visibility: false);
                     });
                 }
@@ -553,26 +553,22 @@ namespace PresentationLayer.Menus.Settings.Live
             ChangeSectionDateAsync(activeSection.ID, newDate);
         }
 
-        public void UpdateCarStatus(List<TimeSpan> carTimes, long appTimes)
+        /// <param name="sentTime">Time when the package was sent from the data sender</param>
+        /// <param name="arrivedTime">Time when the package was sent from the server</param>
+        public void UpdateCarStatus(TimeSpan? sentTime = null, long? arrivedTime = null)
         {
-            if (carTimes.Count > 0)
+            if (sentTime != null)
             {
-                var timesTicks = new List<long>();
-                foreach (var item in carTimes)
-                {
-                    timesTicks.Add(item.Ticks);
-                }
-                var time = new TimeSpan((long)timesTicks.Average());
-                CarToDBConnectionSpeedLabel.Content = $"{time.Milliseconds:f0} ms";
+                CarToDBConnectionSpeedLabel.Content = $"{sentTime.Value.Milliseconds:f0} ms";
             }
             else
             {
                 CarToDBConnectionSpeedLabel.Content = "-";
             }
 
-            if (appTimes >= 0)
+            if (arrivedTime != null)
             {
-                DBToAppConnectionSpeedLabel.Content = $"{appTimes:f0} ms";
+                DBToAppConnectionSpeedLabel.Content = $"{(long)arrivedTime:f0} ms";
             }
             else
             {

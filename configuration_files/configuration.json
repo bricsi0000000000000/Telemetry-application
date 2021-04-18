@@ -4,17 +4,22 @@
     "minor_version" : 1
   },
   "live" : {
-    "wait_between_tries" : 5,
+    "wait_between_collect_data" : 5000,
     "isHTTPS" : false,
     "url" : "192.168.1.33",
     "port" : 5000,
-    "get_live_section_api_call" : "api/Section/live",
-    "get_all_sections_api_call" : "api/Section/all",
-    "post_new_section_api_call" : "api/Section/",
-    "change_section_to_live_api_call" : "api/Section/change_live",
-    "change_section_to_offline_api_call" : "api/Section/change_offline",
-    "change_section_name_api_call" : "api/Section/change_name",
-    "change_section_date_api_call" : "api/Section/change_date",
-    "delete_section_call" : "api/Section/"
+    "sections": {
+      "get_live_section" : "api/Section/live",
+      "get_all_sections" : "api/Section/all",
+      "post_new_section" : "api/Section/",
+      "change_section_to_live" : "api/Section/change_live",
+      "change_section_to_offline" : "api/Section/change_offline",
+      "change_section_name" : "api/Section/change_name",
+      "change_section_date" : "api/Section/change_date",
+      "delete_section" : "api/Section/"
+    },
+    "packages": {
+      "get_package_by_id" : "/api/Package/"
+    }
   }
 }

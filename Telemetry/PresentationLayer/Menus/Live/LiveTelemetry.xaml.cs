@@ -9,15 +9,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using DataLayer.Groups;
 using DataLayer.Models;
 using PresentationLayer.Charts;
-using PresentationLayer.Menus.Settings.Live;
 using LocigLayer.Groups;
-using LocigLayer.Texts;
 using LocigLayer.Colors;
 using LogicLayer.Configurations;
+using PresentationLayer.Extensions;
+using System.Linq;
 
 namespace PresentationLayer.Menus.Live
 {
@@ -34,14 +33,14 @@ namespace PresentationLayer.Menus.Live
         private const int getDataAmount = 5;
         private int yawAngleLastIndex = 0;
 
-        private List<Tuple<double, TimeSpan>> yawAngleData = new List<Tuple<double, TimeSpan>>(); 
+        private Package currentPackage = new Package();
         private object getDataLock = new object();
         private AutoResetEvent getDataSignal = new AutoResetEvent(false);
 
-        private const int WAIT_BETWEEN_COLLECT_DATA_IN_MS = 5000;
-
         private const int NO_OPACITY_VALUE = 1;
         private const float LITTLE_OPACITY_VALUE = .2f;
+
+        private int lastPackageID = 0;
 
         public LiveTelemetry()
         {
@@ -185,7 +184,7 @@ namespace PresentationLayer.Menus.Live
 
             yawAngleLastIndex = 0;
             Stop(); //TODO biztos?
-            yawAngleData.Clear();
+                    //  currentPackage.Clear();
             canUpdateCharts = false;
 
             UpdateSectionTitle();
@@ -217,47 +216,42 @@ namespace PresentationLayer.Menus.Live
             }
         }
 
-        /// <summary>
-        /// Updates all charts with new data.
-        /// </summary>
         private void CollectData()
         {
             while (canUpdateCharts)
             {
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
-                var getYawAngleData = GetDataAsync(controller: "YawAngle", bufferAmount: getDataAmount).Result;
+                var getPackage = GetPackageAsync(packageID: lastPackageID++).Result;
                 stopwatch.Stop();
 
-                lock (getDataLock)
+                if (getPackage != null)
                 {
-                    yawAngleData = getYawAngleData;
-                }
-
-                getDataSignal.Set();
-
-                if (activeSection.IsLive)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    lock (getDataLock)
                     {
-                        var times = new List<TimeSpan>();
-                        foreach (var item in getYawAngleData)
+                        currentPackage = getPackage;
+                    }
+
+                    getDataSignal.Set();
+
+                    if (activeSection.IsLive)
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
                         {
-                            times.Add(item.Item2);
-                        }
-                        ((LiveSettings)((LiveMenu)MenuManager.GetMenuTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).UpdateCarStatus(times, stopwatch.ElapsedMilliseconds);
-                    });
-                }
-                else
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
+                            MenuManager.LiveSettings.UpdateCarStatus(currentPackage.SentTime, stopwatch.ElapsedMilliseconds);
+                        });
+                    }
+                    else
                     {
-                        canUpdateCharts = false;
-                        UpdateCanRecieveDataStatus();
-                    });
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            canUpdateCharts = false;
+                            UpdateCanRecieveDataStatus();
+                        });
+                    }
                 }
 
-                Thread.Sleep(WAIT_BETWEEN_COLLECT_DATA_IN_MS);
+                Thread.Sleep(ConfigurationManager.WaitBetweenCollectData);
             }
         }
 
@@ -268,56 +262,78 @@ namespace PresentationLayer.Menus.Live
                 getDataSignal.WaitOne();
                 if (canUpdateCharts)
                 {
-                    var values = new List<Tuple<double, TimeSpan>>();
+                    var package = new Package();
                     lock (getDataLock)
                     {
-                        values = yawAngleData;
+                        package = currentPackage;
                     }
 
-                    if (values.Count > 0)
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
-                        Application.Current.Dispatcher.Invoke(() =>
+                        /*var yawAngleChannel = GetChart("yaw_angle");
+                        if (yawAngleChannel != null)
                         {
-                            var yawAngleChannel = GetChart("yaw_angle");
-                            if (yawAngleChannel != null)
+                            var updateableValues = new List<double>();
+                            foreach (var item in package)
                             {
-                                var updateableValues = new List<double>();
-                                foreach (var item in values)
-                                {
-                                    updateableValues.Add(item.Item1);
-                                }
-                                yawAngleChannel.Update(updateableValues.ToArray(), "", "yaw angle");
+                                updateableValues.Add(item.Item1);
                             }
-                        });
-                    }
+                            yawAngleChannel.Update(updateableValues.ToArray(), "", "yaw angle");
+                        }*/
+                    });
 
-                    Thread.Sleep(WAIT_BETWEEN_COLLECT_DATA_IN_MS);
+                    Thread.Sleep(ConfigurationManager.WaitBetweenCollectData);
                 }
             }
         }
 
         private Chart GetChart(string name) => charts.Find(x => x.ChartName.Equals(name));
 
-        private async Task<List<Tuple<double, TimeSpan>>> GetDataAsync(string controller, int bufferAmount)
+        private async Task<Package> GetPackageAsync(int packageID)
         {
-            var returnData = new List<Tuple<double, TimeSpan>>();
-
             try
             {
-                var response = await client.GetAsync($"/api/{controller}/last_buffer?id={activeSection.ID}&bufferAmount={bufferAmount}&lastIndex={yawAngleLastIndex}").ConfigureAwait(false);
+                var response = await client.GetAsync($"{ConfigurationManager.GetPackageByIDAPICall}{packageID}").ConfigureAwait(false);
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 string resultString = result.GetAwaiter().GetResult();
-                dynamic data = JsonConvert.DeserializeObject(resultString);
+                dynamic package = JsonConvert.DeserializeObject(resultString);
 
-                for (int i = 0; i < data.Count; i++)
+                var speeds = new List<Speed>();
+                for (int i = 0; i < package.speeds.Count; i++)
+                {
+                    speeds.Add(new Speed()
+                    {
+                        ID = package.speeds[i].id,
+                        Value = package.speeds[i].value,
+                    });
+                }
+
+                var times = new List<Time>();
+                for (int i = 0; i < package.times.Count; i++)
+                {
+                    times.Add(new Time()
+                    {
+                        ID = package.times[i].id,
+                        Value = package.times[i].value,
+                    });
+                }
+
+                return new Package()
+                {
+                    Speeds = speeds,
+                    Times = times,
+                    SentTime = TimeSpan.FromTicks((long)package.sentTime)
+                };
+
+                /*for (int i = 0; i < data.Count; i++)
                 {
                     double actualValue = double.Parse(data[i].value.ToString());
                     string actualDateString = data[i].ellapsedTime.ToString();
                     TimeSpan actualTime = new TimeSpan(long.Parse(actualDateString));
                     returnData.Add(new Tuple<double, TimeSpan>(actualValue, actualTime));
-                }
+                }*/
 
-                yawAngleLastIndex += data.Count;
+                // yawAngleLastIndex += data.Count;
 
                 /* if (yawAngleLastIndex == 0)
                  {
@@ -332,11 +348,11 @@ namespace PresentationLayer.Menus.Live
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    ShowErrorMessage("Couldn't connect to the sever\t" + e.Message);
+                    ShowErrorMessage($"Couldn't connect to the sever\t{e.Message}");
                 });
             }
 
-            return returnData;
+            return null;
         }
 
         /* private Chart BuildChart(string channelName)
@@ -377,8 +393,8 @@ namespace PresentationLayer.Menus.Live
         /// <param name="time"></param>
         private void ShowErrorMessage(string message, bool error = true, double time = 3)
         {
-            ErrorSnackbar.Background = error ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary900)) :
-                                               new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
+            ErrorSnackbar.Background = error ? ColorManager.Primary900.ConvertBrush() :
+                                               ColorManager.Secondary900.ConvertBrush();
 
             ErrorSnackbar.MessageQueue.Enqueue(message, null, null, null, false, true, TimeSpan.FromSeconds(time));
         }
@@ -387,7 +403,7 @@ namespace PresentationLayer.Menus.Live
         {
             if (isActiveSection)
             {
-                RecieveDataStatusCard.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
+                RecieveDataStatusCard.Background = ColorManager.Secondary200.ConvertBrush();
             }
         }
 
@@ -395,7 +411,7 @@ namespace PresentationLayer.Menus.Live
         {
             if (isActiveSection)
             {
-                RecieveDataStatusCard.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+                RecieveDataStatusCard.Background = ColorManager.Secondary100.ConvertBrush();
 
                 canUpdateCharts = !canUpdateCharts;
                 UpdateCanRecieveDataStatus();
@@ -412,7 +428,7 @@ namespace PresentationLayer.Menus.Live
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        ((LiveSettings)((LiveMenu)MenuManager.GetMenuTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).UpdateCarStatus(new List<TimeSpan>(), -1);
+                        MenuManager.LiveSettings.UpdateCarStatus();
                     });
                 }
             }
@@ -422,7 +438,7 @@ namespace PresentationLayer.Menus.Live
         {
             if (isActiveSection)
             {
-                RecieveDataStatusCard.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+                RecieveDataStatusCard.Background = ColorManager.Secondary100.ConvertBrush();
             }
         }
 
@@ -430,7 +446,7 @@ namespace PresentationLayer.Menus.Live
         {
             if (isActiveSection)
             {
-                RecieveDataStatusCard.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+                RecieveDataStatusCard.Background = ColorManager.Secondary50.ConvertBrush();
             }
         }
 
