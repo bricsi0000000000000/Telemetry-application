@@ -17,12 +17,11 @@ namespace PresentationLayer
         protected List<string> selectedChannels = new List<string>();
         protected List<double> horizontalAxisData = new List<double>();
 
-        protected abstract Channel HorizontalAxis(int inputFileID);
         protected abstract Chart BuildGroupChart(Group group);
         protected abstract void UpdateCharts();
         protected abstract void UpdateChannelsList();
         public abstract void BuildCharts();
-        public abstract Channel GetChannel(int inputFileID, string channelName);
+        public abstract Channel GetChannel(string channelName, int? inputFileID = null);
 
         public virtual void SetChannelActivity(string channelName, int inputFileID, bool isActive)
         {

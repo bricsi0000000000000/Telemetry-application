@@ -18,10 +18,11 @@ using System.Linq;
 using LocigLayer.InputFiles;
 using PresentationLayer.Extensions;
 using LogicLayer.Configurations;
+using PresentationLayer;
 
 namespace LogicLayer.Menus.Live
 {
-    public partial class LiveTelemetry : UserControl
+    public partial class LiveTelemetry : PlotTelemetry
     {
         private Section activeSection;
         private bool isActiveSection = false;
@@ -34,9 +35,6 @@ namespace LogicLayer.Menus.Live
 
 
         private List<Tuple<string, bool>> channelNames = new List<Tuple<string, bool>>();
-        private readonly List<string> selectedGroups = new List<string>();
-        private readonly List<string> selectedChannels = new List<string>();
-        private List<double> horizontalAxisData = new List<double>();
 
         private Package currentPackage = new Package();
         private readonly object getDataLock = new object();
@@ -96,20 +94,7 @@ namespace LogicLayer.Menus.Live
 
         private void InitializeGroupItems(bool initCall = false)
         {
-            GroupsStackPanel.Children.Clear();
-
-            foreach (var group in GroupManager.Groups)
-            {
-                var checkBox = new CheckBox()
-                {
-                    Content = group.Name
-                };
-                checkBox.IsChecked = selectedGroups.Contains(group.Name);
-                checkBox.Checked += GroupCheckBox_CheckedClick;
-                checkBox.Unchecked += GroupCheckBox_CheckedClick;
-
-                GroupsStackPanel.Children.Add(checkBox);
-            }
+            base.InitializeGroupItems();
 
             if (!initCall)
             {
@@ -134,7 +119,7 @@ namespace LogicLayer.Menus.Live
             BuildCharts();
         }
 
-        public void BuildCharts()
+        public override void BuildCharts()
         {
             ChartsGrid.Children.Clear();
             ChartsGrid.RowDefinitions.Clear();
@@ -148,7 +133,7 @@ namespace LogicLayer.Menus.Live
 
                     group.AddAttribute(InputFileManager.GetLiveFile(activeSection.Name).GetChannel(channelName.Item1));
 
-                    BuildChartGrid(group, ref rowIndex);
+                    BuildChartGrid(group, ref rowIndex, ChartsGrid);
                 }
             }
 
@@ -156,7 +141,7 @@ namespace LogicLayer.Menus.Live
             {
                 if (selectedGroups.Contains(group.Name))
                 {
-                    BuildChartGrid(group, ref rowIndex);
+                    BuildChartGrid(group, ref rowIndex, ChartsGrid);
                 }
             }
 
@@ -189,41 +174,12 @@ namespace LogicLayer.Menus.Live
             }
         }
 
-        private void BuildChartGrid(Group group, ref int rowIndex)
-        {
-            RowDefinition chartRow = new RowDefinition()
-            {
-                Height = new GridLength(200)
-            };
-            RowDefinition gridSplitterRow = new RowDefinition
-            {
-                Height = new GridLength(5)
-            };
-
-            ChartsGrid.RowDefinitions.Add(chartRow);
-            ChartsGrid.RowDefinitions.Add(gridSplitterRow);
-
-            GridSplitter splitter = new GridSplitter
-            {
-                ResizeDirection = GridResizeDirection.Rows,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                Background = ColorManager.Secondary100.ConvertBrush()
-            };
-            ChartsGrid.Children.Add(splitter);
-
-            var chart = BuildGroupChart(group);
-            ChartsGrid.Children.Add(chart);
-
-            Grid.SetRow(chart, rowIndex++);
-            Grid.SetRow(splitter, rowIndex++);
-        }
-
         /// <summary>
         /// Builds one <see cref="Chart"/> with the <paramref name="group"/>s values.
         /// </summary>
         /// <param name="group"><see cref="Group"/> that will shown on the <see cref="Chart"/></param>
         /// <returns>A <see cref="Chart"/> with the <paramref name="group"/>s values.</returns>
-        private Chart BuildGroupChart(Group group)
+        protected override Chart BuildGroupChart(Group group)
         {
             var chart = new Chart(group.Name);
 
@@ -298,7 +254,7 @@ namespace LogicLayer.Menus.Live
             return chart;
         }
 
-        private Channel GetChannel(string channelName)
+        public override Channel GetChannel(string channelName, int? inputFileID = null)
         {
             var liveFile = InputFileManager.GetLiveFile(activeSection.Name);
             if (liveFile == null)
@@ -332,7 +288,7 @@ namespace LogicLayer.Menus.Live
             return returnData;
         }
 
-        private void InitializeChannelItems()
+        protected override void UpdateChannelsList()
         {
             ChannelsStackPanel.Children.Clear();
 
@@ -405,7 +361,7 @@ namespace LogicLayer.Menus.Live
             {
                 this.channelNames.Add(new Tuple<string, bool>(name, false));
             }
-            InitializeChannelItems();
+            UpdateChannelsList();
         }
 
         private void CollectData()
@@ -447,7 +403,7 @@ namespace LogicLayer.Menus.Live
             }
         }
 
-        private void UpdateCharts()
+        protected override void UpdateCharts()
         {
             while (canUpdateCharts)
             {

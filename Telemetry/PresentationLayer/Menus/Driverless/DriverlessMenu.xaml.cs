@@ -795,7 +795,7 @@ namespace PresentationLayer.Menus.Driverless
             ReadFileProgressBar.Visibility = visibility ? Visibility.Visible : Visibility.Hidden;
         }
 
-        protected override Channel HorizontalAxis(int inputFileID)
+        private Channel HorizontalAxis(int inputFileID)
         {
             return GetChannel(inputFileID, DefaultsManager.GetDefault(TextManager.DriverlessHorizontalAxis).Value);
         }
