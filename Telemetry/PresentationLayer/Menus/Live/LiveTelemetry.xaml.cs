@@ -14,14 +14,12 @@ using DataLayer.Models;
 using PresentationLayer.Charts;
 using LocigLayer.Groups;
 using LocigLayer.Colors;
-using LogicLayer.Configurations;
-using PresentationLayer.Extensions;
 using System.Linq;
 using LocigLayer.InputFiles;
-using PresentationLayer.Errors;
-using System.Drawing;
+using PresentationLayer.Extensions;
+using LogicLayer.Configurations;
 
-namespace PresentationLayer.Menus.Live
+namespace LogicLayer.Menus.Live
 {
     public partial class LiveTelemetry : UserControl
     {
@@ -77,7 +75,7 @@ namespace PresentationLayer.Menus.Live
             client = new HttpClient
             {
                 Timeout = TimeSpan.FromMinutes(1),
-                BaseAddress = new Uri(Configurations.Address)
+                BaseAddress = new Uri(ConfigurationManager.Address)
             };
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -445,7 +443,7 @@ namespace PresentationLayer.Menus.Live
                     }
                 }
 
-                Thread.Sleep(Configurations.WaitBetweenCollectData);
+                Thread.Sleep(ConfigurationManager.WaitBetweenCollectData);
             }
         }
 
@@ -486,7 +484,7 @@ namespace PresentationLayer.Menus.Live
                         }*/
                     });
 
-                    Thread.Sleep(Configurations.WaitBetweenCollectData);
+                    Thread.Sleep(ConfigurationManager.WaitBetweenCollectData);
                 }
             }
         }
@@ -497,7 +495,7 @@ namespace PresentationLayer.Menus.Live
         {
             try
             {
-                var response = await client.GetAsync($"{Configurations.GetPackageByIDAPICall}{packageID}").ConfigureAwait(false);
+                var response = await client.GetAsync($"{ConfigurationManager.GetPackageByIDAPICall}{packageID}").ConfigureAwait(false);
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 string resultString = result.GetAwaiter().GetResult();
                 dynamic package = JsonConvert.DeserializeObject(resultString);

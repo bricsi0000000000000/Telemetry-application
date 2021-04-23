@@ -3,12 +3,12 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using LocigLayer.Colors;
-using LocigLayer.Defaults;
 using LocigLayer.Texts;
 using PresentationLayer.Extensions;
-using PresentationLayer.ValidationRules;
+using LogicLayer.ValidationRules;
+using PresentationLayer.Defaults;
 
-namespace PresentationLayer.Menus.Settings.Default
+namespace LogicLayer.Menus.Settings.Default
 {
     /// <summary>
     /// Interaction logic for DefaultSettings.xaml

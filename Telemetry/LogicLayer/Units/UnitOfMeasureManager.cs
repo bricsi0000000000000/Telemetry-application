@@ -73,7 +73,7 @@ namespace LocigLayer.Units
             }
             catch (JsonReaderException)
             {
-                throw new Exception($"There was a problem reading '{TextManager.UnitOfMeasuresFileName}'");
+                throw new Exception($"There was a problem reading '{Texts.TextManager.UnitOfMeasuresFileName}'");
             }
         }
 
@@ -82,7 +82,7 @@ namespace LocigLayer.Units
         /// </summary>
         public static void Save()
         {
-            string fileName = TextManager.UnitOfMeasuresFileName;
+            string fileName = Texts.TextManager.UnitOfMeasuresFileName;
             if (!File.Exists(fileName))
             {
                 throw new Exception($"Can't save unit of measures because '{fileName}' does not found!");

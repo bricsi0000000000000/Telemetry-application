@@ -3,9 +3,9 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
 using LocigLayer.Colors;
-using PresentationLayer.Errors;
+using LogicLayer.Errors;
 
-namespace PresentationLayer.Menus.Settings.Groups
+namespace LogicLayer.Menus.Settings.Groups
 {
     /// <summary>
     /// Interaction logic for PickColor.xaml

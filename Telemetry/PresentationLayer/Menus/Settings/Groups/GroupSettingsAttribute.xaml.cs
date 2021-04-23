@@ -9,9 +9,9 @@ using LocigLayer.Groups;
 using LocigLayer.InputFiles;
 using LocigLayer.Texts;
 using PresentationLayer.Menus.Driverless;
-using PresentationLayer.Menus.Settings.InputFiles;
+using LogicLayer.Menus.Settings.InputFiles;
 
-namespace PresentationLayer.Menus.Settings.Groups
+namespace LogicLayer.Menus.Settings.Groups
 {
     /// <summary>
     /// Represents one <see cref="Group"/> <see cref="Attribute"/> int <see cref="GroupSettings"/>.

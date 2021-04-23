@@ -80,7 +80,7 @@ namespace LocigLayer.InputFiles
         /// </summary>
         public static InputFile GetActiveInputFile => Get(ActiveInputFileName);
 
-        public static int DriverlessInputFilesCount => InputFiles.FindAll(x => x is DriverlessInputFile).Count;
+        public static bool IsAnyDriverlessFile => InputFiles.FindAll(x => x is DriverlessInputFile).Any();
 
         public static int LastID => InputFiles.Any() ? InputFiles.Last().ID : -1;
 

@@ -2,11 +2,9 @@
 using System.Windows;
 using System.Windows.Input;
 using LocigLayer.Colors;
-using LocigLayer.Texts;
 using PresentationLayer.Extensions;
-using PresentationLayer.Menus.Settings.Live;
 
-namespace PresentationLayer.Menus.Live
+namespace LogicLayer.Menus.Live
 {
     /// <summary>
     /// Interaction logic for PopUpEditDateWindow.xaml

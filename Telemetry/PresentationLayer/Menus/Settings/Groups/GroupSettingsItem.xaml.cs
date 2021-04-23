@@ -5,7 +5,7 @@ using DataLayer.Groups;
 using LocigLayer.Colors;
 using LocigLayer.Texts;
 
-namespace PresentationLayer.Menus.Settings.Groups
+namespace LogicLayer.Menus.Settings.Groups
 {
     /// <summary>
     /// Represents a <see cref="Group"/> settings item in <see cref="GroupSettings"/>.

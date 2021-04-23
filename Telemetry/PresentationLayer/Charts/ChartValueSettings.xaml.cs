@@ -5,13 +5,13 @@ using DataLayer.Groups;
 using LocigLayer.Groups;
 using LocigLayer.InputFiles;
 using LocigLayer.Texts;
+using LogicLayer.Menus;
+using LogicLayer.Menus.Live;
+using LogicLayer.Menus.Settings;
+using LogicLayer.Menus.Settings.Groups;
+using LogicLayer.Menus.Settings.InputFiles;
 using PresentationLayer.Extensions;
-using PresentationLayer.Menus;
 using PresentationLayer.Menus.Driverless;
-using PresentationLayer.Menus.Live;
-using PresentationLayer.Menus.Settings;
-using PresentationLayer.Menus.Settings.Groups;
-using PresentationLayer.Menus.Settings.InputFiles;
 
 namespace PresentationLayer.Charts
 {

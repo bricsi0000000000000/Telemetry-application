@@ -1,12 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace LogicLayer.Configurations
 {
-    public static class Configurations
+    public static class ConfigurationManager
     {
         #region version
 

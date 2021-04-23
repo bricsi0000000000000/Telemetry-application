@@ -5,16 +5,16 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Linq;
-using PresentationLayer.Menus;
-using PresentationLayer.Menus.Driverless;
-using PresentationLayer.Menus.Settings.Groups;
-using PresentationLayer.Menus.Settings;
+using LogicLayer.Menus;
+using LogicLayer.Menus.Settings.Groups;
+using LogicLayer.Menus.Settings;
 using System.Windows.Input;
-using PresentationLayer.Defaults;
 using LocigLayer.Units;
 using LocigLayer.Groups;
 using LocigLayer.Colors;
 using LocigLayer.Texts;
+using PresentationLayer.Menus.Driverless;
+using PresentationLayer.Defaults;
 
 namespace PresentationLayer.Charts
 {

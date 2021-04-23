@@ -7,9 +7,9 @@ using LocigLayer.Colors;
 using LocigLayer.Texts;
 using LocigLayer.Units;
 using PresentationLayer.Extensions;
-using PresentationLayer.ValidationRules;
+using LogicLayer.ValidationRules;
 
-namespace PresentationLayer.Menus.Settings.Units
+namespace LogicLayer.Menus.Settings.Units
 {
     /// <summary>
     /// Interaction logic for AddUnitOfMeasureWindow.xaml

@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using DataLayer.Drivers;
 
-namespace PresentationLayer.Drivers
+namespace LogicLayer.Drivers
 {
     /// <summary>
     /// Interaction logic for DriverItem.xaml

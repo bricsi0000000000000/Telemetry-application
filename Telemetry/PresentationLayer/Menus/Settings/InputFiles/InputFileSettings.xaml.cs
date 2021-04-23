@@ -8,18 +8,18 @@ using System.Windows.Input;
 using DataLayer;
 using DataLayer.Groups;
 using DataLayer.InputFiles;
-using PresentationLayer.Errors;
+using LogicLayer.Errors;
 using PresentationLayer.Menus.Driverless;
-using PresentationLayer.Menus.Live;
-using PresentationLayer.Menus.Settings.Groups;
-using PresentationLayer.ValidationRules;
+using LogicLayer.Menus.Live;
+using LogicLayer.Menus.Settings.Groups;
+using LogicLayer.ValidationRules;
 using LocigLayer.InputFiles;
 using LocigLayer.Colors;
 using LocigLayer.Texts;
 using LocigLayer.Groups;
 using PresentationLayer.Extensions;
 
-namespace PresentationLayer.Menus.Settings.InputFiles
+namespace LogicLayer.Menus.Settings.InputFiles
 {
     /// <summary>
     /// Represents the <see cref="InputFile"/>s settigns in settings menu.

@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using DataLayer.Defaults;
 using LocigLayer.Texts;
 using PresentationLayer.Extensions;
+using System.Drawing;
 
 namespace PresentationLayer.Defaults
 {
@@ -115,21 +115,6 @@ namespace PresentationLayer.Defaults
         /// <param name="name">Removable <see cref="Group"/>s name.</param>
         public static void RemoveDefault(string name) => Defaults.Remove(GetDefault(name));
 
-        public static Color DefaultChartHighlightColor
-        {
-            get
-            {
-                var defaultChartHighlightColor = GetDefault("DefaultChartHighlightColor");
-                if (defaultChartHighlightColor != null)
-                {
-                    var color = defaultChartHighlightColor.Value.ConvertColor();
-                    return Color.FromArgb(color.A, color.R, color.G, color.B);
-                }
-                else
-                {
-                    return Color.Red;
-                }
-            }
-        }
+        public static Color DefaultChartHighlightColor => GetDefault("DefaultChartHighlightColor").Value.ConvertToChartColor();
     }
 }

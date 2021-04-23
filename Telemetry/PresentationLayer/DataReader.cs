@@ -14,14 +14,14 @@ using LocigLayer.Colors;
 using LocigLayer.Groups;
 using LocigLayer.InputFiles;
 using LocigLayer.Texts;
-using PresentationLayer.Errors;
-using PresentationLayer.Menus;
+using LogicLayer.Errors;
+using LogicLayer.Menus;
+using LogicLayer.Menus.Settings;
+using LogicLayer.Menus.Settings.Groups;
+using LogicLayer.Menus.Settings.InputFiles;
 using PresentationLayer.Menus.Driverless;
-using PresentationLayer.Menus.Settings;
-using PresentationLayer.Menus.Settings.Groups;
-using PresentationLayer.Menus.Settings.InputFiles;
 
-namespace PresentationLayer
+namespace LogicLayer
 {
     /// <summary>
     /// Reads a files content.

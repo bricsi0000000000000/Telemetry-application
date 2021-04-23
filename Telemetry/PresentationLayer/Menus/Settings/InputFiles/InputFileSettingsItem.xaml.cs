@@ -11,7 +11,7 @@ using LocigLayer.InputFiles;
 using LocigLayer.Texts;
 using PresentationLayer.Menus.Driverless;
 
-namespace PresentationLayer.Menus.Settings.InputFiles
+namespace LogicLayer.Menus.Settings.InputFiles
 {
     /// <summary>
     /// Interaction logic for InputFileSettingsItem.xaml

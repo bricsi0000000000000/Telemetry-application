@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Windows.Controls;
 using LocigLayer.Texts;
+using LogicLayer.Menus.Live;
+using LogicLayer.Menus.Settings;
+using LogicLayer.Menus.Settings.Live;
 using PresentationLayer.Menus.Driverless;
-using PresentationLayer.Menus.Live;
-using PresentationLayer.Menus.Settings;
-using PresentationLayer.Menus.Settings.Live;
 
-namespace PresentationLayer.Menus
+namespace LogicLayer.Menus
 {
     public static class MenuManager
     {

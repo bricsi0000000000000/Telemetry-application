@@ -12,10 +12,10 @@ using LocigLayer.InputFiles;
 using LocigLayer.Texts;
 using PresentationLayer.Extensions;
 using PresentationLayer.Menus.Driverless;
-using PresentationLayer.Menus.Live;
-using PresentationLayer.ValidationRules;
+using LogicLayer.Menus.Live;
+using LogicLayer.ValidationRules;
 
-namespace PresentationLayer.Menus.Settings.Groups
+namespace LogicLayer.Menus.Settings.Groups
 {
     /// <summary>
     /// Represents the content of the group settings in settings menu.

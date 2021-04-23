@@ -4,7 +4,7 @@ using DataLayer.Models;
 using LocigLayer.Colors;
 using PresentationLayer.Extensions;
 
-namespace PresentationLayer.Menus.Live
+namespace LogicLayer.Menus.Live
 {
     /// <summary>
     /// Interaction logic for LiveSectionItem.xaml

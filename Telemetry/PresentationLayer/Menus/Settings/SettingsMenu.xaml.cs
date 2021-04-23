@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Controls;
 using LocigLayer.Texts;
-using PresentationLayer.Menus.Settings.Default;
-using PresentationLayer.Menus.Settings.Groups;
-using PresentationLayer.Menus.Settings.InputFiles;
-using PresentationLayer.Menus.Settings.Units;
+using LogicLayer.Menus.Settings.Default;
+using LogicLayer.Menus.Settings.Groups;
+using LogicLayer.Menus.Settings.InputFiles;
+using LogicLayer.Menus.Settings.Units;
 
-namespace PresentationLayer.Menus.Settings
+namespace LogicLayer.Menus.Settings
 {
     /// <summary>
     /// Represents the content of the main settings menu.

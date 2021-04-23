@@ -9,9 +9,9 @@ using LocigLayer.InputFiles;
 using LocigLayer.Texts;
 using LocigLayer.Units;
 using PresentationLayer.Menus.Driverless;
-using PresentationLayer.Menus.Settings.Groups;
+using LogicLayer.Menus.Settings.Groups;
 
-namespace PresentationLayer.Menus.Settings.InputFiles
+namespace LogicLayer.Menus.Settings.InputFiles
 {
     /// <summary>
     /// Interaction logic for InputFileChannelSettingsItem.xaml

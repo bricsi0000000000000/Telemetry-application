@@ -1,10 +1,9 @@
 ﻿using LocigLayer.Texts;
-using MaterialDesignThemes.Wpf;
 using PresentationLayer.Extensions;
 using System;
 using System.IO;
 
-namespace PresentationLayer.Errors
+namespace LogicLayer.Errors
 {
     /// <summary>
     /// Show error messages.

@@ -5,20 +5,19 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using PresentationLayer.Menus.Live;
+using LogicLayer.Menus.Live;
 using DataLayer.Models;
 using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Input;
 using System.Linq;
 using LocigLayer.Colors;
+using LogicLayer.ValidationRules;
+using LocigLayer.InputFiles;
 using LogicLayer.Configurations;
 using PresentationLayer.Extensions;
-using PresentationLayer.ValidationRules;
-using LocigLayer.InputFiles;
-using DataLayer.InputFiles;
 
-namespace PresentationLayer.Menus.Settings.Live
+namespace LogicLayer.Menus.Settings.Live
 {
     public partial class LiveSettings : UserControl
     {
@@ -50,7 +49,7 @@ namespace PresentationLayer.Menus.Settings.Live
             client = new HttpClient
             {
                 Timeout = TimeSpan.FromMinutes(1),
-                BaseAddress = new Uri(Configurations.Address)
+                BaseAddress = new Uri(ConfigurationManager.Address)
             };
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -61,7 +60,7 @@ namespace PresentationLayer.Menus.Settings.Live
         {
             try
             {
-                var response = await client.GetAsync(Configurations.AllLiveSectionsAPICall).ConfigureAwait(false);
+                var response = await client.GetAsync(ConfigurationManager.AllLiveSectionsAPICall).ConfigureAwait(false);
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 string resultString = result.GetAwaiter().GetResult();
                 sections = JsonConvert.DeserializeObject<List<Section>>(resultString);
@@ -111,7 +110,7 @@ namespace PresentationLayer.Menus.Settings.Live
         {
             try
             {
-                var response = await client.PostAsJsonAsync(Configurations.PostNewSectionAPICall, new Section { Date = DateTime.Now, Name = sectionName }).ConfigureAwait(false);
+                var response = await client.PostAsJsonAsync(ConfigurationManager.PostNewSectionAPICall, new Section { Date = DateTime.Now, Name = sectionName }).ConfigureAwait(false);
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 int resultCode = int.Parse(result.GetAwaiter().GetResult());
                 if (resultCode == (int)HttpStatusCode.OK)
@@ -160,11 +159,11 @@ namespace PresentationLayer.Menus.Settings.Live
 
                 if (activeSection.IsLive) // change to offline
                 {
-                    response = await client.PutAsJsonAsync(Configurations.ChangeSectionToOfflineAPICall, activeSection.ID).ConfigureAwait(false);
+                    response = await client.PutAsJsonAsync(ConfigurationManager.ChangeSectionToOfflineAPICall, activeSection.ID).ConfigureAwait(false);
                 }
                 else //change to live
                 {
-                    response = await client.PutAsJsonAsync(Configurations.ChangeSectionToLiveAPICall, activeSection.ID).ConfigureAwait(false);
+                    response = await client.PutAsJsonAsync(ConfigurationManager.ChangeSectionToLiveAPICall, activeSection.ID).ConfigureAwait(false);
                 }
 
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -216,7 +215,7 @@ namespace PresentationLayer.Menus.Settings.Live
 
             try
             {
-                var response = await client.DeleteAsync($"{Configurations.DeleteSectionAPICall}?sectionID={id}").ConfigureAwait(false);
+                var response = await client.DeleteAsync($"{ConfigurationManager.DeleteSectionAPICall}?sectionID={id}").ConfigureAwait(false);
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 int resultCode = int.Parse(result.GetAwaiter().GetResult());
                 if (resultCode == (int)HttpStatusCode.OK)
@@ -257,7 +256,7 @@ namespace PresentationLayer.Menus.Settings.Live
 
             try
             {
-                var response = await client.PutAsJsonAsync(Configurations.ChangeSectionNameAPICall, new Section() { ID = id, Name = name }).ConfigureAwait(false);
+                var response = await client.PutAsJsonAsync(ConfigurationManager.ChangeSectionNameAPICall, new Section() { ID = id, Name = name }).ConfigureAwait(false);
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 int resultCode = int.Parse(result.GetAwaiter().GetResult());
                 if (resultCode == (int)HttpStatusCode.OK)
@@ -298,7 +297,7 @@ namespace PresentationLayer.Menus.Settings.Live
 
             try
             {
-                var response = await client.PutAsJsonAsync(Configurations.ChangeSectionDateAPICall, new Section() { ID = id, Name = "a", Date = newDate }).ConfigureAwait(false); // it doesn't work without Name="a", because name is required in api side
+                var response = await client.PutAsJsonAsync(ConfigurationManager.ChangeSectionDateAPICall, new Section() { ID = id, Name = "a", Date = newDate }).ConfigureAwait(false); // it doesn't work without Name="a", because name is required in api side
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 int resultCode = int.Parse(result.GetAwaiter().GetResult());
                 if (resultCode == (int)HttpStatusCode.OK)
@@ -580,8 +579,8 @@ namespace PresentationLayer.Menus.Settings.Live
 
         public void UpdateConfigurationCard()
         {
-            URLLabel.Content = Configurations.URL;
-            PortLabel.Content = Configurations.Port.ToString();
+            URLLabel.Content = ConfigurationManager.URL;
+            PortLabel.Content = ConfigurationManager.Port.ToString();
         }
 
         #region cards

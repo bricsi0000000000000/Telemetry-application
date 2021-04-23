@@ -125,7 +125,7 @@ namespace LocigLayer.Groups
             }
             catch (JsonReaderException)
             {
-                throw new Exception($"There was a problem reading '{TextManager.GroupsFileName}'");
+                throw new Exception($"There was a problem reading '{Texts.TextManager.GroupsFileName}'");
             }
         }
 
@@ -136,7 +136,7 @@ namespace LocigLayer.Groups
         {
             if (!File.Exists(groupsFileNameWithPath))
             {
-                throw new Exception($"Can't save groups because '{TextManager.GroupsFileName}' not found!");
+                throw new Exception($"Can't save groups because '{Texts.TextManager.GroupsFileName}' not found!");
             }
 
             using var writer = new StreamWriter(groupsFileNameWithPath);

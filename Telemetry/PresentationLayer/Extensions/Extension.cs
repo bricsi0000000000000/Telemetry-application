@@ -11,6 +11,13 @@ namespace PresentationLayer.Extensions
             return (Color)ColorConverter.ConvertFromString(colorText);
         }
 
+        public static System.Drawing.Color ConvertToChartColor(this string colorText)
+        {
+            var color = colorText.ConvertColor();
+            return System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
+        }
+
+
         public static SolidColorBrush ConvertBrush(this string colorText)
         {
             return new SolidColorBrush(colorText.ConvertColor());

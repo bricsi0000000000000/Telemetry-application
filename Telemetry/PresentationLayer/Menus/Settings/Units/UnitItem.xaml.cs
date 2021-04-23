@@ -5,7 +5,7 @@ using LocigLayer.Colors;
 using LocigLayer.Texts;
 using PresentationLayer.Extensions;
 
-namespace PresentationLayer.Menus.Settings.Units
+namespace LogicLayer.Menus.Settings.Units
 {
     /// <summary>
     /// Interaction logic for UnitItem.xaml

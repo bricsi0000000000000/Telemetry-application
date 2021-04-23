@@ -8,10 +8,10 @@ using DataLayer.Units;
 using LocigLayer.Colors;
 using LocigLayer.Units;
 using PresentationLayer.Extensions;
-using PresentationLayer.Menus.Live;
-using PresentationLayer.ValidationRules;
+using LogicLayer.Menus.Live;
+using LogicLayer.ValidationRules;
 
-namespace PresentationLayer.Menus.Settings.Units
+namespace LogicLayer.Menus.Settings.Units
 {
     /// <summary>
     /// Interaction logic for UnitsMenu.xaml

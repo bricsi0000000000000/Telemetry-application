@@ -1,18 +1,17 @@
 ﻿using System;
-using System.IO;
 using System.Windows;
-using LocigLayer.Defaults;
 using LocigLayer.Groups;
 using LocigLayer.Texts;
 using LocigLayer.Tracks;
 using LocigLayer.Units;
 using LogicLayer.Configurations;
-using PresentationLayer.Errors;
+using LogicLayer.Errors;
+using LogicLayer.Menus;
+using LogicLayer.Menus.Live;
+using PresentationLayer.Defaults;
 using PresentationLayer.Extensions;
-using PresentationLayer.Menus;
-using PresentationLayer.Menus.Live;
 
-namespace PresentationLayer
+namespace LogicLayer
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -26,8 +25,8 @@ namespace PresentationLayer
 
             try
             {
-                Configurations.LoadConfigurations(TextManager.ConfigurationFileName.MakePath("configuration_files"));
-                Title = $"Telemetry {Configurations.Version}";
+                ConfigurationManager.LoadConfigurations(TextManager.ConfigurationFileName.MakePath("configuration_files"));
+                Title = $"Telemetry {ConfigurationManager.Version}";
             }
             catch (Exception exception)
             {
