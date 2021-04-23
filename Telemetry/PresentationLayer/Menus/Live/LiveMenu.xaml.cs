@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Controls;
-using LocigLayer.Texts;
+using PresentationLayer.Texts;
 using LogicLayer.Menus.Settings.Live;
 
 namespace LogicLayer.Menus.Live

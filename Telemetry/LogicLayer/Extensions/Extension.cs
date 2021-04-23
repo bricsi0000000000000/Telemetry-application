@@ -1,8 +1,8 @@
-﻿using LocigLayer.Texts;
+﻿using PresentationLayer.Texts;
 using System.IO;
 using System.Windows.Media;
 
-namespace PresentationLayer.Extensions
+namespace LogicLayer.Extensions
 {
     public static class Extension
     {
@@ -21,6 +21,11 @@ namespace PresentationLayer.Extensions
         public static SolidColorBrush ConvertBrush(this string colorText)
         {
             return new SolidColorBrush(colorText.ConvertColor());
+        }
+
+        public static SolidColorBrush ConvertBrush(this Color color)
+        {
+            return new SolidColorBrush(color);
         }
 
         public static string MakePath(this string path, string folder)

@@ -12,11 +12,11 @@ using System.Windows.Controls;
 using DataLayer.Groups;
 using DataLayer.Models;
 using PresentationLayer.Charts;
-using LocigLayer.Groups;
-using LocigLayer.Colors;
+using PresentationLayer.Groups;
+using LogicLayer.Colors;
 using System.Linq;
-using LocigLayer.InputFiles;
-using PresentationLayer.Extensions;
+using PresentationLayer.InputFiles;
+using LogicLayer.Extensions;
 using LogicLayer.Configurations;
 using PresentationLayer;
 
@@ -154,10 +154,10 @@ namespace LogicLayer.Menus.Live
 
             Grid.SetRow(new Grid(), rowIndex++);
 
-            UpdateCharts1();
+            UpdateCharts();
         }
 
-        private void UpdateCharts1()
+        private void UpdateCharts()
         {
             if (horizontalAxisData.Count > 0)
             {
@@ -403,7 +403,10 @@ namespace LogicLayer.Menus.Live
             }
         }
 
-        protected override void UpdateCharts()
+        /// <summary>
+        /// Updates charts with new incoming data
+        /// </summary>
+        protected override void RefreshCharts()
         {
             while (canUpdateCharts)
             {
@@ -494,31 +497,6 @@ namespace LogicLayer.Menus.Live
             return null;
         }
 
-        /* private Chart BuildChart(string channelName)
-         {
-
-
-             var horizontalAxisData = HorizontalAxisData.Data;
-
-             var data = ConvertChannelDataToPlotData(channel.Data.ToArray(), horizontalAxisData);
-             int dataIndex = (int)DataSlider.Value;
-
-             double xValue = dataIndex < horizontalAxisData.Count ? horizontalAxisData[dataIndex] : horizontalAxisData.Last();
-             double yValue = dataIndex < channel.Data.Count ? channel.Data[dataIndex] : channel.Data.Last();
-
-             chart.InitPlot(xValue: xValue,
-                            yValue: yValue,
-                            xAxisValues: data.Item1,
-                            yAxisValues: data.Item2,
-                            vLineColor: Color.Black,
-                            lineColor: ColorTranslator.FromHtml(channel.Color),
-                            channels: Channels,
-                            dataIndex: dataIndex,
-                            yAxisLabel: channel.Name);
-
-             return chart;
-         }*/
-
         private void DataSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
 
@@ -560,7 +538,7 @@ namespace LogicLayer.Menus.Live
                     var collectDataThread = new Thread(new ThreadStart(CollectData));
                     collectDataThread.Start();
 
-                    var updateThread = new Thread(new ThreadStart(UpdateCharts));
+                    var updateThread = new Thread(new ThreadStart(RefreshCharts));
                     updateThread.Start();
                 }
                 else

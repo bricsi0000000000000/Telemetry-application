@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Controls;
-using LocigLayer.Texts;
+using PresentationLayer.Texts;
 using LogicLayer.Menus.Settings.Default;
 using LogicLayer.Menus.Settings.Groups;
 using LogicLayer.Menus.Settings.InputFiles;

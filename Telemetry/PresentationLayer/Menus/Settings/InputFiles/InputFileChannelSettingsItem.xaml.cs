@@ -3,13 +3,14 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using DataLayer.Groups;
-using LocigLayer.Colors;
-using LocigLayer.Groups;
-using LocigLayer.InputFiles;
-using LocigLayer.Texts;
-using LocigLayer.Units;
+using LogicLayer.Colors;
+using PresentationLayer.Groups;
+using PresentationLayer.InputFiles;
+using PresentationLayer.Texts;
+using PresentationLayer.Units;
 using PresentationLayer.Menus.Driverless;
 using LogicLayer.Menus.Settings.Groups;
+using LogicLayer.Extensions;
 
 namespace LogicLayer.Menus.Settings.InputFiles
 {
@@ -71,7 +72,7 @@ namespace LogicLayer.Menus.Settings.InputFiles
             if (unitOfMeasure != null)
             {
                 unitOfMeasureFormula = unitOfMeasure.UnitOfMeasure;
-                var formula = @"\color[HTML]{" + ColorManager.Secondary900[1..] + "}{" + unitOfMeasure.UnitOfMeasure + "}";
+                var formula = @"\color[HTML]{" + ColorManager.Secondary900.ToString()[1..] + "}{" + unitOfMeasure.UnitOfMeasure + "}";
                 UnitOfMeasureFormulaControl.Formula = formula;
             }
 
@@ -135,31 +136,31 @@ namespace LogicLayer.Menus.Settings.InputFiles
         {
             isSelected = selected;
 
-            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
-                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+            BackgroundCard.Background = isSelected ? ColorManager.Secondary900.ConvertBrush() :
+                                                     ColorManager.Secondary50.ConvertBrush();
 
-            AttributeLabel.Foreground = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50)) :
-                                                         new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
+            AttributeLabel.Foreground = isSelected ? ColorManager.Secondary50.ConvertBrush() :
+                                                         ColorManager.Secondary900.ConvertBrush();
 
-            LineWidthLabel.Foreground = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50)) :
-                                                         new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
+            LineWidthLabel.Foreground = isSelected ? ColorManager.Secondary50.ConvertBrush() :
+                                                         ColorManager.Secondary900.ConvertBrush();
 
-            var formula = @"\color[HTML]{" + (isSelected ? ColorManager.Secondary50[1..] : ColorManager.Secondary900[1..]) + "}{" + unitOfMeasureFormula + "}";
+            var formula = @"\color[HTML]{" + (isSelected ? ColorManager.Secondary50.ToString()[1..] : ColorManager.Secondary900.ToString()[1..]) + "}{" + unitOfMeasureFormula + "}";
             UnitOfMeasureFormulaControl.Formula = formula;
         }
 
         private void BackgroundCard_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary700)) :
-                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
+            BackgroundCard.Background = isSelected ? ColorManager.Secondary700.ConvertBrush() :
+                                                     ColorManager.Secondary200.ConvertBrush();
         }
 
         private void BackgroundCard_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Mouse.OverrideCursor = Cursors.Wait;
 
-            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
-                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+            BackgroundCard.Background = isSelected ? ColorManager.Secondary800.ConvertBrush() :
+                                                     ColorManager.Secondary100.ConvertBrush();
 
             ((InputFilesSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeActiveChannelSettingsItem(ChannelID);
 
@@ -168,16 +169,16 @@ namespace LogicLayer.Menus.Settings.InputFiles
 
         private void BackgroundCard_MouseEnter(object sender, MouseEventArgs e)
         {
-            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
-                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+            BackgroundCard.Background = isSelected ? ColorManager.Secondary800.ConvertBrush() :
+                                                     ColorManager.Secondary100.ConvertBrush();
 
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void BackgroundCard_MouseLeave(object sender, MouseEventArgs e)
         {
-            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
-                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+            BackgroundCard.Background = isSelected ? ColorManager.Secondary900.ConvertBrush() :
+                                                     ColorManager.Secondary50.ConvertBrush();
 
             Mouse.OverrideCursor = null;
         }

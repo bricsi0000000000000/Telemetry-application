@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using DataLayer.Units;
-using LocigLayer.Texts;
+using PresentationLayer.Texts;
 
-namespace LocigLayer.Units
+namespace PresentationLayer.Units
 {
     public static class UnitOfMeasureManager
     {

@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using DataLayer.Groups;
-using LocigLayer.Texts;
-using LocigLayer.Colors;
+using PresentationLayer.Texts;
+using LogicLayer.Colors;
 
-namespace LocigLayer.Groups
+namespace PresentationLayer.Groups
 {
     /// <summary>
     /// Stores all <see cref="Group"/>s.
@@ -164,7 +164,7 @@ namespace LocigLayer.Groups
             var newGroup = new Group(LastGroupID++, chartName);
             foreach (var name in channelNames)
             {
-                newGroup.AddAttribute(name, ColorManager.GetChartColor, 1);
+                newGroup.AddAttribute(name, ColorManager.GetChartColor.ToString(), 1);
             }
 
             return newGroup;

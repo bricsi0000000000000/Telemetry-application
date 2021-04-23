@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Windows;
-using LocigLayer.Groups;
-using LocigLayer.Texts;
-using LocigLayer.Tracks;
-using LocigLayer.Units;
+using PresentationLayer.Groups;
+using PresentationLayer.Texts;
+using PresentationLayer.Tracks;
+using PresentationLayer.Units;
 using LogicLayer.Configurations;
 using LogicLayer.Errors;
 using LogicLayer.Menus;
 using LogicLayer.Menus.Live;
 using PresentationLayer.Defaults;
-using PresentationLayer.Extensions;
+using LogicLayer.Extensions;
 
 namespace LogicLayer
 {

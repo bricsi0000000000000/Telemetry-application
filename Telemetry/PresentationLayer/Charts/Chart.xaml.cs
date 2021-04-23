@@ -9,10 +9,10 @@ using LogicLayer.Menus;
 using LogicLayer.Menus.Settings.Groups;
 using LogicLayer.Menus.Settings;
 using System.Windows.Input;
-using LocigLayer.Units;
-using LocigLayer.Groups;
-using LocigLayer.Colors;
-using LocigLayer.Texts;
+using PresentationLayer.Units;
+using PresentationLayer.Groups;
+using LogicLayer.Colors;
+using PresentationLayer.Texts;
 using PresentationLayer.Menus.Driverless;
 using PresentationLayer.Defaults;
 
@@ -272,7 +272,7 @@ namespace PresentationLayer.Charts
             {
                 if (group.GetAttribute(channelName) == null)
                 {
-                    GroupManager.GetGroup(ChartName).AddAttribute(channelName, ColorManager.GetChartColor, 1);
+                    GroupManager.GetGroup(ChartName).AddAttribute(channelName, ColorManager.GetChartColor.ToString(), 1);
                 }
             }
             else

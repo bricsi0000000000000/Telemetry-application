@@ -1,4 +1,4 @@
-﻿namespace LocigLayer.Texts
+﻿namespace PresentationLayer.Texts
 {
     /// <summary>
     /// Stores default values for texts.

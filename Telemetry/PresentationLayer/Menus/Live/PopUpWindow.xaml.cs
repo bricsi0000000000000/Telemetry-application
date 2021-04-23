@@ -1,8 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using LocigLayer.Colors;
-using LocigLayer.Texts;
-using PresentationLayer.Extensions;
+using LogicLayer.Colors;
+using PresentationLayer.Texts;
+using LogicLayer.Extensions;
 using LogicLayer.Menus.Settings;
 using LogicLayer.Menus.Settings.Groups;
 using LogicLayer.Menus.Settings.InputFiles;

@@ -3,10 +3,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using DataLayer.Units;
-using LocigLayer.Colors;
-using LocigLayer.Texts;
-using LocigLayer.Units;
-using PresentationLayer.Extensions;
+using LogicLayer.Colors;
+using PresentationLayer.Texts;
+using PresentationLayer.Units;
+using LogicLayer.Extensions;
 using LogicLayer.ValidationRules;
 
 namespace LogicLayer.Menus.Settings.Units

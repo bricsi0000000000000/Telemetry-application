@@ -10,10 +10,10 @@ using DataLayer.Tracks;
 using Microsoft.Win32;
 using DataLayer;
 using System.Windows.Input;
-using LocigLayer.Texts;
-using LocigLayer.Tracks;
-using LocigLayer.Groups;
-using LocigLayer.InputFiles;
+using PresentationLayer.Texts;
+using PresentationLayer.Tracks;
+using PresentationLayer.Groups;
+using PresentationLayer.InputFiles;
 using LogicLayer.Errors;
 using LogicLayer;
 using PresentationLayer.Defaults;
@@ -116,10 +116,10 @@ namespace PresentationLayer.Menus.Driverless
 
             Grid.SetRow(new Grid(), rowIndex++);
 
-            UpdateCharts();
+            RefreshCharts();
         }
 
-        protected override void UpdateCharts()
+        protected override void RefreshCharts()
         {
             if (horizontalAxisData.Count > 0)
             {
@@ -157,11 +157,11 @@ namespace PresentationLayer.Menus.Driverless
                     foreach (var inputFile in channelName.Item2)
                     {
                         int lineWidth = group.GetAttribute(channelName.Item1).LineWidth;
-                        var channel = GetChannel(inputFile.Item1, channelName.Item1);
+                        var channel = GetChannel(channelName: channelName.Item1, inputFileID: inputFile.Item1);
 
                         if (inputFile.Item2) // aktiv e a channel
                         {
-                            var currentHorizontalAxisData = GetChannel(inputFile.Item1, group.HorizontalAxis).Data;
+                            var currentHorizontalAxisData = GetChannel(channelName: group.HorizontalAxis, inputFileID: inputFile.Item1).Data;
                             if (currentHorizontalAxisData == null)
                             {
                                 ShowError.ShowErrorMessage($"Can't find '{group.HorizontalAxis}', so can't show diagram properly", nameof(DriverlessMenu));
@@ -304,14 +304,19 @@ namespace PresentationLayer.Menus.Driverless
         /// </summary>
         /// <param name="channelName">The name of the <see cref="Channel"/> to find.</param>
         /// <returns>A single <see cref="Channel"/></returns>
-        public override Channel GetChannel(int inputFileID, string channelName)
+        public override Channel GetChannel(string channelName, int? inputFileID = null)
         {
+            if (inputFileID == null)
+            {
+                throw new Exception("Input file ID is null");
+            }
+
             if (!InputFileManager.IsAnyDriverlessFile)
             {
                 return null;
             }
 
-            return InputFileManager.GetDriverlessFile(inputFileID).GetChannel(channelName);
+            return InputFileManager.GetDriverlessFile((int)inputFileID).GetChannel(channelName);
         }
 
         public void ReplaceChannelWithTemporaryGroup(string channelName, string groupName)
@@ -344,7 +349,7 @@ namespace PresentationLayer.Menus.Driverless
         {
             List<double> integratedYawAngle = new List<double>();
 
-            var yawrate = GetChannel(inputFileID, TextManager.DefaultYawRateChannelName);
+            var yawrate = GetChannel(channelName: TextManager.DefaultYawRateChannelName, inputFileID: inputFileID);
             if (yawrate == null)
             {
                 throw new Exception($"Can't find '{TextManager.DefaultYawRateChannelName}' channel");
@@ -495,7 +500,7 @@ namespace PresentationLayer.Menus.Driverless
                 {
                     if (selectedInputFileIDs.Contains(inputFile.Item1))
                     {
-                        var channelDataCount = GetChannel(inputFile.Item1, channelName.Item1).Data.Count;
+                        var channelDataCount = GetChannel(channelName: channelName.Item1, inputFileID: inputFile.Item1).Data.Count;
                         if (channelDataCount > max)
                         {
                             max = channelDataCount;
@@ -509,7 +514,7 @@ namespace PresentationLayer.Menus.Driverless
 
         private void DataSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            UpdateCharts();
+            RefreshCharts();
             UpdateTrack();
         }
 
@@ -532,14 +537,14 @@ namespace PresentationLayer.Menus.Driverless
 
                 MergeChannelNames(actInputFile.Channels, actInputFile.ID);
 
-                var yChannel = GetChannel(actInputFile.ID, DefaultsManager.GetDefault(TextManager.DriverlessYChannel).Value);
+                var yChannel = GetChannel(channelName: DefaultsManager.GetDefault(TextManager.DriverlessYChannel).Value, inputFileID: actInputFile.ID);
                 if (yChannel == null)
                 {
                     ShowError.ShowErrorMessage($"Can't find '{DefaultsManager.GetDefault(TextManager.DriverlessYChannel).Value}', so can't build track", nameof(DriverlessMenu));
                     return;
                 }
 
-                var c0refChannel = GetChannel(actInputFile.ID, DefaultsManager.GetDefault(TextManager.DriverlessC0refChannel).Value);
+                var c0refChannel = GetChannel(channelName: DefaultsManager.GetDefault(TextManager.DriverlessC0refChannel).Value, inputFileID: actInputFile.ID);
                 if (c0refChannel == null)
                 {
                     ShowError.ShowErrorMessage($"Can't find '{DefaultsManager.GetDefault(TextManager.DriverlessC0refChannel).Value}', so can't build track", nameof(DriverlessMenu));
@@ -797,7 +802,7 @@ namespace PresentationLayer.Menus.Driverless
 
         private Channel HorizontalAxis(int inputFileID)
         {
-            return GetChannel(inputFileID, DefaultsManager.GetDefault(TextManager.DriverlessHorizontalAxis).Value);
+            return GetChannel(channelName: DefaultsManager.GetDefault(TextManager.DriverlessHorizontalAxis).Value, inputFileID: inputFileID);
         }
     }
 }

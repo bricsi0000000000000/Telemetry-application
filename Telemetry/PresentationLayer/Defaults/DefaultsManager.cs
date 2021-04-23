@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using DataLayer.Defaults;
-using LocigLayer.Texts;
-using PresentationLayer.Extensions;
+using PresentationLayer.Texts;
+using LogicLayer.Extensions;
 using System.Drawing;
 
 namespace PresentationLayer.Defaults

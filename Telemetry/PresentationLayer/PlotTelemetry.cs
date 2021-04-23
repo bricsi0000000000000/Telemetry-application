@@ -1,11 +1,11 @@
 ﻿using DataLayer.Groups;
-using LocigLayer.Colors;
-using LocigLayer.Groups;
+using PresentationLayer.Groups;
 using PresentationLayer.Charts;
-using PresentationLayer.Extensions;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using LogicLayer.Colors;
+using LogicLayer.Extensions;
 
 namespace PresentationLayer
 {
@@ -18,7 +18,7 @@ namespace PresentationLayer
         protected List<double> horizontalAxisData = new List<double>();
 
         protected abstract Chart BuildGroupChart(Group group);
-        protected abstract void UpdateCharts();
+        protected abstract void RefreshCharts();
         protected abstract void UpdateChannelsList();
         public abstract void BuildCharts();
         public abstract Channel GetChannel(string channelName, int? inputFileID = null);

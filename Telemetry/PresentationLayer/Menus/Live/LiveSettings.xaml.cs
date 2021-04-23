@@ -11,11 +11,11 @@ using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Input;
 using System.Linq;
-using LocigLayer.Colors;
+using LogicLayer.Colors;
 using LogicLayer.ValidationRules;
-using LocigLayer.InputFiles;
+using PresentationLayer.InputFiles;
 using LogicLayer.Configurations;
-using PresentationLayer.Extensions;
+using LogicLayer.Extensions;
 
 namespace LogicLayer.Menus.Settings.Live
 {

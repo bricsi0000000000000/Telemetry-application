@@ -1,8 +1,8 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
 using DataLayer.Models;
-using LocigLayer.Colors;
-using PresentationLayer.Extensions;
+using LogicLayer.Colors;
+using LogicLayer.Extensions;
 
 namespace LogicLayer.Menus.Live
 {

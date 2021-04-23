@@ -1,10 +1,10 @@
 ﻿using DataLayer.Groups;
 using DataLayer.InputFiles;
-using LocigLayer.Colors;
+using LogicLayer.Colors;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LocigLayer.InputFiles
+namespace PresentationLayer.InputFiles
 {
     /// <summary>
     /// Manages <see cref="InputFile"/>s.
@@ -98,7 +98,7 @@ namespace LocigLayer.InputFiles
                 var channels = new List<Channel>();
                 for (int i = 0; i < sensorNames.Count; i++)
                 {
-                    channels.Add(new Channel(i, sensorNames[i], ColorManager.GetChartColor));
+                    channels.Add(new Channel(i, sensorNames[i], ColorManager.GetChartColor.ToString()));
                 }
                 Add(new LiveInputFile(LastID + 1, name, channels));
             }

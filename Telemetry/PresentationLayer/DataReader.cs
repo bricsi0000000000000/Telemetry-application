@@ -10,16 +10,16 @@ using System.Windows.Controls;
 using DataLayer;
 using DataLayer.Groups;
 using DataLayer.InputFiles;
-using LocigLayer.Colors;
-using LocigLayer.Groups;
-using LocigLayer.InputFiles;
-using LocigLayer.Texts;
+using PresentationLayer.Groups;
+using PresentationLayer.InputFiles;
+using PresentationLayer.Texts;
 using LogicLayer.Errors;
 using LogicLayer.Menus;
 using LogicLayer.Menus.Settings;
 using LogicLayer.Menus.Settings.Groups;
 using LogicLayer.Menus.Settings.InputFiles;
 using PresentationLayer.Menus.Driverless;
+using LogicLayer.Colors;
 
 namespace LogicLayer
 {
@@ -98,7 +98,7 @@ namespace LogicLayer
                     throw new Exception($"Channels name is empty in {fileName}");
                 }
 
-                var channel = new Channel(lastChannelID, channelName, ColorManager.GetChartColor);
+                var channel = new Channel(lastChannelID, channelName, ColorManager.GetChartColor.ToString());
                 lastChannelID++;
 
                 foreach (var group in GroupManager.Groups)
