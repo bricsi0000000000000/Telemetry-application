@@ -1,15 +1,15 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using LocigLayer.Colors;
-using LocigLayer.Texts;
-using PresentationLayer.Extensions;
-using PresentationLayer.Menus.Settings;
-using PresentationLayer.Menus.Settings.Groups;
-using PresentationLayer.Menus.Settings.InputFiles;
-using PresentationLayer.Menus.Settings.Live;
-using PresentationLayer.Menus.Settings.Units;
+using LogicLayer.Colors;
+using PresentationLayer.Texts;
+using LogicLayer.Extensions;
+using LogicLayer.Menus.Settings;
+using LogicLayer.Menus.Settings.Groups;
+using LogicLayer.Menus.Settings.InputFiles;
+using LogicLayer.Menus.Settings.Live;
+using LogicLayer.Menus.Settings.Units;
 
-namespace PresentationLayer.Menus.Live
+namespace LogicLayer.Menus.Live
 {
     /// <summary>
     /// Interaction logic for ChangeLiveStatusWindow.xaml

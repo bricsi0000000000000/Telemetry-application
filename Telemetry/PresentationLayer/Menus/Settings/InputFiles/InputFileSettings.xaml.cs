@@ -8,18 +8,18 @@ using System.Windows.Input;
 using DataLayer;
 using DataLayer.Groups;
 using DataLayer.InputFiles;
-using PresentationLayer.Errors;
+using LogicLayer.Errors;
 using PresentationLayer.Menus.Driverless;
-using PresentationLayer.Menus.Live;
-using PresentationLayer.Menus.Settings.Groups;
-using PresentationLayer.ValidationRules;
-using LocigLayer.InputFiles;
-using LocigLayer.Colors;
-using LocigLayer.Texts;
-using LocigLayer.Groups;
-using PresentationLayer.Extensions;
+using LogicLayer.Menus.Live;
+using LogicLayer.Menus.Settings.Groups;
+using LogicLayer.ValidationRules;
+using PresentationLayer.InputFiles;
+using PresentationLayer.Texts;
+using PresentationLayer.Groups;
+using LogicLayer.Extensions;
+using LogicLayer.Colors;
 
-namespace PresentationLayer.Menus.Settings.InputFiles
+namespace LogicLayer.Menus.Settings.InputFiles
 {
     /// <summary>
     /// Represents the <see cref="InputFile"/>s settigns in settings menu.
@@ -91,8 +91,8 @@ namespace PresentationLayer.Menus.Settings.InputFiles
         public void ChangeActiveInputFileSettingsItem(int id)
         {
             ActiveInputFileID = id;
-            SelectedInputFileNameTextBox.Text = InputFileManager.GetInputFile(id).Name;
-            SelectedInputFileOriginalNameTextBox.Text = InputFileManager.GetInputFile(id).OriginalName;
+            SelectedInputFileNameTextBox.Text = InputFileManager.Get(id).Name;
+            SelectedInputFileOriginalNameTextBox.Text = InputFileManager.Get(id).OriginalName;
             ChangeAllInputFileSettingsItemColorMode();
 
             InitChannelItems();
@@ -101,8 +101,8 @@ namespace PresentationLayer.Menus.Settings.InputFiles
         public void ChangeActiveChannelSettingsItem(int id)
         {
             ActiveChannelID = id;
-            SelectedChannelNameTextBox.Text = InputFileManager.GetInputFile(ActiveInputFileID).GetChannel(id).Name;
-            SelectedChannelLineWidthTextBox.Text = InputFileManager.GetInputFile(ActiveInputFileID).GetChannel(id).LineWidth.ToString();
+            SelectedChannelNameTextBox.Text = InputFileManager.Get(ActiveInputFileID).GetChannel(id).Name;
+            SelectedChannelLineWidthTextBox.Text = InputFileManager.Get(ActiveInputFileID).GetChannel(id).LineWidth.ToString();
             ChangeAllChannelSettingsItemColorMode();
         }
 
@@ -194,7 +194,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
 
         private void InitActiveChannel()
         {
-            var activeInputFile = InputFileManager.GetInputFile(ActiveInputFileID);
+            var activeInputFile = InputFileManager.Get(ActiveInputFileID);
             if (activeInputFile != null)
             {
                 if (activeInputFile.Channels.Count > 0)
@@ -212,7 +212,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
             ChannelItemsStackPanel.Children.Clear();
             inputFileChannelSettingsItems.Clear();
 
-            var activeInputFile = InputFileManager.GetInputFile(ActiveInputFileID);
+            var activeInputFile = InputFileManager.Get(ActiveInputFileID);
             if (activeInputFile != null)
             {
                 foreach (var channel in activeInputFile.Channels)
@@ -232,7 +232,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
 
         private void InitChannelSettings()
         {
-            var channel = InputFileManager.GetInputFile(ActiveInputFileID).GetChannel(ActiveChannelID);
+            var channel = InputFileManager.Get(ActiveInputFileID).GetChannel(ActiveChannelID);
             SelectedChannelNameTextBox.Text = channel.Name;
             SelectedChannelLineWidthTextBox.Text = channel.LineWidth.ToString();
 
@@ -282,7 +282,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
                 }
                 catch (Exception exception)
                 {
-                    ShowError.ShowErrorMessage(exception.Message);
+                    ShowError.ShowErrorMessage(exception.Message, nameof(InputFilesSettings));
                 }
             }
         }
@@ -317,9 +317,9 @@ namespace PresentationLayer.Menus.Settings.InputFiles
                 string newName = SelectedInputFileNameTextBox.Text;
                 if (!newName.Equals(string.Empty))
                 {
-                    if (!newName.Equals(InputFileManager.GetInputFile(ActiveInputFileID).Name))
+                    if (!newName.Equals(InputFileManager.Get(ActiveInputFileID).Name))
                     {
-                        InputFileManager.GetInputFile(ActiveInputFileID).Name = newName;
+                        InputFileManager.Get(ActiveInputFileID).Name = newName;
                         foreach (InputFileSettingsItem item in InputFileStackPanel.Children)
                         {
                             if (item.ID == ActiveInputFileID)
@@ -392,7 +392,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
 
                 LoadingGrid.Visibility = Visibility.Visible;
 
-                var changeLiveStatusWindow = new PopUpWindow($"You are about to delete '{InputFileManager.GetInputFile(ActiveInputFileID).Name}'\n" +
+                var changeLiveStatusWindow = new PopUpWindow($"You are about to delete '{InputFileManager.Get(ActiveInputFileID).Name}'\n" +
                                                              $"Are you sure about that?",
                                                              PopUpWindow.PopUpType.DeleteInputFile);
                 changeLiveStatusWindow.ShowDialog();
@@ -403,9 +403,9 @@ namespace PresentationLayer.Menus.Settings.InputFiles
         {
             if (delete)
             {
-                string inputFileName = InputFileManager.GetInputFile(ActiveInputFileID).Name;
+                string inputFileName = InputFileManager.Get(ActiveInputFileID).Name;
 
-                InputFileManager.RemoveInputFile(ActiveInputFileID);
+                InputFileManager.Remove(ActiveInputFileID);
 
                 RemoveSingleInputFileSettingsItem(inputFileName);
 
@@ -422,7 +422,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
                     ActiveInputFileID = -1;
                 }
 
-                var inputFile = InputFileManager.GetInputFile(ActiveInputFileID);
+                var inputFile = InputFileManager.Get(ActiveInputFileID);
                 if (inputFile != null)
                 {
                     SelectedInputFileNameTextBox.Text = inputFile.Name;
@@ -482,7 +482,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
 
             if (!newName.Equals(string.Empty))
             {
-                var activeChannel = InputFileManager.GetInputFile(ActiveInputFileID).GetChannel(ActiveChannelID);
+                var activeChannel = InputFileManager.Get(ActiveInputFileID).GetChannel(ActiveChannelID);
                 if (activeChannel.Name != newName)
                 {
                     activeChannel.Name = newName;
@@ -528,7 +528,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
             {
                 if (lineWidth > 0)
                 {
-                    var activeChannel = InputFileManager.GetInputFile(ActiveInputFileID).GetChannel(ActiveChannelID);
+                    var activeChannel = InputFileManager.Get(ActiveInputFileID).GetChannel(ActiveChannelID);
                     if (activeChannel.LineWidth != lineWidth)
                     {
                         activeChannel.LineWidth = lineWidth;
@@ -576,7 +576,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
                     {
                         if (lineWidth > 0)
                         {
-                            var activeChannel = InputFileManager.GetInputFile(inputFileID).GetChannel(channelName);
+                            var activeChannel = InputFileManager.Get(inputFileID).GetChannel(channelName);
                             if (activeChannel.LineWidth != lineWidth)
                             {
                                 activeChannel.LineWidth = lineWidth;

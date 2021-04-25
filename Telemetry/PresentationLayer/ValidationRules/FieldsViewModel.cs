@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace PresentationLayer.ValidationRules
+namespace LogicLayer.ValidationRules
 {
     public class FieldsViewModel : INotifyPropertyChanged
     {

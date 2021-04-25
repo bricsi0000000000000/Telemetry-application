@@ -10,18 +10,18 @@ using System.Windows.Controls;
 using DataLayer;
 using DataLayer.Groups;
 using DataLayer.InputFiles;
-using LocigLayer.Colors;
-using LocigLayer.Groups;
-using LocigLayer.InputFiles;
-using LocigLayer.Texts;
-using PresentationLayer.Errors;
-using PresentationLayer.Menus;
+using PresentationLayer.Groups;
+using PresentationLayer.InputFiles;
+using PresentationLayer.Texts;
+using LogicLayer.Errors;
+using LogicLayer.Menus;
+using LogicLayer.Menus.Settings;
+using LogicLayer.Menus.Settings.Groups;
+using LogicLayer.Menus.Settings.InputFiles;
 using PresentationLayer.Menus.Driverless;
-using PresentationLayer.Menus.Settings;
-using PresentationLayer.Menus.Settings.Groups;
-using PresentationLayer.Menus.Settings.InputFiles;
+using LogicLayer.Colors;
 
-namespace PresentationLayer
+namespace LogicLayer
 {
     /// <summary>
     /// Reads a files content.
@@ -98,7 +98,7 @@ namespace PresentationLayer
                     throw new Exception($"Channels name is empty in {fileName}");
                 }
 
-                var channel = new Channel(lastChannelID, channelName, ColorManager.GetChartColor);
+                var channel = new Channel(lastChannelID, channelName, ColorManager.GetChartColor.ToString());
                 lastChannelID++;
 
                 foreach (var group in GroupManager.Groups)
@@ -176,7 +176,7 @@ namespace PresentationLayer
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    ShowError.ShowErrorMessage(exception.Message);
+                    ShowError.ShowErrorMessage(exception.Message, nameof(DataReader));
                     processingError = true;
                 });
             }
@@ -209,16 +209,16 @@ namespace PresentationLayer
                 var yChannel = inputFile.GetChannel("y");
                 if (yChannel == null)
                 {
-                    ShowError.ShowErrorMessage("Can't find 'y' channel, so the track will not shown");
+                    ShowError.ShowErrorMessage("Can't find 'y' channel, so the track will not shown", nameof(DataReader));
                 }
 
                 var c0refChannel = inputFile.GetChannel("c0ref");
                 if (c0refChannel == null)
                 {
-                    ShowError.ShowErrorMessage("Can't find 'c0ref' channel, so the track will not shown");
+                    ShowError.ShowErrorMessage("Can't find 'c0ref' channel, so the track will not shown", nameof(DataReader));
                 }
 
-                InputFileManager.AddInputFile(inputFile);
+                InputFileManager.Add(inputFile);
                 InputFileManager.ActiveInputFileName = FileNameWithoutPath;
                 ((InputFilesSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).AddInputFileSettingsItem(inputFile);
                 ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).UpdateAfterReadFile();

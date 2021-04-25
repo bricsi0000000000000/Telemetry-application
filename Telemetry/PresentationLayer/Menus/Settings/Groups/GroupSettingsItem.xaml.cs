@@ -2,10 +2,11 @@
 using System.Windows.Input;
 using System.Windows.Media;
 using DataLayer.Groups;
-using LocigLayer.Colors;
-using LocigLayer.Texts;
+using LogicLayer.Colors;
+using LogicLayer.Extensions;
+using PresentationLayer.Texts;
 
-namespace PresentationLayer.Menus.Settings.Groups
+namespace LogicLayer.Menus.Settings.Groups
 {
     /// <summary>
     /// Represents a <see cref="Group"/> settings item in <see cref="GroupSettings"/>.
@@ -66,23 +67,23 @@ namespace PresentationLayer.Menus.Settings.Groups
         {
             isSelected = change;
 
-            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
-                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+            BackgroundColor.Background = isSelected ? ColorManager.Secondary900.ConvertBrush() :
+                                                      ColorManager.Secondary50.ConvertBrush();
 
-            GroupLabel.Foreground = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50)) :
-                                                 new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
+            GroupLabel.Foreground = isSelected ? ColorManager.Secondary50.ConvertBrush() :
+                                                 ColorManager.Secondary900.ConvertBrush();
         }
 
         private void BackgroundColor_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary700)) :
-                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
+            BackgroundColor.Background = isSelected ? ColorManager.Secondary700.ConvertBrush() :
+                                                      ColorManager.Secondary200.ConvertBrush();
         }
 
         private void BackgroundColor_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
-                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+            BackgroundColor.Background = isSelected ? ColorManager.Secondary800.ConvertBrush() :
+                                                      ColorManager.Secondary100.ConvertBrush();
 
             ((GroupSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).ChangeActiveGroupItem(ID);
             ((GroupSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).SelectInputFile();
@@ -90,16 +91,16 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void BackgroundColor_MouseEnter(object sender, MouseEventArgs e)
         {
-            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
-                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+            BackgroundColor.Background = isSelected ? ColorManager.Secondary800.ConvertBrush() :
+                                                      ColorManager.Secondary100.ConvertBrush();
 
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void BackgroundColor_MouseLeave(object sender, MouseEventArgs e)
         {
-            BackgroundColor.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
-                                                      new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+            BackgroundColor.Background = isSelected ? ColorManager.Secondary900.ConvertBrush() :
+                                                      ColorManager.Secondary50.ConvertBrush();
 
             Mouse.OverrideCursor = null;
         }

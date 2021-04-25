@@ -6,12 +6,13 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using DataLayer.InputFiles;
-using LocigLayer.Colors;
-using LocigLayer.InputFiles;
-using LocigLayer.Texts;
+using LogicLayer.Colors;
+using PresentationLayer.InputFiles;
+using PresentationLayer.Texts;
 using PresentationLayer.Menus.Driverless;
+using LogicLayer.Extensions;
 
-namespace PresentationLayer.Menus.Settings.InputFiles
+namespace LogicLayer.Menus.Settings.InputFiles
 {
     /// <summary>
     /// Interaction logic for InputFileSettingsItem.xaml
@@ -20,7 +21,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
     {
         public int ID { get; set; }
 
-        private bool driverless;
+        private bool isDriverless;
 
         private string inputFileName;
         public string InputFileName
@@ -43,7 +44,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
             InitializeComponent();
 
             ID = inputFile.ID;
-            driverless = inputFile.Driverless;
+            isDriverless = inputFile.InputFileType == InputFileTypes.driverless;
 
             InputFileName = inputFile.Name;
 
@@ -55,7 +56,7 @@ namespace PresentationLayer.Menus.Settings.InputFiles
             var logo = new BitmapImage();
             logo.BeginInit();
 
-            if (driverless)
+            if (isDriverless)
             {
                 string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 string imageRelativePath = @"..\..\..\..\..\default_files\images\daisy.png";
@@ -81,29 +82,29 @@ namespace PresentationLayer.Menus.Settings.InputFiles
         {
             isSelected = selected;
 
-            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
-                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+            BackgroundCard.Background = isSelected ? ColorManager.Secondary900.ConvertBrush() :
+                                                     ColorManager.Secondary50.ConvertBrush();
 
-            InputFileNameLabel.Foreground = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50)) :
-                                                         new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
+            InputFileNameLabel.Foreground = isSelected ? ColorManager.Secondary50.ConvertBrush() :
+                                                         ColorManager.Secondary900.ConvertBrush();
         }
 
         private void ChangeGroupItemType_Click(object sender, RoutedEventArgs e)
         {
-            var inputFile = InputFileManager.GetInputFile(ID);
+            var inputFile = InputFileManager.Get(ID);
             if (inputFile != null)
             {
-                InputFileManager.RemoveInputFile(ID);
+                InputFileManager.Remove(ID);
 
                 if (inputFile is DriverlessInputFile)
                 {
-                    InputFileManager.AddInputFile(new StandardInputFile(inputFile));
-                    driverless = false;
+                    InputFileManager.Add(new StandardInputFile(inputFile));
+                    isDriverless = false;
                 }
                 else
                 {
-                    InputFileManager.AddInputFile(new DriverlessInputFile(inputFile));
-                    driverless = true;
+                    InputFileManager.Add(new DriverlessInputFile(inputFile));
+                    isDriverless = true;
                 }
             }
 
@@ -113,26 +114,26 @@ namespace PresentationLayer.Menus.Settings.InputFiles
 
         private void ChangeGroupItemType_MouseEnter(object sender, MouseEventArgs e)
         {
-            ChangeGroupItemType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary300));
+            ChangeGroupItemType.Background = ColorManager.Secondary300.ConvertBrush();
         }
 
         private void ChangeGroupItemType_MouseLeave(object sender, MouseEventArgs e)
         {
-            ChangeGroupItemType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+            ChangeGroupItemType.Background = ColorManager.Secondary50.ConvertBrush();
         }
 
         private void BackgroundCard_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary700)) :
-                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
+            BackgroundCard.Background = isSelected ? ColorManager.Secondary700.ConvertBrush() :
+                                                     ColorManager.Secondary200.ConvertBrush();
         }
 
         private void BackgroundCard_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Mouse.OverrideCursor = Cursors.Wait;
 
-            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
-                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+            BackgroundCard.Background = isSelected ? ColorManager.Secondary800.ConvertBrush() :
+                                                     ColorManager.Secondary100.ConvertBrush();
 
             ((InputFilesSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeActiveInputFileSettingsItem(ID);
 
@@ -141,16 +142,16 @@ namespace PresentationLayer.Menus.Settings.InputFiles
 
         private void BackgroundCard_MouseEnter(object sender, MouseEventArgs e)
         {
-            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800)) :
-                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+            BackgroundCard.Background = isSelected ? ColorManager.Secondary800.ConvertBrush() :
+                                                     ColorManager.Secondary100.ConvertBrush();
 
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void BackgroundCard_MouseLeave(object sender, MouseEventArgs e)
         {
-            BackgroundCard.Background = isSelected ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900)) :
-                                                     new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+            BackgroundCard.Background = isSelected ? ColorManager.Secondary900.ConvertBrush() :
+                                                     ColorManager.Secondary50.ConvertBrush();
 
             Mouse.OverrideCursor = null;
         }

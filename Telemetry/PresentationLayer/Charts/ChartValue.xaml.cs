@@ -1,8 +1,8 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Media;
 using DataLayer.Groups;
-using LocigLayer.Colors;
-using PresentationLayer.Extensions;
+using LogicLayer.Colors;
+using LogicLayer.Extensions;
 
 namespace PresentationLayer.Charts
 {
@@ -36,7 +36,7 @@ namespace PresentationLayer.Charts
             //ColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(color);
             ChannelName = channelName;
             SetChannelValue(0);
-            var formula = @"\color[HTML]{" + ColorManager.Secondary900[1..] + "}{" + unitOfMeasure + "}";
+            var formula = @"\color[HTML]{" + ColorManager.Secondary900.ToString()[1..] + "}{" + unitOfMeasure + "}";
             UnitOfMeasureFormulaControl.Formula = formula;
         }
 

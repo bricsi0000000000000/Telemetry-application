@@ -2,13 +2,13 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using LocigLayer.Colors;
-using LocigLayer.Defaults;
-using LocigLayer.Texts;
-using PresentationLayer.Extensions;
-using PresentationLayer.ValidationRules;
+using LogicLayer.Colors;
+using PresentationLayer.Texts;
+using LogicLayer.Extensions;
+using LogicLayer.ValidationRules;
+using PresentationLayer.Defaults;
 
-namespace PresentationLayer.Menus.Settings.Default
+namespace LogicLayer.Menus.Settings.Default
 {
     /// <summary>
     /// Interaction logic for DefaultSettings.xaml
@@ -41,8 +41,8 @@ namespace PresentationLayer.Menus.Settings.Default
         /// <param name="time"></param>
         private void ShowErrorMessage(string message, bool error = true, double time = 3)
         {
-            ErrorSnackbar.Foreground = error ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary400)) :
-                                               new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+            ErrorSnackbar.Foreground = error ? ColorManager.Primary400.ConvertBrush() :
+                                               ColorManager.Secondary50.ConvertBrush();
 
             ErrorSnackbar.MessageQueue.Enqueue(message, null, null, null, false, true, TimeSpan.FromSeconds(time));
         }

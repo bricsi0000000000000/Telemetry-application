@@ -1,27 +1,23 @@
 ﻿using System;
-using System.IO;
 using System.Windows;
-using LocigLayer.Defaults;
-using LocigLayer.Groups;
-using LocigLayer.Texts;
-using LocigLayer.Tracks;
-using LocigLayer.Units;
+using PresentationLayer.Groups;
+using PresentationLayer.Texts;
+using PresentationLayer.Tracks;
+using PresentationLayer.Units;
 using LogicLayer.Configurations;
-using PresentationLayer.Errors;
-using PresentationLayer.Menus;
-using PresentationLayer.Menus.Live;
+using LogicLayer.Errors;
+using LogicLayer.Menus;
+using LogicLayer.Menus.Live;
+using PresentationLayer.Defaults;
+using LogicLayer.Extensions;
 
-namespace PresentationLayer
+namespace LogicLayer
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const string ROOT_DIRECTORY = @"..\..\..\..\..\";
-
-        private string MakeDirectoryPath(string folder) => $"{ROOT_DIRECTORY}/{folder}";
-
         public MainWindow()
         {
             InitializeComponent();
@@ -29,49 +25,49 @@ namespace PresentationLayer
 
             try
             {
-                ConfigurationManager.LoadConfigurations(Path.Combine(MakeDirectoryPath("configuration_files"), TextManager.ConfigurationFileName));
+                ConfigurationManager.LoadConfigurations(TextManager.ConfigurationFileName.MakePath("configuration_files"));
                 Title = $"Telemetry {ConfigurationManager.Version}";
             }
             catch (Exception exception)
             {
-                ShowError.ShowErrorMessage(exception.Message);
+                ShowError.ShowErrorMessage(exception.Message, nameof(MainWindow));
             }
 
             try
             {
-                UnitOfMeasureManager.InitializeUnitOfMeasures(Path.Combine(MakeDirectoryPath("default_files"), TextManager.UnitOfMeasuresFileName));
+                UnitOfMeasureManager.InitializeUnitOfMeasures(TextManager.UnitOfMeasuresFileName.MakePath("default_files"));
             }
             catch (Exception exception)
             {
-                ShowError.ShowErrorMessage(exception.Message);
+                ShowError.ShowErrorMessage(exception.Message, nameof(MainWindow));
             }
 
             try
             {
-                DriverlessTrackManager.LoadTracks(Path.Combine(MakeDirectoryPath("default_files"), TextManager.DriverlessTracksFolderName));
+                DriverlessTrackManager.LoadTracks(TextManager.DriverlessTracksFolderName.MakePath("default_files"));
             }
             catch (Exception exception)
             {
-                ShowError.ShowErrorMessage(exception.Message);
+                ShowError.ShowErrorMessage(exception.Message, nameof(MainWindow));
             }
 
             try
             {
-                GroupManager.InitGroups(Path.Combine(MakeDirectoryPath("default_files"), TextManager.GroupsFileName));
+                GroupManager.InitGroups(TextManager.GroupsFileName.MakePath("default_files"));
             }
             catch (Exception exception)
             {
-                ShowError.ShowErrorMessage(exception.Message);
+                ShowError.ShowErrorMessage(exception.Message, nameof(MainWindow));
             }
 
 
             try
             {
-                DefaultsManager.LoadDefaults(Path.Combine(MakeDirectoryPath("default_files"), TextManager.DefaultFileName));
+                DefaultsManager.LoadDefaults(TextManager.DefaultFileName.MakePath("default_files"));
             }
             catch (Exception exception)
             {
-                ShowError.ShowErrorMessage(exception.Message);
+                ShowError.ShowErrorMessage(exception.Message, nameof(MainWindow));
             }
 
             try
@@ -80,7 +76,7 @@ namespace PresentationLayer
             }
             catch (Exception exception)
             {
-                ShowError.ShowErrorMessage(exception.Message);
+                ShowError.ShowErrorMessage(exception.Message, nameof(MainWindow));
             }
         }
 

@@ -27,11 +27,11 @@ namespace DataLayer.Groups
         /// Constructor for <see cref="Group"/>.
         /// </summary>
         /// <param name="name"><see cref="Group"/>s name.</param>
-        public Group(int id, string name)
+        public Group(int id, string name, string horizontalAxis = "x")
         {
             ID = id;
             Name = name.Trim();
-            HorizontalAxis = "x";
+            HorizontalAxis = horizontalAxis;
         }
 
         /// <summary>

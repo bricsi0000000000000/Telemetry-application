@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using DataLayer.Groups;
-using LocigLayer.Texts;
-using LocigLayer.Colors;
+using PresentationLayer.Texts;
+using LogicLayer.Colors;
 
-namespace LocigLayer.Groups
+namespace PresentationLayer.Groups
 {
     /// <summary>
     /// Stores all <see cref="Group"/>s.
@@ -85,7 +85,7 @@ namespace LocigLayer.Groups
                                 throw new Exception("Can't add attribute, because 'name' is null!");
                             }
 
-                            if (groupsJSON[i].Attributes[j].Color == null)
+                            if (groupsJSON[i].Attributes[j].ColorText == null)
                             {
                                 throw new Exception("Can't add attribute, because 'color' is null!");
                             }
@@ -96,7 +96,7 @@ namespace LocigLayer.Groups
                             }
 
                             attributeName = groupsJSON[i].Attributes[j].Name.ToString();
-                            attributeColor = groupsJSON[i].Attributes[j].Color.ToString();
+                            attributeColor = groupsJSON[i].Attributes[j].ColorText.ToString();
                             attributeLineWidth = int.Parse(groupsJSON[i].Attributes[j].LineWidth.ToString());
 
                             if (!attributeName.Equals(string.Empty) &&
@@ -125,7 +125,7 @@ namespace LocigLayer.Groups
             }
             catch (JsonReaderException)
             {
-                throw new Exception($"There was a problem reading '{TextManager.GroupsFileName}'");
+                throw new Exception($"There was a problem reading '{Texts.TextManager.GroupsFileName}'");
             }
         }
 
@@ -136,7 +136,7 @@ namespace LocigLayer.Groups
         {
             if (!File.Exists(groupsFileNameWithPath))
             {
-                throw new Exception($"Can't save groups because '{TextManager.GroupsFileName}' not found!");
+                throw new Exception($"Can't save groups because '{Texts.TextManager.GroupsFileName}' not found!");
             }
 
             using var writer = new StreamWriter(groupsFileNameWithPath);
@@ -164,7 +164,7 @@ namespace LocigLayer.Groups
             var newGroup = new Group(LastGroupID++, chartName);
             foreach (var name in channelNames)
             {
-                newGroup.AddAttribute(name, ColorManager.GetChartColor, 1);
+                newGroup.AddAttribute(name, ColorManager.GetChartColor.ToString(), 1);
             }
 
             return newGroup;

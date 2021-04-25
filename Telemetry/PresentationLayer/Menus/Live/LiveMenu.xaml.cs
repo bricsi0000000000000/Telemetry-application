@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Controls;
-using LocigLayer.Texts;
-using PresentationLayer.Menus.Settings.Live;
+using PresentationLayer.Texts;
+using LogicLayer.Menus.Settings.Live;
 
-namespace PresentationLayer.Menus.Live
+namespace LogicLayer.Menus.Live
 {
     public partial class LiveMenu : UserControl
     {

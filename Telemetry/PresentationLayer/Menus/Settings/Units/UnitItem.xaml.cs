@@ -1,11 +1,11 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
 using DataLayer.Units;
-using LocigLayer.Colors;
-using LocigLayer.Texts;
-using PresentationLayer.Extensions;
+using LogicLayer.Colors;
+using PresentationLayer.Texts;
+using LogicLayer.Extensions;
 
-namespace PresentationLayer.Menus.Settings.Units
+namespace LogicLayer.Menus.Settings.Units
 {
     /// <summary>
     /// Interaction logic for UnitItem.xaml

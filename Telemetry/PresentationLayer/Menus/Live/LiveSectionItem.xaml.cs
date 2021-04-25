@@ -1,10 +1,10 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
 using DataLayer.Models;
-using LocigLayer.Colors;
-using PresentationLayer.Extensions;
+using LogicLayer.Colors;
+using LogicLayer.Extensions;
 
-namespace PresentationLayer.Menus.Live
+namespace LogicLayer.Menus.Live
 {
     /// <summary>
     /// Interaction logic for LiveSectionItem.xaml

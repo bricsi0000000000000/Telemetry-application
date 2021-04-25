@@ -1,1 +1,22 @@
-[{"Name":"DriverlessHorizontalAxis","Value":"x"},{"Name":"DriverlessC0refChannel","Value":"c0ref"},{"Name":"DriverlessYChannel","Value":"y"},{"Name":"TireTemperatureHorizontalAxis","Value":"time"}]
+[
+  {
+    "Name": "DriverlessHorizontalAxis",
+    "Value": "x"
+  },
+  {
+    "Name": "DriverlessC0refChannel",
+    "Value": "c0ref"
+  },
+  {
+    "Name": "DriverlessYChannel",
+    "Value": "y"
+  },
+  {
+    "Name": "TireTemperatureHorizontalAxis",
+    "Value": "time"
+  },
+  {
+    "Name": "DefaultChartHighlightColor",
+    "Value": "#3c3c3c"
+  }
+]

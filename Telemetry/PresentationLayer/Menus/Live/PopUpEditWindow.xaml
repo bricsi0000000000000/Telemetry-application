@@ -1,9 +1,9 @@
-﻿<Window x:Class="PresentationLayer.Menus.Live.PopUpEditWindow"
+﻿<Window x:Class="LogicLayer.Menus.Live.PopUpEditWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PresentationLayer.Menus.Live"
+        xmlns:local="clr-namespace:LogicLayer.Menus.Live"
         mc:Ignorable="d"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontSize="14"
@@ -18,7 +18,7 @@
         Topmost="True"
         Background="Transparent"
         AllowsTransparency="True"
-        xmlns:validation="clr-namespace:PresentationLayer.ValidationRules"
+        xmlns:validation="clr-namespace:LogicLayer.ValidationRules"
         d:DataContext="{d:DesignInstance validation:FieldsViewModel, IsDesignTimeCreatable=False}"
         >
 

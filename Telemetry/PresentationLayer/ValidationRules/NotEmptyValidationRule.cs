@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows.Controls;
 
-namespace PresentationLayer.ValidationRules
+namespace LogicLayer.ValidationRules
 {
     public class NotEmptyValidationRule : ValidationRule
     {

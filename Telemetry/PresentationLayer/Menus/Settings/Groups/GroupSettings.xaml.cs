@@ -6,16 +6,16 @@ using System.Windows.Input;
 using System.Windows.Media;
 using DataLayer.Groups;
 using DataLayer.InputFiles;
-using LocigLayer.Colors;
-using LocigLayer.Groups;
-using LocigLayer.InputFiles;
-using LocigLayer.Texts;
-using PresentationLayer.Extensions;
+using LogicLayer.Colors;
+using PresentationLayer.Groups;
+using PresentationLayer.InputFiles;
+using PresentationLayer.Texts;
+using LogicLayer.Extensions;
 using PresentationLayer.Menus.Driverless;
-using PresentationLayer.Menus.Live;
-using PresentationLayer.ValidationRules;
+using LogicLayer.Menus.Live;
+using LogicLayer.ValidationRules;
 
-namespace PresentationLayer.Menus.Settings.Groups
+namespace LogicLayer.Menus.Settings.Groups
 {
     /// <summary>
     /// Represents the content of the group settings in settings menu.
@@ -83,7 +83,7 @@ namespace PresentationLayer.Menus.Settings.Groups
 
             if ((bool)checkBox.IsChecked)
             {
-                var inputFile = InputFileManager.GetInputFile(SelectedInputFileName);
+                var inputFile = InputFileManager.Get(SelectedInputFileName);
                 GroupManager.GetGroup(ActiveGroupID).AddAttribute(inputFile.GetChannel(attributeName));
                 ActiveAttributeID = GroupManager.GetGroup(ActiveGroupID).Attributes.Last().ID;
             }
@@ -250,7 +250,7 @@ namespace PresentationLayer.Menus.Settings.Groups
         {
             ChannelsStackPanel.Children.Clear();
 
-            var inputFile = InputFileManager.GetInputFile(activeInputFileID);
+            var inputFile = InputFileManager.Get(activeInputFileID);
 
             if (inputFile != null)
             {
@@ -272,7 +272,7 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void InputFile_Checked(object sender, RoutedEventArgs e)
         {
-            activeInputFileID = InputFileManager.GetInputFile(((RadioButton)sender).Content.ToString()).ID;
+            activeInputFileID = InputFileManager.Get(((RadioButton)sender).Content.ToString()).ID;
             UpdateChannels();
         }
 
@@ -284,7 +284,7 @@ namespace PresentationLayer.Menus.Settings.Groups
 
             if ((bool)((CheckBox)sender).IsChecked)
             {
-                GroupManager.GetGroup(ActiveGroupID).AddAttribute(InputFileManager.GetInputFile(activeInputFileID).GetChannel(content));
+                GroupManager.GetGroup(ActiveGroupID).AddAttribute(InputFileManager.Get(activeInputFileID).GetChannel(content));
                 ActiveAttributeID = GroupManager.GetGroup(ActiveGroupID).GetAttribute(content).ID;
             }
             else
@@ -378,11 +378,11 @@ namespace PresentationLayer.Menus.Settings.Groups
             InputFile inputFile;
             if (fileName.Equals(string.Empty))
             {
-                inputFile = InputFileManager.GetInputFile(activeInputFileID);
+                inputFile = InputFileManager.Get(activeInputFileID);
             }
             else
             {
-                inputFile = InputFileManager.GetInputFile(fileName);
+                inputFile = InputFileManager.Get(fileName);
             }
 
 
@@ -402,7 +402,7 @@ namespace PresentationLayer.Menus.Settings.Groups
                 }
             }
 
-            inputFile = InputFileManager.GetInputFile(activeInputFileID);
+            inputFile = InputFileManager.Get(activeInputFileID);
             if (inputFile != null)
             {
                 foreach (RadioButton item in InputFilesStackPanel.Children)
@@ -587,12 +587,12 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void DeleteGroupCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            DeleteGroupCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary700));
+            DeleteGroupCardButton.Background = ColorManager.Primary700.ConvertBrush();
         }
 
         private void DeleteGroupCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            DeleteGroupCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary800));
+            DeleteGroupCardButton.Background = ColorManager.Primary800.ConvertBrush();
 
             AddGroupGridBackground.Visibility = Visibility.Visible;
 
@@ -626,26 +626,26 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void DeleteGroupCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            DeleteGroupCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary800));
+            DeleteGroupCardButton.Background = ColorManager.Primary800.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void DeleteGroupCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            DeleteGroupCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary900));
+            DeleteGroupCardButton.Background = ColorManager.Primary900.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
         private void ChangeSelectedGroupNameCardButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ChangeSelectedGroupNameCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary200));
+            ChangeSelectedGroupNameCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
         private void ChangeSelectedGroupNameCardButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Mouse.OverrideCursor = Cursors.Wait;
 
-            ChangeSelectedGroupNameCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+            ChangeSelectedGroupNameCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             string newName = SelectedGroupNameTextBox.Text;
             if (!newName.Equals(string.Empty))
@@ -668,13 +668,13 @@ namespace PresentationLayer.Menus.Settings.Groups
 
         private void ChangeSelectedGroupNameCardButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            ChangeSelectedGroupNameCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary100));
+            ChangeSelectedGroupNameCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
         private void ChangeSelectedGroupNameCardButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            ChangeSelectedGroupNameCardButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+            ChangeSelectedGroupNameCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
@@ -780,7 +780,7 @@ namespace PresentationLayer.Menus.Settings.Groups
             AddGroupGridBackground.Visibility = Visibility.Hidden;
             AddAttributeGrid.Visibility = Visibility.Hidden;
 
-            GroupManager.GetGroup(ActiveGroupID).AddAttribute(AddAttributeNameTextBox.Text, ColorManager.GetChartColor, lineWidth);
+            GroupManager.GetGroup(ActiveGroupID).AddAttribute(AddAttributeNameTextBox.Text, ColorManager.GetChartColor.ToString(), lineWidth);
             ActiveAttributeID = GroupManager.GetGroup(ActiveGroupID).Attributes.Last().ID;
 
             GroupManager.SaveGroups();

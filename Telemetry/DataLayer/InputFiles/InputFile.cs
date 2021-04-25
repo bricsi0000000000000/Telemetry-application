@@ -18,10 +18,7 @@ namespace DataLayer.InputFiles
         public string Name { get; set; }
         public string OriginalName { get; }
 
-        /// <summary>
-        /// Decides that this <see cref="InputFile"/> is driverless or not.
-        /// </summary>
-        public bool Driverless { get; set; } = true;
+        public InputFileTypes InputFileType { get; set; } = InputFileTypes.standard;
 
         /// <summary>
         /// <see cref="Channel"/>s which are in this <see cref="InputFile"/>.
@@ -29,16 +26,8 @@ namespace DataLayer.InputFiles
         public List<Channel> Channels { get; } = new List<Channel>();
 
         #region constructors
-        /// <summary>
-        /// Empty constructor
-        /// </summary>
         public InputFile() { }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="name"><see cref="InputFile"/>s name.</param>
-        /// <param name="channels"><see cref="InputFile"/>s channels</param>
         public InputFile(int id, string name, List<Channel> channels)
         {
             ID = id;
@@ -72,33 +61,6 @@ namespace DataLayer.InputFiles
         /// Contains the required <see cref="Channel"/>s for this <see cref="InputFile"/>.
         /// </summary>
         public Dictionary<string, bool> RequiredChannels { get; protected set; }
-
-        /// <summary>
-        /// Checks if the required <see cref="Channel"/> whose name is <paramref name="name"/> is satisfied.
-        /// </summary>
-        /// <param name="name">Name of the <see cref="Channel"/>.</param>
-        /// <returns>True if the <see cref="Channel"/> is already satisfied and false if not.</returns>
-        public bool IsRequiredChannelSatisfied(string name)
-        {
-            try
-            {
-                return RequiredChannels[name];
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Changes the value of the required channel based on <paramref name="satisfaction"/>.
-        /// </summary>
-        /// <param name="name"><see cref="Channel"/>s name.</param>
-        /// <param name="satisfaction">True if satisfied and false if not.</param>
-        public void ChangeRequiredChannelSatisfaction(string name, bool satisfaction)
-        {
-            RequiredChannels[name] = satisfaction;
-        }
     }
 }
 

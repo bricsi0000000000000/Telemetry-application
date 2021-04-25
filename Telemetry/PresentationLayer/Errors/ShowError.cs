@@ -1,7 +1,9 @@
-﻿using MaterialDesignThemes.Wpf;
+﻿using PresentationLayer.Texts;
 using System;
+using System.IO;
+using LogicLayer.Extensions;
 
-namespace PresentationLayer.Errors
+namespace LogicLayer.Errors
 {
     /// <summary>
     /// Show error messages.
@@ -12,10 +14,18 @@ namespace PresentationLayer.Errors
         /// Shows error message in a <seealso cref="ErrorMessagePopUp"/> window.
         /// </summary>
         /// <param name="message">Error message.</param>
-        public static void ShowErrorMessage(string message)
+        public static void ShowErrorMessage(string message, string className)
         {
+            WriteLog(message, className);
             var errorMessagePopUp = new ErrorMessagePopUp(message);
             errorMessagePopUp.ShowDialog();
+        }
+
+        private static void WriteLog(string message, string className)
+        {
+            using StreamWriter writer = new StreamWriter(TextManager.ErrorMessagesLogFileName.MakePath("logs"));
+
+            writer.WriteLine($"[{DateTime.Now}]: {className}\t{message}");
         }
     }
 }

@@ -2,16 +2,16 @@
 using System.Windows.Input;
 using System.Windows.Media;
 using DataLayer.Groups;
-using LocigLayer.Groups;
-using LocigLayer.InputFiles;
-using LocigLayer.Texts;
-using PresentationLayer.Extensions;
-using PresentationLayer.Menus;
+using PresentationLayer.Groups;
+using PresentationLayer.InputFiles;
+using PresentationLayer.Texts;
+using LogicLayer.Menus;
+using LogicLayer.Menus.Live;
+using LogicLayer.Menus.Settings;
+using LogicLayer.Menus.Settings.Groups;
+using LogicLayer.Menus.Settings.InputFiles;
 using PresentationLayer.Menus.Driverless;
-using PresentationLayer.Menus.Live;
-using PresentationLayer.Menus.Settings;
-using PresentationLayer.Menus.Settings.Groups;
-using PresentationLayer.Menus.Settings.InputFiles;
+using LogicLayer.Extensions;
 
 namespace PresentationLayer.Charts
 {

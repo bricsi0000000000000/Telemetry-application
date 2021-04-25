@@ -1,8 +1,10 @@
-﻿using DataLayer.InputFiles;
+﻿using DataLayer.Groups;
+using DataLayer.InputFiles;
+using LogicLayer.Colors;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LocigLayer.InputFiles
+namespace PresentationLayer.InputFiles
 {
     /// <summary>
     /// Manages <see cref="InputFile"/>s.
@@ -18,48 +20,50 @@ namespace LocigLayer.InputFiles
         /// Adds a <see cref="InputFile"/> to <see cref="InputFiles"/>.
         /// </summary>
         /// <param name="inputFile"></param>
-        public static void AddInputFile(InputFile inputFile) => InputFiles.Add(inputFile);
+        public static void Add(InputFile inputFile) => InputFiles.Add(inputFile);
 
         /// <summary>
         /// Finds a <see cref="InputFile"/> in <see cref="InputFiles"/>.
         /// </summary>
-        /// <param name="inputFileName">Name of the findable <see cref="InputFile"/>.</param>
-        /// <returns>An <see cref="InputFile"/> whose name is <paramref name="inputFileName"/>.</returns>
-        public static InputFile GetInputFile(string inputFileName) => InputFiles.Find(x => x.Name.Equals(inputFileName));
+        /// <param name="fileName">Name of the findable <see cref="InputFile"/>.</param>
+        /// <returns>An <see cref="InputFile"/> whose name is <paramref name="fileName"/>.</returns>
+        public static InputFile Get(string fileName) => InputFiles.Find(x => x.Name.Equals(fileName));
+
+        public static InputFile Get(int id) => InputFiles.Find(x => x.ID == id);
 
         /// <summary>
         /// Finds a driverless <see cref="InputFile"/> in <see cref="InputFiles"/>.
         /// </summary>
         /// <param name="inputFileName">Name of the findable <see cref="InputFile"/>.</param>
         /// <returns>An <see cref="InputFile"/> whose name is <paramref name="inputFileName"/>.</returns>
-        public static InputFile GetDriverlessInputFile(string inputFileName) => InputFiles.Find(x => x.Name.Equals(inputFileName) && x is DriverlessInputFile);
+        public static InputFile GetDriverlessFile(string inputFileName) => InputFiles.Find(x => x.Name.Equals(inputFileName) && x is DriverlessInputFile);
 
         /// <summary>
         /// Finds a driverless <see cref="InputFile"/> in <see cref="InputFiles"/>.
         /// </summary>
         /// <param name="inputFileID">ID of the findable <see cref="InputFile"/>.</param>
         /// <returns>An <see cref="InputFile"/> whose name is <paramref name="inputFileName"/>.</returns>
-        public static InputFile GetDriverlessInputFile(int inputFileID) => InputFiles.Find(x => x.ID == inputFileID && x is DriverlessInputFile);
+        public static InputFile GetDriverlessFile(int inputFileID) => InputFiles.Find(x => x.ID == inputFileID && x is DriverlessInputFile);
 
         /// <summary>
         /// Finds the last driverless <see cref="InputFile"/> in <see cref="InputFiles"/>.
         /// </summary>
         /// <returns>The last driverless <see cref="InputFile"/>.</returns>
-        public static InputFile GetLastDriverlessInputFile => InputFiles.FindLast(x => x is DriverlessInputFile);
+        public static InputFile GetLastDriverlessFile => InputFiles.FindLast(x => x is DriverlessInputFile);
 
         /// <summary>
         /// Finds a stadnard <see cref="InputFile"/> in <see cref="InputFiles"/>.
         /// </summary>
         /// <param name="inputFileName">Name of the findable <see cref="InputFile"/>.</param>
         /// <returns>An <see cref="InputFile"/> whose name is <paramref name="inputFileName"/>.</returns>
-        public static InputFile GetStandardInputFile(string inputFileName) => InputFiles.Find(x => x.Name.Equals(inputFileName) && x is StandardInputFile);
+        public static InputFile GetStandardFile(string inputFileName) => InputFiles.Find(x => x.Name.Equals(inputFileName) && x is StandardInputFile);
 
         /// <summary>
         /// Removes a <see cref="InputFile"/> from <see cref="InputFiles"/> whose name is <paramref name="inputFileName"/>.
         /// </summary>
         /// <param name="inputFileName">Removabel <see cref="InputFile"/>s name.</param>
-        public static void RemoveInputFile(string inputFileName) => InputFiles.Remove(GetInputFile(inputFileName));
-        public static void RemoveInputFile(int id) => InputFiles.Remove(GetInputFile(id));
+        public static void Remove(string inputFileName) => InputFiles.Remove(Get(inputFileName));
+        public static void Remove(int id) => InputFiles.Remove(Get(id));
 
         /// <summary>
         /// Active <see cref="InputFile"/>s name.
@@ -74,14 +78,32 @@ namespace LocigLayer.InputFiles
         /// <summary>
         /// Returns the active <see cref="InputFile"/>.
         /// </summary>
-        public static InputFile GetActiveInputFile => GetInputFile(ActiveInputFileName);
+        public static InputFile GetActiveInputFile => Get(ActiveInputFileName);
 
-        public static int DriverlessInputFilesCount => InputFiles.FindAll(x => x is DriverlessInputFile).Count;
+        public static bool IsAnyDriverlessFile => InputFiles.FindAll(x => x is DriverlessInputFile).Any();
 
-        public static int LastID => InputFiles.Count == 0 ? -1 : InputFiles.Last().ID;
-
-        public static InputFile GetInputFile(int id) => InputFiles.Find(x => x.ID == id);
+        public static int LastID => InputFiles.Any() ? InputFiles.Last().ID : -1;
 
         public static bool HasInputFile(string originalName) => InputFiles.Find(x => x.OriginalName.Equals(originalName)) != null;
+
+        /// <summary>
+        /// Creates a live input file and saves it
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="sensorNames"></param>
+        public static void AddLive(string name, List<string> sensorNames)
+        {
+            if (Get(name) == null)
+            {
+                var channels = new List<Channel>();
+                for (int i = 0; i < sensorNames.Count; i++)
+                {
+                    channels.Add(new Channel(i, sensorNames[i], ColorManager.GetChartColor.ToString()));
+                }
+                Add(new LiveInputFile(LastID + 1, name, channels));
+            }
+        }
+
+        public static LiveInputFile GetLiveFile(string name) => (LiveInputFile)InputFiles.Find(x => x.Name.Equals(name) && x.InputFileType == InputFileTypes.live);
     }
 }

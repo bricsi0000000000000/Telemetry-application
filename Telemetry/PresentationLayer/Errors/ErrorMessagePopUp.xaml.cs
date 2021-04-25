@@ -1,9 +1,10 @@
-﻿using LocigLayer.Colors;
+﻿using LogicLayer.Colors;
+using LogicLayer.Extensions;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace PresentationLayer.Errors
+namespace LogicLayer.Errors
 {
     /// <summary>
     /// Interaction logic for ErrorMessagePopUp.xaml
@@ -19,24 +20,24 @@ namespace PresentationLayer.Errors
 
         private void OkButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            OkButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary700));
+            OkButton.Background = ColorManager.Secondary700.ConvertBrush();
         }
 
         private void OkButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            OkButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800));
+            OkButton.Background = ColorManager.Secondary800.ConvertBrush();
 
             Close();
         }
 
         private void OkButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            OkButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary800));
+            OkButton.Background = ColorManager.Secondary800.ConvertBrush();
         }
 
         private void OkButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            OkButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary900));
+            OkButton.Background = ColorManager.Secondary900.ConvertBrush();
         }
     }
 }

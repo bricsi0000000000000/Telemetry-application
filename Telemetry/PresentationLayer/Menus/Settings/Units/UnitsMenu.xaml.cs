@@ -5,13 +5,13 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using DataLayer.Units;
-using LocigLayer.Colors;
-using LocigLayer.Units;
-using PresentationLayer.Extensions;
-using PresentationLayer.Menus.Live;
-using PresentationLayer.ValidationRules;
+using LogicLayer.Colors;
+using PresentationLayer.Units;
+using LogicLayer.Extensions;
+using LogicLayer.Menus.Live;
+using LogicLayer.ValidationRules;
 
-namespace PresentationLayer.Menus.Settings.Units
+namespace LogicLayer.Menus.Settings.Units
 {
     /// <summary>
     /// Interaction logic for UnitsMenu.xaml
@@ -158,8 +158,8 @@ namespace PresentationLayer.Menus.Settings.Units
         /// <param name="time"></param>
         private void ShowErrorMessage(string message, bool error = true, double time = 3)
         {
-            ErrorSnackbar.Foreground = error ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Primary400)) :
-                                               new SolidColorBrush((Color)ColorConverter.ConvertFromString(ColorManager.Secondary50));
+            ErrorSnackbar.Foreground = error ? ColorManager.Primary400.ConvertBrush() :
+                                               ColorManager.Secondary50.ConvertBrush();
 
             ErrorSnackbar.MessageQueue.Enqueue(message, null, null, null, false, true, TimeSpan.FromSeconds(time));
         }

@@ -5,18 +5,19 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using PresentationLayer.Menus.Live;
+using LogicLayer.Menus.Live;
 using DataLayer.Models;
 using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Input;
 using System.Linq;
-using LocigLayer.Colors;
+using LogicLayer.Colors;
+using LogicLayer.ValidationRules;
+using PresentationLayer.InputFiles;
 using LogicLayer.Configurations;
-using PresentationLayer.Extensions;
-using PresentationLayer.ValidationRules;
+using LogicLayer.Extensions;
 
-namespace PresentationLayer.Menus.Settings.Live
+namespace LogicLayer.Menus.Settings.Live
 {
     public partial class LiveSettings : UserControl
     {
@@ -363,8 +364,8 @@ namespace PresentationLayer.Menus.Settings.Live
                 activeSection = GetSection(sectionID);
                 ChangeSectionColors();
                 var channelNames = activeSection.SensorNames.Split(';').ToList();
-                // ((LiveTelemetry)((LiveMenu)MenuManager.GetMenuTab(TextManager.LiveMenuName).Content).GetTab(TextManager.LiveMenuName).Content).UpdateSection(activeSection, channelNames);
                 MenuManager.LiveTelemetry.UpdateSection(activeSection, channelNames);
+                InputFileManager.AddLive(activeSection.Name, channelNames);
                 UpdateSelectedSectionInfo(channelNames);
                 SelectedSectionStatusIcon.Kind = activeSection.IsLive ? PackIconKind.AccessPoint : PackIconKind.AccessPointOff;
                 SelectedSectionStatusIcon.Foreground = activeSection.IsLive ? ColorManager.Secondary900.ConvertBrush() :
