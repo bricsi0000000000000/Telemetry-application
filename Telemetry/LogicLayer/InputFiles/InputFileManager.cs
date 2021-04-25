@@ -2,6 +2,7 @@
 using DataLayer.InputFiles;
 using LogicLayer.Colors;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace PresentationLayer.InputFiles
@@ -105,5 +106,41 @@ namespace PresentationLayer.InputFiles
         }
 
         public static LiveInputFile GetLiveFile(string name) => (LiveInputFile)InputFiles.Find(x => x.Name.Equals(name) && x.InputFileType == InputFileTypes.live);
+
+        public static void AddDataToLiveFile(string liveFileName, string channelName, double[] values) => GetLiveFile(liveFileName).GetChannel(channelName).AddChannelData(values);
+
+        public static void SaveFile(string fileName)
+        {
+            var file = Get(fileName);
+
+            using StreamWriter writer = new StreamWriter($"{fileName}.csv");
+
+            string header = "";
+            foreach (var channel in file.Channels)
+            {
+                header += channel.Name + ";";
+            }
+            header = header[0..^1];
+
+            writer.WriteLine(header);
+
+            for (int i = 0; i < file.Channels.First().Data.Count; i++)
+            {
+                string row = "";
+                foreach (var channel in file.Channels)
+                {
+                    if (channel.Data.Count > i)
+                    {
+                        row += channel.Data[i] + ";";
+                    }
+                }
+                if (row.Length > 0)
+                {
+                    row = row[0..^1];
+                }
+
+                writer.WriteLine(row);
+            }
+        }
     }
 }

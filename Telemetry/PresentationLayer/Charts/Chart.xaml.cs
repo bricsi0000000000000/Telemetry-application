@@ -26,7 +26,7 @@ namespace PresentationLayer.Charts
         private readonly PlottableScatterHighlight plottableScatterHighlight;
         private PlottableVLine plottableVLine;
         private readonly Style chartStyle = ScottPlot.Style.Light1;
-        private List<double> liveChartValues = new List<double>();
+        private readonly List<double> liveChartValues = new List<double>();
 
         /// <summary>
         /// Name of the <see cref="Chart"/>.

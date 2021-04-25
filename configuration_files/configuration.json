@@ -4,7 +4,7 @@
     "minor_version" : 1
   },
   "live" : {
-    "wait_between_collect_data" : 5000,
+    "wait_between_collect_data" : 2000,
     "isHTTPS" : false,
     "url" : "192.168.1.33",
     "port" : 5000,
@@ -19,7 +19,9 @@
       "delete_section" : "api/Section/"
     },
     "packages": {
-      "get_package_by_id" : "/api/Package/"
+      "get_package_by_id" : "/api/Package/get_single",
+      "get_packages_after" : "/api/Package/get_after",
+      "get_all_packages" : "/api/Package/get_all"
     }
   }
 }

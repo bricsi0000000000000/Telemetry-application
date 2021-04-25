@@ -65,6 +65,8 @@ namespace DataLayer.Groups
         /// Add <paramref name="value"/> to the channel.
         /// </summary>
         /// <param name="value">Value to add.</param>
-        public void AddChannelData(float value) => Data.Add(value);
+        public void AddChannelData(double value) => Data.Add(value);
+
+        public void AddChannelData(double[] values) => Data.AddRange(values);
     }
 }
