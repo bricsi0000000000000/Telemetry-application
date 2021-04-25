@@ -6,9 +6,13 @@ using System.Windows;
 using System.Windows.Controls;
 using LogicLayer.Colors;
 using LogicLayer.Extensions;
+using System.Runtime.CompilerServices;
 
 namespace PresentationLayer
 {
+    /// <summary>
+    /// Base class for plotting telemetry data
+    /// </summary>
     public abstract class PlotTelemetry : UserControl
     {
         protected const float deltaTime = .05f;
@@ -70,7 +74,8 @@ namespace PresentationLayer
             BuildCharts();
         }
 
-        protected void BuildChartGrid(Group group, ref int rowIndex, Grid chartsGrid)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected void BuildChartGrid(Group group, ref int rowIndex, ref Grid chartsGrid)
         {
             RowDefinition chartRow = new RowDefinition()
             {
@@ -98,6 +103,5 @@ namespace PresentationLayer
             Grid.SetRow(chart, rowIndex++);
             Grid.SetRow(splitter, rowIndex++);
         }
-
     }
 }

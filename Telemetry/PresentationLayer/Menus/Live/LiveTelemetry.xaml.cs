@@ -25,25 +25,25 @@ namespace LogicLayer.Menus.Live
     public partial class LiveTelemetry : PlotTelemetry
     {
         private Section activeSection;
-        private bool isActiveSection = false;
-        private List<Group> activeGroups = new List<Group>();
-        private List<Chart> charts = new List<Chart>();
+        private bool isActiveSection = false; // TODO never set to false, why?
+
+        private readonly List<Chart> charts = new List<Chart>();
         private bool canUpdateCharts = false;
         private static HttpClient client = new HttpClient();
-        private const int getDataAmount = 5;
 
-
-
+        /// <summary>
+        /// Item1: name
+        /// Item2: is active
+        /// </summary>
         private List<Tuple<string, bool>> channelNames = new List<Tuple<string, bool>>();
 
-        private Package currentPackage = new Package();
+        private List<Package> currentPackages = new List<Package>();
+        private int lastPackageID = 0;
         private readonly object getDataLock = new object();
         private readonly AutoResetEvent getDataSignal = new AutoResetEvent(false);
 
         private const int NO_OPACITY_VALUE = 1;
         private const float LITTLE_OPACITY_VALUE = .2f;
-
-        private int lastPackageID = 0;
 
         public LiveTelemetry()
         {
@@ -94,29 +94,12 @@ namespace LogicLayer.Menus.Live
 
         private void InitializeGroupItems(bool initCall = false)
         {
-            base.InitializeGroupItems();
+            base.InitializeGroupItems(GroupsStackPanel);
 
             if (!initCall)
             {
                 BuildCharts();
             }
-        }
-
-        private void GroupCheckBox_CheckedClick(object sender, RoutedEventArgs e)
-        {
-            var checkBox = (CheckBox)sender;
-            string content = checkBox.Content.ToString();
-
-            if ((bool)checkBox.IsChecked)
-            {
-                selectedGroups.Add(content);
-            }
-            else
-            {
-                selectedGroups.Remove(content);
-            }
-
-            BuildCharts();
         }
 
         public override void BuildCharts()
@@ -133,7 +116,7 @@ namespace LogicLayer.Menus.Live
 
                     group.AddAttribute(InputFileManager.GetLiveFile(activeSection.Name).GetChannel(channelName.Item1));
 
-                    BuildChartGrid(group, ref rowIndex, ChartsGrid);
+                    BuildChartGrid(group, ref rowIndex, ref ChartsGrid);
                 }
             }
 
@@ -141,7 +124,7 @@ namespace LogicLayer.Menus.Live
             {
                 if (selectedGroups.Contains(group.Name))
                 {
-                    BuildChartGrid(group, ref rowIndex, ChartsGrid);
+                    BuildChartGrid(group, ref rowIndex, ref ChartsGrid);
                 }
             }
 
@@ -154,10 +137,10 @@ namespace LogicLayer.Menus.Live
 
             Grid.SetRow(new Grid(), rowIndex++);
 
-            UpdateCharts();
+            // RefreshCharts();
         }
 
-        private void UpdateCharts()
+        protected override void RefreshCharts()
         {
             if (horizontalAxisData.Count > 0)
             {
@@ -265,23 +248,30 @@ namespace LogicLayer.Menus.Live
             return liveFile.GetChannel(channelName);
         }
 
-        private double[] GetSensorData(string sensorName)
+        private double[] GetSensorData(int packageID, string sensorName)
         {
+            var package = currentPackages.Find(x => x.ID == packageID);
             double[] returnData = new double[0];
             switch (sensorName)
             {
                 case nameof(Time):
-                    returnData = new double[currentPackage.Times.Count];
-                    for (int i = 0; i < returnData.Length; i++)
+                    if (package.Times != null)
                     {
-                        returnData[i] = currentPackage.Times[i].Value;
+                        returnData = new double[package.Times.Count];
+                        for (int i = 0; i < returnData.Length; i++)
+                        {
+                            returnData[i] = package.Times[i].Value;
+                        }
                     }
                     return returnData;
                 case nameof(Speed):
-                    returnData = new double[currentPackage.Speeds.Count];
-                    for (int i = 0; i < returnData.Length; i++)
+                    if (package.Speeds != null)
                     {
-                        returnData[i] = currentPackage.Speeds[i].Value;
+                        returnData = new double[package.Speeds.Count];
+                        for (int i = 0; i < returnData.Length; i++)
+                        {
+                            returnData[i] = package.Speeds[i].Value;
+                        }
                     }
                     return returnData;
             }
@@ -343,7 +333,7 @@ namespace LogicLayer.Menus.Live
             UpdateCoverGridsVisibilities();
 
             selectedChannels.Clear();
-            activeGroups.Clear();
+            selectedGroups.Clear();
             charts.Clear();
 
             foreach (CheckBox item in GroupsStackPanel.Children)
@@ -370,14 +360,21 @@ namespace LogicLayer.Menus.Live
             {
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
-                var getPackage = GetPackageAsync(packageID: lastPackageID++).Result;
+
+                var getPackages = new List<Package>();
+
+                // if lastPackageID is 0, so it's the first call, then get all packages and continue getting from that
+                getPackages = GetPackagesAsync(lastPackageID, all: lastPackageID == 0).Result;
+
                 stopwatch.Stop();
 
-                if (getPackage != null)
+                if (getPackages != null && getPackages.Any())
                 {
+                    lastPackageID = getPackages.Last().ID;
+
                     lock (getDataLock)
                     {
-                        currentPackage = getPackage;
+                        currentPackages = getPackages;
                     }
 
                     getDataSignal.Set();
@@ -386,7 +383,7 @@ namespace LogicLayer.Menus.Live
                     {
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            MenuManager.LiveSettings.UpdateCarStatus(currentPackage.SentTime, stopwatch.ElapsedMilliseconds);
+                            MenuManager.LiveSettings.UpdateCarStatus(currentPackages.First().SentTime, stopwatch.ElapsedMilliseconds);
                         });
                     }
                     else
@@ -406,31 +403,22 @@ namespace LogicLayer.Menus.Live
         /// <summary>
         /// Updates charts with new incoming data
         /// </summary>
-        protected override void RefreshCharts()
+        private void UpdateCharts()
         {
             while (canUpdateCharts)
             {
                 getDataSignal.WaitOne();
                 if (canUpdateCharts)
                 {
-                    var package = new Package();
+                    var packages = new List<Package>();
                     lock (getDataLock)
                     {
-                        package = currentPackage;
+                        packages = currentPackages;
                     }
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        foreach (Chart chart in charts)
-                        {
-                            foreach (var name in selectedChannels)
-                            {
-                                if (chart.HasChannelName(name))
-                                {
-                                    chart.PlotLive(GetSensorData(name), name);
-                                }
-                            }
-                        }
+                        Plot(ref packages);
                         /*var yawAngleChannel = GetChart("yaw_angle");
                         if (yawAngleChannel != null)
                         {
@@ -448,43 +436,88 @@ namespace LogicLayer.Menus.Live
             }
         }
 
+        private void Plot(ref List<Package> packages)
+        {
+            foreach (Chart chart in charts)
+            {
+                foreach (var name in selectedChannels)
+                {
+                    if (chart.HasChannelName(name))
+                    {
+                        foreach (var package in packages)
+                        {
+                            var sensorData = GetSensorData(packageID: package.ID, sensorName: name);
+                            if (sensorData.Length > 0)
+                            {
+                                InputFileManager.AddDataToLiveFile(liveFileName: activeSection.Name, channelName: name, values: sensorData);
+
+                                //chart.PlotLive(InputFileManager.GetLiveFile(activeSection.Name).GetChannel(name).Data.ToArray(), name);
+                                chart.PlotLive(sensorData, name);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         private Chart GetChart(string name) => charts.Find(x => x.ChartName.Equals(name));
 
-        private async Task<Package> GetPackageAsync(int packageID)
+        private async Task<List<Package>> GetPackagesAsync(int lastPackageID, bool all = false)
         {
             try
             {
-                var response = await client.GetAsync($"{ConfigurationManager.GetPackageByIDAPICall}{packageID}").ConfigureAwait(false);
+                string apiCall;
+                if (all)
+                {
+                    apiCall = $"{ConfigurationManager.GetAllPackages_APICall}/{activeSection.ID}";
+                }
+                else
+                {
+                    apiCall = $"{ConfigurationManager.GetPackagesAfter_APICall}/{lastPackageID}/{activeSection.ID}";
+                }
+
+                var response = await client.GetAsync(apiCall).ConfigureAwait(false);
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 string resultString = result.GetAwaiter().GetResult();
-                dynamic package = JsonConvert.DeserializeObject(resultString);
+                dynamic packages = JsonConvert.DeserializeObject(resultString);
 
-                var speeds = new List<Speed>();
-                for (int i = 0; i < package.speeds.Count; i++)
+                var returnPackages = new List<Package>();
+
+                if (packages != null)
                 {
-                    speeds.Add(new Speed()
+                    for (int packageIndex = 0; packageIndex < packages.Count; packageIndex++)
                     {
-                        ID = package.speeds[i].id,
-                        Value = package.speeds[i].value,
-                    });
+                        var speeds = new List<Speed>();
+                        for (int i = 0; i < packages[packageIndex].speeds.Count; i++)
+                        {
+                            speeds.Add(new Speed()
+                            {
+                                ID = packages[packageIndex].speeds[i].id,
+                                Value = packages[packageIndex].speeds[i].value,
+                            });
+                        }
+
+                        var times = new List<Time>();
+                        for (int i = 0; i < packages[packageIndex].times.Count; i++)
+                        {
+                            times.Add(new Time()
+                            {
+                                ID = packages[packageIndex].times[i].id,
+                                Value = packages[packageIndex].times[i].value,
+                            });
+                        }
+
+                        returnPackages.Add(new Package()
+                        {
+                            ID = packages[packageIndex].id,
+                            Speeds = speeds,
+                            Times = times,
+                            SentTime = TimeSpan.FromTicks((long)packages[packageIndex].sentTime)
+                        });
+                    }
                 }
 
-                var times = new List<Time>();
-                for (int i = 0; i < package.times.Count; i++)
-                {
-                    times.Add(new Time()
-                    {
-                        ID = package.times[i].id,
-                        Value = package.times[i].value,
-                    });
-                }
-
-                return new Package()
-                {
-                    Speeds = speeds,
-                    Times = times,
-                    SentTime = TimeSpan.FromTicks((long)package.sentTime)
-                };
+                return returnPackages;
             }
             catch (Exception e)
             {
@@ -538,11 +571,13 @@ namespace LogicLayer.Menus.Live
                     var collectDataThread = new Thread(new ThreadStart(CollectData));
                     collectDataThread.Start();
 
-                    var updateThread = new Thread(new ThreadStart(RefreshCharts));
+                    var updateThread = new Thread(new ThreadStart(UpdateCharts));
                     updateThread.Start();
                 }
                 else
                 {
+                    InputFileManager.SaveFile(activeSection.Name);
+
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         MenuManager.LiveSettings.UpdateCarStatus();

@@ -95,7 +95,7 @@ namespace PresentationLayer.Menus.Driverless
                         group.AddAttribute(InputFileManager.GetDriverlessFile(inputFile.Item1).GetChannel(channelName.Item1));
                     }
 
-                    BuildChartGrid(group, ref rowIndex, ChartsGrid);
+                    BuildChartGrid(group, ref rowIndex, ref ChartsGrid);
                 }
             }
 
@@ -103,7 +103,7 @@ namespace PresentationLayer.Menus.Driverless
             {
                 if (selectedGroups.Contains(group.Name))
                 {
-                    BuildChartGrid(group, ref rowIndex, ChartsGrid);
+                    BuildChartGrid(group, ref rowIndex, ref ChartsGrid);
                 }
             }
 
@@ -541,17 +541,18 @@ namespace PresentationLayer.Menus.Driverless
                 if (yChannel == null)
                 {
                     ShowError.ShowErrorMessage($"Can't find '{DefaultsManager.GetDefault(TextManager.DriverlessYChannel).Value}', so can't build track", nameof(DriverlessMenu));
-                    return;
                 }
 
                 var c0refChannel = GetChannel(channelName: DefaultsManager.GetDefault(TextManager.DriverlessC0refChannel).Value, inputFileID: actInputFile.ID);
                 if (c0refChannel == null)
                 {
                     ShowError.ShowErrorMessage($"Can't find '{DefaultsManager.GetDefault(TextManager.DriverlessC0refChannel).Value}', so can't build track", nameof(DriverlessMenu));
-                    return;
                 }
 
-                trackChart.AddTrackData(actInputFile.ID, name, HorizontalAxis(actInputFile.ID).Data.ToArray(), yChannel.Data.ToArray(), GetYawAngle(actInputFile.ID), (float)c0refChannel.Data.First());
+                if (yChannel != null && c0refChannel != null)
+                {
+                    trackChart.AddTrackData(actInputFile.ID, name, HorizontalAxis(actInputFile.ID).Data.ToArray(), yChannel.Data.ToArray(), GetYawAngle(actInputFile.ID), (float)c0refChannel.Data.First());
+                }
             }
             else
             {

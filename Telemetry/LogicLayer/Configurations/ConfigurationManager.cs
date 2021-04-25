@@ -39,7 +39,9 @@ namespace LogicLayer.Configurations
         #endregion
 
         #region packages
-        public static string GetPackageByIDAPICall { get; private set; }
+        public static string GetPackageByID_APICall { get; private set; }
+        public static string GetPackagesAfter_APICall { get; private set; }
+        public static string GetAllPackages_APICall { get; private set; }
 
         #endregion
 
@@ -88,7 +90,9 @@ namespace LogicLayer.Configurations
                 ChangeSectionDateAPICall = configurationJSON.live.sections.change_section_date;
                 DeleteSectionAPICall = configurationJSON.live.sections.delete_section;
 
-                GetPackageByIDAPICall = configurationJSON.live.packages.get_package_by_id;
+                GetPackageByID_APICall = configurationJSON.live.packages.get_package_by_id;
+                GetPackagesAfter_APICall = configurationJSON.live.packages.get_packages_after;
+                GetAllPackages_APICall = configurationJSON.live.packages.get_all_packages;
 
                 #endregion
             }
