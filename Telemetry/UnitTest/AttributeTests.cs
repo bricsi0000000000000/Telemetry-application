@@ -1,5 +1,5 @@
-﻿using NUnit.Framework;
-using DataLayer.Groups;
+﻿using DataLayer.Groups;
+using NUnit.Framework;
 
 namespace UnitTest
 {

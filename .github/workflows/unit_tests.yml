@@ -21,5 +21,5 @@ jobs:
           dotnet-version: '3.1.x'
       - name: Build unit test project
         run: cd Telemetry && dotnet build UnitTest
-      - name: Test unit tests
+      - name: Run unit tests
         run: cd Telemetry && dotnet test UnitTest 
