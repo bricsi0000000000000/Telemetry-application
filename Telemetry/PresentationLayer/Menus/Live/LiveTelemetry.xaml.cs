@@ -25,7 +25,7 @@ namespace LogicLayer.Menus.Live
     public partial class LiveTelemetry : PlotTelemetry
     {
         private Section activeSection;
-        private bool isActiveSection = false; // TODO never set to false, why?
+        public bool IsSelectedSection { get; set; } = false;
 
         private readonly List<Chart> charts = new List<Chart>();
         private bool canUpdateCharts = false;
@@ -37,7 +37,7 @@ namespace LogicLayer.Menus.Live
         /// </summary>
         private List<Tuple<string, bool>> channelNames = new List<Tuple<string, bool>>();
 
-        private List<Package> currentPackages = new List<Package>();
+        //private List<Package> currentPackages = new List<Package>();
         private int lastPackageID = 0;
         private readonly object getDataLock = new object();
         private readonly AutoResetEvent getDataSignal = new AutoResetEvent(false);
@@ -59,11 +59,11 @@ namespace LogicLayer.Menus.Live
 
         private void UpdateCoverGridsVisibilities()
         {
-            NoSectionGrid.Visibility = isActiveSection ? Visibility.Hidden : Visibility.Visible;
-            NoChannelsGrid.Visibility = isActiveSection ? Visibility.Hidden : Visibility.Visible;
-            NoGroupsGrid.Visibility = isActiveSection ? Visibility.Hidden : Visibility.Visible;
-            NoChartsGrid.Visibility = isActiveSection ? Visibility.Hidden : Visibility.Visible;
-            RecieveDataStatusIcon.Opacity = isActiveSection ? NO_OPACITY_VALUE : LITTLE_OPACITY_VALUE;
+            NoSectionGrid.Visibility = IsSelectedSection ? Visibility.Hidden : Visibility.Visible;
+            NoChannelsGrid.Visibility = IsSelectedSection ? Visibility.Hidden : Visibility.Visible;
+            NoGroupsGrid.Visibility = IsSelectedSection ? Visibility.Hidden : Visibility.Visible;
+            NoChartsGrid.Visibility = IsSelectedSection ? Visibility.Hidden : Visibility.Visible;
+            RecieveDataStatusIcon.Opacity = IsSelectedSection ? NO_OPACITY_VALUE : LITTLE_OPACITY_VALUE;
         }
 
         private void InitilaizeHttpClient()
@@ -248,9 +248,9 @@ namespace LogicLayer.Menus.Live
             return liveFile.GetChannel(channelName);
         }
 
-        private double[] GetSensorData(int packageID, string sensorName)
+        private double[] GetSensorData(int packageID, string sensorName, List<Package> packages)
         {
-            var package = currentPackages.Find(x => x.ID == packageID);
+            var package = packages.Find(x => x.ID == packageID);
             double[] returnData = new double[0];
             switch (sensorName)
             {
@@ -328,18 +328,11 @@ namespace LogicLayer.Menus.Live
         {
             activeSection = section;
 
-            isActiveSection = true;
+            IsSelectedSection = true;
 
             UpdateCoverGridsVisibilities();
 
-            selectedChannels.Clear();
-            selectedGroups.Clear();
-            charts.Clear();
-
-            foreach (CheckBox item in GroupsStackPanel.Children)
-            {
-                item.IsChecked = false;
-            }
+            ResetCharts();
 
             Stop(); //TODO biztos?
             canUpdateCharts = false;
@@ -351,7 +344,22 @@ namespace LogicLayer.Menus.Live
             {
                 this.channelNames.Add(new Tuple<string, bool>(name, false));
             }
+
             UpdateChannelsList();
+        }
+
+        public void ResetCharts()
+        {
+            selectedChannels.Clear();
+            selectedGroups.Clear();
+
+            foreach (CheckBox item in GroupsStackPanel.Children)
+            {
+                item.IsChecked = false;
+            }
+
+            charts.Clear();
+            ChartsGrid.Children.Clear();
         }
 
         private void CollectData()
@@ -361,29 +369,40 @@ namespace LogicLayer.Menus.Live
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
 
-                var getPackages = new List<Package>();
+                var packages = new List<Package>();
 
                 // if lastPackageID is 0, so it's the first call, then get all packages and continue getting from that
-                getPackages = GetPackagesAsync(lastPackageID, all: lastPackageID == 0).Result;
-
+                packages = GetPackagesAsync(lastPackageID, all: lastPackageID == 0).Result;
                 stopwatch.Stop();
 
-                if (getPackages != null && getPackages.Any())
+                if (packages != null && packages.Any())
                 {
-                    lastPackageID = getPackages.Last().ID;
-
-                    lock (getDataLock)
+                    foreach (var name in selectedChannels)
                     {
-                        currentPackages = getPackages;
+                        foreach (var package in packages)
+                        {
+                            var sensorData = GetSensorData(packageID: package.ID, sensorName: name, packages: packages);
+                            if (sensorData.Any())
+                            {
+                                InputFileManager.AddDataToLiveFile(liveFileName: activeSection.Name, channelName: name, values: sensorData);
+                            }
+                        }
                     }
 
-                    getDataSignal.Set();
+                    lastPackageID = packages.Last().ID;
+
+                    /* lock (getDataLock)
+                     {
+                         currentPackages = getPackages;
+                     }*/
+
+                    //getDataSignal.Set();
 
                     if (activeSection.IsLive)
                     {
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            MenuManager.LiveSettings.UpdateCarStatus(currentPackages.First().SentTime, stopwatch.ElapsedMilliseconds);
+                            MenuManager.LiveSettings.UpdateCarStatus(packages.First().SentTime, stopwatch.ElapsedMilliseconds);
                         });
                     }
                     else
@@ -407,28 +426,18 @@ namespace LogicLayer.Menus.Live
         {
             while (canUpdateCharts)
             {
-                getDataSignal.WaitOne();
+                // getDataSignal.WaitOne();
                 if (canUpdateCharts)
                 {
-                    var packages = new List<Package>();
+                    /*var packages = new List<Package>();
                     lock (getDataLock)
                     {
                         packages = currentPackages;
-                    }
+                    }*/
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        Plot(ref packages);
-                        /*var yawAngleChannel = GetChart("yaw_angle");
-                        if (yawAngleChannel != null)
-                        {
-                            var updateableValues = new List<double>();
-                            foreach (var item in package)
-                            {
-                                updateableValues.Add(item.Item1);
-                            }
-                            yawAngleChannel.Update(updateableValues.ToArray(), "", "yaw angle");
-                        }*/
+                        Plot();
                     });
 
                     Thread.Sleep(ConfigurationManager.WaitBetweenCollectData);
@@ -436,7 +445,7 @@ namespace LogicLayer.Menus.Live
             }
         }
 
-        private void Plot(ref List<Package> packages)
+        private void Plot()
         {
             foreach (Chart chart in charts)
             {
@@ -444,16 +453,10 @@ namespace LogicLayer.Menus.Live
                 {
                     if (chart.HasChannelName(name))
                     {
-                        foreach (var package in packages)
+                        double[] sensorData = InputFileManager.GetLiveFile(activeSection.Name).GetChannel(name).Data.ToArray();
+                        if (sensorData.Any())
                         {
-                            var sensorData = GetSensorData(packageID: package.ID, sensorName: name);
-                            if (sensorData.Length > 0)
-                            {
-                                InputFileManager.AddDataToLiveFile(liveFileName: activeSection.Name, channelName: name, values: sensorData);
-
-                                //chart.PlotLive(InputFileManager.GetLiveFile(activeSection.Name).GetChannel(name).Data.ToArray(), name);
-                                chart.PlotLive(sensorData, name);
-                            }
+                            chart.PlotLive(sensorData, name);
                         }
                     }
                 }
@@ -551,7 +554,7 @@ namespace LogicLayer.Menus.Live
 
         private void RecieveDataStatusCard_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (isActiveSection)
+            if (IsSelectedSection)
             {
                 RecieveDataStatusCard.Background = ColorManager.Secondary200.ConvertBrush();
             }
@@ -559,7 +562,7 @@ namespace LogicLayer.Menus.Live
 
         private void RecieveDataStatusCard_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (isActiveSection)
+            if (IsSelectedSection)
             {
                 RecieveDataStatusCard.Background = ColorManager.Secondary100.ConvertBrush();
 
@@ -588,7 +591,7 @@ namespace LogicLayer.Menus.Live
 
         private void RecieveDataStatusCard_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (isActiveSection)
+            if (IsSelectedSection)
             {
                 RecieveDataStatusCard.Background = ColorManager.Secondary100.ConvertBrush();
             }
@@ -596,7 +599,7 @@ namespace LogicLayer.Menus.Live
 
         private void RecieveDataStatusCard_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (isActiveSection)
+            if (IsSelectedSection)
             {
                 RecieveDataStatusCard.Background = ColorManager.Secondary50.ConvertBrush();
             }
