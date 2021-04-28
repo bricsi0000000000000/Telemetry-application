@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
 using System;
-using DataLayer.Tracks;
+using PresentationLayer.Tracks;
 
-namespace Telemetry_unit_tests
+namespace UnitTest
 {
     [TestFixture]
     class ReadTrackFileTest

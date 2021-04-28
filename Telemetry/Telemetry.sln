@@ -3,11 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telemetry_unit_tests", "Telemetry_unit_tests\Telemetry_unit_tests.csproj", "{C4B46EF9-1FA8-4F74-8BE3-0135A4FB2887}"
-	ProjectSection(ProjectDependencies) = postProject
-		{C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB} = {C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB}
-	EndProjectSection
-EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Telemetry_setup", "Telemetry_setup\Telemetry_setup.vdproj", "{7C07C698-6A1B-4B52-814F-C9A0942CDE50}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicLayer", "LogicLayer\LogicLayer.csproj", "{C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB}"
@@ -15,12 +10,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicLayer", "LogicLayer\Lo
 		{304A38B1-D1B5-4118-9705-72C12AF3B8F7} = {304A38B1-D1B5-4118-9705-72C12AF3B8F7}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayer", "DataLayer\DataLayer.csproj", "{304A38B1-D1B5-4118-9705-72C12AF3B8F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLayer", "DataLayer\DataLayer.csproj", "{304A38B1-D1B5-4118-9705-72C12AF3B8F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PresentationLayer", "PresentationLayer\PresentationLayer.csproj", "{901534FC-9EAC-45D9-ACAA-E352527D7363}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PresentationLayer", "PresentationLayer\PresentationLayer.csproj", "{901534FC-9EAC-45D9-ACAA-E352527D7363}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB} = {C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{ED4678CD-0BA6-4FBD-AD6F-8C6E1B51B3FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,10 +25,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C4B46EF9-1FA8-4F74-8BE3-0135A4FB2887}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4B46EF9-1FA8-4F74-8BE3-0135A4FB2887}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4B46EF9-1FA8-4F74-8BE3-0135A4FB2887}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4B46EF9-1FA8-4F74-8BE3-0135A4FB2887}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7C07C698-6A1B-4B52-814F-C9A0942CDE50}.Debug|Any CPU.ActiveCfg = Debug
 		{7C07C698-6A1B-4B52-814F-C9A0942CDE50}.Release|Any CPU.ActiveCfg = Release
 		{C6941C0A-4AD9-4D02-A1A6-CBAD8EC6EAEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -46,6 +39,10 @@ Global
 		{901534FC-9EAC-45D9-ACAA-E352527D7363}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{901534FC-9EAC-45D9-ACAA-E352527D7363}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{901534FC-9EAC-45D9-ACAA-E352527D7363}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED4678CD-0BA6-4FBD-AD6F-8C6E1B51B3FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED4678CD-0BA6-4FBD-AD6F-8C6E1B51B3FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED4678CD-0BA6-4FBD-AD6F-8C6E1B51B3FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED4678CD-0BA6-4FBD-AD6F-8C6E1B51B3FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
