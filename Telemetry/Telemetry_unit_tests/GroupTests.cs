@@ -1,5 +1,7 @@
 using DataLayer.Groups;
 using NUnit.Framework;
+using PresentationLayer.Groups;
+using System;
 
 namespace Telemetry_unit_tests
 {
@@ -7,42 +9,47 @@ namespace Telemetry_unit_tests
     public class GroupTests
     {
         [Test]
-        [TestCase("proba_group", "proba_group")]
-        [TestCase("proba group", "proba group")]
-        [TestCase(" proba group", "proba group")]
-        [TestCase("proba group ", "proba group")]
-        [TestCase(" proba group ", "proba group")]
-        public void CreateGroup_TestGood(string groupName, string expectedGroupName)
+        [TestCase(0, "proba_group", 0, "proba_group")]
+        [TestCase(1, "proba group", 1, "proba group")]
+        [TestCase(2, " proba group", 2, "proba group")]
+        [TestCase(3, "proba group ", 3, "proba group")]
+        [TestCase(4, " proba group ", 4, "proba group")]
+        public void CreateGroup_TestGood(int id, string groupName, int expectedID, string expectedGroupName)
         {
-            Group group = new Group(groupName);
+            Group group = new Group(id, groupName);
             Assert.AreEqual(group.Name, expectedGroupName);
+            Assert.AreEqual(group.ID, expectedID);
         }
 
         [Test]
-        [TestCase("proba_group", "proba group")]
-        [TestCase("proba group", "proba_group")]
-        [TestCase(" proba group", " proba group")]
-        [TestCase("proba group ", "proba group ")]
-        [TestCase(" proba group ", " proba group ")]
-        public void CreateGroup_TestBad(string groupName, string expectedGroupName)
+        [TestCase(0, "proba_group", 0, "proba group")]
+        [TestCase(1, "proba group", 1, "proba_group")]
+        [TestCase(2, " proba group", 2, " proba group")]
+        [TestCase(3, "proba group ", 3, "proba group ")]
+        [TestCase(4, " proba group ", 4, " proba group ")]
+        public void CreateGroup_TestBad(int id, string groupName, int expectedID, string expectedGroupName)
         {
-            Group group = new Group(groupName);
+            Group group = new Group(id, groupName);
             Assert.AreNotEqual(group.Name, expectedGroupName);
         }
 
         [Test]
-        [TestCase("attribute", "#fc0505", "attribute", "#fc0505")]
-        [TestCase(" attribute", "#fc0505", "attribute", "#fc0505")]
-        [TestCase("attribute", " #fc0505", "attribute", "#fc0505")]
-        [TestCase(" attribute", " #fc0505", "attribute", "#fc0505")]
-        [TestCase("attribute ", " #fc0505", "attribute", "#fc0505")]
-        [TestCase(" attribute ", " #fc0505", "attribute", "#fc0505")]
-        public void AddAttributeToGroup_Test(string attributeName, string attributeColor, string expectedAttributeName, string expectedAttributeColor)
+        [TestCase("attribute", "#fc0505", 1, "attribute", "#fc0505", 1)]
+        [TestCase(" attribute", "#fc0505", 1, "attribute", "#fc0505", 1)]
+        [TestCase("attribute", " #fc0505", 1, "attribute", "#fc0505", 1)]
+        [TestCase(" attribute", " #fc0505", 1, "attribute", "#fc0505", 1)]
+        [TestCase("attribute ", " #fc0505", 1, "attribute", "#fc0505", 1)]
+        [TestCase(" attribute ", " #fc0505", 1, "attribute", "#fc0505", 1)]
+        [TestCase("attribute", "#fc0505 ", 1, "attribute", "#fc0505", 1)]
+        [TestCase("attribute", " #fc0505 ", 1, "attribute", "#fc0505", 1)]
+        [TestCase(" attribute ", " #fc0505 ", 1, "attribute", "#fc0505", 1)]
+        public void AddAttributeToGroup_Test(string name, string colorText, int lineWidth, string expectedName, string expectedColorText, int expectedintLineWidth)
         {
-            Group group = new Group("group");
-            group.AddAttribute(attributeName, attributeColor);
-            Assert.AreEqual(group.Attributes[0].Name, expectedAttributeName);
-            Assert.AreEqual(group.Attributes[0].Color, expectedAttributeColor);
+            Group group = new Group(0, "group");
+            group.AddAttribute(name, colorText, lineWidth);
+            Assert.AreEqual(group.Attributes[0].Name, expectedName);
+            Assert.AreEqual(group.Attributes[0].ColorText, expectedColorText);
+            Assert.AreEqual(group.Attributes[0].LineWidth, expectedintLineWidth);
         }
 
         [Test]
@@ -50,21 +57,21 @@ namespace Telemetry_unit_tests
         {
             GroupManager.InitGroups("../../../good_input_files/groups.json");
 
-            Group group1 = new Group("EngineMapping");
-            group1.AddAttribute("rev", "#FFF1B5B5");
-            group1.AddAttribute("ath", "#FF5F1818");
-            group1.AddAttribute("lam", "#FFFCE705");
-            group1.AddAttribute("ign_1", "#FF80FC05");
-            group1.AddAttribute("ti_1", "#FFBA8A8A");
-            group1.AddAttribute("gear", "#FF8005FC");
-            group1.AddAttribute("speed", "#FFFC0505");
+            Group group1 = new Group(0, "Gearbox");
+            group1.AddAttribute("rev", "#FF4D4D4D", 1);
+            group1.AddAttribute("gear", "#FF80FC05", 1);
+            group1.AddAttribute("upInput", "#FF05FCF4", 1);
+            group1.AddAttribute("upRqe", "#FF8005FC", 1);
+            group1.AddAttribute("upGoing", "#FFFC0505", 1);
+            group1.AddAttribute("shiftCnt", "#FFFC7C05", 1);
+            group1.AddAttribute("neutral_In", "#FFFCE705", 1);
 
-            var group2 = GroupManager.GetGroup("EngineMapping");
+            Group group2 = GroupManager.GetGroup("Gearbox");
             Assert.AreEqual(group1.Name, group2.Name);
             for (int i = 0; i < group1.Attributes.Count; i++)
             {
                 Assert.AreEqual(group1.Attributes[i].Name, group2.Attributes[i].Name);
-                Assert.AreEqual(group1.Attributes[i].Color, group2.Attributes[i].Color);
+                Assert.AreEqual(group1.Attributes[i].ColorText, group2.Attributes[i].ColorText);
             }
         }
 
@@ -73,26 +80,26 @@ namespace Telemetry_unit_tests
         {
             GroupManager.InitGroups("../../../good_input_files/groups.json");
 
-            Group group1 = new Group("EngineMapoping");
-            group1.AddAttribute("ver", "#FFF1B5B6");
-            group1.AddAttribute("athh", "#FF5F1815");
-            group1.AddAttribute("lame", "#FFFCE704");
-            group1.AddAttribute("ign1", "#FF80FC03");
-            group1.AddAttribute("ti1", "#FFBA8A83");
-            group1.AddAttribute("geer", "#FF8005F2");
-            group1.AddAttribute("spead", "#FFFC0501");
+            Group group1 = new Group(0, "Gaerbox");
+            group1.AddAttribute("ver", "#FFF1B5B6", 1);
+            group1.AddAttribute("gaer", "#FF5F1815", 1);
+            group1.AddAttribute("downInput", "#FFFCE704", 1);
+            group1.AddAttribute("downRqe", "#FF80FC03", 1);
+            group1.AddAttribute("downGoing", "#FFBA8A83", 1);
+            group1.AddAttribute("shtCnt", "#FF8005F2", 1);
+            group1.AddAttribute("neutral_Out", "#FFFC0501", 1);
 
-            var group2 = GroupManager.GetGroup("EngineMapping");
+            var group2 = GroupManager.GetGroup("Gearbox");
             Assert.AreNotEqual(group1.Name, group2.Name);
             for (int i = 0; i < group1.Attributes.Count; i++)
             {
                 Assert.AreNotEqual(group1.Attributes[i].Name, group2.Attributes[i].Name);
-                Assert.AreNotEqual(group1.Attributes[i].Color, group2.Attributes[i].Color);
+                Assert.AreNotEqual(group1.Attributes[i].ColorText, group2.Attributes[i].ColorText);
             }
         }
 
         [Test]
-        [TestCase("EngineMapping")]
+        [TestCase("Gearbox")]
         [TestCase("EngineBase")]
         [TestCase("Gearbox")]
         public void GetGroup_TestGood(string name)
@@ -110,7 +117,7 @@ namespace Telemetry_unit_tests
         [TestCase(" group_3 ", "group_3")]
         public void AddGroup_TestGood(string name, string expectedName)
         {
-            GroupManager.AddGroup(new Group(name));
+            GroupManager.AddGroup(new Group(0, name));
             Assert.IsNotNull(GroupManager.GetGroup(expectedName));
         }
 
@@ -122,7 +129,7 @@ namespace Telemetry_unit_tests
         [TestCase(" group_03 ", "group_03")]
         public void RemoveGroup_TestGood(string name, string expectedName)
         {
-            GroupManager.AddGroup(new Group(name));
+            GroupManager.AddGroup(new Group(0, name));
             GroupManager.RemoveGroup(expectedName);
             Assert.IsNull(GroupManager.GetGroup(expectedName));
         }

@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
-using PresentationLayer;
+using LogicLayer;
 
 namespace Telemetry_unit_tests
 {
