@@ -2,7 +2,7 @@
 using System;
 using PresentationLayer.Tracks;
 
-namespace Telemetry_unit_tests
+namespace UnitTest
 {
     [TestFixture]
     class ReadTrackFileTest

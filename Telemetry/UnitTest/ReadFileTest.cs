@@ -2,7 +2,7 @@
 using System;
 using LogicLayer;
 
-namespace Telemetry_unit_tests
+namespace UnitTest
 {
     [TestFixture]
     public class ReadFileTest

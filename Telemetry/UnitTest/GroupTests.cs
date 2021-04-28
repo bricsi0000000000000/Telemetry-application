@@ -3,7 +3,7 @@ using NUnit.Framework;
 using PresentationLayer.Groups;
 using System;
 
-namespace Telemetry_unit_tests
+namespace UnitTest
 {
     [TestFixture]
     public class GroupTests

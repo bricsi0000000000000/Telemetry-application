@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using DataLayer.Groups;
 
-namespace Telemetry_unit_tests
+namespace UnitTest
 {
     [TestFixture]
     public class AttributeTests
