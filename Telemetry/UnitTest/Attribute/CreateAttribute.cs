@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace UnitTest
 {
     [TestFixture]
-    public class AttributeTests
+    public class CreateAttribute
     {
         [Test]
         [TestCase(0, "attribute", "#fc0505", 1, 0, "attribute", "#fc0505", 1)]
