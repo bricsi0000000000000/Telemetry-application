@@ -332,10 +332,12 @@ namespace LogicLayer.Menus.Settings.Live
         private bool FillSectionsStackPanel(List<Section> sections)
         {
             SectionsCoverGridGrid.Visibility = Visibility.Visible;
+            SectionDataGridCover.Visibility = Visibility.Visible;
             SectionsStackPanel.Children.Clear();
 
             if (!sections.Any())
             {
+                MenuManager.LiveTelemetry.IsSelectedSection = false;
                 ShowSnackbarMessage("There are no sections on the server", error: false);
                 return false;
             }
@@ -348,6 +350,9 @@ namespace LogicLayer.Menus.Settings.Live
             }
 
             SectionsCoverGridGrid.Visibility = Visibility.Hidden;
+            SectionDataGridCover.Visibility = Visibility.Hidden;
+
+            MenuManager.LiveTelemetry.ResetCharts();
 
             return true;
         }

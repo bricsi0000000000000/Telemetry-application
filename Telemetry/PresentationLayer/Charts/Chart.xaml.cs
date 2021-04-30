@@ -95,6 +95,18 @@ namespace PresentationLayer.Charts
             ScottPlotChart.Render();
         }
 
+        public void AddPlot(double[] xAxisValues,
+                           Color lineColor,
+                           int lineWidth,
+                           string xAxisLabel)
+        {
+            ScottPlotChart.plt.PlotSignal(xAxisValues, color: lineColor, lineWidth: lineWidth, markerSize: 1);
+
+            ScottPlotChart.plt.XLabel(xAxisLabel, bold: true);
+            ScottPlotChart.plt.Legend();
+            ScottPlotChart.Render();
+        }
+
         public void UpdateHighlight(double xValue)
         {
             if (plottableScatterHighlight != null)
@@ -118,10 +130,10 @@ namespace PresentationLayer.Charts
         /// <param name="data">New package sensor data</param>
         public void PlotLive(double[] data, string yAxisLabel)
         {
-            liveChartValues.AddRange(data);
+           // liveChartValues.AddRange(data);
 
             ScottPlotChart.plt.Clear();
-            ScottPlotChart.plt.PlotSignal(liveChartValues.ToArray(), markerSize: 0);
+            ScottPlotChart.plt.PlotSignal(data, markerSize: 0);
 
             ScottPlotChart.plt.Style(chartStyle);
             ScottPlotChart.plt.Colorset(Colorset.Category10);
@@ -140,7 +152,7 @@ namespace PresentationLayer.Charts
             {
                 foreach (ChartValue item in ValuesStackPanel.Children)
                 {
-                    item.SetChannelValue(liveChartValues.Last());
+                    item.SetChannelValue(data.Last());
                 }
             }
         }
