@@ -135,7 +135,14 @@ namespace LogicLayer
                         }
                         else
                         {
-                            throw new Exception($"Can't convert {row[i]} into number in {fileName}");
+                            if (float.TryParse(row[i], out rowValue))
+                            {
+                                channels[i].AddChannelData(rowValue);
+                            }
+                            else
+                            {
+                                throw new Exception($"Can't convert {row[i]} into number in {fileName}");
+                            }
                         }
                     }
                 }

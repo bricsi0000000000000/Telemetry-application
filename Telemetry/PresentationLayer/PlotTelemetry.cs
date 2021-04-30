@@ -22,7 +22,6 @@ namespace PresentationLayer
         protected List<double> horizontalAxisData = new List<double>();
 
         protected abstract Chart BuildGroupChart(Group group);
-        protected abstract void RefreshCharts();
         protected abstract void UpdateChannelsList();
         public abstract void BuildCharts();
         public abstract Channel GetChannel(string channelName, int? inputFileID = null);

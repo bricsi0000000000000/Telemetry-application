@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,15 +9,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Newtonsoft.Json;
 using DataLayer.Groups;
 using DataLayer.Models;
-using PresentationLayer.Charts;
-using PresentationLayer.Groups;
 using LogicLayer.Colors;
-using System.Linq;
-using PresentationLayer.InputFiles;
 using LogicLayer.Extensions;
 using LogicLayer.Configurations;
+using PresentationLayer.Charts;
+using PresentationLayer.Groups;
+using PresentationLayer.InputFiles;
 using PresentationLayer;
 
 namespace LogicLayer.Menus.Live
@@ -37,7 +37,6 @@ namespace LogicLayer.Menus.Live
         /// </summary>
         private List<Tuple<string, bool>> channelNames = new List<Tuple<string, bool>>();
 
-        //private List<Package> currentPackages = new List<Package>();
         private int lastPackageID = 0;
         private readonly object getDataLock = new object();
         private readonly AutoResetEvent getDataSignal = new AutoResetEvent(false);
@@ -136,25 +135,6 @@ namespace LogicLayer.Menus.Live
             ChartsGrid.RowDefinitions.Add(chartRow);
 
             Grid.SetRow(new Grid(), rowIndex++);
-
-            // RefreshCharts();
-        }
-
-        protected override void RefreshCharts()
-        {
-            if (horizontalAxisData.Count > 0)
-            {
-                int dataIndex = (int)DataSlider.Value;
-                double xValue = dataIndex < horizontalAxisData.Count ? horizontalAxisData[dataIndex] : horizontalAxisData.Last();
-                foreach (var item in ChartsGrid.Children)
-                {
-                    if (item is Chart chart)
-                    {
-                        chart.UpdateHighlight(xValue);
-                        chart.UpdateSideValues(ref dataIndex);
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -186,25 +166,6 @@ namespace LogicLayer.Menus.Live
                         {
                             charts.Add(chart);
                         }
-                        /*var data = GetSensorData(channelName.Item1);
-                        if (data.Any())
-                        {
-                            chart.PlotLive(data: data,
-                                           yAxisLabel: channelName.Item1);
-                        }*/
-
-                        /*chart.AddPlot(xAxisValues: channelDataPlotData.Item1,
-                                      yAxisValues: channel.Data.ToArray(),
-                                      lineWidth: lineWidth,
-                                      lineColor: ColorTranslator.FromHtml(color),
-                                      xAxisLabel: group.HorizontalAxis);
-
-                        chart.AddSideValue(channelName: channelName.Item1,
-                                            xAxisValues: channelDataPlotData.Item2,
-                                            isActive: true,
-                                            inputFileID: inputFile.Item1,
-                                            color: color,
-                                            lineWidth: lineWidth);*/
                     }
                     else
                     {
@@ -255,22 +216,32 @@ namespace LogicLayer.Menus.Live
             switch (sensorName)
             {
                 case nameof(Time):
-                    if (package.Times != null)
+                    if (package.TimeValues != null)
                     {
-                        returnData = new double[package.Times.Count];
+                        returnData = new double[package.TimeValues.Count];
                         for (int i = 0; i < returnData.Length; i++)
                         {
-                            returnData[i] = package.Times[i].Value;
+                            returnData[i] = package.TimeValues[i].Value;
                         }
                     }
                     return returnData;
                 case nameof(Speed):
-                    if (package.Speeds != null)
+                    if (package.SpeedValues != null)
                     {
-                        returnData = new double[package.Speeds.Count];
+                        returnData = new double[package.SpeedValues.Count];
                         for (int i = 0; i < returnData.Length; i++)
                         {
-                            returnData[i] = package.Speeds[i].Value;
+                            returnData[i] = package.SpeedValues[i].Value;
+                        }
+                    }
+                    return returnData;
+                case nameof(Yaw):
+                    if (package.YawValues != null)
+                    {
+                        returnData = new double[package.YawValues.Count];
+                        for (int i = 0; i < returnData.Length; i++)
+                        {
+                            returnData[i] = package.YawValues[i].Value;
                         }
                     }
                     return returnData;
@@ -377,26 +348,22 @@ namespace LogicLayer.Menus.Live
 
                 if (packages != null && packages.Any())
                 {
-                    foreach (var name in selectedChannels)
+                    foreach (var package in packages)
                     {
-                        foreach (var package in packages)
+                        foreach (var name in selectedChannels)
                         {
                             var sensorData = GetSensorData(packageID: package.ID, sensorName: name, packages: packages);
                             if (sensorData.Any())
                             {
                                 InputFileManager.AddDataToLiveFile(liveFileName: activeSection.Name, channelName: name, values: sensorData);
+                                InputFileManager.SaveFile(activeSection.Name);
                             }
                         }
                     }
 
                     lastPackageID = packages.Last().ID;
 
-                    /* lock (getDataLock)
-                     {
-                         currentPackages = getPackages;
-                     }*/
-
-                    //getDataSignal.Set();
+                    getDataSignal.Set();
 
                     if (activeSection.IsLive)
                     {
@@ -405,14 +372,15 @@ namespace LogicLayer.Menus.Live
                             MenuManager.LiveSettings.UpdateCarStatus(packages.First().SentTime, stopwatch.ElapsedMilliseconds);
                         });
                     }
-                    else
+                }
+
+                if (!activeSection.IsLive)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
-                        Application.Current.Dispatcher.Invoke(() =>
-                        {
-                            canUpdateCharts = false;
-                            UpdateCanRecieveDataStatus();
-                        });
-                    }
+                        canUpdateCharts = false;
+                        UpdateCanRecieveDataStatus();
+                    });
                 }
 
                 Thread.Sleep(ConfigurationManager.WaitBetweenCollectData);
@@ -426,15 +394,9 @@ namespace LogicLayer.Menus.Live
         {
             while (canUpdateCharts)
             {
-                // getDataSignal.WaitOne();
+                getDataSignal.WaitOne();
                 if (canUpdateCharts)
                 {
-                    /*var packages = new List<Package>();
-                    lock (getDataLock)
-                    {
-                        packages = currentPackages;
-                    }*/
-
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         Plot();
@@ -447,23 +409,48 @@ namespace LogicLayer.Menus.Live
 
         private void Plot()
         {
-            foreach (Chart chart in charts)
+            foreach (var name in selectedChannels)
             {
-                foreach (var name in selectedChannels)
+                var chart = GetChart(name);
+                if (chart != null)
                 {
-                    if (chart.HasChannelName(name))
+                    double[] sensorData = InputFileManager.GetLiveFile(activeSection.Name).GetChannel(name).Data.ToArray();
+                    if (sensorData.Any())
                     {
-                        double[] sensorData = InputFileManager.GetLiveFile(activeSection.Name).GetChannel(name).Data.ToArray();
-                        if (sensorData.Any())
-                        {
-                            chart.PlotLive(sensorData, name);
-                        }
+                        chart.PlotLive(sensorData, name);
+
+                        /*chart.AddPlot(xAxisValues: channelDataPlotData.Item1,
+                                     yAxisValues: channel.Data.ToArray(),
+                                     lineWidth: lineWidth,
+                                     lineColor: ColorTranslator.FromHtml(color),
+                                     xAxisLabel: group.HorizontalAxis);
+
+                       chart.AddSideValue(channelName: channelName.Item1,
+                                           xAxisValues: channelDataPlotData.Item2,
+                                           isActive: true,
+                                           inputFileID: inputFile.Item1,
+                                           color: color,
+                                           lineWidth: lineWidth);*/
                     }
                 }
             }
         }
 
-        private Chart GetChart(string name) => charts.Find(x => x.ChartName.Equals(name));
+        private Chart GetChart(string name)
+        {
+            foreach (var item in ChartsGrid.Children)
+            {
+                if (item is Chart chart)
+                {
+                    if (chart.ChartName.Equals(name))
+                    {
+                        return chart;
+                    }
+                }
+            }
+
+            return null;
+        }
 
         private async Task<List<Package>> GetPackagesAsync(int lastPackageID, bool all = false)
         {
@@ -490,31 +477,42 @@ namespace LogicLayer.Menus.Live
                 {
                     for (int packageIndex = 0; packageIndex < packages.Count; packageIndex++)
                     {
-                        var speeds = new List<Speed>();
-                        for (int i = 0; i < packages[packageIndex].speeds.Count; i++)
+                        var speedValues = new List<Speed>();
+                        for (int i = 0; i < packages[packageIndex].speedValues.Count; i++)
                         {
-                            speeds.Add(new Speed()
+                            speedValues.Add(new Speed()
                             {
-                                ID = packages[packageIndex].speeds[i].id,
-                                Value = packages[packageIndex].speeds[i].value,
+                                ID = packages[packageIndex].speedValues[i].id,
+                                Value = packages[packageIndex].speedValues[i].value,
                             });
                         }
 
-                        var times = new List<Time>();
-                        for (int i = 0; i < packages[packageIndex].times.Count; i++)
+                        var timeValues = new List<Time>();
+                        for (int i = 0; i < packages[packageIndex].timeValues.Count; i++)
                         {
-                            times.Add(new Time()
+                            timeValues.Add(new Time()
                             {
-                                ID = packages[packageIndex].times[i].id,
-                                Value = packages[packageIndex].times[i].value,
+                                ID = packages[packageIndex].timeValues[i].id,
+                                Value = packages[packageIndex].timeValues[i].value,
+                            });
+                        }
+
+                        var yawValues = new List<Yaw>();
+                        for (int i = 0; i < packages[packageIndex].yawValues.Count; i++)
+                        {
+                            yawValues.Add(new Yaw()
+                            {
+                                ID = packages[packageIndex].yawValues[i].id,
+                                Value = packages[packageIndex].yawValues[i].value,
                             });
                         }
 
                         returnPackages.Add(new Package()
                         {
                             ID = packages[packageIndex].id,
-                            Speeds = speeds,
-                            Times = times,
+                            SpeedValues = speedValues,
+                            TimeValues = timeValues,
+                            YawValues = yawValues,
                             SentTime = TimeSpan.FromTicks((long)packages[packageIndex].sentTime)
                         });
                     }

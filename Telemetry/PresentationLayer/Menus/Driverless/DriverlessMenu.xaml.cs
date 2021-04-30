@@ -25,7 +25,7 @@ namespace PresentationLayer.Menus.Driverless
         /// <summary>
         /// List of selected <see cref="Group"/>s.
         /// </summary>
-       
+
         private List<int> selectedInputFileIDs = new List<int>();
 
         private readonly List<Tuple<string, List<Tuple<int, bool>>>> channelNames = new List<Tuple<string, List<Tuple<int, bool>>>>();
@@ -119,7 +119,7 @@ namespace PresentationLayer.Menus.Driverless
             RefreshCharts();
         }
 
-        protected override void RefreshCharts()
+        private void RefreshCharts()
         {
             if (horizontalAxisData.Count > 0)
             {
@@ -158,36 +158,55 @@ namespace PresentationLayer.Menus.Driverless
                     {
                         int lineWidth = group.GetAttribute(channelName.Item1).LineWidth;
                         var channel = GetChannel(channelName: channelName.Item1, inputFileID: inputFile.Item1);
+                        var color = group.GetAttribute(channel.Name).ColorText;
 
                         if (inputFile.Item2) // aktiv e a channel
                         {
-                            var currentHorizontalAxisData = GetChannel(channelName: group.HorizontalAxis, inputFileID: inputFile.Item1).Data;
-                            if (currentHorizontalAxisData == null)
+
+                            var currentHorizontalAxis = GetChannel(channelName: group.HorizontalAxis, inputFileID: inputFile.Item1);
+                            if (currentHorizontalAxis != null)
                             {
-                                ShowError.ShowErrorMessage($"Can't find '{group.HorizontalAxis}', so can't show diagram properly", nameof(DriverlessMenu));
-                            }
+                                var currentHorizontalAxisData = GetChannel(channelName: group.HorizontalAxis, inputFileID: inputFile.Item1).Data;
+                                if (currentHorizontalAxisData == null)
+                                {
+                                    ShowError.ShowErrorMessage($"Can't find '{group.HorizontalAxis}', so can't show diagram properly", nameof(DriverlessMenu));
+                                }
 
-                            if (currentHorizontalAxisData.Count > horizontalAxisData.Count)
+                                if (currentHorizontalAxisData.Count > horizontalAxisData.Count)
+                                {
+                                    horizontalAxisData = new List<double>(currentHorizontalAxisData);
+                                }
+
+                                var channelDataPlotData = ConvertChannelDataToPlotData(channel.Data.ToArray(), currentHorizontalAxisData);
+
+
+                                chart.AddPlot(xAxisValues: channelDataPlotData.Item1,
+                                              yAxisValues: channelDataPlotData.Item2,
+                                              lineWidth: lineWidth,
+                                              lineColor: ColorTranslator.FromHtml(color),
+                                              xAxisLabel: group.HorizontalAxis);
+
+                                chart.AddSideValue(channelName: channelName.Item1,
+                                              xAxisValues: channelDataPlotData.Item2,
+                                              isActive: true,
+                                              inputFileID: inputFile.Item1,
+                                              color: color,
+                                              lineWidth: lineWidth);
+                            }
+                            else
                             {
-                                horizontalAxisData = new List<double>(currentHorizontalAxisData);
+                                chart.AddPlot(xAxisValues: channel.Data.ToArray(),
+                                              lineWidth: lineWidth,
+                                              lineColor: ColorTranslator.FromHtml(color),
+                                              xAxisLabel: group.HorizontalAxis);
+
+                                chart.AddSideValue(channelName: channelName.Item1,
+                                             xAxisValues: channel.Data.ToArray(),
+                                             isActive: true,
+                                             inputFileID: inputFile.Item1,
+                                             color: color,
+                                             lineWidth: lineWidth);
                             }
-
-                            var channelDataPlotData = ConvertChannelDataToPlotData(channel.Data.ToArray(), currentHorizontalAxisData);
-
-                            var color = group.GetAttribute(channel.Name).ColorText;
-
-                            chart.AddPlot(xAxisValues: channelDataPlotData.Item1,
-                                          yAxisValues: channelDataPlotData.Item2,
-                                          lineWidth: lineWidth,
-                                          lineColor: ColorTranslator.FromHtml(color),
-                                          xAxisLabel: group.HorizontalAxis);
-
-                            chart.AddSideValue(channelName: channelName.Item1,
-                                               xAxisValues: channelDataPlotData.Item2,
-                                               isActive: true,
-                                               inputFileID: inputFile.Item1,
-                                               color: color,
-                                               lineWidth: lineWidth);
                         }
                         else
                         {
