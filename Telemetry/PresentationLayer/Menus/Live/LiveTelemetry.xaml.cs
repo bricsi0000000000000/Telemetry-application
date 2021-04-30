@@ -288,6 +288,8 @@ namespace LogicLayer.Menus.Live
             int index = channelNames.FindIndex(x => x.Item1.Equals(content));
             channelNames[index] = new Tuple<string, bool>(content, isChecked);
 
+            lastPackageID = 0;
+
             BuildCharts();
         }
 
