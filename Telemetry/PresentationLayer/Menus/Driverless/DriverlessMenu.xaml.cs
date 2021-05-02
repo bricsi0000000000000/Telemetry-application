@@ -59,6 +59,13 @@ namespace PresentationLayer.Menus.Driverless
             }
         }
 
+        protected override void GroupCheckBox_CheckedClick(object sender, RoutedEventArgs e)
+        {
+            base.GroupCheckBox_CheckedClick(sender, e);
+
+            BuildCharts();
+        }
+
         /// <summary>
         /// Initializes <see cref="CheckBox"/>es based on <see cref="GroupManager.Groups"/>.
         /// </summary>
@@ -377,7 +384,7 @@ namespace PresentationLayer.Menus.Driverless
             integratedYawAngle.Add(0);
             for (int i = 1; i < yawrate.Data.Count; i++)
             {
-                integratedYawAngle.Add(integratedYawAngle[i - 1] + deltaTime * yawrate.Data[i]);
+                integratedYawAngle.Add(integratedYawAngle[i - 1] + DELTA_TIME * yawrate.Data[i]);
             }
 
             for (int i = 0; i < integratedYawAngle.Count; i++)

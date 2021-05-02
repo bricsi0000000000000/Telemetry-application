@@ -541,6 +541,7 @@ namespace LogicLayer.Menus.Settings.InputFiles
                         }
 
                         ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                        MenuManager.LiveTelemetry.BuildCharts();
                     }
                 }
             }
@@ -566,6 +567,7 @@ namespace LogicLayer.Menus.Settings.InputFiles
                                 ((GroupSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
 
                                 ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                                MenuManager.LiveTelemetry.BuildCharts();
                             }
                         }
                     }
@@ -589,6 +591,7 @@ namespace LogicLayer.Menus.Settings.InputFiles
                                 }
 
                                 ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                                MenuManager.LiveTelemetry.BuildCharts();
                             }
                         }
                     }

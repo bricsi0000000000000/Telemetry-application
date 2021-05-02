@@ -121,12 +121,20 @@ namespace LogicLayer.Menus.Settings.Live
                         UpdateLoadingGrid(visibility: false);
                     });
                 }
+                else if (resultCode == (int)HttpStatusCode.Conflict)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        UpdateLoadingGrid(visibility: false);
+                        ShowSnackbarMessage($"There is already a section called {sectionName}");
+                    });
+                }
                 else
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         UpdateLoadingGrid(visibility: false);
-                        ShowSnackbarMessage($"Couldn't add {sectionName}");
+                        ShowSnackbarMessage("There was a problem with the server");
                     });
                 }
             }
@@ -173,6 +181,7 @@ namespace LogicLayer.Menus.Settings.Live
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         activeSection.IsLive = !activeSection.IsLive;
+                        MenuManager.LiveTelemetry.ChangeSectionStatusIconState(activeSection.IsLive);
                         ChangeSectionStatus(activeSection.ID, activeSection.IsLive);
                         UpdateLoadingGrid(visibility: false);
                         SelectedSectionStatusIcon.Kind = activeSection.IsLive ? PackIconKind.AccessPoint : PackIconKind.AccessPointOff;
@@ -370,7 +379,7 @@ namespace LogicLayer.Menus.Settings.Live
                 ChangeSectionColors();
                 var channelNames = activeSection.SensorNames.Split(';').ToList();
                 MenuManager.LiveTelemetry.UpdateSection(activeSection, channelNames);
-                InputFileManager.AddLive(activeSection.Name, channelNames);
+                InputFileManager.AddLive(activeSection.ID, activeSection.Name, channelNames);
                 UpdateSelectedSectionInfo(channelNames);
                 SelectedSectionStatusIcon.Kind = activeSection.IsLive ? PackIconKind.AccessPoint : PackIconKind.AccessPointOff;
                 SelectedSectionStatusIcon.Foreground = activeSection.IsLive ? ColorManager.Secondary900.ConvertBrush() :
@@ -405,6 +414,12 @@ namespace LogicLayer.Menus.Settings.Live
             }
 
             UpdateSelectedSectionButtons();
+            ChangeLoadedPackagesLabel();
+        }
+
+        public void ChangeLoadedPackagesLabel(int packagesCount = 0)
+        {
+            SelectedSectionPackagesCountTextBox.Text = $"Loaded packages: {packagesCount}";
         }
 
         private void UpdateSelectedSectionButtons()

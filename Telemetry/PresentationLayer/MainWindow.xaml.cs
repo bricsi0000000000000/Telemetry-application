@@ -82,14 +82,10 @@ namespace LogicLayer
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            var liveMenuTab = MenuManager.GetMenuTab(TextManager.LiveMenuName);
-            if (liveMenuTab != null)
+            if (MenuManager.LiveTelemetry.CanUpdateCharts)
             {
-                var liveMenuTab1 = ((LiveMenu)liveMenuTab.Content).GetTab(TextManager.LiveMenuName);
-                if (liveMenuTab1 != null)
-                {
-                    ((LiveTelemetry)liveMenuTab1.Content).Stop();
-                }
+                ShowError.ShowErrorMessage("Stop the data stream before closing application", nameof(MainWindow));
+                e.Cancel = true;
             }
         }
     }

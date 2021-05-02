@@ -45,6 +45,7 @@ namespace PresentationLayer.Charts
 
         private List<Tuple<string, double[]>> values = new List<Tuple<string, double[]>>();
 
+
         /// <summary>
         /// Represents a chart.
         /// </summary>
@@ -96,15 +97,33 @@ namespace PresentationLayer.Charts
         }
 
         public void AddPlot(double[] xAxisValues,
-                           Color lineColor,
-                           int lineWidth,
-                           string xAxisLabel)
+                            Color lineColor,
+                            int lineWidth,
+                            string xAxisLabel)
         {
-            ScottPlotChart.plt.PlotSignal(xAxisValues, color: lineColor, lineWidth: lineWidth, markerSize: 1);
+            if (xAxisValues.Any())
+            {
+                ScottPlotChart.plt.PlotSignal(xAxisValues, color: lineColor, lineWidth: lineWidth, markerSize: 1);
+                ScottPlotChart.plt.XLabel(xAxisLabel, bold: true);
+                ScottPlotChart.plt.Legend();
+                ScottPlotChart.Render();
+            }
+        }
 
-            ScottPlotChart.plt.XLabel(xAxisLabel, bold: true);
-            ScottPlotChart.plt.Legend();
-            ScottPlotChart.Render();
+        public void AddLivePlot(double[] xAxisValues,
+                                Color lineColor,
+                                int lineWidth,
+                                string xAxisLabel,
+                                int minRenderIndex,
+                                int maxRenderIndex)
+        {
+            if (xAxisValues.Any())
+            {
+                ScottPlotChart.plt.PlotSignal(xAxisValues, color: lineColor, lineWidth: lineWidth, markerSize: 1, minRenderIndex: minRenderIndex, maxRenderIndex: maxRenderIndex);
+                ScottPlotChart.plt.XLabel(xAxisLabel, bold: true);
+                ScottPlotChart.plt.Legend();
+                ScottPlotChart.Render();
+            }
         }
 
         public void UpdateHighlight(double xValue)
@@ -125,39 +144,6 @@ namespace PresentationLayer.Charts
         }
 
         /// <summary>
-        /// Updates the plot with new data.
-        /// </summary>
-        /// <param name="data">New package sensor data</param>
-        public void PlotLive(double[] data, string yAxisLabel)
-        {
-           // liveChartValues.AddRange(data);
-
-            ScottPlotChart.plt.Clear();
-            ScottPlotChart.plt.PlotSignal(data, markerSize: 0);
-
-            ScottPlotChart.plt.Style(chartStyle);
-            ScottPlotChart.plt.Colorset(Colorset.Category10);
-            ScottPlotChart.plt.YLabel(yAxisLabel);
-            ScottPlotChart.plt.Legend();
-            ScottPlotChart.Render();
-
-            SetAxisLimitsToAuto();
-
-            if (ValuesStackPanel.Children.Count == 0)
-            {
-                var unit = UnitOfMeasureManager.GetUnitOfMeasure(yAxisLabel);
-                ValuesStackPanel.Children.Add(new ChartValue(yAxisLabel, /*liveChartValues.Last(),*/ unit == null ? "" : unit.UnitOfMeasure, ""/*, "#4d4d4d", 0*/));
-            }
-            else
-            {
-                foreach (ChartValue item in ValuesStackPanel.Children)
-                {
-                    item.SetChannelValue(data.Last());
-                }
-            }
-        }
-
-        /// <summary>
         /// Sets the axis limits to automatic.
         /// </summary>
         public void SetAxisLimitsToAuto()
@@ -175,14 +161,6 @@ namespace PresentationLayer.Charts
         public void SetFrameBorder(bool left = true, bool bottom = true, bool top = true, bool right = true)
         {
             ScottPlotChart.plt.Frame(left: left, bottom: bottom, top: top, right: right);
-        }
-
-        private void Grid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            /*double mouseXPosition = ScottPlotChart.GetMouseCoordinates().x;
-            RenderPlot(mouseXPosition);
-
-            Console.WriteLine(plottableScatterHighlight.GetPointNearestX(mouseXPosition));*/
         }
 
         private ChartValue AddEmptySideValue(string channelName)
@@ -209,7 +187,10 @@ namespace PresentationLayer.Charts
 
             if (!color.Equals(string.Empty))
             {
-                chartValue.SetUp(colorText: color, inputFileID: inputFileID);
+                if (isActive)
+                {
+                    chartValue.SetUp(colorText: color, inputFileID: inputFileID);
+                }
                 SettingsStackPanel.Children.Add(new ChartValueSettings(channelName: channelName,
                                                                        groupName: ChartName,
                                                                        colorText: color,
@@ -272,6 +253,20 @@ namespace PresentationLayer.Charts
             ChannelsGrid.Visibility = System.Windows.Visibility.Hidden;
         }
 
+        public void UpdateLiveSideValue()
+        {
+            foreach (var item in ValuesStackPanel.Children)
+            {
+                if (item is ChartValue chartValue)
+                {
+                    if (liveChartValues.Any())
+                    {
+                        chartValue.SetChannelValue(liveChartValues.Last());
+                    }
+                }
+            }
+        }
+
         private void Grid_Drop(object sender, System.Windows.DragEventArgs e)
         {
             Mouse.OverrideCursor = Cursors.Wait;
@@ -304,15 +299,17 @@ namespace PresentationLayer.Charts
                     }
 
                     ChartName = $"Temporary{GroupManager.TemporaryGroupIndex}";
-                   
-                    GroupManager.AddGroup(GroupManager.MakeGroupWirhAttributes(ChartName, channelNames));
+
+                    GroupManager.AddGroup(GroupManager.MakeGroupWithAttributes(ChartName, channelNames));
                     ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).ReplaceChannelWithTemporaryGroup(oldName, ChartName);
+                    MenuManager.LiveTelemetry.ReplaceChannelWithTemporaryGroup(oldName, ChartName);
                 }
             }
 
             GroupManager.SaveGroups();
             ((GroupSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.GroupsSettingsName).Content).InitGroups();
             ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+            MenuManager.LiveTelemetry.BuildCharts();
 
             Mouse.OverrideCursor = null;
         }

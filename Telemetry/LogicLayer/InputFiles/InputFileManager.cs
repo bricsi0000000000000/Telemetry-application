@@ -92,22 +92,25 @@ namespace PresentationLayer.InputFiles
         /// </summary>
         /// <param name="name"></param>
         /// <param name="sensorNames"></param>
-        public static void AddLive(string name, List<string> sensorNames)
+        public static void AddLive(int id, string name, List<string> sensorNames)
         {
-            if (Get(name) == null)
+            if (Get(id) == null)
             {
                 var channels = new List<Channel>();
                 for (int i = 0; i < sensorNames.Count; i++)
                 {
                     channels.Add(new Channel(i, sensorNames[i], ColorManager.GetChartColor.ToString()));
                 }
-                Add(new LiveInputFile(LastID + 1, name, channels));
+                Add(new LiveInputFile(id, name, channels));
             }
         }
 
-        public static LiveInputFile GetLiveFile(string name) => (LiveInputFile)InputFiles.Find(x => x.Name.Equals(name) && x.InputFileType == InputFileTypes.live);
+        public static LiveInputFile GetLiveFile(int id) => (LiveInputFile)InputFiles.Find(x => x.ID == id && x.InputFileType == InputFileTypes.live);
 
-        public static void AddDataToLiveFile(string liveFileName, string channelName, double[] values) => GetLiveFile(liveFileName).GetChannel(channelName).AddChannelData(values);
+        public static void AddDataToLiveFile(int fileID, string channelName, double[] values)
+        {
+            GetLiveFile(fileID).GetChannel(channelName).AddChannelData(values);
+        }
 
         public static void SaveFile(string fileName)
         {
