@@ -119,6 +119,7 @@ namespace PresentationLayer.Charts
         {
             if (xAxisValues.Any())
             {
+                liveChartValues.AddRange(xAxisValues); // save the incoming values because based on liveChartValues can the side value be updated
                 ScottPlotChart.plt.PlotSignal(xAxisValues, color: lineColor, lineWidth: lineWidth, markerSize: 1, minRenderIndex: minRenderIndex, maxRenderIndex: maxRenderIndex);
                 ScottPlotChart.plt.XLabel(xAxisLabel, bold: true);
                 ScottPlotChart.plt.Legend();
@@ -261,7 +262,7 @@ namespace PresentationLayer.Charts
                 {
                     if (liveChartValues.Any())
                     {
-                        chartValue.SetChannelValue(liveChartValues.Last());
+                        chartValue.SetLiveChannelValue(liveChartValues.Last());
                     }
                 }
             }

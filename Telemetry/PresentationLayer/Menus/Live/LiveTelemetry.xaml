@@ -171,6 +171,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
 
             <ScrollViewer Grid.Row="0"
@@ -185,22 +186,31 @@
 
             <!-- Background line of the slider because that doesn't has one -->
             <Border Grid.Row="1"
-                    Background="{StaticResource Secondary400}"
-                    Height="2"
+                    Background="{StaticResource Secondary700}"
+                    Height="1.6"
                     Margin="8"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
-                    CornerRadius="1"
                     />
             
             <rangeSlider:RangeSlider Grid.Row="1" 
                                      Orientation="Horizontal" 
                                      Height="25"
-                                     Margin="8,0"
+                                     Margin="5,0"
                                      Maximum="{Binding Max, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                      Minimum="{Binding Min, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                      Start="{Binding Start, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                      End="{Binding End, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+            <Slider Grid.Row="2"
+                    x:Name="DataSlider"
+                    Margin="5,0"
+                    ValueChanged="DataSlider_ValueChanged"
+                    IsSnapToTickEnabled="True"
+                    VerticalAlignment="Center"
+                    IsMoveToPointEnabled="True"
+                    Foreground="{StaticResource SecondaryAccentBrush}"
+                    />
         </Grid>
 
         <Grid Grid.Column="2"

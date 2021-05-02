@@ -122,6 +122,7 @@ namespace LogicLayer.Menus.Settings.Units
                     UnitOfMeasureManager.ChangeUnitOfMeasureName(activeUnit.ID, newName);
                     UnitOfMeasureManager.Save();
                     InitializeUnits();
+                    UpdateSelectedUnitUI();
                     ShowErrorMessage("Saved", error: false);
                 }
             }
@@ -140,7 +141,9 @@ namespace LogicLayer.Menus.Settings.Units
                     UnitOfMeasureManager.ChangeUnitOfMeasureFormula(activeUnit.ID, newFormula);
                     UnitOfMeasureManager.Save();
                     InitializeUnits();
+                    UpdateSelectedUnitUI();
                     ShowErrorMessage("Saved", error: false);
+                    MenuManager.LiveTelemetry.BuildCharts();
                 }
             }
         }

@@ -32,8 +32,8 @@ namespace LogicLayer.Menus.Settings.Live
         {
             InitializeComponent();
 
-            fieldsViewModel.SectionName = "a";
-            fieldsViewModel.SectionDate = "a";
+            fieldsViewModel.SectionName = "a"; // it is necessarry because if I don't give it any value, the error message will be visible through the cover grid
+            fieldsViewModel.SectionDate = "a"; // it is necessarry because if I don't give it any value, the error message will be visible through the cover grid
             DataContext = fieldsViewModel;
 
             InitilaizeHttpClient();
@@ -398,7 +398,7 @@ namespace LogicLayer.Menus.Settings.Live
                 fieldsViewModel.SectionDate = activeSection.Date.ToString();
                 SelectedSectionChannelsStackPanel.Children.Clear();
 
-                NoChannelsGrid.Visibility = channelNames.Count == 0 ? Visibility.Visible : Visibility.Hidden;
+                ChannelsCoverGrid.Visibility = channelNames.Count == 0 ? Visibility.Visible : Visibility.Hidden;
 
                 SelectedSectionChannelsCountTextBox.Text = $"({channelNames.Count})";
 

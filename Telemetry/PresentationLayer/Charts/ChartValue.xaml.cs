@@ -36,7 +36,7 @@ namespace PresentationLayer.Charts
             //ColorCard.Background = ConvertColor.ConvertStringColorToSolidColorBrush(color);
             ChannelName = channelName;
             SetChannelValue(0);
-            var formula = @"\color[HTML]{" + ColorManager.Secondary900.ToString()[1..] + "}{" + unitOfMeasure + "}";
+            var formula = @"\color[HTML]{" + ColorManager.Secondary900.ToString()[3..] + "}{" + unitOfMeasure + "}";
             UnitOfMeasureFormulaControl.Formula = formula;
         }
 
@@ -87,6 +87,11 @@ namespace PresentationLayer.Charts
             {
                 ChannelValueLabel.Content = $"{channelValue:f3}";
             }
+        }
+
+        public void SetLiveChannelValue(double value)
+        {
+            ChannelValueLabel.Content = $"{value:f3}";
         }
 
         public void SetUp(string colorText, int inputFileID)

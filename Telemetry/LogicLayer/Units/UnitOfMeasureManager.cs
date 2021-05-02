@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using DataLayer.Units;
 using PresentationLayer.Texts;
+using LogicLayer.Extensions;
 
 namespace PresentationLayer.Units
 {
@@ -38,51 +39,48 @@ namespace PresentationLayer.Units
             {
                 dynamic unitOfMeasuresJSON = JsonConvert.DeserializeObject(reader.ReadToEnd());
 
-                for (int i = 0; i < unitOfMeasuresJSON.Count; i++)
+                for (int index = 0; index < unitOfMeasuresJSON.Count; index++)
                 {
-                    if (unitOfMeasuresJSON[i].Name == null)
+                    if (unitOfMeasuresJSON[index].Name == null)
                     {
                         throw new Exception("Can't add unit of measure, because 'name' is null!");
                     }
 
-                    if (unitOfMeasuresJSON[i].Name.ToString().Equals(string.Empty))
+                    if (unitOfMeasuresJSON[index].Name.ToString().Equals(string.Empty))
                     {
                         throw new Exception("Can't add unit of measure, because 'name' is empty!");
                     }
 
-                    if (unitOfMeasuresJSON[i].Description == null)
+                    if (unitOfMeasuresJSON[index].Description == null)
                     {
                         throw new Exception("Can't add unit of measure, because 'description' is null!");
                     }
 
-                    if (unitOfMeasuresJSON[i].Unit== null)
+                    if (unitOfMeasuresJSON[index].UnitOfMeasure == null)
                     {
                         throw new Exception("Can't add unit of measure, because 'unit of measure' is null!");
                     }
 
-                    if (unitOfMeasuresJSON[i].Unit.ToString().Equals(string.Empty))
+                    if (unitOfMeasuresJSON[index].UnitOfMeasure.ToString().Equals(string.Empty))
                     {
                         throw new Exception("Can't add unit of measure, because 'unit of measure' is empty!");
                     }
 
-                    AddUnitOfMeasure(new Unit(i,
-                                              unitOfMeasuresJSON[i].Name.ToString(),
-                                              unitOfMeasuresJSON[i].Description.ToString(),
-                                              unitOfMeasuresJSON[i].Unit.ToString()));
+                    AddUnitOfMeasure(new Unit(index,
+                                              unitOfMeasuresJSON[index].Name.ToString(),
+                                              unitOfMeasuresJSON[index].Description.ToString(),
+                                              unitOfMeasuresJSON[index].UnitOfMeasure.ToString()));
                 }
             }
             catch (JsonReaderException)
             {
-                throw new Exception($"There was a problem reading '{Texts.TextManager.UnitOfMeasuresFileName}'");
+                throw new Exception($"There was a problem reading '{TextManager.UnitOfMeasuresFileName}'");
             }
         }
 
-        /// <summary>
-        /// Saves unit of measures to file.
-        /// </summary>
         public static void Save()
         {
-            string fileName = Texts.TextManager.UnitOfMeasuresFileName;
+            string fileName = TextManager.UnitOfMeasuresFileName.MakePath(TextManager.DefaultFilesFolderName);
             if (!File.Exists(fileName))
             {
                 throw new Exception($"Can't save unit of measures because '{fileName}' does not found!");

@@ -670,5 +670,10 @@ namespace LogicLayer.Menus.Live
             rangeSliderDistance = End - Start;
             BuildCharts();
         }
+
+        private void DataSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
+        }
     }
 }

@@ -157,11 +157,6 @@
         /// </summary>
         public static string ConfigurationFileName { get; private set; } = "configuration.json";
 
-        /// <summary>
-        /// Name of the driverless tracks folder.
-        /// "driverless_tracks"
-        /// </summary>
-        public static string DriverlessTracksFolderName { get; private set; } = "driverless_tracks";
         #endregion
 
         #region input file default channel names
@@ -221,6 +216,22 @@
         /// "DriverlessYChannel"
         /// </summary>
         public static string DriverlessYChannel { get; private set; } = "DriverlessYChannel";
+
+        #endregion
+
+        #region folder names
+
+        /// <summary>
+        /// Name of the driverless tracks folder.
+        /// "driverless_tracks"
+        /// </summary>
+        public static string DriverlessTracksFolderName { get; private set; } = "driverless_tracks";
+
+        /// <summary>
+        /// Name of the driverless tracks folder.
+        /// "default_files"
+        /// </summary>
+        public static string DefaultFilesFolderName { get; private set; } = "default_files";
 
         #endregion
     }

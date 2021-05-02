@@ -35,7 +35,7 @@ namespace LogicLayer
 
             try
             {
-                UnitOfMeasureManager.InitializeUnitOfMeasures(TextManager.UnitOfMeasuresFileName.MakePath("default_files"));
+                UnitOfMeasureManager.InitializeUnitOfMeasures(TextManager.UnitOfMeasuresFileName.MakePath(TextManager.DefaultFilesFolderName));
             }
             catch (Exception exception)
             {
@@ -44,7 +44,7 @@ namespace LogicLayer
 
             try
             {
-                DriverlessTrackManager.LoadTracks(TextManager.DriverlessTracksFolderName.MakePath("default_files"));
+                DriverlessTrackManager.LoadTracks(TextManager.DriverlessTracksFolderName.MakePath(TextManager.DefaultFilesFolderName));
             }
             catch (Exception exception)
             {
@@ -53,7 +53,7 @@ namespace LogicLayer
 
             try
             {
-                GroupManager.InitGroups(TextManager.GroupsFileName.MakePath("default_files"));
+                GroupManager.InitGroups(TextManager.GroupsFileName.MakePath(TextManager.DefaultFilesFolderName));
             }
             catch (Exception exception)
             {
@@ -63,7 +63,7 @@ namespace LogicLayer
 
             try
             {
-                DefaultsManager.LoadDefaults(TextManager.DefaultFileName.MakePath("default_files"));
+                DefaultsManager.LoadDefaults(TextManager.DefaultFileName.MakePath(TextManager.DefaultFilesFolderName));
             }
             catch (Exception exception)
             {
