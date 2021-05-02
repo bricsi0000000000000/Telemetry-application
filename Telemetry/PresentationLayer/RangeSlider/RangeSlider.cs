@@ -1,6 +1,5 @@
 ﻿using LogicLayer.Menus;
 using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -10,6 +9,9 @@ namespace PresentationLayer.RangeSlider
 {
     public class RangeSlider : Control
     {
+        public static readonly double MinStartValue = 2d;
+        public static readonly double MaxStartValue = 98d;
+
         FrameworkElement SliderContainer;
         Thumb StartThumb, EndThumb;
         FrameworkElement StartArea;
@@ -204,11 +206,11 @@ namespace PresentationLayer.RangeSlider
                 var value = Math.Min(Maximum, Minimum + (position / viewportSize) * (Maximum - Minimum));
                 if (block == SliderThumb.Start)
                 {
-                    Start = Math.Min(End, value);
+                    Start = Math.Max(MinStartValue, Math.Min(End, value));
                 }
                 else if (block == SliderThumb.End)
                 {
-                    End = Math.Max(Start, value);
+                    End = Math.Min(MaxStartValue, Math.Max(Start, value));
                 }
             }
 
@@ -251,11 +253,11 @@ namespace PresentationLayer.RangeSlider
 
                 if (thumb == StartThumb)
                 {
-                    Start = Math.Max(Minimum, Math.Min(End, Start + change));
+                    Start = Math.Max(MinStartValue, Math.Max(Minimum, Math.Min(End, Start + change)));
                 }
                 else if (thumb == EndThumb)
                 {
-                    End = Math.Min(Maximum, Math.Max(Start, End + change));
+                    End = Math.Min(MaxStartValue, Math.Min(Maximum, Math.Max(Start, End + change)));
                 }
             }
         }

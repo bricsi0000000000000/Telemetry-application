@@ -3,7 +3,6 @@
                     xmlns:local="clr-namespace:PresentationLayer.RangeSlider">
     
     <Style TargetType="Thumb" x:Key="RangeSliderThumbStyle">
-        <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
         <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
         <Setter Property="Template">

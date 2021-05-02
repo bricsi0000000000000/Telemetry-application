@@ -21,6 +21,7 @@ using PresentationLayer.InputFiles;
 using PresentationLayer;
 using System.Windows.Input;
 using MaterialDesignThemes.Wpf;
+using PresentationLayer.RangeSlider;
 
 namespace LogicLayer.Menus.Live
 {
@@ -32,8 +33,7 @@ namespace LogicLayer.Menus.Live
         public bool CanUpdateCharts { get; private set; } = false;
         private static HttpClient client = new HttpClient();
 
-        // channel names from section
-        private List<string> channelNames = new List<string>();
+        private List<string> channelNamesFromSection = new List<string>();
         private int lastPackageID = 0;
         private readonly object getDataLock = new object();
         private readonly AutoResetEvent getDataSignal = new AutoResetEvent(false);
@@ -43,14 +43,14 @@ namespace LogicLayer.Menus.Live
 
         private bool gettingData = false;
 
-        private double distance = 0;
+        private double rangeSliderDistance = 0;
 
         #region range slider
 
         public static readonly DependencyProperty MinProperty = DependencyProperty.Register("Min", typeof(double), typeof(MainWindow), new PropertyMetadata(0d));
         public static readonly DependencyProperty MaxProperty = DependencyProperty.Register("Max", typeof(double), typeof(MainWindow), new PropertyMetadata(100d));
-        public static readonly DependencyProperty StartProperty = DependencyProperty.Register("Start", typeof(double), typeof(MainWindow), new PropertyMetadata(20d));
-        public static readonly DependencyProperty EndProperty = DependencyProperty.Register("End", typeof(double), typeof(MainWindow), new PropertyMetadata(85d));
+        public static readonly DependencyProperty StartProperty = DependencyProperty.Register("Start", typeof(double), typeof(MainWindow), new PropertyMetadata(RangeSlider.MinStartValue));
+        public static readonly DependencyProperty EndProperty = DependencyProperty.Register("End", typeof(double), typeof(MainWindow), new PropertyMetadata(RangeSlider.MaxStartValue));
 
         public double Max
         {
@@ -81,6 +81,8 @@ namespace LogicLayer.Menus.Live
         public LiveTelemetry()
         {
             InitializeComponent();
+
+            rangeSliderDistance = End - Start;
 
             InitializeGroupItems(GroupsStackPanel);
             UpdateSectionTitle();
@@ -181,9 +183,9 @@ namespace LogicLayer.Menus.Live
                         
                         int minRenderIndex = (int)(Start * renderRate);
                         double end = End;
-                        if (end - Start > Start + distance)
+                        if (end - Start > Start + rangeSliderDistance)
                         {
-                            end = Start + distance;
+                            end = Start + rangeSliderDistance;
                         }
                         int maxRenderIndex = (int)(end * renderRate);
 
@@ -264,7 +266,7 @@ namespace LogicLayer.Menus.Live
         {
             ChannelsStackPanel.Children.Clear();
 
-            foreach (var channelName in channelNames)
+            foreach (var channelName in channelNamesFromSection)
             {
                 var checkBox = new CheckBox()
                 {
@@ -383,7 +385,7 @@ namespace LogicLayer.Menus.Live
 
             UpdateSectionTitle();
 
-            this.channelNames = new List<string>(channelNames);
+            this.channelNamesFromSection = new List<string>(channelNames);
 
             UpdateChannelsList();
 
@@ -651,12 +653,12 @@ namespace LogicLayer.Menus.Live
             {
                 if (activeSection.IsLive)
                 {
-                    RecieveDataStatusIcon.Kind = CanUpdateCharts ? MaterialDesignThemes.Wpf.PackIconKind.Pause :
-                                                                   MaterialDesignThemes.Wpf.PackIconKind.Play;
+                    RecieveDataStatusIcon.Kind = CanUpdateCharts ? PackIconKind.Pause :
+                                                                   PackIconKind.Play;
                 }
                 else
                 {
-                    RecieveDataStatusIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.TrayArrowDown;
+                    RecieveDataStatusIcon.Kind = PackIconKind.TrayArrowDown;
                     RecieveDataStatusIcon.Opacity = gettingData ? LITTLE_OPACITY_VALUE : NO_OPACITY_VALUE;
                     Mouse.OverrideCursor = gettingData ? Cursors.Wait : null;
                 }
@@ -665,8 +667,7 @@ namespace LogicLayer.Menus.Live
 
         public void UpdateDataSlider()
         {
-            distance = End - Start;
-            Trace.WriteLine($"distance: {distance}");
+            rangeSliderDistance = End - Start;
             BuildCharts();
         }
     }
