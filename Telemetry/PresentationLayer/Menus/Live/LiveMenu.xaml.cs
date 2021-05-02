@@ -25,7 +25,7 @@ namespace LogicLayer.Menus.Live
             MenuManager.LiveSettings = (LiveSettings)liveSettingsTab.Content;
             AddTab(liveSettingsTab);
 
-            TabItem liveTelemetryTab = MakeTab(TextManager.LiveMenuName, new LiveTelemetry(), "liveTelemetryTab", selected: true);
+            TabItem liveTelemetryTab = MakeTab(TextManager.LiveMenuName, new LiveTelemetry(), "liveTelemetryTab", selected: false);
             MenuManager.LiveTelemetry = (LiveTelemetry)liveTelemetryTab.Content;
             AddTab(liveTelemetryTab);
         }

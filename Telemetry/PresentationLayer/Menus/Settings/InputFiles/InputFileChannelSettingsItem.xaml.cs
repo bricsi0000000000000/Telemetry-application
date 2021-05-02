@@ -119,6 +119,7 @@ namespace LogicLayer.Menus.Settings.InputFiles
 
                 //TODO if driverless, a driverlesseset updatelje ha nem akkor meg a másikat
                 ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                MenuManager.LiveTelemetry.BuildCharts();
             }
         }
 

@@ -31,7 +31,7 @@
     <Page Update="App.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
-    <Page Update="ART_design.xaml">
+    <Page Update="CustomDesign.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Charts\Chart.xaml">
@@ -115,6 +115,10 @@
     <Page Update="Menus\Settings\Units\UnitsMenu.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="RangeSlider\" />
   </ItemGroup>
 
 </Project>

@@ -155,6 +155,7 @@ namespace PresentationLayer.Charts
 
                     //TODO if driverless, a driverlesseset updatelje ha nem akkor meg a másikat
                     ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                    MenuManager.LiveTelemetry.BuildCharts();
 
                     Mouse.OverrideCursor = null;
                 }

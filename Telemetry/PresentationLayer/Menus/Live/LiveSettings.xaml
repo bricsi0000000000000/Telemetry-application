@@ -64,7 +64,8 @@
                                 Margin="0,2.5,0,0"/>
                 </ScrollViewer>
                 <Grid x:Name="SectionsCoverGridGrid"
-                        Background="White">
+                      Background="White"
+                      >
                     <materialDesign:PackIcon Kind="CardsVariant"
                                                 Opacity=".2"
                                                 VerticalAlignment="Stretch"
@@ -219,19 +220,37 @@
                                        Margin="5,0,0,0"
                                        />
 
-                                <TextBox Name="SelectedSectionChannelsCountTextBox"
-                                         Grid.Column="1"
-                                         TextWrapping="Wrap"
-                                         VerticalAlignment="Stretch"
-                                         HorizontalAlignment="Stretch"
-                                         VerticalContentAlignment="Center"
-                                         HorizontalContentAlignment="Left"
-                                         IsReadOnly="True"
-                                         materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-                                         BorderThickness="0"
-                                         Text="(4)"
-                                         FontStyle="Italic"
-                                         />
+                                <Grid Grid.Column="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="3*"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <TextBox Name="SelectedSectionChannelsCountTextBox"
+                                             TextWrapping="Wrap"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             VerticalContentAlignment="Center"
+                                             HorizontalContentAlignment="Left"
+                                             IsReadOnly="True"
+                                             materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                                             BorderThickness="0"
+                                             Text="(4)"
+                                             FontStyle="Italic"
+                                             />
+
+                                    <TextBox Name="SelectedSectionPackagesCountTextBox"
+                                             Grid.Column="1"
+                                             TextWrapping="Wrap"
+                                             VerticalAlignment="Stretch"
+                                             HorizontalAlignment="Stretch"
+                                             VerticalContentAlignment="Center"
+                                             HorizontalContentAlignment="Left"
+                                             IsReadOnly="True"
+                                             materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                                             BorderThickness="0"
+                                             />
+                                </Grid>
                             </Grid>
 
                             <Grid Grid.Row="3">
@@ -260,7 +279,7 @@
                             <Grid x:Name="SectionDataGridCover"
                                   Background="White"
                                   Grid.RowSpan="5"
-                                  Visibility="Visible"
+                                  Visibility="Hidden"
                                   >
                                 <materialDesign:PackIcon Kind="CardText"
                                                          Opacity=".2"

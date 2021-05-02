@@ -1,14 +1,15 @@
 ﻿<local:PlotTelemetry x:Class="LogicLayer.Menus.Live.LiveTelemetry"
                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-                     mc:Ignorable="d"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                      xmlns:local="clr-namespace:PresentationLayer"
+                     xmlns:rangeSlider="clr-namespace:PresentationLayer.RangeSlider"
+                     mc:Ignorable="d"
                      TextElement.Foreground="{DynamicResource MaterialDesignBody}"
                      Background="{DynamicResource MaterialDesignPaper}"
                      TextElement.FontSize="14"
-                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                      d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -18,7 +19,7 @@
             <ColumnDefinition Width="5"/>
             <ColumnDefinition Width=".7*"/>
         </Grid.ColumnDefinitions>
-        
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="55"/>
@@ -37,46 +38,63 @@
                 <Grid>
                     <Grid>
                         <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height=".9*"/>
-                    </Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height=".9*"/>
+                        </Grid.RowDefinitions>
 
-                    <TextBox Name="SectionNameTextBox"
-                             TextWrapping="Wrap"
-                             VerticalAlignment="Stretch"
-                             HorizontalAlignment="Stretch"
-                             VerticalContentAlignment="Bottom"
-                             HorizontalContentAlignment="Center"
-                             IsReadOnly="True"
-                             materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-                             BorderThickness="0"
-                             Text="No section selected"
-                             FontWeight="Bold"
-                             />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="25"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                    <TextBox Name="SectionDateLabel"
-                             Grid.Row="1"
-                             TextWrapping="Wrap"
-                             VerticalAlignment="Stretch"
-                             HorizontalAlignment="Stretch"
-                             VerticalContentAlignment="Bottom"
-                             HorizontalContentAlignment="Center"
-                             IsReadOnly="True"
-                             FontSize="12"
-                             Foreground="{DynamicResource Secondary800}"
-                             materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-                             BorderThickness="0"
-                             Text="1/12/2021"
-                             />
+                            <materialDesign:PackIcon Kind="AccessPoint"
+                                                     Name="SectionStatusIcon"
+                                                     HorizontalAlignment="Left"
+                                                     VerticalAlignment="Center"
+                                                     Margin="5,0,0,0"
+                                                     />
+
+                            <TextBox Name="SectionNameTextBox"
+                                     Grid.Column="1"
+                                     TextWrapping="Wrap"
+                                     VerticalAlignment="Stretch"
+                                     HorizontalAlignment="Stretch"
+                                     HorizontalContentAlignment="Left"
+                                     VerticalContentAlignment="Bottom"
+                                     IsReadOnly="True"
+                                     materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                                     BorderThickness="0"
+                                     Text="No section selected"
+                                     FontWeight="Bold"
+                                     />
+
+                        </Grid>
+
+                        <TextBox Name="SectionDateLabel"
+                            Grid.Row="1"
+                            TextWrapping="Wrap"
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Stretch"
+                            VerticalContentAlignment="Bottom"
+                            HorizontalContentAlignment="Center"
+                            IsReadOnly="True"
+                            FontSize="12"
+                            Foreground="{DynamicResource Secondary800}"
+                            materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                            BorderThickness="0"
+                            Text="1/12/2021"
+                            />
                     </Grid>
                     <Grid Background="White"
-                          Name="NoSectionGrid"
-                          >
+                        Name="NoSectionGrid"
+                        Visibility="Hidden"
+                        >
                         <materialDesign:PackIcon Kind="CardBulleted"
-                                                 VerticalAlignment="Stretch"
-                                                 HorizontalAlignment="Stretch"
-                                                 Opacity=".2"
-                                                 />
+                                                VerticalAlignment="Stretch"
+                                                HorizontalAlignment="Stretch"
+                                                Opacity=".2"
+                                                />
                     </Grid>
                 </Grid>
             </materialDesign:Card>
@@ -90,7 +108,7 @@
                     <ScrollViewer Margin="5">
                         <StackPanel Name="ChannelsStackPanel" />
                     </ScrollViewer>
-                    
+
                     <Grid Background="White"
                           Name="NoChannelsGrid"
                           >
@@ -114,7 +132,7 @@
                     <ScrollViewer Margin="5">
                         <StackPanel Name="GroupsStackPanel" />
                     </ScrollViewer>
-                    
+
                     <Grid Background="White"
                           Name="NoGroupsGrid"
                           >
@@ -165,20 +183,30 @@
                       />
             </ScrollViewer>
 
-            <Slider Grid.Row="1"
-                    x:Name="DataSlider"
-                    Margin="5,0"
-                    ValueChanged="DataSlider_ValueChanged"
-                    IsSnapToTickEnabled="True"
-                    TickFrequency="1"
+            <!-- Background line of the slider because that doesn't has one -->
+            <Border Grid.Row="1"
+                    Background="{StaticResource Secondary400}"
+                    Height="2"
+                    Margin="8"
+                    HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
-                    >
-            </Slider>
+                    CornerRadius="1"
+                    />
+            
+            <rangeSlider:RangeSlider Grid.Row="1" 
+                                     Orientation="Horizontal" 
+                                     Height="25"
+                                     Margin="8,0"
+                                     Maximum="{Binding Max, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                     Minimum="{Binding Min, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                     Start="{Binding Start, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                     End="{Binding End, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
         </Grid>
 
         <Grid Grid.Column="2"
               Background="White"
               Name="NoChartsGrid"
+              Visibility="Hidden"
               >
             <materialDesign:PackIcon Kind="ChartLine"
                                      VerticalAlignment="Stretch"

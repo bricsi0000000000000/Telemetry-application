@@ -17,6 +17,10 @@ namespace LogicLayer.Extensions
             return System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
         }
 
+        public static System.Drawing.Color ConvertToChartColor(this Color color)
+        {
+            return System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
+        }
 
         public static SolidColorBrush ConvertBrush(this string colorText)
         {

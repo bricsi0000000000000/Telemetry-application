@@ -159,7 +159,7 @@ namespace PresentationLayer.Groups
         /// <param name="group">The group that you want to add to <see cref="Groups"/>.</param>
         public static void AddGroup(Group group) => Groups.Add(group);
 
-        public static Group MakeGroupWirhAttributes(string chartName, List<string> channelNames)
+        public static Group MakeGroupWithAttributes(string chartName, List<string> channelNames)
         {
             var newGroup = new Group(LastGroupID++, chartName);
             foreach (var name in channelNames)

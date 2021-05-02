@@ -11,11 +11,12 @@ using System.Runtime.CompilerServices;
 namespace PresentationLayer
 {
     /// <summary>
-    /// Base class for plotting telemetry data
+    /// Base class for plotting data
     /// </summary>
     public abstract class PlotTelemetry : UserControl
     {
-        protected const float deltaTime = .05f;
+        protected const float DELTA_TIME = .05f;
+        protected const int MAX_RENDER_DISTANCE = 20;
 
         protected List<string> selectedGroups = new List<string>();
         protected List<string> selectedChannels = new List<string>();
@@ -55,8 +56,8 @@ namespace PresentationLayer
             }
         }
 
-
-        private void GroupCheckBox_CheckedClick(object sender, RoutedEventArgs e)
+        // call BuildCharts() after this
+        protected virtual void GroupCheckBox_CheckedClick(object sender, RoutedEventArgs e)
         {
             var checkBox = (CheckBox)sender;
             string content = checkBox.Content.ToString();
@@ -69,8 +70,6 @@ namespace PresentationLayer
             {
                 selectedGroups.Remove(content);
             }
-
-            BuildCharts();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

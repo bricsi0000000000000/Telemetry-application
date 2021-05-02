@@ -1,9 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:LogicLayer"
                     xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
                     xmlns:controls="clr-namespace:WpfMath.Controls;assembly=WpfMath"
-                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     >
 
     <Color x:Key="Primary50">#ffffff</Color>
@@ -71,16 +69,17 @@
 
     <SolidColorBrush x:Key="Delete" Color="#da0000" po:Freeze="True" />
     <SolidColorBrush x:Key="GridSplitter" Color="#fafafa" po:Freeze="True" />
-    <SolidColorBrush x:Key="Secondary" Color="#3c3c3c" po:Freeze="True" />
-    <SolidColorBrush x:Key="Secondary800" Color="#606060" po:Freeze="True" />
 
     <SolidColorBrush x:Key="ErrorMessagePopUpBackground" Color="#ff200c" po:Freeze="True" />
     <SolidColorBrush x:Key="ErrorMessagePopUpOkButtonBackground" Color="#3c3c3c" po:Freeze="True" />
     <SolidColorBrush x:Key="ErrorMessagePopUpBorderBrush" Color="#da0000" po:Freeze="True" />
 
     <SolidColorBrush x:Key="Expander" Color="#fafafa" po:Freeze="True" />
+    <SolidColorBrush x:Key="Secondary" Color="#3c3c3c" po:Freeze="True" />
     <SolidColorBrush x:Key="Secondary200" Color="#f5f5f5" po:Freeze="True" />
     <SolidColorBrush x:Key="Secondary300" Color="#f0f0f0" po:Freeze="True" />
+    <SolidColorBrush x:Key="Secondary400" Color="#dedede" po:Freeze="True" />
+    <SolidColorBrush x:Key="Secondary800" Color="#606060" po:Freeze="True" />
 
     <Style x:Key="ClearTypeFormula" TargetType="controls:FormulaControl">
         <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />

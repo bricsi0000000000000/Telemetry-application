@@ -99,6 +99,7 @@ namespace LogicLayer.Menus.Settings.Groups
             InitGroups();
             GroupManager.SaveGroups();
             ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+            MenuManager.LiveTelemetry.BuildCharts();
         }
 
         /// <summary>
@@ -305,6 +306,7 @@ namespace LogicLayer.Menus.Settings.Groups
             InitGroups();
             SelectInputFile();
             ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+            MenuManager.LiveTelemetry.BuildCharts();
 
             Mouse.OverrideCursor = null;
         }
@@ -427,6 +429,7 @@ namespace LogicLayer.Menus.Settings.Groups
                 activeAttribute.ColorText = pickedColor.ToString();
                 GroupManager.SaveGroups();
                 ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                MenuManager.LiveTelemetry.BuildCharts();
 
                 foreach (GroupSettingsAttribute item in AttributesStackPanel.Children)
                 {
@@ -479,6 +482,7 @@ namespace LogicLayer.Menus.Settings.Groups
                         }
 
                         ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                        MenuManager.LiveTelemetry.BuildCharts();
                     }
                 }
             }
@@ -536,6 +540,7 @@ namespace LogicLayer.Menus.Settings.Groups
                 InitGroups();
                 SelectInputFile();
                 ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+                MenuManager.LiveTelemetry.BuildCharts();
 
                 Mouse.OverrideCursor = null;
             }
@@ -615,6 +620,7 @@ namespace LogicLayer.Menus.Settings.Groups
                 GroupManager.SaveGroups();
 
                 ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).InitializeGroupItems();
+                MenuManager.LiveTelemetry.InitializeGroupItems();
 
                 SelectInputFile();
 
@@ -731,6 +737,7 @@ namespace LogicLayer.Menus.Settings.Groups
                 InitGroups();
                 UpdateChannels();
                 ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).InitializeGroupItems();
+                MenuManager.LiveTelemetry.InitializeGroupItems();
                 // ((Diagrams)MenuManager.GetTab(TextManager.DiagramsMenuName).Content).InitTabs();
             }
 
@@ -788,6 +795,7 @@ namespace LogicLayer.Menus.Settings.Groups
             SelectInputFile();
 
             ((DriverlessMenu)MenuManager.GetMenuTab(TextManager.DriverlessMenuName).Content).BuildCharts();
+            MenuManager.LiveTelemetry.BuildCharts();
 
             AddAttributeNameTextBox.Text = string.Empty;
             AddAttributeLineWidthTextBox.Text = "1";

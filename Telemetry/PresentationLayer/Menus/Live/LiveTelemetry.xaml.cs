@@ -19,6 +19,8 @@ using PresentationLayer.Charts;
 using PresentationLayer.Groups;
 using PresentationLayer.InputFiles;
 using PresentationLayer;
+using System.Windows.Input;
+using MaterialDesignThemes.Wpf;
 
 namespace LogicLayer.Menus.Live
 {
@@ -27,16 +29,11 @@ namespace LogicLayer.Menus.Live
         private Section activeSection;
         public bool IsSelectedSection { get; set; } = false;
 
-        private readonly List<Chart> charts = new List<Chart>();
-        private bool canUpdateCharts = false;
+        public bool CanUpdateCharts { get; private set; } = false;
         private static HttpClient client = new HttpClient();
 
-        /// <summary>
-        /// Item1: name
-        /// Item2: is active
-        /// </summary>
-        private List<Tuple<string, bool>> channelNames = new List<Tuple<string, bool>>();
-
+        // channel names from section
+        private List<string> channelNames = new List<string>();
         private int lastPackageID = 0;
         private readonly object getDataLock = new object();
         private readonly AutoResetEvent getDataSignal = new AutoResetEvent(false);
@@ -44,11 +41,48 @@ namespace LogicLayer.Menus.Live
         private const int NO_OPACITY_VALUE = 1;
         private const float LITTLE_OPACITY_VALUE = .2f;
 
+        private bool gettingData = false;
+
+        private double distance = 0;
+
+        #region range slider
+
+        public static readonly DependencyProperty MinProperty = DependencyProperty.Register("Min", typeof(double), typeof(MainWindow), new PropertyMetadata(0d));
+        public static readonly DependencyProperty MaxProperty = DependencyProperty.Register("Max", typeof(double), typeof(MainWindow), new PropertyMetadata(100d));
+        public static readonly DependencyProperty StartProperty = DependencyProperty.Register("Start", typeof(double), typeof(MainWindow), new PropertyMetadata(20d));
+        public static readonly DependencyProperty EndProperty = DependencyProperty.Register("End", typeof(double), typeof(MainWindow), new PropertyMetadata(85d));
+
+        public double Max
+        {
+            get => (double)GetValue(MaxProperty);
+            set => SetValue(MaxProperty, value);
+        }
+
+        public double Min
+        {
+            get => (double)GetValue(MinProperty);
+            set => SetValue(MinProperty, value);
+        }
+
+        public double Start
+        {
+            get => (double)GetValue(StartProperty);
+            set => SetValue(StartProperty, value);
+        }
+
+        public double End
+        {
+            get => (double)GetValue(EndProperty);
+            set => SetValue(EndProperty, value);
+        }
+
+        #endregion
+
         public LiveTelemetry()
         {
             InitializeComponent();
 
-            InitializeGroupItems(initCall: true);
+            InitializeGroupItems(GroupsStackPanel);
             UpdateSectionTitle();
             UpdateCanRecieveDataStatus();
             InitilaizeHttpClient();
@@ -91,32 +125,19 @@ namespace LogicLayer.Menus.Live
             }
         }
 
-        private void InitializeGroupItems(bool initCall = false)
-        {
-            base.InitializeGroupItems(GroupsStackPanel);
-
-            if (!initCall)
-            {
-                BuildCharts();
-            }
-        }
-
         public override void BuildCharts()
         {
             ChartsGrid.Children.Clear();
             ChartsGrid.RowDefinitions.Clear();
 
             int rowIndex = 0;
-            foreach (var channelName in channelNames)
+            foreach (var channelName in selectedChannels) // egyszerű channeles chart
             {
-                if (selectedChannels.Contains(channelName.Item1))
-                {
-                    var group = new Group(GroupManager.LastGroupID++, channelName.Item1);
+                var group = new Group(GroupManager.LastGroupID++, channelName);
 
-                    group.AddAttribute(InputFileManager.GetLiveFile(activeSection.Name).GetChannel(channelName.Item1));
+                group.AddAttribute(InputFileManager.GetLiveFile(activeSection.ID).GetChannel(channelName));
 
-                    BuildChartGrid(group, ref rowIndex, ref ChartsGrid);
-                }
+                BuildChartGrid(group, ref rowIndex, ref ChartsGrid);
             }
 
             foreach (var group in GroupManager.Groups)
@@ -146,51 +167,41 @@ namespace LogicLayer.Menus.Live
         {
             var chart = new Chart(group.Name);
 
-            int dataIndex = (int)DataSlider.Value;
-
-            var addedChannelNames = new List<string>();
-
-            foreach (var channelName in channelNames)
-            {
-                var attribute = group.GetAttribute(channelName.Item1);
-                if (attribute != null)
-                {
-                    int lineWidth = group.GetAttribute(channelName.Item1).LineWidth;
-                    var channel = GetChannel(channelName.Item1);
-
-                    if (channelName.Item2) // aktiv e a channel
-                    {
-                        var color = group.GetAttribute(channel.Name).ColorText;
-
-                        if (charts.Find(x => x.ChartName.Equals(group.Name)) == null)
-                        {
-                            charts.Add(chart);
-                        }
-                    }
-                    else
-                    {
-                        chart.AddSideValue(channelName: channelName.Item1, xAxisValues: new double[0]/*, inputFileID: inputFile.Item1*/);
-                    }
-
-                    chart.AddChannelName(channelName.Item1);
-
-                    addedChannelNames.Add(channelName.Item1);
-                }
-            }
-
             foreach (var attribute in group.Attributes)
             {
-                if (!addedChannelNames.Contains(attribute.Name))
+                chart.AddChannelName(attribute.Name);
+                var channel = GetChannel(attribute.Name);
+                double[] values;
+                if (channel != null)
                 {
-                    chart.AddChannelName(attribute.Name);
-                    chart.AddSideValue(channelName: attribute.Name, xAxisValues: new double[0]);
-                }
-            }
+                    values = channel.Data.ToArray();
+                    if (values.Any())
+                    {
+                        double renderRate = values.Length / (double)MaxProperty.DefaultMetadata.DefaultValue;
+                        
+                        int minRenderIndex = (int)(Start * renderRate);
+                        double end = End;
+                        if (end - Start > Start + distance)
+                        {
+                            end = Start + distance;
+                        }
+                        int maxRenderIndex = (int)(end * renderRate);
 
-            if (horizontalAxisData.Count > 0)
-            {
-                double xValue = dataIndex < horizontalAxisData.Count ? horizontalAxisData[dataIndex] : horizontalAxisData.Last();
-                chart.UpdateHighlight(xValue);
+                        chart.AddLivePlot(xAxisValues: values,
+                                          lineColor: attribute.ColorText.ConvertToChartColor(),
+                                          lineWidth: 1,
+                                          xAxisLabel: "",
+                                          minRenderIndex,
+                                          maxRenderIndex);
+                    }
+                }
+                else
+                {
+                    values = new double[0];
+                }
+
+                chart.AddSideValue(attribute.Name, values, color: attribute.ColorText, isActive: values.Any());
+                chart.UpdateLiveSideValue();
             }
 
             chart.SetAxisLimitsToAuto();
@@ -200,7 +211,7 @@ namespace LogicLayer.Menus.Live
 
         public override Channel GetChannel(string channelName, int? inputFileID = null)
         {
-            var liveFile = InputFileManager.GetLiveFile(activeSection.Name);
+            var liveFile = InputFileManager.GetLiveFile(activeSection.ID);
             if (liveFile == null)
             {
                 return null;
@@ -257,20 +268,48 @@ namespace LogicLayer.Menus.Live
             {
                 var checkBox = new CheckBox()
                 {
-                    Content = channelName.Item1
+                    Content = channelName
                 };
-                checkBox.Click += ChannelCheckBox_Click;
+                checkBox.Checked += ChannelCheckBox_Checked;
+                checkBox.Unchecked += ChannelCheckBox_Checked;
+                checkBox.PreviewMouseRightButtonDown += ChannelCheckboc_PreviewMouseRightButtonDown;
+                checkBox.MouseEnter += CheckBox_MouseEnter;
+                checkBox.MouseLeave += CheckBox_MouseLeave;
 
                 ChannelsStackPanel.Children.Add(checkBox);
             }
+        }
 
-            if (selectedChannels.Any())
+        private void CheckBox_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void CheckBox_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Mouse.OverrideCursor = null;
+        }
+
+        private void ChannelCheckboc_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            CheckBox checkBox = (CheckBox)sender;
+            string channelName = "";
+
+            foreach (CheckBox item in ChannelsStackPanel.Children)
             {
-                BuildCharts();
+                if (item.Content.Equals(checkBox.Content))
+                {
+                    channelName = item.Content.ToString();
+                }
+            }
+
+            if (!channelName.Equals(string.Empty))
+            {
+                DragDrop.DoDragDrop(checkBox, channelName, DragDropEffects.Move);
             }
         }
 
-        private void ChannelCheckBox_Click(object sender, RoutedEventArgs e)
+        private void ChannelCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             var checkBox = (CheckBox)sender;
             string content = checkBox.Content.ToString();
@@ -285,13 +324,44 @@ namespace LogicLayer.Menus.Live
                 selectedChannels.Remove(content);
             }
 
-            int index = channelNames.FindIndex(x => x.Item1.Equals(content));
-            channelNames[index] = new Tuple<string, bool>(content, isChecked);
+            BuildCharts();
+        }
 
-            lastPackageID = 0;
+        public void ReplaceChannelWithTemporaryGroup(string channelName, string groupName)
+        {
+            foreach (CheckBox item in ChannelsStackPanel.Children)
+            {
+                if (item.Content.ToString().Equals(channelName))
+                {
+                    item.IsChecked = false;
+                }
+            }
+
+            InitializeGroupItems();
+
+            foreach (CheckBox item in GroupsStackPanel.Children)
+            {
+                if (item.Content.ToString().Equals(groupName))
+                {
+                    item.IsChecked = true;
+                }
+            }
+        }
+
+        public override void InitializeGroupItems(StackPanel groupsStackPanel = null)
+        {
+            NoGroupsGrid.Visibility = GroupManager.Groups.Count == 0 ? Visibility.Visible : Visibility.Hidden;
+
+            base.InitializeGroupItems(GroupsStackPanel);
+        }
+
+        protected override void GroupCheckBox_CheckedClick(object sender, RoutedEventArgs e)
+        {
+            base.GroupCheckBox_CheckedClick(sender, e);
 
             BuildCharts();
         }
+
 
         /// <summary>
         /// Updates the active section to <paramref name="section"/> and initializes the channels and charts.
@@ -301,24 +371,35 @@ namespace LogicLayer.Menus.Live
         {
             activeSection = section;
 
+            ChangeSectionStatusIconState(section.IsLive);
+
             IsSelectedSection = true;
 
             UpdateCoverGridsVisibilities();
 
             ResetCharts();
 
-            Stop(); //TODO biztos?
-            canUpdateCharts = false;
+            CanUpdateCharts = false;
 
             UpdateSectionTitle();
 
-            this.channelNames = new List<Tuple<string, bool>>();
-            foreach (var name in channelNames)
-            {
-                this.channelNames.Add(new Tuple<string, bool>(name, false));
-            }
+            this.channelNames = new List<string>(channelNames);
 
             UpdateChannelsList();
+
+
+            lastPackageID = 0;
+        }
+
+        public void ChangeSectionStatusIconState(bool isLive)
+        {
+            SectionStatusIcon.Kind = isLive ? PackIconKind.AccessPoint : PackIconKind.AccessPointOff;
+            SectionStatusIcon.Foreground = isLive ? ColorManager.Secondary900.ConvertBrush() :
+                                                                  ColorManager.Primary900.ConvertBrush();
+
+            activeSection.IsLive = isLive;
+
+            UpdateCanRecieveDataStatus();
         }
 
         public void ResetCharts()
@@ -331,13 +412,12 @@ namespace LogicLayer.Menus.Live
                 item.IsChecked = false;
             }
 
-            charts.Clear();
             ChartsGrid.Children.Clear();
         }
 
         private void CollectData()
         {
-            while (canUpdateCharts)
+            while (CanUpdateCharts)
             {
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
@@ -352,13 +432,12 @@ namespace LogicLayer.Menus.Live
                 {
                     foreach (var package in packages)
                     {
-                        foreach (var name in selectedChannels)
+                        foreach (var channel in InputFileManager.GetLiveFile(activeSection.ID).Channels)
                         {
-                            var sensorData = GetSensorData(packageID: package.ID, sensorName: name, packages: packages);
+                            var sensorData = GetSensorData(packageID: package.ID, sensorName: channel.Name, packages: packages);
                             if (sensorData.Any())
                             {
-                                InputFileManager.AddDataToLiveFile(liveFileName: activeSection.Name, channelName: name, values: sensorData);
-                                InputFileManager.SaveFile(activeSection.Name);
+                                InputFileManager.AddDataToLiveFile(fileID: activeSection.ID, channelName: channel.Name, values: sensorData);
                             }
                         }
                     }
@@ -366,6 +445,12 @@ namespace LogicLayer.Menus.Live
                     lastPackageID = packages.Last().ID;
 
                     getDataSignal.Set();
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        BuildCharts();
+                        MenuManager.LiveSettings.ChangeLoadedPackagesLabel(lastPackageID);
+                    });
 
                     if (activeSection.IsLive)
                     {
@@ -380,61 +465,13 @@ namespace LogicLayer.Menus.Live
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        canUpdateCharts = false;
+                        gettingData = false;
+                        CanUpdateCharts = false;
                         UpdateCanRecieveDataStatus();
                     });
                 }
 
                 Thread.Sleep(ConfigurationManager.WaitBetweenCollectData);
-            }
-        }
-
-        /// <summary>
-        /// Updates charts with new incoming data
-        /// </summary>
-        private void UpdateCharts()
-        {
-            while (canUpdateCharts)
-            {
-                getDataSignal.WaitOne();
-                if (canUpdateCharts)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        Plot();
-                    });
-
-                    Thread.Sleep(ConfigurationManager.WaitBetweenCollectData);
-                }
-            }
-        }
-
-        private void Plot()
-        {
-            foreach (var name in selectedChannels)
-            {
-                var chart = GetChart(name);
-                if (chart != null)
-                {
-                    double[] sensorData = InputFileManager.GetLiveFile(activeSection.Name).GetChannel(name).Data.ToArray();
-                    if (sensorData.Any())
-                    {
-                        chart.PlotLive(sensorData, name);
-
-                        /*chart.AddPlot(xAxisValues: channelDataPlotData.Item1,
-                                     yAxisValues: channel.Data.ToArray(),
-                                     lineWidth: lineWidth,
-                                     lineColor: ColorTranslator.FromHtml(color),
-                                     xAxisLabel: group.HorizontalAxis);
-
-                       chart.AddSideValue(channelName: channelName.Item1,
-                                           xAxisValues: channelDataPlotData.Item2,
-                                           isActive: true,
-                                           inputFileID: inputFile.Item1,
-                                           color: color,
-                                           lineWidth: lineWidth);*/
-                    }
-                }
             }
         }
 
@@ -533,17 +570,6 @@ namespace LogicLayer.Menus.Live
             return null;
         }
 
-        private void DataSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="error">If true, it's an error message, if not, it's a regular one.</param>
-        /// <param name="time"></param>
         private void ShowErrorMessage(string message, bool error = true, double time = 3)
         {
             ErrorSnackbar.Background = error ? ColorManager.Primary900.ConvertBrush() :
@@ -552,68 +578,96 @@ namespace LogicLayer.Menus.Live
             ErrorSnackbar.MessageQueue.Enqueue(message, null, null, null, false, true, TimeSpan.FromSeconds(time));
         }
 
-        private void RecieveDataStatusCard_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void RecieveDataStatusCard_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (IsSelectedSection)
+            if (!gettingData)
             {
-                RecieveDataStatusCard.Background = ColorManager.Secondary200.ConvertBrush();
+                if (IsSelectedSection)
+                {
+                    RecieveDataStatusCard.Background = ColorManager.Secondary200.ConvertBrush();
+                }
             }
         }
 
-        private void RecieveDataStatusCard_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void RecieveDataStatusCard_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (IsSelectedSection)
+            if (!gettingData)
             {
-                RecieveDataStatusCard.Background = ColorManager.Secondary100.ConvertBrush();
-
-                canUpdateCharts = !canUpdateCharts;
-                UpdateCanRecieveDataStatus();
-
-                if (canUpdateCharts)
+                if (IsSelectedSection)
                 {
-                    var collectDataThread = new Thread(new ThreadStart(CollectData));
-                    collectDataThread.Start();
+                    RecieveDataStatusCard.Background = ColorManager.Secondary100.ConvertBrush();
 
-                    var updateThread = new Thread(new ThreadStart(UpdateCharts));
-                    updateThread.Start();
-                }
-                else
-                {
-                    InputFileManager.SaveFile(activeSection.Name);
-
-                    Application.Current.Dispatcher.Invoke(() =>
+                    if (activeSection.IsLive)
                     {
+                        CanUpdateCharts = !CanUpdateCharts;
+                    }
+                    else
+                    {
+                        gettingData = true;
+                        CanUpdateCharts = true;
+                    }
+
+                    if (CanUpdateCharts)
+                    {
+                        var collectDataThread = new Thread(new ThreadStart(CollectData));
+                        collectDataThread.Start();
+                    }
+                    else
+                    {
+                        InputFileManager.SaveFile(activeSection.Name);
                         MenuManager.LiveSettings.UpdateCarStatus();
-                    });
+                    }
+
+                    UpdateCanRecieveDataStatus();
                 }
             }
         }
 
-        private void RecieveDataStatusCard_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        private void RecieveDataStatusCard_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (IsSelectedSection)
+            if (!gettingData)
             {
-                RecieveDataStatusCard.Background = ColorManager.Secondary100.ConvertBrush();
+                if (IsSelectedSection)
+                {
+                    RecieveDataStatusCard.Background = ColorManager.Secondary100.ConvertBrush();
+                }
             }
         }
 
-        private void RecieveDataStatusCard_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void RecieveDataStatusCard_MouseLeave(object sender, MouseEventArgs e)
         {
-            if (IsSelectedSection)
+            if (!gettingData)
             {
-                RecieveDataStatusCard.Background = ColorManager.Secondary50.ConvertBrush();
+                if (IsSelectedSection)
+                {
+                    RecieveDataStatusCard.Background = ColorManager.Secondary50.ConvertBrush();
+                }
             }
         }
 
         private void UpdateCanRecieveDataStatus()
         {
-            RecieveDataStatusIcon.Kind = canUpdateCharts ? MaterialDesignThemes.Wpf.PackIconKind.Pause :
-                                                           MaterialDesignThemes.Wpf.PackIconKind.Play;
+            if (activeSection != null)
+            {
+                if (activeSection.IsLive)
+                {
+                    RecieveDataStatusIcon.Kind = CanUpdateCharts ? MaterialDesignThemes.Wpf.PackIconKind.Pause :
+                                                                   MaterialDesignThemes.Wpf.PackIconKind.Play;
+                }
+                else
+                {
+                    RecieveDataStatusIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.TrayArrowDown;
+                    RecieveDataStatusIcon.Opacity = gettingData ? LITTLE_OPACITY_VALUE : NO_OPACITY_VALUE;
+                    Mouse.OverrideCursor = gettingData ? Cursors.Wait : null;
+                }
+            }
         }
 
-        public void Stop()
+        public void UpdateDataSlider()
         {
-            canUpdateCharts = false;
+            distance = End - Start;
+            Trace.WriteLine($"distance: {distance}");
+            BuildCharts();
         }
     }
 }
