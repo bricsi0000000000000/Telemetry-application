@@ -15,7 +15,7 @@ namespace LogicLayer.Menus.Live
     /// </summary>
     public partial class PopUpEditWindow : Window
     {
-        public enum EditType { ChangeSectionName, ChangeLineWidth }
+        public enum EditType { ChangeLineWidth }
         private EditType editType;
 
         private readonly FieldsViewModel fieldsViewModel = new FieldsViewModel();
@@ -52,8 +52,6 @@ namespace LogicLayer.Menus.Live
 
             switch (editType)
             {
-                case EditType.ChangeSectionName:
-                    break;
                 case EditType.ChangeLineWidth:
                     ((InputFilesSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeLineWidth(newLineWidth: ChaneNameTextBox.Text,
                                                                                                                                                                                  inputFileID: data.inputFileID,
@@ -89,8 +87,6 @@ namespace LogicLayer.Menus.Live
 
             switch (editType)
             {
-                case EditType.ChangeSectionName:
-                    break;
                 case EditType.ChangeLineWidth:
                     ((InputFilesSettings)((SettingsMenu)MenuManager.GetMenuTab(TextManager.SettingsMenuName).Content).GetTab(TextManager.FilesSettingsName).Content).ChangeLineWidth(newLineWidth: ChaneNameTextBox.Text,
                                                                                                                                                                                  inputFileID: data.inputFileID,

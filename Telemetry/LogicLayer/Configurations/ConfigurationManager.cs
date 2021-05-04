@@ -27,15 +27,15 @@ namespace LogicLayer.Configurations
 
         #region API calls
 
-        #region sections
-        public static string LiveSectionAPICall { get; private set; }
-        public static string AllLiveSectionsAPICall { get; private set; }
-        public static string PostNewSectionAPICall { get; private set; }
-        public static string ChangeSectionToLiveAPICall { get; private set; }
-        public static string ChangeSectionToOfflineAPICall { get; private set; }
-        public static string ChangeSectionNameAPICall { get; private set; }
-        public static string ChangeSectionDateAPICall { get; private set; }
-        public static string DeleteSectionAPICall { get; private set; }
+        #region sessions
+        public static string LiveSessionAPICall { get; private set; }
+        public static string AllLiveSessionsAPICall { get; private set; }
+        public static string PostNewSessionAPICall { get; private set; }
+        public static string ChangeSessionToLiveAPICall { get; private set; }
+        public static string ChangeSessionToOfflineAPICall { get; private set; }
+        public static string ChangeSessionNameAPICall { get; private set; }
+        public static string ChangeSessionDateAPICall { get; private set; }
+        public static string DeleteSessionAPICall { get; private set; }
         #endregion
 
         #region packages
@@ -81,14 +81,14 @@ namespace LogicLayer.Configurations
                 URL = configurationJSON.live.url;
                 Port = configurationJSON.live.port;
 
-                LiveSectionAPICall = configurationJSON.live.sections.get_live_section;
-                AllLiveSectionsAPICall = configurationJSON.live.sections.get_all_sections;
-                PostNewSectionAPICall = configurationJSON.live.sections.post_new_section;
-                ChangeSectionToLiveAPICall = configurationJSON.live.sections.change_section_to_live;
-                ChangeSectionToOfflineAPICall = configurationJSON.live.sections.change_section_to_offline;
-                ChangeSectionNameAPICall = configurationJSON.live.sections.change_section_name;
-                ChangeSectionDateAPICall = configurationJSON.live.sections.change_section_date;
-                DeleteSectionAPICall = configurationJSON.live.sections.delete_section;
+                LiveSessionAPICall = configurationJSON.live.sessions.get_live_session;
+                AllLiveSessionsAPICall = configurationJSON.live.sessions.get_all_sessions;
+                PostNewSessionAPICall = configurationJSON.live.sessions.post_new_session;
+                ChangeSessionToLiveAPICall = configurationJSON.live.sessions.change_session_to_live;
+                ChangeSessionToOfflineAPICall = configurationJSON.live.sessions.change_session_to_offline;
+                ChangeSessionNameAPICall = configurationJSON.live.sessions.change_session_name;
+                ChangeSessionDateAPICall = configurationJSON.live.sessions.change_session_date;
+                DeleteSessionAPICall = configurationJSON.live.sessions.delete_session;
 
                 GetPackageByID_APICall = configurationJSON.live.packages.get_package_by_id;
                 GetPackagesAfter_APICall = configurationJSON.live.packages.get_packages_after;

@@ -21,8 +21,8 @@ namespace LogicLayer.ValidationRules
         private string? fileName;
         private string? horizontalAxis;
         private string? changeLineWidth;
-        private string? sectionName;
-        private string? sectionDate;
+        private string? sessionName;
+        private string? sessionDate;
 
         public string? Name
         {
@@ -114,16 +114,16 @@ namespace LogicLayer.ValidationRules
             set => this.MutateVerbose(ref changeLineWidth, value, RaisePropertyChanged());
         }
 
-        public string? SectionName
+        public string? SessionName
         {
-            get => sectionName;
-            set => this.MutateVerbose(ref sectionName, value, RaisePropertyChanged());
+            get => sessionName;
+            set => this.MutateVerbose(ref sessionName, value, RaisePropertyChanged());
         }
 
-        public string? SectionDate
+        public string? SessionDate
         {
-            get => sectionDate;
-            set => this.MutateVerbose(ref sectionDate, value, RaisePropertyChanged());
+            get => sessionDate;
+            set => this.MutateVerbose(ref sessionDate, value, RaisePropertyChanged());
         }
 
 

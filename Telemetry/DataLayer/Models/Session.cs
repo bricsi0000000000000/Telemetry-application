@@ -2,7 +2,7 @@
 
 namespace DataLayer.Models
 {
-    public class Section
+    public class Session
     {
         public int ID { get; set; }
         public bool IsLive { get; set; }

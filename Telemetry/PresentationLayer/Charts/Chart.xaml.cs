@@ -275,9 +275,7 @@ namespace PresentationLayer.Charts
         {
             if (liveChartValues.Any())
             {
-                var a = liveChartValues[dataIndex];
-                var b = liveChartValues.Last();
-                double value = dataIndex < liveChartValues.Count ? a : b;
+                double value = dataIndex < liveChartValues.Count ? liveChartValues[dataIndex] : liveChartValues.Last();
 
                 foreach (var item in ValuesStackPanel.Children)
                 {

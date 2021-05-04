@@ -7,26 +7,26 @@ using LogicLayer.Extensions;
 namespace LogicLayer.Menus.Live
 {
     /// <summary>
-    /// Interaction logic for LiveSectionItem.xaml
+    /// Interaction logic for LiveSessionItem.xaml
     /// </summary>
-    public partial class LiveSectionItem : UserControl
+    public partial class LiveSessionItem : UserControl
     {
-        public int SectionID => section.ID;
+        public int SessionID => session.ID;
 
-        private readonly Section section;
+        private readonly Session session;
         private bool isActive = false;
 
-        public LiveSectionItem(Section section)
+        public LiveSessionItem(Session session)
         {
             InitializeComponent();
 
-            this.section = section;
+            this.session = session;
 
-            DateLabel.Content = section.DateString;
-            NameLabel.Content = section.Name;
-            ChangeStausIcon(section.IsLive);
+            DateLabel.Content = session.DateString;
+            NameLabel.Content = session.Name;
+            ChangeStausIcon(session.IsLive);
 
-            IsLiveIcon.Foreground = section.IsLive ? ColorManager.Secondary900.ConvertBrush() :
+            IsLiveIcon.Foreground = session.IsLive ? ColorManager.Secondary900.ConvertBrush() :
                                                      ColorManager.Primary900.ConvertBrush();
         }
 
@@ -50,12 +50,12 @@ namespace LogicLayer.Menus.Live
 
             if (isActive)
             {
-                IsLiveIcon.Foreground = section.IsLive ? ColorManager.Secondary50.ConvertBrush() :
+                IsLiveIcon.Foreground = session.IsLive ? ColorManager.Secondary50.ConvertBrush() :
                                                          ColorManager.Primary900.ConvertBrush();
             }
             else
             {
-                IsLiveIcon.Foreground = section.IsLive ? ColorManager.Secondary900.ConvertBrush() :
+                IsLiveIcon.Foreground = session.IsLive ? ColorManager.Secondary900.ConvertBrush() :
                                                          ColorManager.Primary900.ConvertBrush();
             }
         }
@@ -93,7 +93,7 @@ namespace LogicLayer.Menus.Live
             StatusCard.Background = isActive ? ColorManager.Secondary800.ConvertBrush() :
                                                ColorManager.Secondary100.ConvertBrush();
 
-            MenuManager.LiveSettings.SelectSection(SectionID);
+            MenuManager.LiveSettings.SelectSession(SessionID);
         }
 
         private void BackgroundCard_MouseEnter(object sender, MouseEventArgs e)

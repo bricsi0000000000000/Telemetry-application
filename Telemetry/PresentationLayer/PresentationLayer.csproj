@@ -61,7 +61,7 @@
     <Page Update="Menus\Live\LiveMenu.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
-    <Page Update="Menus\Live\LiveSectionItem.xaml">
+    <Page Update="Menus\Live\LiveSessionItem.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Menus\Live\LiveSettings.xaml">

@@ -16,7 +16,7 @@ namespace LogicLayer.Menus.Live
     /// </summary>
     public partial class PopUpWindow : Window
     {
-        public enum PopUpType { ChangeLiveStatus, DeleteSection, DeleteUnit, DeleteGroup, DeleteGroupAttribute, DeleteInputFile }
+        public enum PopUpType { ChangeLiveStatus, DeleteSession, DeleteUnit, DeleteGroup, DeleteGroupAttribute, DeleteInputFile }
 
         private readonly PopUpType popUpType;
 
@@ -42,7 +42,7 @@ namespace LogicLayer.Menus.Live
                 case PopUpType.ChangeLiveStatus:
                     MenuManager.LiveSettings.ChangeStatusResultAsync(change: true);
                     break;
-                case PopUpType.DeleteSection:
+                case PopUpType.DeleteSession:
                     ((LiveSettings)((LiveMenu)MenuManager.GetMenuTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).DeleteSeciton(delete: true);
                     break;
                 case PopUpType.DeleteUnit:
@@ -88,7 +88,7 @@ namespace LogicLayer.Menus.Live
                 case PopUpType.ChangeLiveStatus:
                     ((LiveSettings)((LiveMenu)MenuManager.GetMenuTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).ChangeStatusResultAsync(change: false);
                     break;
-                case PopUpType.DeleteSection:
+                case PopUpType.DeleteSession:
                     ((LiveSettings)((LiveMenu)MenuManager.GetMenuTab(TextManager.LiveMenuName).Content).GetTab(TextManager.SettingsMenuName).Content).DeleteSeciton(delete: false);
                     break;
                 case PopUpType.DeleteUnit:

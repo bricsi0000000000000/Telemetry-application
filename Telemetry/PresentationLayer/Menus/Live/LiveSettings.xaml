@@ -15,15 +15,15 @@
     <materialDesign:DialogHost HorizontalAlignment="Stretch"
                                VerticalAlignment="Stretch"
                                CloseOnClickAway="True"
-                               Name="SectionDialogHost"
+                               Name="SessionDialogHost"
                                >
         <materialDesign:DialogHost.DialogContent>
             <StackPanel Margin="16">
-                <TextBlock Text="Add new live section"/>
+                <TextBlock Text="Add new live session"/>
                 <TextBox Margin="0 8 0 0"
-                         Name="AddLiveSectionNameTextBox"
+                         Name="AddLiveSessionNameTextBox"
                          HorizontalAlignment="Stretch"
-                         materialDesign:HintAssist.Hint="Section name"
+                         materialDesign:HintAssist.Hint="Session name"
                          materialDesign:HintAssist.IsFloating="True"
                          />
                 <StackPanel Orientation="Horizontal"
@@ -34,7 +34,7 @@
                             Margin="0 8 8 0"
                             Command="materialDesign:DialogHost.CloseDialogCommand"
                             Content="Add"
-                            Click="AddLiveSection_Click"
+                            Click="AddLiveSession_Click"
                             >
                     </Button>
                     <Button Style="{StaticResource MaterialDesignFlatButton}"
@@ -60,10 +60,10 @@
           
             <Grid>
                 <ScrollViewer>
-                    <StackPanel Name="SectionsStackPanel"
+                    <StackPanel Name="SessionsStackPanel"
                                 Margin="0,2.5,0,0"/>
                 </ScrollViewer>
-                <Grid x:Name="SectionsCoverGridGrid"
+                <Grid x:Name="SessionsCoverGridGrid"
                       Background="White"
                       >
                     <materialDesign:PackIcon Kind="CardsVariant"
@@ -113,19 +113,19 @@
                                        Margin="5,0,0,0"
                                        />
 
-                                <TextBox Name="SelectedSectionNameTextBox"
+                                <TextBox Name="SelectedSessionNameTextBox"
                                          Grid.Column="1"
                                          VerticalAlignment="Stretch"
                                          HorizontalAlignment="Stretch"
                                          VerticalContentAlignment="Center"
                                          HorizontalContentAlignment="Left"
-                                         materialDesign:HintAssist.Hint="Section name"
+                                         materialDesign:HintAssist.Hint="Session name"
                                          materialDesign:HintAssist.IsFloating="True"
                                          BorderThickness="0"
                                          Margin="5,0,0,15"
                                          >
                                     <TextBox.Text>
-                                        <Binding Path="SectionName"
+                                        <Binding Path="SessionName"
                                                  UpdateSourceTrigger="PropertyChanged">
                                             <Binding.ValidationRules>
                                                 <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
@@ -134,15 +134,15 @@
                                     </TextBox.Text>
                                 </TextBox>
 
-                                <materialDesign:Card Name="ChangeSectionNameCardButton"
+                                <materialDesign:Card Name="ChangeSessionNameCardButton"
                                                      Grid.Column="2"
                                                      UniformCornerRadius="5"
                                                      Margin="5"
                                                      materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                                     PreviewMouseLeftButtonDown="ChangeSectionNameCardButton_PreviewMouseLeftButtonDown"
-                                                     PreviewMouseLeftButtonUp="ChangeSectionNameCardButton_PreviewMouseLeftButtonUp"
-                                                     MouseEnter="ChangeSectionNameCardButton_MouseEnter"
-                                                     MouseLeave="ChangeSectionNameCardButton_MouseLeave"
+                                                     PreviewMouseLeftButtonDown="ChangeSessionNameCardButton_PreviewMouseLeftButtonDown"
+                                                     PreviewMouseLeftButtonUp="ChangeSessionNameCardButton_PreviewMouseLeftButtonUp"
+                                                     MouseEnter="ChangeSessionNameCardButton_MouseEnter"
+                                                     MouseLeave="ChangeSessionNameCardButton_MouseLeave"
                                                      >
                                     <materialDesign:PackIcon Kind="ContentSave"
                                                              VerticalAlignment="Stretch"
@@ -167,19 +167,19 @@
                                    Margin="5,0,0,0"
                                    />
 
-                            <TextBox Name="SelectedSectionDateLabel"
+                            <TextBox Name="SelectedSessionDateLabel"
                                      Grid.Column="1"
                                      VerticalAlignment="Stretch"
                                      HorizontalAlignment="Stretch"
                                      VerticalContentAlignment="Center"
                                      HorizontalContentAlignment="Left"
                                      BorderThickness="0"
-                                     materialDesign:HintAssist.Hint="Section date"
+                                     materialDesign:HintAssist.Hint="Session date"
                                      materialDesign:HintAssist.IsFloating="True"
                                      Margin="5,0,0,15"
                                      >
                                     <TextBox.Text>
-                                        <Binding Path="SectionDate"
+                                        <Binding Path="SessionDate"
                                                  UpdateSourceTrigger="PropertyChanged">
                                             <Binding.ValidationRules>
                                                 <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
@@ -188,15 +188,15 @@
                                     </TextBox.Text>
                                 </TextBox>
 
-                             <materialDesign:Card Name="ChangeSectionDateCardButton"
+                             <materialDesign:Card Name="ChangeSessionDateCardButton"
                                                   Grid.Column="2"
                                                   UniformCornerRadius="5"
                                                   Margin="5"
                                                   materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                                  PreviewMouseLeftButtonDown="ChangeSectionDateCardButton_PreviewMouseLeftButtonDown"
-                                                  PreviewMouseLeftButtonUp="ChangeSectionDateCardButton_PreviewMouseLeftButtonUp"
-                                                  MouseEnter="ChangeSectionDateCardButton_MouseEnter"
-                                                  MouseLeave="ChangeSectionDateCardButton_MouseLeave"
+                                                  PreviewMouseLeftButtonDown="ChangeSessionDateCardButton_PreviewMouseLeftButtonDown"
+                                                  PreviewMouseLeftButtonUp="ChangeSessionDateCardButton_PreviewMouseLeftButtonUp"
+                                                  MouseEnter="ChangeSessionDateCardButton_MouseEnter"
+                                                  MouseLeave="ChangeSessionDateCardButton_MouseLeave"
                                                   >
                                     <materialDesign:PackIcon Kind="ContentSave"
                                                              VerticalAlignment="Stretch"
@@ -226,7 +226,7 @@
                                         <ColumnDefinition Width="3*"/>
                                     </Grid.ColumnDefinitions>
                                     
-                                    <TextBox Name="SelectedSectionChannelsCountTextBox"
+                                    <TextBox Name="SelectedSessionChannelsCountTextBox"
                                              TextWrapping="Wrap"
                                              VerticalAlignment="Stretch"
                                              HorizontalAlignment="Stretch"
@@ -239,7 +239,7 @@
                                              FontStyle="Italic"
                                              />
 
-                                    <TextBox Name="SelectedSectionPackagesCountTextBox"
+                                    <TextBox Name="SelectedSessionPackagesCountTextBox"
                                              Grid.Column="1"
                                              TextWrapping="Wrap"
                                              VerticalAlignment="Stretch"
@@ -261,7 +261,7 @@
                                 
                                 <ScrollViewer Margin="0,0,5,0"
                                               Grid.Column="1">
-                                    <StackPanel x:Name="SelectedSectionChannelsStackPanel"/>
+                                    <StackPanel x:Name="SelectedSessionChannelsStackPanel"/>
                                 </ScrollViewer>
 
                                 <Grid x:Name="ChannelsCoverGrid"
@@ -276,7 +276,7 @@
                                 </Grid>
                             </Grid>
 
-                            <Grid x:Name="SectionDataGridCover"
+                            <Grid x:Name="SessionDataGridCover"
                                   Background="White"
                                   Grid.RowSpan="5"
                                   Visibility="Visible"
@@ -296,33 +296,33 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <materialDesign:Card Name="ChangeSectionStatusCardButton"
+                        <materialDesign:Card Name="ChangeSessionStatusCardButton"
                                              Grid.Column="0"
                                              UniformCornerRadius="5"
                                              Margin="0,0,2.5,5"
                                              materialDesign:ShadowAssist.ShadowDepth="Depth1"
-                                             PreviewMouseLeftButtonDown="ChangeSectionStatusCardButton_PreviewMouseLeftButtonDown"
-                                             PreviewMouseLeftButtonUp="ChangeSectionStatusCardButton_PreviewMouseLeftButtonUp"
-                                             MouseEnter="ChangeSectionStatusCardButton_MouseEnter"
-                                             MouseLeave="ChangeSectionStatusCardButton_MouseLeave"
+                                             PreviewMouseLeftButtonDown="ChangeSessionStatusCardButton_PreviewMouseLeftButtonDown"
+                                             PreviewMouseLeftButtonUp="ChangeSessionStatusCardButton_PreviewMouseLeftButtonUp"
+                                             MouseEnter="ChangeSessionStatusCardButton_MouseEnter"
+                                             MouseLeave="ChangeSessionStatusCardButton_MouseLeave"
                                              >
-                            <materialDesign:PackIcon Name="SelectedSectionStatusIcon"
+                            <materialDesign:PackIcon Name="SelectedSessionStatusIcon"
                                                      Kind="AccessPoint"
                                                      VerticalAlignment="Stretch"
                                                      HorizontalAlignment="Stretch"
                                                      />
                         </materialDesign:Card>
 
-                        <materialDesign:Card Name="DeleteSectionCardButton"
+                        <materialDesign:Card Name="DeleteSessionCardButton"
                                              Grid.Column="1"
                                              UniformCornerRadius="5"
                                              Margin="2.5,0,0,5"
                                              Background="{DynamicResource Delete}"
                                              materialDesign:ShadowAssist.ShadowDepth="Depth1"
-                                             PreviewMouseLeftButtonDown="DeleteSectionCardButton_PreviewMouseLeftButtonDown"
-                                             PreviewMouseLeftButtonUp="DeleteSectionCardButton_PreviewMouseLeftButtonUp"
-                                             MouseEnter="DeleteSectionCardButton_MouseEnter"
-                                             MouseLeave="DeleteSectionCardButton_MouseLeave"
+                                             PreviewMouseLeftButtonDown="DeleteSessionCardButton_PreviewMouseLeftButtonDown"
+                                             PreviewMouseLeftButtonUp="DeleteSessionCardButton_PreviewMouseLeftButtonUp"
+                                             MouseEnter="DeleteSessionCardButton_MouseEnter"
+                                             MouseLeave="DeleteSessionCardButton_MouseLeave"
                                              >
                             <materialDesign:PackIcon Kind="Delete"
                                                      VerticalAlignment="Stretch"
@@ -459,7 +459,7 @@
             </Grid>
             
             <Button Grid.ColumnSpan="5"
-                    Name="AddLiveSectionButton"
+                    Name="AddLiveSessionButton"
                     Margin="10"
                     Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
                     Style="{StaticResource MaterialDesignFloatingActionButton}"
@@ -470,9 +470,9 @@
             </Button>
 
             <Button Grid.ColumnSpan="5"
-                    Name="RefreshSectionsButton"
+                    Name="RefreshSessionsButton"
                     Margin="10,10,10,75"
-                    Click="RefreshSectionsButton_Click"
+                    Click="RefreshSessionsButton_Click"
                     Style="{StaticResource MaterialDesignFloatingActionButton}"
                     VerticalAlignment="Bottom"
                     HorizontalAlignment="Right"
@@ -496,7 +496,7 @@
                 </Grid.RowDefinitions>
                 
                 <Label Name="LoadingLabel"
-                       Content="Loading sections.."
+                       Content="Loading sessions.."
                        FontSize="20"
                        Foreground="#ffffff"
                        VerticalContentAlignment="Bottom"

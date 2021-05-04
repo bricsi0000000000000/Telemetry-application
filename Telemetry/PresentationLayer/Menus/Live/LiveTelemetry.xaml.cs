@@ -27,13 +27,13 @@ namespace LogicLayer.Menus.Live
 {
     public partial class LiveTelemetry : PlotTelemetry
     {
-        private Section activeSection;
-        public bool IsSelectedSection { get; set; } = false;
+        private Session activeSession;
+        public bool IsSelectedSession { get; set; } = false;
 
         public bool CanUpdateCharts { get; private set; } = false;
         private static HttpClient client = new HttpClient();
 
-        private List<string> channelNamesFromSection = new List<string>();
+        private List<string> channelNamesFromSession = new List<string>();
         private int lastPackageID = 0;
         private readonly object getDataLock = new object();
         private readonly AutoResetEvent getDataSignal = new AutoResetEvent(false);
@@ -85,7 +85,7 @@ namespace LogicLayer.Menus.Live
             rangeSliderDistance = End - Start;
 
             InitializeGroupItems(GroupsStackPanel);
-            UpdateSectionTitle();
+            UpdateSessionTitle();
             UpdateCanRecieveDataStatus();
             InitilaizeHttpClient();
 
@@ -94,11 +94,11 @@ namespace LogicLayer.Menus.Live
 
         private void UpdateCoverGridsVisibilities()
         {
-            NoSectionGrid.Visibility = IsSelectedSection ? Visibility.Hidden : Visibility.Visible;
-            NoChannelsGrid.Visibility = IsSelectedSection ? Visibility.Hidden : Visibility.Visible;
-            NoGroupsGrid.Visibility = IsSelectedSection ? Visibility.Hidden : Visibility.Visible;
-            NoChartsGrid.Visibility = IsSelectedSection ? Visibility.Hidden : Visibility.Visible;
-            RecieveDataStatusIcon.Opacity = IsSelectedSection ? NO_OPACITY_VALUE : LITTLE_OPACITY_VALUE;
+            NoSessionGrid.Visibility = IsSelectedSession ? Visibility.Hidden : Visibility.Visible;
+            NoChannelsGrid.Visibility = IsSelectedSession ? Visibility.Hidden : Visibility.Visible;
+            NoGroupsGrid.Visibility = IsSelectedSession ? Visibility.Hidden : Visibility.Visible;
+            NoChartsGrid.Visibility = IsSelectedSession ? Visibility.Hidden : Visibility.Visible;
+            RecieveDataStatusIcon.Opacity = IsSelectedSession ? NO_OPACITY_VALUE : LITTLE_OPACITY_VALUE;
         }
 
         private void InitilaizeHttpClient()
@@ -114,16 +114,16 @@ namespace LogicLayer.Menus.Live
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        private void UpdateSectionTitle()
+        private void UpdateSessionTitle()
         {
-            if (activeSection == null)
+            if (activeSession == null)
             {
-                SectionNameTextBox.Text = "No active section";
+                SessionNameTextBox.Text = "No active session";
             }
             else
             {
-                SectionNameTextBox.Text = activeSection.Name;
-                SectionDateLabel.Text = activeSection.Date.ToString();
+                SessionNameTextBox.Text = activeSession.Name;
+                SessionDateLabel.Text = activeSession.Date.ToString();
             }
         }
 
@@ -137,7 +137,7 @@ namespace LogicLayer.Menus.Live
             {
                 var group = new Group(GroupManager.LastGroupID++, channelName);
 
-                group.AddAttribute(InputFileManager.GetLiveFile(activeSection.ID).GetChannel(channelName));
+                group.AddAttribute(InputFileManager.GetLiveFile(activeSession.ID).GetChannel(channelName));
 
                 BuildChartGrid(group, ref rowIndex, ref ChartsGrid);
             }
@@ -215,7 +215,7 @@ namespace LogicLayer.Menus.Live
 
         public override Channel GetChannel(string channelName, int? inputFileID = null)
         {
-            var liveFile = InputFileManager.GetLiveFile(activeSection.ID);
+            var liveFile = InputFileManager.GetLiveFile(activeSession.ID);
             if (liveFile == null)
             {
                 return null;
@@ -268,7 +268,7 @@ namespace LogicLayer.Menus.Live
         {
             ChannelsStackPanel.Children.Clear();
 
-            foreach (var channelName in channelNamesFromSection)
+            foreach (var channelName in channelNamesFromSession)
             {
                 var checkBox = new CheckBox()
                 {
@@ -368,16 +368,16 @@ namespace LogicLayer.Menus.Live
 
 
         /// <summary>
-        /// Updates the active section to <paramref name="section"/> and initializes the channels and charts.
+        /// Updates the active session to <paramref name="session"/> and initializes the channels and charts.
         /// </summary>
-        /// <param name="section"></param>
-        public void UpdateSection(Section section, List<string> channelNames)
+        /// <param name="session"></param>
+        public void UpdateSession(Session session, List<string> channelNames)
         {
-            activeSection = section;
+            activeSession = session;
 
-            ChangeSectionStatusIconState(section.IsLive);
+            ChangeSessionStatusIconState(session.IsLive);
 
-            IsSelectedSection = true;
+            IsSelectedSession = true;
 
             UpdateCoverGridsVisibilities();
 
@@ -385,9 +385,9 @@ namespace LogicLayer.Menus.Live
 
             CanUpdateCharts = false;
 
-            UpdateSectionTitle();
+            UpdateSessionTitle();
 
-            channelNamesFromSection = new List<string>(channelNames);
+            channelNamesFromSession = new List<string>(channelNames);
 
             UpdateChannelsList();
 
@@ -396,13 +396,13 @@ namespace LogicLayer.Menus.Live
             SetUpDataSlider();
         }
 
-        public void ChangeSectionStatusIconState(bool isLive)
+        public void ChangeSessionStatusIconState(bool isLive)
         {
-            SectionStatusIcon.Kind = isLive ? PackIconKind.AccessPoint : PackIconKind.AccessPointOff;
-            SectionStatusIcon.Foreground = isLive ? ColorManager.Secondary900.ConvertBrush() :
+            SessionStatusIcon.Kind = isLive ? PackIconKind.AccessPoint : PackIconKind.AccessPointOff;
+            SessionStatusIcon.Foreground = isLive ? ColorManager.Secondary900.ConvertBrush() :
                                                                   ColorManager.Primary900.ConvertBrush();
 
-            activeSection.IsLive = isLive;
+            activeSession.IsLive = isLive;
 
             UpdateCanRecieveDataStatus();
         }
@@ -437,12 +437,12 @@ namespace LogicLayer.Menus.Live
                 {
                     foreach (var package in packages)
                     {
-                        foreach (var channel in InputFileManager.GetLiveFile(activeSection.ID).Channels)
+                        foreach (var channel in InputFileManager.GetLiveFile(activeSession.ID).Channels)
                         {
                             var sensorData = GetSensorData(packageID: package.ID, sensorName: channel.Name, packages: packages);
                             if (sensorData.Any())
                             {
-                                InputFileManager.AddDataToLiveFile(fileID: activeSection.ID, channelName: channel.Name, values: sensorData);
+                                InputFileManager.AddDataToLiveFile(fileID: activeSession.ID, channelName: channel.Name, values: sensorData);
                             }
                         }
                     }
@@ -458,7 +458,7 @@ namespace LogicLayer.Menus.Live
                         MenuManager.LiveSettings.ChangeLoadedPackagesLabel(lastPackageID);
                     });
 
-                    if (activeSection.IsLive)
+                    if (activeSession.IsLive)
                     {
                         Application.Current.Dispatcher.Invoke(() =>
                         {
@@ -467,7 +467,7 @@ namespace LogicLayer.Menus.Live
                     }
                 }
 
-                if (!activeSection.IsLive)
+                if (!activeSession.IsLive)
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
@@ -491,7 +491,7 @@ namespace LogicLayer.Menus.Live
         {
             get
             {
-                var file = InputFileManager.GetLiveFile(activeSection.ID);
+                var file = InputFileManager.GetLiveFile(activeSession.ID);
                 if (file == null)
                 {
                     return 0;
@@ -524,11 +524,11 @@ namespace LogicLayer.Menus.Live
                 string apiCall;
                 if (all)
                 {
-                    apiCall = $"{ConfigurationManager.GetAllPackages_APICall}/{activeSection.ID}";
+                    apiCall = $"{ConfigurationManager.GetAllPackages_APICall}/{activeSession.ID}";
                 }
                 else
                 {
-                    apiCall = $"{ConfigurationManager.GetPackagesAfter_APICall}/{lastPackageID}/{activeSection.ID}";
+                    apiCall = $"{ConfigurationManager.GetPackagesAfter_APICall}/{lastPackageID}/{activeSession.ID}";
                 }
 
                 var response = await client.GetAsync(apiCall).ConfigureAwait(false);
@@ -608,7 +608,7 @@ namespace LogicLayer.Menus.Live
         {
             if (!gettingData)
             {
-                if (IsSelectedSection)
+                if (IsSelectedSession)
                 {
                     RecieveDataStatusCard.Background = ColorManager.Secondary200.ConvertBrush();
                 }
@@ -619,11 +619,11 @@ namespace LogicLayer.Menus.Live
         {
             if (!gettingData)
             {
-                if (IsSelectedSection)
+                if (IsSelectedSession)
                 {
                     RecieveDataStatusCard.Background = ColorManager.Secondary100.ConvertBrush();
 
-                    if (activeSection.IsLive)
+                    if (activeSession.IsLive)
                     {
                         CanUpdateCharts = !CanUpdateCharts;
                     }
@@ -640,7 +640,7 @@ namespace LogicLayer.Menus.Live
                     }
                     else
                     {
-                        InputFileManager.SaveFile(activeSection.Name);
+                        InputFileManager.SaveFile(activeSession.Name);
                         MenuManager.LiveSettings.UpdateCarStatus();
                     }
 
@@ -653,7 +653,7 @@ namespace LogicLayer.Menus.Live
         {
             if (!gettingData)
             {
-                if (IsSelectedSection)
+                if (IsSelectedSession)
                 {
                     RecieveDataStatusCard.Background = ColorManager.Secondary100.ConvertBrush();
                 }
@@ -664,7 +664,7 @@ namespace LogicLayer.Menus.Live
         {
             if (!gettingData)
             {
-                if (IsSelectedSection)
+                if (IsSelectedSession)
                 {
                     RecieveDataStatusCard.Background = ColorManager.Secondary50.ConvertBrush();
                 }
@@ -673,9 +673,9 @@ namespace LogicLayer.Menus.Live
 
         private void UpdateCanRecieveDataStatus()
         {
-            if (activeSection != null)
+            if (activeSession != null)
             {
-                if (activeSection.IsLive)
+                if (activeSession.IsLive)
                 {
                     RecieveDataStatusIcon.Kind = CanUpdateCharts ? PackIconKind.Pause :
                                                                    PackIconKind.Play;
