@@ -209,7 +209,7 @@
                     IsSnapToTickEnabled="True"
                     VerticalAlignment="Center"
                     IsMoveToPointEnabled="True"
-                    Foreground="{StaticResource SecondaryAccentBrush}"
+                    Foreground="{StaticResource Secondary}"
                     />
         </Grid>
 

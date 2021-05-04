@@ -144,6 +144,23 @@ namespace PresentationLayer.Charts
             ScottPlotChart.Render();
         }
 
+        public void UpdateLiveHighlight(ref int dataIndex)
+        {
+            if (plottableScatterHighlight != null)
+            {
+                plottableScatterHighlight.HighlightClear();
+            }
+
+            if (plottableVLine != null)
+            {
+                ScottPlotChart.plt.Clear(plottableVLine);
+            }
+
+            plottableVLine = ScottPlotChart.plt.PlotVLine(dataIndex, lineStyle: LineStyle.Dash, color: DefaultsManager.DefaultChartHighlightColor);
+
+            ScottPlotChart.Render();
+        }
+
         /// <summary>
         /// Sets the axis limits to automatic.
         /// </summary>
@@ -254,15 +271,19 @@ namespace PresentationLayer.Charts
             ChannelsGrid.Visibility = System.Windows.Visibility.Hidden;
         }
 
-        public void UpdateLiveSideValue()
+        public void UpdateLiveSideValue(ref int dataIndex)
         {
-            foreach (var item in ValuesStackPanel.Children)
+            if (liveChartValues.Any())
             {
-                if (item is ChartValue chartValue)
+                var a = liveChartValues[dataIndex];
+                var b = liveChartValues.Last();
+                double value = dataIndex < liveChartValues.Count ? a : b;
+
+                foreach (var item in ValuesStackPanel.Children)
                 {
-                    if (liveChartValues.Any())
+                    if (item is ChartValue chartValue)
                     {
-                        chartValue.SetLiveChannelValue(liveChartValues.Last());
+                        chartValue.SetLiveChannelValue(value);
                     }
                 }
             }

@@ -214,7 +214,7 @@ namespace PresentationLayer.RangeSlider
                 }
             }
 
-            MenuManager.LiveTelemetry.UpdateDataSlider();
+            MenuManager.LiveTelemetry.UpdateRangeSlider();
         }
 
         private static void OnDragStartedEvent(object sender, DragStartedEventArgs e)
@@ -272,7 +272,7 @@ namespace PresentationLayer.RangeSlider
 
         private void OnDragCompletedEvent(DragCompletedEventArgs e)
         {
-            MenuManager.LiveTelemetry.UpdateDataSlider();
+            MenuManager.LiveTelemetry.UpdateRangeSlider();
         }
     }
 }

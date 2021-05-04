@@ -133,7 +133,7 @@ namespace LogicLayer.Menus.Live
             ChartsGrid.RowDefinitions.Clear();
 
             int rowIndex = 0;
-            foreach (var channelName in selectedChannels) // egyszerű channeles chart
+            foreach (var channelName in selectedChannels) // basic single chart
             {
                 var group = new Group(GroupManager.LastGroupID++, channelName);
 
@@ -158,6 +158,8 @@ namespace LogicLayer.Menus.Live
             ChartsGrid.RowDefinitions.Add(chartRow);
 
             Grid.SetRow(new Grid(), rowIndex++);
+
+            RefreshCharts();
         }
 
         /// <summary>
@@ -180,7 +182,7 @@ namespace LogicLayer.Menus.Live
                     if (values.Any())
                     {
                         double renderRate = values.Length / (double)MaxProperty.DefaultMetadata.DefaultValue;
-                        
+
                         int minRenderIndex = (int)(Start * renderRate);
                         double end = End;
                         if (end - Start > Start + rangeSliderDistance)
@@ -203,7 +205,7 @@ namespace LogicLayer.Menus.Live
                 }
 
                 chart.AddSideValue(attribute.Name, values, color: attribute.ColorText, isActive: values.Any());
-                chart.UpdateLiveSideValue();
+                //chart.UpdateLiveSideValue();
             }
 
             chart.SetAxisLimitsToAuto();
@@ -385,12 +387,13 @@ namespace LogicLayer.Menus.Live
 
             UpdateSectionTitle();
 
-            this.channelNamesFromSection = new List<string>(channelNames);
+            channelNamesFromSection = new List<string>(channelNames);
 
             UpdateChannelsList();
 
-
             lastPackageID = 0;
+
+            SetUpDataSlider();
         }
 
         public void ChangeSectionStatusIconState(bool isLive)
@@ -451,6 +454,7 @@ namespace LogicLayer.Menus.Live
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         BuildCharts();
+                        SetUpDataSlider();
                         MenuManager.LiveSettings.ChangeLoadedPackagesLabel(lastPackageID);
                     });
 
@@ -474,6 +478,26 @@ namespace LogicLayer.Menus.Live
                 }
 
                 Thread.Sleep(ConfigurationManager.WaitBetweenCollectData);
+            }
+        }
+
+        private void SetUpDataSlider()
+        {
+            DataSlider.Maximum = MaxDataCount;
+            DataSlider.Value = MaxDataCount;
+        }
+
+        private int MaxDataCount
+        {
+            get
+            {
+                var file = InputFileManager.GetLiveFile(activeSection.ID);
+                if (file == null)
+                {
+                    return 0;
+                }
+                var channels = file.Channels;
+                return channels == null ? 0 : channels.Max(x => x.Data.Count);
             }
         }
 
@@ -665,15 +689,28 @@ namespace LogicLayer.Menus.Live
             }
         }
 
-        public void UpdateDataSlider()
+        public void UpdateRangeSlider()
         {
             rangeSliderDistance = End - Start;
             BuildCharts();
         }
 
+        private void RefreshCharts()
+        {
+            int dataIndex = (int)DataSlider.Value;
+            foreach (var item in ChartsGrid.Children)
+            {
+                if (item is Chart chart)
+                {
+                    chart.UpdateLiveHighlight(ref dataIndex);
+                    chart.UpdateLiveSideValue(ref dataIndex);
+                }
+            }
+        }
+
         private void DataSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-
+            RefreshCharts();
         }
     }
 }
