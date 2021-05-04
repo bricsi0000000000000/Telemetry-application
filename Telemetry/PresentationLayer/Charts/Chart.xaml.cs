@@ -26,7 +26,6 @@ namespace PresentationLayer.Charts
         private readonly PlottableScatterHighlight plottableScatterHighlight;
         private PlottableVLine plottableVLine;
         private readonly Style chartStyle = ScottPlot.Style.Light1;
-        private readonly List<double> liveChartValues = new List<double>();
 
         /// <summary>
         /// Name of the <see cref="Chart"/>.
@@ -114,12 +113,25 @@ namespace PresentationLayer.Charts
                                 Color lineColor,
                                 int lineWidth,
                                 string xAxisLabel,
+                                string channelName,
                                 int minRenderIndex,
                                 int maxRenderIndex)
         {
             if (xAxisValues.Any())
             {
-                liveChartValues.AddRange(xAxisValues); // save the incoming values because based on liveChartValues can the side value be updated
+                // save the incoming values because based on liveChartValues can the side value be updated
+                int index = values.FindIndex(x => x.Item1.Equals(xAxisLabel));
+                if (index == -1)
+                {
+                    values.Add(new Tuple<string, double[]>(channelName, xAxisValues));
+                }
+                else
+                {
+                    var newValues = new List<double>(values[index].Item2);
+                    newValues.AddRange(xAxisValues);
+                    values[index] = new Tuple<string, double[]>(channelName, newValues.ToArray());
+                }
+
                 ScottPlotChart.plt.PlotSignal(xAxisValues, color: lineColor, lineWidth: lineWidth, markerSize: 1, minRenderIndex: minRenderIndex, maxRenderIndex: maxRenderIndex);
                 ScottPlotChart.plt.XLabel(xAxisLabel, bold: true);
                 ScottPlotChart.plt.Legend();
@@ -273,15 +285,18 @@ namespace PresentationLayer.Charts
 
         public void UpdateLiveSideValue(ref int dataIndex)
         {
-            if (liveChartValues.Any())
+            if (values.Any())
             {
-                double value = dataIndex < liveChartValues.Count ? liveChartValues[dataIndex] : liveChartValues.Last();
-
                 foreach (var item in ValuesStackPanel.Children)
                 {
                     if (item is ChartValue chartValue)
                     {
-                        chartValue.SetLiveChannelValue(value);
+                        var channelValues = values.Find(x => x.Item1.Equals(chartValue.ChannelName)).Item2;
+                        if (channelValues.Any())
+                        {
+                            double value = dataIndex < channelValues.Length ? channelValues[dataIndex] : channelValues.Last();
+                            chartValue.SetLiveChannelValue(value);
+                        }
                     }
                 }
             }

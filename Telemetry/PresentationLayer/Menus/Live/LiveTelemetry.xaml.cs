@@ -195,6 +195,7 @@ namespace LogicLayer.Menus.Live
                                           lineColor: attribute.ColorText.ConvertToChartColor(),
                                           lineWidth: 1,
                                           xAxisLabel: "",
+                                          channelName: attribute.Name,
                                           minRenderIndex,
                                           maxRenderIndex);
                     }

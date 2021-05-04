@@ -419,7 +419,7 @@ namespace LogicLayer.Menus.Settings.Live
 
         public void ChangeLoadedPackagesLabel(int packagesCount = 0)
         {
-            SelectedSessionPackagesCountTextBox.Text = $"Loaded packages: {packagesCount}";
+            SelectedSessionPackagesCountTextBox.Text = $"Downloaded packages: {packagesCount}";
         }
 
         private void UpdateSelectedSessionButtons()
