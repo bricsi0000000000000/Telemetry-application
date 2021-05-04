@@ -22,9 +22,9 @@ namespace LogicLayer.Menus.Settings.Live
     public partial class LiveSettings : UserControl
     {
         private static HttpClient client = new HttpClient();
-        private List<Section> sections = new List<Section>();
-        private Section activeSection;
-        private bool sectionSelected = false;
+        private List<Session> sessions = new List<Session>();
+        private Session activeSession;
+        private bool sessionSelected = false;
 
         private readonly FieldsViewModel fieldsViewModel = new FieldsViewModel();
 
@@ -32,12 +32,12 @@ namespace LogicLayer.Menus.Settings.Live
         {
             InitializeComponent();
 
-            fieldsViewModel.SectionName = "a"; // it is necessarry because if I don't give it any value, the error message will be visible through the cover grid
-            fieldsViewModel.SectionDate = "a"; // it is necessarry because if I don't give it any value, the error message will be visible through the cover grid
+            fieldsViewModel.SessionName = "a"; // it is necessarry because if I don't give it any value, the error message will be visible through the cover grid
+            fieldsViewModel.SessionDate = "a"; // it is necessarry because if I don't give it any value, the error message will be visible through the cover grid
             DataContext = fieldsViewModel;
 
             InitilaizeHttpClient();
-            UpdateSelectedSectionButtons();
+            UpdateSelectedSessionButtons();
             UpdateCarStatus();
             UpdateConfigurationCard();
         }
@@ -56,38 +56,38 @@ namespace LogicLayer.Menus.Settings.Live
         }
 
         #region async methods
-        private async void GetAllSectionsAsync(int? selectedSectionID = null)
+        private async void GetAllSessionsAsync(int? selectedSessionID = null)
         {
             try
             {
-                var response = await client.GetAsync(ConfigurationManager.AllLiveSectionsAPICall).ConfigureAwait(false);
+                var response = await client.GetAsync(ConfigurationManager.AllLiveSessionsAPICall).ConfigureAwait(false);
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 string resultString = result.GetAwaiter().GetResult();
-                sections = JsonConvert.DeserializeObject<List<Section>>(resultString);
+                sessions = JsonConvert.DeserializeObject<List<Session>>(resultString);
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     try
                     {
-                        if (FillSectionsStackPanel(sections))
+                        if (FillSessionsStackPanel(sessions))
                         {
-                            ChangeSectionColors();
-                            int selectSectionID;
-                            if (selectedSectionID == null || !sections.FindAll(x => x.ID == (int)selectedSectionID).Any())
+                            ChangeSessionColors();
+                            int selectSessionID;
+                            if (selectedSessionID == null || !sessions.FindAll(x => x.ID == (int)selectedSessionID).Any())
                             {
-                                selectSectionID = sections.First().ID;
+                                selectSessionID = sessions.First().ID;
                             }
                             else
                             {
-                                selectSectionID = (int)selectedSectionID;
+                                selectSessionID = (int)selectedSessionID;
                             }
 
-                            SelectSection(selectSectionID, firstTime: true);
+                            SelectSession(selectSessionID, firstTime: true);
                         }
                     }
                     catch (Exception)
                     {
-                        ShowSnackbarMessage("An error occurred while getting the sections");
+                        ShowSnackbarMessage("An error occurred while getting the sessions");
                     }
                 });
 
@@ -106,18 +106,18 @@ namespace LogicLayer.Menus.Settings.Live
             });
         }
 
-        private async void PostNewSectionAsync(string sectionName)
+        private async void PostNewSessionAsync(string sessionName)
         {
             try
             {
-                var response = await client.PostAsJsonAsync(ConfigurationManager.PostNewSectionAPICall, new Section { Date = DateTime.Now, Name = sectionName }).ConfigureAwait(false);
+                var response = await client.PostAsJsonAsync(ConfigurationManager.PostNewSessionAPICall, new Session { Date = DateTime.Now, Name = sessionName }).ConfigureAwait(false);
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 int resultCode = int.Parse(result.GetAwaiter().GetResult());
                 if (resultCode == (int)HttpStatusCode.OK)
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        GetAllSectionsAsync();
+                        GetAllSessionsAsync();
                         UpdateLoadingGrid(visibility: false);
                     });
                 }
@@ -126,7 +126,7 @@ namespace LogicLayer.Menus.Settings.Live
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         UpdateLoadingGrid(visibility: false);
-                        ShowSnackbarMessage($"There is already a section called {sectionName}");
+                        ShowSnackbarMessage($"There is already a session called {sessionName}");
                     });
                 }
                 else
@@ -143,7 +143,7 @@ namespace LogicLayer.Menus.Settings.Live
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     UpdateLoadingGrid(visibility: false);
-                    ShowSnackbarMessage($"Can't add {sectionName} because can't connect to the server");
+                    ShowSnackbarMessage($"Can't add {sessionName} because can't connect to the server");
                 });
             }
         }
@@ -165,13 +165,13 @@ namespace LogicLayer.Menus.Settings.Live
             {
                 HttpResponseMessage response;
 
-                if (activeSection.IsLive) // change to offline
+                if (activeSession.IsLive) // change to offline
                 {
-                    response = await client.PutAsJsonAsync(ConfigurationManager.ChangeSectionToOfflineAPICall, activeSection.ID).ConfigureAwait(false);
+                    response = await client.PutAsJsonAsync(ConfigurationManager.ChangeSessionToOfflineAPICall, activeSession.ID).ConfigureAwait(false);
                 }
                 else //change to live
                 {
-                    response = await client.PutAsJsonAsync(ConfigurationManager.ChangeSectionToLiveAPICall, activeSection.ID).ConfigureAwait(false);
+                    response = await client.PutAsJsonAsync(ConfigurationManager.ChangeSessionToLiveAPICall, activeSession.ID).ConfigureAwait(false);
                 }
 
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -180,12 +180,12 @@ namespace LogicLayer.Menus.Settings.Live
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        activeSection.IsLive = !activeSection.IsLive;
-                        MenuManager.LiveTelemetry.ChangeSectionStatusIconState(activeSection.IsLive);
-                        ChangeSectionStatus(activeSection.ID, activeSection.IsLive);
+                        activeSession.IsLive = !activeSession.IsLive;
+                        MenuManager.LiveTelemetry.ChangeSessionStatusIconState(activeSession.IsLive);
+                        ChangeSessionStatus(activeSession.ID, activeSession.IsLive);
                         UpdateLoadingGrid(visibility: false);
-                        SelectedSectionStatusIcon.Kind = activeSection.IsLive ? PackIconKind.AccessPoint : PackIconKind.AccessPointOff;
-                        SelectedSectionStatusIcon.Foreground = activeSection.IsLive ? ColorManager.Secondary900.ConvertBrush() :
+                        SelectedSessionStatusIcon.Kind = activeSession.IsLive ? PackIconKind.AccessPoint : PackIconKind.AccessPointOff;
+                        SelectedSessionStatusIcon.Foreground = activeSession.IsLive ? ColorManager.Secondary900.ConvertBrush() :
                                                                                       ColorManager.Primary900.ConvertBrush();
                     });
                 }
@@ -194,7 +194,7 @@ namespace LogicLayer.Menus.Settings.Live
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         UpdateLoadingGrid(visibility: false);
-                        ShowSnackbarMessage($"Only one live section can be at a time!");
+                        ShowSnackbarMessage($"Only one live session can be at a time!");
                     });
                 }
                 else
@@ -202,9 +202,9 @@ namespace LogicLayer.Menus.Settings.Live
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         UpdateLoadingGrid(visibility: false);
-                        ShowSnackbarMessage($"Couldn't update {activeSection.Name}'s status from " +
-                                            $"{(activeSection.IsLive ? "live" : "offline")} to " +
-                                            $"{(!activeSection.IsLive ? "live" : "offline")}");
+                        ShowSnackbarMessage($"Couldn't update {activeSession.Name}'s status from " +
+                                            $"{(activeSession.IsLive ? "live" : "offline")} to " +
+                                            $"{(!activeSession.IsLive ? "live" : "offline")}");
                     });
                 }
             }
@@ -213,18 +213,18 @@ namespace LogicLayer.Menus.Settings.Live
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     UpdateLoadingGrid(visibility: false);
-                    ShowSnackbarMessage($"There was an error updating {activeSection.Name}");
+                    ShowSnackbarMessage($"There was an error updating {activeSession.Name}");
                 });
             }
         }
 
-        private async void DeleteSectionAsync(int id)
+        private async void DeleteSessionAsync(int id)
         {
-            UpdateLoadingGrid(visibility: true, "Deleting section..");
+            UpdateLoadingGrid(visibility: true, "Deleting session..");
 
             try
             {
-                var response = await client.DeleteAsync($"{ConfigurationManager.DeleteSectionAPICall}?sectionID={id}").ConfigureAwait(false);
+                var response = await client.DeleteAsync($"{ConfigurationManager.DeleteSessionAPICall}?sessionID={id}").ConfigureAwait(false);
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 int resultCode = int.Parse(result.GetAwaiter().GetResult());
                 if (resultCode == (int)HttpStatusCode.OK)
@@ -232,7 +232,7 @@ namespace LogicLayer.Menus.Settings.Live
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         UpdateLoadingGrid(visibility: false);
-                        GetAllSectionsAsync();
+                        GetAllSessionsAsync();
                     });
                 }
                 else
@@ -240,7 +240,7 @@ namespace LogicLayer.Menus.Settings.Live
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         UpdateLoadingGrid(visibility: false);
-                        ShowSnackbarMessage("Couldn't delete section");
+                        ShowSnackbarMessage("Couldn't delete session");
                     });
                 }
             }
@@ -249,48 +249,7 @@ namespace LogicLayer.Menus.Settings.Live
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     UpdateLoadingGrid(visibility: false);
-                    ShowSnackbarMessage("Can't delete section because can't connect to the server");
-                });
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="name">New name</param>
-        private async void ChangeSectionNameAsync(int id, string name)
-        {
-            UpdateLoadingGrid(visibility: true, "Updating section..");
-
-            try
-            {
-                var response = await client.PutAsJsonAsync(ConfigurationManager.ChangeSectionNameAPICall, new Section() { ID = id, Name = name }).ConfigureAwait(false);
-                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                int resultCode = int.Parse(result.GetAwaiter().GetResult());
-                if (resultCode == (int)HttpStatusCode.OK)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        UpdateLoadingGrid(visibility: false);
-                        GetAllSectionsAsync(selectedSectionID: activeSection.ID);
-                    });
-                }
-                else
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        UpdateLoadingGrid(visibility: false);
-                        ShowSnackbarMessage("Couldn't update section");
-                    });
-                }
-            }
-            catch (Exception)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    UpdateLoadingGrid(visibility: false);
-                    ShowSnackbarMessage("Can't update section because can't connect to the server");
+                    ShowSnackbarMessage("Can't delete session because can't connect to the server");
                 });
             }
         }
@@ -300,13 +259,13 @@ namespace LogicLayer.Menus.Settings.Live
         /// </summary>
         /// <param name="id"></param>
         /// <param name="name">New name</param>
-        private async void ChangeSectionDateAsync(int id, DateTime newDate)
+        private async void ChangeSessionNameAsync(int id, string name)
         {
-            UpdateLoadingGrid(visibility: true, "Updating section..");
+            UpdateLoadingGrid(visibility: true, "Updating session..");
 
             try
             {
-                var response = await client.PutAsJsonAsync(ConfigurationManager.ChangeSectionDateAPICall, new Section() { ID = id, Name = "a", Date = newDate }).ConfigureAwait(false); // it doesn't work without Name="a", because name is required in api side
+                var response = await client.PutAsJsonAsync(ConfigurationManager.ChangeSessionNameAPICall, new Session() { ID = id, Name = name }).ConfigureAwait(false);
                 var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 int resultCode = int.Parse(result.GetAwaiter().GetResult());
                 if (resultCode == (int)HttpStatusCode.OK)
@@ -314,7 +273,7 @@ namespace LogicLayer.Menus.Settings.Live
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         UpdateLoadingGrid(visibility: false);
-                        GetAllSectionsAsync(selectedSectionID: activeSection.ID);
+                        GetAllSessionsAsync(selectedSessionID: activeSession.ID);
                     });
                 }
                 else
@@ -322,7 +281,7 @@ namespace LogicLayer.Menus.Settings.Live
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         UpdateLoadingGrid(visibility: false);
-                        ShowSnackbarMessage("Couldn't update section");
+                        ShowSnackbarMessage("Couldn't update session");
                     });
                 }
             }
@@ -331,35 +290,76 @@ namespace LogicLayer.Menus.Settings.Live
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     UpdateLoadingGrid(visibility: false);
-                    ShowSnackbarMessage("Can't update section because can't connect to the server");
+                    ShowSnackbarMessage("Can't update session because can't connect to the server");
+                });
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name">New name</param>
+        private async void ChangeSessionDateAsync(int id, DateTime newDate)
+        {
+            UpdateLoadingGrid(visibility: true, "Updating session..");
+
+            try
+            {
+                var response = await client.PutAsJsonAsync(ConfigurationManager.ChangeSessionDateAPICall, new Session() { ID = id, Name = "a", Date = newDate }).ConfigureAwait(false); // it doesn't work without Name="a", because name is required in api side
+                var result = response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                int resultCode = int.Parse(result.GetAwaiter().GetResult());
+                if (resultCode == (int)HttpStatusCode.OK)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        UpdateLoadingGrid(visibility: false);
+                        GetAllSessionsAsync(selectedSessionID: activeSession.ID);
+                    });
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        UpdateLoadingGrid(visibility: false);
+                        ShowSnackbarMessage("Couldn't update session");
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    UpdateLoadingGrid(visibility: false);
+                    ShowSnackbarMessage("Can't update session because can't connect to the server");
                 });
             }
         }
 
         #endregion
 
-        private bool FillSectionsStackPanel(List<Section> sections)
+        private bool FillSessionsStackPanel(List<Session> sessions)
         {
-            SectionsCoverGridGrid.Visibility = Visibility.Visible;
-            SectionDataGridCover.Visibility = Visibility.Visible;
-            SectionsStackPanel.Children.Clear();
+            SessionsCoverGridGrid.Visibility = Visibility.Visible;
+            SessionDataGridCover.Visibility = Visibility.Visible;
+            SessionsStackPanel.Children.Clear();
 
-            if (!sections.Any())
+            if (!sessions.Any())
             {
-                MenuManager.LiveTelemetry.IsSelectedSection = false;
-                ShowSnackbarMessage("There are no sections on the server", error: false);
+                MenuManager.LiveTelemetry.IsSelectedSession = false;
+                ShowSnackbarMessage("There are no sessions on the server", error: false);
                 return false;
             }
 
-            sections.Reverse();
-            activeSection = sections.First();
-            foreach (var section in sections)
+            sessions.Reverse();
+            activeSession = sessions.First();
+            foreach (var session in sessions)
             {
-                SectionsStackPanel.Children.Add(new LiveSectionItem(section));
+                SessionsStackPanel.Children.Add(new LiveSessionItem(session));
             }
 
-            SectionsCoverGridGrid.Visibility = Visibility.Hidden;
-            SectionDataGridCover.Visibility = Visibility.Hidden;
+            SessionsCoverGridGrid.Visibility = Visibility.Hidden;
+            SessionDataGridCover.Visibility = Visibility.Hidden;
 
             MenuManager.LiveTelemetry.ResetCharts();
 
@@ -367,111 +367,111 @@ namespace LogicLayer.Menus.Settings.Live
         }
 
         /// <summary>
-        /// Calls if a section is selected.
+        /// Calls if a session is selected.
         /// </summary>
-        /// <param name="sectionID">Selected sections ID.</param>
-        /// <param name="firstTime">If true, it will update the section in <see cref="LiveTelemetry"/>, no matter what.</param>
-        public void SelectSection(int sectionID, bool firstTime = false)
+        /// <param name="sessionID">Selected sessions ID.</param>
+        /// <param name="firstTime">If true, it will update the session in <see cref="LiveTelemetry"/>, no matter what.</param>
+        public void SelectSession(int sessionID, bool firstTime = false)
         {
-            if (activeSection.ID != sectionID || firstTime)
+            if (activeSession.ID != sessionID || firstTime)
             {
-                activeSection = GetSection(sectionID);
-                ChangeSectionColors();
-                var channelNames = activeSection.SensorNames.Split(';').ToList();
-                MenuManager.LiveTelemetry.UpdateSection(activeSection, channelNames);
-                InputFileManager.AddLive(activeSection.ID, activeSection.Name, channelNames);
-                UpdateSelectedSectionInfo(channelNames);
-                SelectedSectionStatusIcon.Kind = activeSection.IsLive ? PackIconKind.AccessPoint : PackIconKind.AccessPointOff;
-                SelectedSectionStatusIcon.Foreground = activeSection.IsLive ? ColorManager.Secondary900.ConvertBrush() :
+                activeSession = GetSession(sessionID);
+                ChangeSessionColors();
+                var channelNames = activeSession.SensorNames.Split(';').ToList();
+                MenuManager.LiveTelemetry.UpdateSession(activeSession, channelNames);
+                InputFileManager.AddLive(activeSession.ID, activeSession.Name, channelNames);
+                UpdateSelectedSessionInfo(channelNames);
+                SelectedSessionStatusIcon.Kind = activeSession.IsLive ? PackIconKind.AccessPoint : PackIconKind.AccessPointOff;
+                SelectedSessionStatusIcon.Foreground = activeSession.IsLive ? ColorManager.Secondary900.ConvertBrush() :
                                                                               ColorManager.Primary900.ConvertBrush();
             }
         }
 
-        private void UpdateSelectedSectionInfo(List<string> channelNames)
+        private void UpdateSelectedSessionInfo(List<string> channelNames)
         {
-            if (activeSection != null)
+            if (activeSession != null)
             {
-                SectionDataGridCover.Visibility = Visibility.Hidden;
-                sectionSelected = true;
+                SessionDataGridCover.Visibility = Visibility.Hidden;
+                sessionSelected = true;
 
-                fieldsViewModel.SectionName = activeSection.Name;
-                fieldsViewModel.SectionDate = activeSection.Date.ToString();
-                SelectedSectionChannelsStackPanel.Children.Clear();
+                fieldsViewModel.SessionName = activeSession.Name;
+                fieldsViewModel.SessionDate = activeSession.Date.ToString();
+                SelectedSessionChannelsStackPanel.Children.Clear();
 
                 ChannelsCoverGrid.Visibility = channelNames.Count == 0 ? Visibility.Visible : Visibility.Hidden;
 
-                SelectedSectionChannelsCountTextBox.Text = $"({channelNames.Count})";
+                SelectedSessionChannelsCountTextBox.Text = $"({channelNames.Count})";
 
                 foreach (var item in channelNames)
                 {
-                    SelectedSectionChannelsStackPanel.Children.Add(new Label() { Content = item });
+                    SelectedSessionChannelsStackPanel.Children.Add(new Label() { Content = item });
                 }
             }
             else
             {
-                SectionDataGridCover.Visibility = Visibility.Visible;
-                sectionSelected = false;
+                SessionDataGridCover.Visibility = Visibility.Visible;
+                sessionSelected = false;
             }
 
-            UpdateSelectedSectionButtons();
+            UpdateSelectedSessionButtons();
             ChangeLoadedPackagesLabel();
         }
 
         public void ChangeLoadedPackagesLabel(int packagesCount = 0)
         {
-            SelectedSectionPackagesCountTextBox.Text = $"Loaded packages: {packagesCount}";
+            SelectedSessionPackagesCountTextBox.Text = $"Loaded packages: {packagesCount}";
         }
 
-        private void UpdateSelectedSectionButtons()
+        private void UpdateSelectedSessionButtons()
         {
-            ChangeSectionStatusCardButton.Foreground = sectionSelected ? ColorManager.Secondary900.ConvertBrush() :
+            ChangeSessionStatusCardButton.Foreground = sessionSelected ? ColorManager.Secondary900.ConvertBrush() :
                                                                          ColorManager.Secondary400.ConvertBrush();
-            DeleteSectionCardButton.Background = sectionSelected ? ColorManager.Primary900.ConvertBrush() :
+            DeleteSessionCardButton.Background = sessionSelected ? ColorManager.Primary900.ConvertBrush() :
                                                                    ColorManager.Primary200.ConvertBrush();
         }
 
         public void ChangeStatus(int id)
         {
-            SelectSection(id);
+            SelectSession(id);
 
             UpdateLoadingGrid(visibility: true, progressBarVisibility: false);
 
-            var changeLiveStatusWindow = new PopUpWindow($"You are about to change {activeSection.Name}'s status from " +
-                                                         $"{(activeSection.IsLive ? "live" : "offline")} to " +
-                                                         $"{(activeSection.IsLive ? "offline" : "live")}\n" +
+            var changeLiveStatusWindow = new PopUpWindow($"You are about to change {activeSession.Name}'s status from " +
+                                                         $"{(activeSession.IsLive ? "live" : "offline")} to " +
+                                                         $"{(activeSession.IsLive ? "offline" : "live")}\n" +
                                                          $"Are you sure about that?",
                                                          PopUpWindow.PopUpType.ChangeLiveStatus);
             changeLiveStatusWindow.ShowDialog();
         }
 
-        private void ChangeSectionColors()
+        private void ChangeSessionColors()
         {
-            foreach (LiveSectionItem liveSectionItem in SectionsStackPanel.Children)
+            foreach (LiveSessionItem liveSessionItem in SessionsStackPanel.Children)
             {
-                liveSectionItem.ChangeColor(liveSectionItem.SectionID == activeSection.ID);
+                liveSessionItem.ChangeColor(liveSessionItem.SessionID == activeSession.ID);
             }
         }
 
-        private void ChangeSectionStatus(int sectionID, bool status)
+        private void ChangeSessionStatus(int sessionID, bool status)
         {
-            foreach (LiveSectionItem liveSectionItem in SectionsStackPanel.Children)
+            foreach (LiveSessionItem liveSessionItem in SessionsStackPanel.Children)
             {
-                if (liveSectionItem.SectionID == sectionID)
+                if (liveSessionItem.SessionID == sessionID)
                 {
-                    liveSectionItem.ChangeStatus(status);
+                    liveSessionItem.ChangeStatus(status);
                 }
             }
         }
 
-        private Section GetSection(int id) => sections.Find(x => x.ID == id);
+        private Session GetSession(int id) => sessions.Find(x => x.ID == id);
 
-        private void AddLiveSection_Click(object sender, RoutedEventArgs e)
+        private void AddLiveSession_Click(object sender, RoutedEventArgs e)
         {
-            UpdateLoadingGrid(visibility: true, "Adding new section..");
+            UpdateLoadingGrid(visibility: true, "Adding new session..");
 
-            PostNewSectionAsync(AddLiveSectionNameTextBox.Text);
+            PostNewSessionAsync(AddLiveSessionNameTextBox.Text);
 
-            AddLiveSectionNameTextBox.Text = string.Empty;
+            AddLiveSessionNameTextBox.Text = string.Empty;
         }
 
         /// <summary>
@@ -496,58 +496,58 @@ namespace LogicLayer.Menus.Settings.Live
             LoadingCancelButtonCard.Visibility = cancelButtonVisibility ? Visibility.Visible : Visibility.Hidden;
         }
 
-        private void RefreshSectionsButton_Click(object sender, RoutedEventArgs e)
+        private void RefreshSessionsButton_Click(object sender, RoutedEventArgs e)
         {
-            RefreshSectionsButton.Background = ColorManager.Secondary100.ConvertBrush();
-            UpdateLoadingGrid(visibility: true, "Loading sections..");
+            RefreshSessionsButton.Background = ColorManager.Secondary100.ConvertBrush();
+            UpdateLoadingGrid(visibility: true, "Loading sessions..");
 
-            int? selectedSectionID = null;
+            int? selectedSessionID = null;
 
-            if (activeSection != null)
+            if (activeSession != null)
             {
-                selectedSectionID = activeSection.ID;
+                selectedSessionID = activeSession.ID;
             }
 
-            GetAllSectionsAsync(selectedSectionID: selectedSectionID);
+            GetAllSessionsAsync(selectedSessionID: selectedSessionID);
         }
 
-        private void DeleteSectionCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void DeleteSessionCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (sectionSelected)
+            if (sessionSelected)
             {
-                DeleteSectionCardButton.Background = ColorManager.Primary700.ConvertBrush();
+                DeleteSessionCardButton.Background = ColorManager.Primary700.ConvertBrush();
             }
         }
 
-        private void DeleteSectionCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void DeleteSessionCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (sectionSelected)
+            if (sessionSelected)
             {
-                DeleteSectionCardButton.Background = ColorManager.Primary800.ConvertBrush();
+                DeleteSessionCardButton.Background = ColorManager.Primary800.ConvertBrush();
 
                 UpdateLoadingGrid(visibility: true, progressBarVisibility: false);
 
-                var deleteSectionWindow = new PopUpWindow($"You are about to delete {activeSection.Name}\n" +
+                var deleteSessionWindow = new PopUpWindow($"You are about to delete {activeSession.Name}\n" +
                                                           $"Are you sure about that?",
-                                                          PopUpWindow.PopUpType.DeleteSection);
-                deleteSectionWindow.ShowDialog();
+                                                          PopUpWindow.PopUpType.DeleteSession);
+                deleteSessionWindow.ShowDialog();
             }
         }
 
-        private void DeleteSectionCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        private void DeleteSessionCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (sectionSelected)
+            if (sessionSelected)
             {
-                DeleteSectionCardButton.Background = ColorManager.Primary800.ConvertBrush();
+                DeleteSessionCardButton.Background = ColorManager.Primary800.ConvertBrush();
                 Mouse.OverrideCursor = Cursors.Hand;
             }
         }
 
-        private void DeleteSectionCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void DeleteSessionCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (sectionSelected)
+            if (sessionSelected)
             {
-                DeleteSectionCardButton.Background = ColorManager.Primary900.ConvertBrush();
+                DeleteSessionCardButton.Background = ColorManager.Primary900.ConvertBrush();
                 Mouse.OverrideCursor = null;
             }
         }
@@ -556,7 +556,7 @@ namespace LogicLayer.Menus.Settings.Live
         {
             if (delete)
             {
-                DeleteSectionAsync(activeSection.ID);
+                DeleteSessionAsync(activeSession.ID);
             }
             else
             {
@@ -566,12 +566,12 @@ namespace LogicLayer.Menus.Settings.Live
 
         public void ChangeName(string newName)
         {
-            ChangeSectionNameAsync(activeSection.ID, newName);
+            ChangeSessionNameAsync(activeSession.ID, newName);
         }
 
         public void ChangeDate(DateTime newDate)
         {
-            ChangeSectionDateAsync(activeSection.ID, newDate);
+            ChangeSessionDateAsync(activeSession.ID, newDate);
         }
 
         /// <param name="sentTime">Time when the package was sent from the data sender</param>
@@ -605,104 +605,104 @@ namespace LogicLayer.Menus.Settings.Live
 
         #region cards
 
-        private void ChangeSectionStatusCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ChangeSessionStatusCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (sectionSelected)
+            if (sessionSelected)
             {
-                ChangeSectionStatusCardButton.Background = ColorManager.Secondary200.ConvertBrush();
+                ChangeSessionStatusCardButton.Background = ColorManager.Secondary200.ConvertBrush();
             }
         }
 
-        private void ChangeSectionStatusCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ChangeSessionStatusCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (sectionSelected)
+            if (sessionSelected)
             {
-                ChangeSectionStatusCardButton.Background = ColorManager.Secondary100.ConvertBrush();
+                ChangeSessionStatusCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
-                ChangeStatus(activeSection.ID);
+                ChangeStatus(activeSession.ID);
             }
         }
 
-        private void ChangeSectionStatusCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        private void ChangeSessionStatusCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (sectionSelected)
+            if (sessionSelected)
             {
-                ChangeSectionStatusCardButton.Background = ColorManager.Secondary100.ConvertBrush();
+                ChangeSessionStatusCardButton.Background = ColorManager.Secondary100.ConvertBrush();
                 Mouse.OverrideCursor = Cursors.Hand;
             }
         }
 
-        private void ChangeSectionStatusCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void ChangeSessionStatusCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (sectionSelected)
+            if (sessionSelected)
             {
-                ChangeSectionStatusCardButton.Background = ColorManager.Secondary50.ConvertBrush();
+                ChangeSessionStatusCardButton.Background = ColorManager.Secondary50.ConvertBrush();
                 Mouse.OverrideCursor = null;
             }
         }
 
 
-        private void ChangeSectionNameCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ChangeSessionNameCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ChangeSectionNameCardButton.Background = ColorManager.Secondary200.ConvertBrush();
+            ChangeSessionNameCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
-        private void ChangeSectionNameCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ChangeSessionNameCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ChangeSectionNameCardButton.Background = ColorManager.Secondary100.ConvertBrush();
+            ChangeSessionNameCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             UpdateLoadingGrid(visibility: true, progressBarVisibility: false);
 
-            string newName = SelectedSectionNameTextBox.Text;
-            if (!newName.Equals(string.Empty) && !newName.Equals(activeSection.Name))
+            string newName = SelectedSessionNameTextBox.Text;
+            if (!newName.Equals(string.Empty) && !newName.Equals(activeSession.Name))
             {
                 MenuManager.LiveSettings.ChangeName(newName);
             }
         }
 
-        private void ChangeSectionNameCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        private void ChangeSessionNameCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ChangeSectionNameCardButton.Background = ColorManager.Secondary100.ConvertBrush();
+            ChangeSessionNameCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
-        private void ChangeSectionNameCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void ChangeSessionNameCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ChangeSectionNameCardButton.Background = ColorManager.Secondary50.ConvertBrush();
+            ChangeSessionNameCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 
-        private void ChangeSectionDateCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ChangeSessionDateCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ChangeSectionDateCardButton.Background = ColorManager.Secondary200.ConvertBrush();
+            ChangeSessionDateCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
-        private void ChangeSectionDateCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ChangeSessionDateCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ChangeSectionDateCardButton.Background = ColorManager.Secondary100.ConvertBrush();
+            ChangeSessionDateCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             UpdateLoadingGrid(visibility: true, progressBarVisibility: false);
 
-            string newDateText = SelectedSectionDateLabel.Text;
+            string newDateText = SelectedSessionDateLabel.Text;
             if (!newDateText.Equals(string.Empty))
             {
                 DateTime newDate = Convert.ToDateTime(newDateText);
-                if (newDate != activeSection.Date)
+                if (newDate != activeSession.Date)
                 {
                     MenuManager.LiveSettings.ChangeDate(newDate);
                 }
             }
         }
 
-        private void ChangeSectionDateCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        private void ChangeSessionDateCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ChangeSectionDateCardButton.Background = ColorManager.Secondary100.ConvertBrush();
+            ChangeSessionDateCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
-        private void ChangeSectionDateCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void ChangeSessionDateCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ChangeSectionDateCardButton.Background = ColorManager.Secondary50.ConvertBrush();
+            ChangeSessionDateCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;
         }
 

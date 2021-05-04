@@ -34,10 +34,10 @@ namespace LogicLayer.Menus.Settings.Units
                 InitializeUnits();
             }
 
-            UpdateSelectedSectionButtons();
+            UpdateSelectedSessionButtons();
         }
 
-        private void UpdateSelectedSectionButtons()
+        private void UpdateSelectedSessionButtons()
         {
             DeleteUnitCardButton.Background = isUnitSelected ? ColorManager.Primary900.ConvertBrush() :
                                                                   ColorManager.Primary200.ConvertBrush();
@@ -99,7 +99,7 @@ namespace LogicLayer.Menus.Settings.Units
                 item.ChangeColor(item.Unit.ID == unit.ID);
             }
 
-            UpdateSelectedSectionButtons();
+            UpdateSelectedSessionButtons();
         }
 
         private void UpdateSelectedUnitUI()
@@ -182,10 +182,10 @@ namespace LogicLayer.Menus.Settings.Units
                 DeleteUnitCardButton.Background = ColorManager.Primary800.ConvertBrush();
 
                 SetLoadingGrid(visibility: true);
-                var deleteSectionWindow = new PopUpWindow($"You are about to delete '{activeUnit.Name}'\n" +
+                var deleteSessionWindow = new PopUpWindow($"You are about to delete '{activeUnit.Name}'\n" +
                                                           $"Are you sure about that?",
                                                           PopUpWindow.PopUpType.DeleteUnit);
-                deleteSectionWindow.ShowDialog();
+                deleteSessionWindow.ShowDialog();
             }
         }
 
@@ -231,25 +231,25 @@ namespace LogicLayer.Menus.Settings.Units
             Mouse.OverrideCursor = null;
         }
 
-        private void ChangeSectionFormulaCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ChangeSessionFormulaCardButton_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ChangeUnitFormulaCardButton.Background = ColorManager.Secondary200.ConvertBrush();
         }
 
-        private void ChangeSectionFormulaCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ChangeSessionFormulaCardButton_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ChangeUnitFormulaCardButton.Background = ColorManager.Secondary100.ConvertBrush();
 
             ChangeUnitFormula(SelectedUnitFormulaTextBox.Text);
         }
 
-        private void ChangeSectionFormulaCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        private void ChangeSessionFormulaCardButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             ChangeUnitFormulaCardButton.Background = ColorManager.Secondary100.ConvertBrush();
             Mouse.OverrideCursor = Cursors.Hand;
         }
 
-        private void ChangeSectionFormulaCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void ChangeSessionFormulaCardButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             ChangeUnitFormulaCardButton.Background = ColorManager.Secondary50.ConvertBrush();
             Mouse.OverrideCursor = null;

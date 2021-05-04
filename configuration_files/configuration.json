@@ -8,15 +8,15 @@
     "isHTTPS" : false,
     "url" : "192.168.1.33",
     "port" : 5000,
-    "sections": {
-      "get_live_section" : "api/Section/live",
-      "get_all_sections" : "api/Section/all",
-      "post_new_section" : "api/Section/",
-      "change_section_to_live" : "api/Section/change_live",
-      "change_section_to_offline" : "api/Section/change_offline",
-      "change_section_name" : "api/Section/change_name",
-      "change_section_date" : "api/Section/change_date",
-      "delete_section" : "api/Section/"
+    "sessions": {
+      "get_live_session" : "api/Section/live",
+      "get_all_sessions" : "api/Section/all",
+      "post_new_session" : "api/Section/",
+      "change_session_to_live" : "api/Section/change_live",
+      "change_session_to_offline" : "api/Section/change_offline",
+      "change_session_name" : "api/Section/change_name",
+      "change_session_date" : "api/Section/change_date",
+      "delete_session" : "api/Section/"
     },
     "packages": {
       "get_package_by_id" : "/api/Package/get_single",

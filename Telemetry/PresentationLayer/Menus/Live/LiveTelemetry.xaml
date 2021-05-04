@@ -49,13 +49,13 @@
                             </Grid.ColumnDefinitions>
 
                             <materialDesign:PackIcon Kind="AccessPoint"
-                                                     Name="SectionStatusIcon"
+                                                     Name="SessionStatusIcon"
                                                      HorizontalAlignment="Left"
                                                      VerticalAlignment="Center"
                                                      Margin="5,0,0,0"
                                                      />
 
-                            <TextBox Name="SectionNameTextBox"
+                            <TextBox Name="SessionNameTextBox"
                                      Grid.Column="1"
                                      TextWrapping="Wrap"
                                      VerticalAlignment="Stretch"
@@ -65,13 +65,13 @@
                                      IsReadOnly="True"
                                      materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
                                      BorderThickness="0"
-                                     Text="No section selected"
+                                     Text="No session selected"
                                      FontWeight="Bold"
                                      />
 
                         </Grid>
 
-                        <TextBox Name="SectionDateLabel"
+                        <TextBox Name="SessionDateLabel"
                             Grid.Row="1"
                             TextWrapping="Wrap"
                             VerticalAlignment="Stretch"
@@ -87,7 +87,7 @@
                             />
                     </Grid>
                     <Grid Background="White"
-                        Name="NoSectionGrid"
+                        Name="NoSessionGrid"
                         Visibility="Hidden"
                         >
                         <materialDesign:PackIcon Kind="CardBulleted"
