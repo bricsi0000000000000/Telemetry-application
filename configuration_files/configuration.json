@@ -9,14 +9,14 @@
     "url" : "192.168.1.33",
     "port" : 5000,
     "sessions": {
-      "get_live_session" : "api/Section/live",
-      "get_all_sessions" : "api/Section/all",
-      "post_new_session" : "api/Section/",
-      "change_session_to_live" : "api/Section/change_live",
-      "change_session_to_offline" : "api/Section/change_offline",
-      "change_session_name" : "api/Section/change_name",
-      "change_session_date" : "api/Section/change_date",
-      "delete_session" : "api/Section/"
+      "get_live_session" : "api/Session/live",
+      "get_all_sessions" : "api/Session/all",
+      "post_new_session" : "api/Session/",
+      "change_session_to_live" : "api/Session/change_live",
+      "change_session_to_offline" : "api/Session/change_offline",
+      "change_session_name" : "api/Session/change_name",
+      "change_session_date" : "api/Session/change_date",
+      "delete_session" : "api/Session/"
     },
     "packages": {
       "get_package_by_id" : "/api/Package/get_single",
